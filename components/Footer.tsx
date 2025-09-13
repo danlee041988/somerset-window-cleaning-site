@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="col-span-2">
             <div className="mb-4 flex items-center gap-3">
-              <Logo className="h-24 md:h-28" />
+              <Logo className="h-48 md:h-56" />
             </div>
             <p className="text-sm text-white/70 max-w-prose">Crystal-clear windows for homes and businesses across Somerset. Friendly, reliable, fully insured.</p>
           </div>
@@ -17,7 +17,7 @@ export default function Footer() {
             <h4 className="mb-3 font-semibold">Quick links</h4>
             <ul className="space-y-2 text-sm text-white/80">
               <li><Link href="/services" className="hover:text-white">Services</Link></li>
-              <li><Link href="/pricing" className="hover:text-white">Pricing</Link></li>
+              <li><Link href="/quote" className="hover:text-white">Quote me</Link></li>
               <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
               <li><Link href="/privacy" className="hover:text-white">Privacy</Link></li>
             </ul>

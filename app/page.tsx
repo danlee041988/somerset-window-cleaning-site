@@ -37,7 +37,7 @@ export default function HomePage() {
             Streak‑free, sparkling windows for homes and businesses across Somerset. Professional service, transparent pricing, flexible scheduling.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button href="/contact">Get a free quote</Button>
+            <Button href="/quote">Quote me</Button>
             <Button href="/services" variant="ghost">Explore services</Button>
           </div>
         </div>
@@ -98,7 +98,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-semibold">Ready for a streak‑free shine?</h2>
           <p className="mx-auto mt-2 max-w-2xl text-white/70">Tell us a little about your property and we’ll get back with a quick quote.</p>
           <div className="mt-6 flex justify-center">
-            <Button href="/contact">Get a free quote</Button>
+            <Button href="/quote">Quote me</Button>
           </div>
         </div>
       </Section>
