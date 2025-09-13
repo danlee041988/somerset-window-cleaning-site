@@ -1,0 +1,53 @@
+import React from 'react'
+
+export default function StructuredData() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Somerset Window Cleaning',
+    url: siteUrl,
+    image: `${siteUrl}/logo.png`,
+    telephone: '+44 1458 860 339',
+    email: 'info@somersetwindowcleaning.co.uk',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '13 Rockhaven Business Centre, Gravenchon Way',
+      addressLocality: 'Street',
+      addressRegion: 'Somerset',
+      postalCode: 'BA16 0HW',
+      addressCountry: 'GB',
+    },
+    areaServed: {
+      '@type': 'AdministrativeArea',
+      name: 'Somerset',
+    },
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: [
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+        ],
+        opens: '09:00',
+        closes: '16:00',
+      },
+    ],
+    sameAs: [
+      'https://www.facebook.com/SomersetWindowCleaning/',
+      'https://www.instagram.com/somersetwindowcleaning/',
+      'https://www.linkedin.com/company/somerset-window-cleaning/',
+    ],
+    priceRange: '££',
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  )
+}

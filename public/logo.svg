@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="520" height="140" viewBox="0 0 520 140" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Somerset Window Cleaning logo">
+  <style>
+    .small { font: 600 18px 'Montserrat', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.35em; }
+    .big { font: 700 44px 'Montserrat', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; letter-spacing: 0.04em; }
+  </style>
+  <!-- Top lines framing SOMERSET -->
+  <rect x="0" y="30" width="150" height="4" fill="#E11D2A" rx="2"/>
+  <rect x="370" y="30" width="150" height="4" fill="#E11D2A" rx="2"/>
+  <!-- SOMERSET -->
+  <text x="260" y="40" text-anchor="middle" class="small" fill="#FFFFFF">SOMERSET</text>
+  <!-- WINDOW -->
+  <text x="260" y="86" text-anchor="middle" class="big" fill="#FFFFFF">WINDOW</text>
+  <!-- CLEANING -->
+  <text x="260" y="132" text-anchor="middle" class="big" fill="#FFFFFF">CLEANING</text>
+</svg>
+

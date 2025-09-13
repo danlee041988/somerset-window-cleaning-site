@@ -1,0 +1,93 @@
+
+> somerset-window-cleaning@0.1.0 dev:3000
+> next dev -H localhost -p 3000
+
+  ▲ Next.js 14.2.32
+  - Local:        http://localhost:3000
+  - Network:      http://[::1]:3000
+
+ ✓ Starting...
+
+   We detected TypeScript in your project and reconfigured your tsconfig.json file for you. Strict-mode is set to false by default.
+   The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+   	- incremental was set to true
+   	- include was updated to add '.next/types/**/*.ts'
+   	- plugins was updated to add { name: 'next' }
+
+ ⚠ Found lockfile missing swc dependencies, patching...
+ ✓ Ready in 1016ms
+ ⚠ Lockfile was successfully patched, please run "npm install" to ensure @next/swc dependencies are downloaded
+ ○ Compiling / ...
+ ✓ Compiled / in 1419ms (525 modules)
+ GET / 200 in 1497ms
+ ✓ Compiled /services in 154ms (511 modules)
+ ✓ Compiled /pricing in 83ms (499 modules)
+ ✓ Compiled /about in 82ms (501 modules)
+ ✓ Compiled /contact in 205ms (556 modules)
+ ✓ Compiled in 279ms (604 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 54ms
+ ✓ Compiled in 91ms (604 modules)
+ ✓ Compiled in 68ms (300 modules)
+ ✓ Compiled in 116ms (605 modules)
+ ✓ Compiled /_not-found in 115ms (594 modules)
+ GET /logo.png 404 in 153ms
+ ✓ Compiled in 115ms (556 modules)
+ GET /logo.png 404 in 35ms
+ ✓ Compiled in 129ms (567 modules)
+ ✓ Compiled in 77ms (567 modules)
+ ✓ Compiled in 75ms (567 modules)
+ ✓ Compiled in 109ms (567 modules)
+ ✓ Compiled in 113ms (567 modules)
+ ✓ Compiled in 113ms (567 modules)
+ ✓ Compiled in 79ms (567 modules)
+ ✓ Compiled in 113ms (567 modules)
+ ✓ Compiled in 113ms (567 modules)
+ ✓ Compiled in 75ms (567 modules)
+ ✓ Compiled in 76ms (567 modules)
+ ✓ Compiled in 82ms (287 modules)
+ ✓ Compiled in 57ms (287 modules)
+ ✓ Compiled in 165ms (570 modules)
+ ⚠ Fast Refresh had to perform a full reload when SWC_WEBSITE/components/LightboxGallery.tsx","ids":["default"]}, SWC_WEBSITE/node_modules/next/dist/client/link.js","ids":["*"]} changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET / 200 in 39ms
+ GET / 200 in 21ms
+ GET / 200 in 38ms
+ ✓ Compiled /gallery in 155ms (560 modules)
+ ✓ Compiled in 126ms (574 modules)
+ ✓ Compiled in 155ms (574 modules)
+ ✓ Compiled in 90ms (574 modules)
+ ✓ Compiled in 91ms (574 modules)
+ ✓ Compiled in 50ms (289 modules)
+ ✓ Compiled in 90ms (574 modules)
+ ✓ Compiled in 63ms (289 modules)
+ ✓ Compiled in 171ms (574 modules)
+ ✓ Compiled in 125ms (574 modules)
+ ✓ Compiled in 77ms (289 modules)
+ ✓ Compiled in 76ms (289 modules)
+ ✓ Compiled in 184ms (574 modules)
+ ✓ Compiled in 116ms (574 modules)
+ ✓ Compiled in 67ms (289 modules)
+ ✓ Compiled /_not-found in 160ms (563 modules)
+ GET / 404 in 426ms
+ GET /_next/static/css/app/layout.css?v=1757719948335 404 in 21ms
+ GET /_next/static/chunks/main-app.js?v=1757719948335 404 in 26ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 25ms
+ GET /_next/static/chunks/app/layout.js 404 in 26ms
+ GET /contact 404 in 34ms
+ GET /_next/static/css/app/layout.css?v=1757719948410 404 in 13ms
+ GET /_next/static/chunks/main-app.js?v=1757719948410 404 in 19ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 19ms
+ GET /_next/static/chunks/app/layout.js 404 in 13ms
+ GET / 404 in 39ms
+ GET /_next/static/css/app/layout.css?v=1757719956456 404 in 31ms
+ GET /_next/static/chunks/app/layout.js 404 in 31ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 32ms
+ GET /_next/static/chunks/main-app.js?v=1757719956456 404 in 34ms
+ ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
+  ▲ Next.js 14.2.32
+  - Local:        http://localhost:3000
+  - Network:      http://[::1]:3000
+
+ ✓ Starting...
+[?25h

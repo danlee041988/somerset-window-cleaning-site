@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-red: #E11D2A;
+  --brand-black: #0B0B0B;
+  --brand-white: #FFFFFF;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--brand-black);
+  color: var(--brand-white);
+}
+
+.container-prose p + p {
+  margin-top: 1rem;
+}
