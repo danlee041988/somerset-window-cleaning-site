@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 
 export default function CaseStudy({
   title = 'Somerset Council case study',
@@ -10,19 +11,24 @@ export default function CaseStudy({
   ],
   quote = 'The Enterprise Centres support has helped us stay organised, grow steadily and keep standards high for customers across Somerset.',
   cta = 'Read the case study',
+  logoSrc = '/Codex SWC Photos/Somerset Council Logo .png',
 }: {
   title?: string
   link?: string
   bullets?: string[]
   quote?: string
   cta?: string
+  logoSrc?: string
 }) {
   return (
     <section className="mx-auto max-w-6xl px-4">
       <div className="overflow-hidden rounded-xl border border-white/10 bg-white/10">
         <div className="flex flex-col gap-6 p-6 md:flex-row md:p-8">
           <div className="md:w-2/3">
-            <div className="mb-3 inline-flex items-center gap-2">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="relative h-8 w-28 overflow-hidden rounded-sm bg-white">
+                <Image src={logoSrc} alt="Somerset Council logo" fill className="object-contain p-1" sizes="112px" />
+              </div>
               <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--brand-red)' }} aria-hidden />
               <p className="text-xs uppercase tracking-wide text-white/70">Case Study</p>
             </div>
@@ -55,4 +61,3 @@ export default function CaseStudy({
     </section>
   )
 }
-
