@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import { SOMERSET_COUNCIL_LOGO } from '@/content/image-manifest'
 
 export default function CaseStudy({
   title = 'Somerset Council case study',
@@ -11,7 +12,7 @@ export default function CaseStudy({
   ],
   quote = 'The Enterprise Centres support has helped us stay organised, grow steadily and keep standards high for customers across Somerset.',
   cta = 'Read the case study',
-  logoSrc = process.env.NEXT_PUBLIC_COUNCIL_LOGO_URL || '/Codex SWC Photos/Somerset Council Logo .png',
+  logoSrc = process.env.NEXT_PUBLIC_COUNCIL_LOGO_URL || SOMERSET_COUNCIL_LOGO,
 }: {
   title?: string
   link?: string

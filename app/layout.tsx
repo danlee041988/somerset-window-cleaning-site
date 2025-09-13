@@ -24,9 +24,7 @@ export const metadata: Metadata = {
     url: siteUrl?.href || 'http://localhost:3000',
     images: [
       {
-        url: '/logo.png',
-        width: 512,
-        height: 512,
+        url: '/Codex SWC Photos/SWC Logo.png',
         alt: 'Somerset Window Cleaning',
       },
     ],
@@ -37,7 +35,7 @@ export const metadata: Metadata = {
     description: 'Somerset Window Cleaning: Expert residential & commercial window, gutter, and fascia cleaning. Trusted service across Somerset and surrounding areas',
   },
   icons: {
-    icon: '/logo.png',
+    icon: '/Codex SWC Photos/SWC Logo.png',
   },
 }
 
