@@ -211,7 +211,6 @@ export default function ContactForm() {
           <label className="mb-1 block text-sm">Photos (optional)</label>
           <input
             type="file"
-            name="photos"
             accept="image/*"
             multiple
             className="block w-full rounded-md border border-white/10 bg-white/5 file:mr-4 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-white"

@@ -16,7 +16,7 @@ export default function HomePage() {
           alt=""
           aria-hidden="true"
           loading="eager"
-          fetchpriority="high"
+          fetchPriority="high"
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover opacity-50"
         />
