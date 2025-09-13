@@ -16,9 +16,9 @@ export default function Logo({ className = '', height, width }: Props) {
   if (width && !height) style.height = 'auto'
   return (
     <img
-      src="/logo.png"
+      src="/logo.svg"
       alt="Somerset Window Cleaning"
-      className={className}
+      className={`bg-black ${className}`}
       style={style}
     />
   )
