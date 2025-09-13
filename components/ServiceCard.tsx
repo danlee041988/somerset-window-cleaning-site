@@ -6,9 +6,10 @@ type Props = {
   description: string
   imageSrc?: string
   imageAlt?: string
+  bullets?: string[]
 }
 
-export default function ServiceCard({ title, description, imageSrc, imageAlt }: Props) {
+export default function ServiceCard({ title, description, imageSrc, imageAlt, bullets }: Props) {
   return (
     <div className="overflow-hidden rounded-xl border border-white/10 bg-white/10 transition hover:bg-white/15">
       {imageSrc && (
@@ -27,6 +28,13 @@ export default function ServiceCard({ title, description, imageSrc, imageAlt }: 
       <div className="p-6">
         <h3 className="text-lg font-semibold">{title}</h3>
         <p className="mt-2 text-sm text-white/80">{description}</p>
+        {bullets && bullets.length > 0 && (
+          <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-white/75">
+            {bullets.map((b) => (
+              <li key={b}>{b}</li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   )}

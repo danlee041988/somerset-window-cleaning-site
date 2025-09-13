@@ -66,9 +66,50 @@ export default function HomePage() {
         </div>
       </Section>
 
+      {/* Case study trust badge */}
+      <Section>
+        <div className="rounded-xl border border-white/10 bg-white/10 p-5 md:p-6">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--brand-red)' }} aria-hidden />
+              <p className="text-sm text-white/80">Featured by Somerset Council in a small‑business case study.</p>
+            </div>
+            <div>
+              <a
+                href={(process.env.NEXT_PUBLIC_CASE_STUDY_URL || 'https://www.somerset.gov.uk/business-economy-and-licences/case-studies/somerset-window-cleaning-company/')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-neutral-200"
+              >
+                Read the case study
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4"><path strokeLinecap="round" strokeLinejoin="round" d="M7 17 17 7M7 7h10v10"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </Section>
+
       {/* How it works */}
       <Section title="Clean and simple, start to finish" subtitle="Our straightforward process makes booking and paying easy.">
         <ProcessFlow />
+      </Section>
+
+      {/* Reviews strip */}
+      <Section>
+        <div className="rounded-xl border border-white/10 bg-white/10 p-5 md:p-6">
+          <div className="mb-3 flex items-center gap-2">
+            {[...Array(5)].map((_, i) => (
+              <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+                <path fill="#E11D2A" d="M12 17.27 18.18 21 16.54 13.97 22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"/>
+              </svg>
+            ))}
+            <span className="text-sm text-white/80">Friendly, reliable, guaranteed</span>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <blockquote className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-white/80">“Brilliant service and sparkling results. Booking was simple and the reminder was handy.”</blockquote>
+            <blockquote className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-white/80">“Professional, uniformed team. Love that we can pay online and don’t need to be home.”</blockquote>
+          </div>
+        </div>
       </Section>
 
       {/* CTA */}
