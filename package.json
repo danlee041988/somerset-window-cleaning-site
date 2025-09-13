@@ -6,12 +6,16 @@
   "scripts": {
     "dev": "next dev",
     "dev:3000": "next dev -H localhost -p 3000",
+    "dev:clean": "rm -rf .next && next dev -H localhost -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "build:static": "next build",
     "preview:static": "npx --yes serve -l 4321 out || python3 -m http.server 4321 -d out",
     "gen:images": "node scripts/build-image-manifest.mjs"
+  },
+  "engines": {
+    "node": ">=18.17.0"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

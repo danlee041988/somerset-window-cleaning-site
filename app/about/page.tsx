@@ -23,6 +23,83 @@ export default function AboutPage() {
           </div>
         </div>
       </Section>
+
+      {/* Team Section */}
+      <Section title="Meet Our Team" subtitle="The people behind Somerset Window Cleaning's professional service.">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {/* Dan Lee - Owner */}
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-red text-2xl font-bold text-white">
+                DL
+              </div>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">Dan Lee</h3>
+            <p className="mb-3 text-sm font-medium text-brand-red">Owner & Founder</p>
+            <p className="text-sm text-white/70">Former Royal Marine who brings discipline and attention to detail to window cleaning.</p>
+          </div>
+
+          {/* Sean - Ops Manager */}
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-red text-2xl font-bold text-white">
+                ST
+              </div>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">Sean</h3>
+            <p className="mb-3 text-sm font-medium text-brand-red">Ops Manager</p>
+            <p className="text-sm text-white/70">Keeps routes running smoothly and standards consistently high.</p>
+          </div>
+
+          {/* Pat - Office Admin */}
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-red text-2xl font-bold text-white">
+                P
+              </div>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">Pat</h3>
+            <p className="mb-3 text-sm font-medium text-brand-red">Office Admin</p>
+            <p className="text-sm text-white/70">Scheduling, customer queries and quotes — your first point of contact.</p>
+          </div>
+
+          {/* Dylan - Team Supervisor */}
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-red text-2xl font-bold text-white">
+                D
+              </div>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">Dylan</h3>
+            <p className="mb-3 text-sm font-medium text-brand-red">Team Supervisor</p>
+            <p className="text-sm text-white/70">Quality checks and support across teams and complex jobs.</p>
+          </div>
+
+          {/* Woody - Window Cleaner */}
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-red text-2xl font-bold text-white">
+                W
+              </div>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">Woody</h3>
+            <p className="mb-3 text-sm font-medium text-brand-red">Window Cleaner</p>
+            <p className="text-sm text-white/70">Friendly service and a meticulous eye for detail.</p>
+          </div>
+
+          {/* Josh - Window Cleaner */}
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-red text-2xl font-bold text-white">
+                J
+              </div>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">Josh</h3>
+            <p className="mb-3 text-sm font-medium text-brand-red">Window Cleaner</p>
+            <p className="text-sm text-white/70">Consistent results and great communication with customers.</p>
+          </div>
+        </div>
+      </Section>
     </div>
   )
 }

@@ -1,14 +1,14 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter, Montserrat } from 'next/font/google'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StructuredData from '@/components/StructuredData'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+const siteUrlRaw = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+let siteUrl: URL | undefined
+try {
+  siteUrl = new URL(siteUrlRaw)
+} catch {}
 
 export const metadata: Metadata = {
   title: {
@@ -16,13 +16,12 @@ export const metadata: Metadata = {
     template: '%s | Somerset Window Cleaning',
   },
   description: 'Somerset Window Cleaning: Expert residential & commercial window, gutter, and fascia cleaning. Trusted service across Somerset and surrounding areas',
-  metadataBase: new URL(siteUrl),
-  alternates: { canonical: siteUrl },
+  ...(siteUrl ? { metadataBase: siteUrl, alternates: { canonical: siteUrl.href } } : {}),
   openGraph: {
     title: 'Somerset Window Cleaning',
     description: 'Somerset Window Cleaning: Expert residential & commercial window, gutter, and fascia cleaning. Trusted service across Somerset and surrounding areas',
     type: 'website',
-    url: siteUrl,
+    url: siteUrl?.href || 'http://localhost:3000',
     images: [
       {
         url: '/logo.png',
@@ -48,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
+    <html lang="en">
       <body className="min-h-screen bg-brand-black text-brand-white antialiased">
         <a href="#content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-brand-white text-black px-3 py-2 rounded">Skip to content</a>
         <Header />

@@ -19,6 +19,18 @@ TypeScript Next.js site for Somerset Window Cleaning. Black-first theme with bri
 3. Run dev server:
    npm run dev
 
+### Local Dev Troubleshooting
+
+- If you see “Cannot find module './682.js'” or “missing required error components”:
+  - Stop any running dev servers (kill Node on ports 3000/3001)
+  - Remove the build cache: `rm -rf .next`
+  - Start fresh: `npm run dev:3000` (or `npm run dev:clean`)
+
+- If port 3000 is blocked:
+  - `npm run dev -- -p 3001` and open http://localhost:3001
+
+- Fonts: We removed remote Google Fonts to avoid network dependency locally. We can switch to self‑hosted fonts later.
+
 ## Alternate Preview (No Dev Server)
 If localhost ports are blocked, build a static export and serve it on a different port:
 

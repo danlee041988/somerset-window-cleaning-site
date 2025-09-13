@@ -5,6 +5,7 @@ import LightboxGallery from '@/components/LightboxGallery'
 import ProcessFlow from '@/components/ProcessFlow'
 import { HERO_IMAGES, GALLERY_IMAGES, SERVICE_IMAGES } from '@/content/image-manifest'
 import Image from 'next/image'
+import CaseStudy from '@/components/CaseStudy'
 
 export default function HomePage() {
   return (
@@ -29,7 +30,7 @@ export default function HomePage() {
             <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--brand-red)' }} />
             Local • Reliable • Fully Insured
           </span>
-          <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl" style={{ fontFamily: 'var(--font-montserrat)' }}>
+          <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl">
             Somerset Window Cleaning
           </h1>
           <p className="max-w-2xl text-lg text-white/80">
@@ -66,28 +67,7 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* Case study trust badge */}
-      <Section>
-        <div className="rounded-xl border border-white/10 bg-white/10 p-5 md:p-6">
-          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--brand-red)' }} aria-hidden />
-              <p className="text-sm text-white/80">Featured by Somerset Council in a small‑business case study.</p>
-            </div>
-            <div>
-              <a
-                href={(process.env.NEXT_PUBLIC_CASE_STUDY_URL || 'https://www.somerset.gov.uk/business-economy-and-licences/case-studies/somerset-window-cleaning-company/')}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-neutral-200"
-              >
-                Read the case study
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4"><path strokeLinecap="round" strokeLinejoin="round" d="M7 17 17 7M7 7h10v10"/></svg>
-              </a>
-            </div>
-          </div>
-        </div>
-      </Section>
+      <CaseStudy />
 
       {/* How it works */}
       <Section title="Clean and simple, start to finish" subtitle="Our straightforward process makes booking and paying easy.">
