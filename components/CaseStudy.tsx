@@ -11,7 +11,7 @@ export default function CaseStudy({
   ],
   quote = 'The Enterprise Centres support has helped us stay organised, grow steadily and keep standards high for customers across Somerset.',
   cta = 'Read the case study',
-  logoSrc = process.env.NEXT_PUBLIC_COUNCIL_LOGO_URL || 'https://www.somerset.gov.uk/wp-content/uploads/2022/11/newLogo.png',
+  logoSrc = process.env.NEXT_PUBLIC_COUNCIL_LOGO_URL || '/Codex SWC Photos/Somerset Council Logo .png',
 }: {
   title?: string
   link?: string
