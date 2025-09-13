@@ -1,6 +1,7 @@
 import Section from '@/components/Section'
 import Button from '@/components/Button'
 import { TEAM_IMAGES } from '@/content/image-manifest'
+import Image from 'next/image'
 
 export const metadata = {
   title: 'Meet the Team',
@@ -22,7 +23,9 @@ export default function TeamPage() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {TEAM.map((m) => (
             <div key={m.name} className="overflow-hidden rounded-xl border border-white/10 bg-white/10">
-              <img src={m.photo} alt={`${m.name} — ${m.role}`} className="aspect-[4/3] w-full object-cover" />
+              <div className="relative aspect-[4/3] w-full">
+                <Image src={m.photo} alt={`${m.name} — ${m.role}`} fill className="object-cover" sizes="(min-width: 1024px) 25vw, 50vw" />
+              </div>
               <div className="p-5">
                 <h3 className="text-lg font-semibold">{m.name}</h3>
                 <p className="mt-1 text-sm text-white/70">{m.role}</p>

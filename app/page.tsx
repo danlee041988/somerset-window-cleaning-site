@@ -4,6 +4,7 @@ import ServiceCard from '@/components/ServiceCard'
 import LightboxGallery from '@/components/LightboxGallery'
 import ProcessFlow from '@/components/ProcessFlow'
 import { HERO_IMAGES, GALLERY_IMAGES, SERVICE_IMAGES } from '@/content/image-manifest'
+import Image from 'next/image'
 
 export default function HomePage() {
   return (
@@ -11,14 +12,14 @@ export default function HomePage() {
       {/* Hero with background image */}
       <section className="relative overflow-hidden border-b border-white/10 bg-black">
         {/* Background image */}
-        <img
+        <Image
           src={(HERO_IMAGES && HERO_IMAGES[0]) || '/photos/photo01.jpg'}
           alt=""
           aria-hidden="true"
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover opacity-50"
+          fill
+          priority
+          className="absolute inset-0 object-cover opacity-50"
+          sizes="100vw"
         />
         {/* Gradient overlay for readability but lighter */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />

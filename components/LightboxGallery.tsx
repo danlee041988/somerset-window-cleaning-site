@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react'
+import Image from 'next/image'
 
 export default function LightboxGallery({
   images,
@@ -11,14 +12,15 @@ export default function LightboxGallery({
 }) {
   const [open, setOpen] = React.useState(false)
   const [index, setIndex] = React.useState(0)
+  const overlayRef = React.useRef<HTMLDivElement>(null)
   const closeBtnRef = React.useRef<HTMLButtonElement>(null)
   const openAt = (i: number) => {
     setIndex(i)
     setOpen(true)
   }
   const close = () => setOpen(false)
-  const prev = () => setIndex((i) => (i - 1 + images.length) % images.length)
-  const next = () => setIndex((i) => (i + 1) % images.length)
+  const prev = React.useCallback(() => setIndex((i) => (i - 1 + images.length) % images.length), [images.length])
+  const next = React.useCallback(() => setIndex((i) => (i + 1) % images.length), [images.length])
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -39,6 +41,33 @@ export default function LightboxGallery({
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
     }
+  }, [open, prev, next])
+
+  // Basic focus trap within overlay when open
+  React.useEffect(() => {
+    if (!open) return
+    const el = overlayRef.current
+    if (!el) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return
+      const focusables = el.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusables.length === 0) return
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          ;(last as HTMLElement).focus()
+        }
+      } else if (document.activeElement === last) {
+        e.preventDefault()
+        ;(first as HTMLElement).focus()
+      }
+    }
+    el.addEventListener('keydown', onKeyDown as any)
+    return () => el.removeEventListener('keydown', onKeyDown as any)
   }, [open])
 
   return (
@@ -50,12 +79,16 @@ export default function LightboxGallery({
             className="group relative overflow-hidden rounded-lg border border-white/10 bg-white/5 focus:outline-none focus:ring-2 focus:ring-brand-red"
             onClick={() => openAt(i)}
           >
-            <img
-              src={src}
-              alt={`${captionPrefix} ${i + 1}`}
-              className="aspect-[4/3] w-full object-cover transition group-hover:scale-[1.03]"
-              loading="lazy"
-            />
+            <div className="relative aspect-[4/3] w-full">
+              <Image
+                src={src}
+                alt={`${captionPrefix} ${i + 1}`}
+                fill
+                className="object-cover transition group-hover:scale-[1.03]"
+                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                priority={false}
+              />
+            </div>
           </button>
         ))}
       </div>
@@ -66,6 +99,7 @@ export default function LightboxGallery({
           role="dialog"
           aria-modal="true"
           aria-label="Image viewer"
+          ref={overlayRef}
         >
           <button
             ref={closeBtnRef}

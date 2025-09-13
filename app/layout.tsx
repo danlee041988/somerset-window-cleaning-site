@@ -52,7 +52,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-brand-black text-brand-white antialiased">
         <a href="#content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-brand-white text-black px-3 py-2 rounded">Skip to content</a>
         <Header />
-        <main id="content" className="pt-56 md:pt-64">
+        <main id="content" className="pt-28 md:pt-32">
           {children}
         </main>
         <Footer />
