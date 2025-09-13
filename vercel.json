@@ -1,6 +1,9 @@
 {
   "env": {
     "NEXT_PUBLIC_SITE_URL": "https://www.somersetwindowcleaning.co.uk",
-    "NEXT_PUBLIC_CASE_STUDY_URL": "https://www.somerset.gov.uk/business-economy-and-licences/case-studies/somerset-window-cleaning-company/"
+    "NEXT_PUBLIC_CASE_STUDY_URL": "https://www.somerset.gov.uk/business-economy-and-licences/case-studies/somerset-window-cleaning-company/",
+    "NEXT_PUBLIC_EMAILJS_PUBLIC_KEY": "cbA_IhBfxEeDwbEx6",
+    "NEXT_PUBLIC_EMAILJS_SERVICE_ID": "service_yfnr1a9",
+    "NEXT_PUBLIC_EMAILJS_TEMPLATE_ID": ""
   }
 }
