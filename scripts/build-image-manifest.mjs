@@ -4,7 +4,8 @@ import { execFile } from 'child_process'
 import { fileURLToPath } from 'url'
 
 const root = process.cwd()
-const photosDir = join(root, 'public', 'photos', 'website-photos')
+// Scan the main SWC photos directory recursively (includes `website-photos`)
+const photosDir = join(root, 'public', 'Codex SWC Photos')
 
 function run(cmd, args) {
   return new Promise((resolve, reject) => {
@@ -74,7 +75,15 @@ async function main() {
   const landscape = withMeta.filter(i => i.w >= i.h).sort(byRatioDesc)
   const portrait = withMeta.filter(i => i.h > i.w)
 
-  const HERO_IMAGES = landscape.filter(i => (i.w / (i.h || 1)) >= 1.7).slice(0, 3).map(i => i.rel)
+  // Prefer any image named with 'hero' or 'main' as the first hero image
+  const HERO_IMAGES = []
+  const heroNamed = landscape.find(i => i.name.includes('hero') || i.name.includes('main'))
+  if (heroNamed) HERO_IMAGES.push(heroNamed.rel)
+  const heroWide = landscape.filter(i => (i.w / (i.h || 1)) >= 1.7).map(i => i.rel)
+  for (const rel of heroWide) {
+    if (HERO_IMAGES.length >= 3) break
+    if (!HERO_IMAGES.includes(rel)) HERO_IMAGES.push(rel)
+  }
   if (HERO_IMAGES.length === 0 && landscape[0]) HERO_IMAGES.push(landscape[0].rel)
 
   const TEAM_IMAGES = portrait.slice(0, 4).map(i => i.rel)
@@ -98,4 +107,3 @@ async function main() {
 }
 
 main().catch(err => { console.error(err); process.exit(1) })
-
