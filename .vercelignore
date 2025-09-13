@@ -1,0 +1,7 @@
+dev.log
+*.log
+scripts/
+.env*
+node_modules/
+.next/
+out/
