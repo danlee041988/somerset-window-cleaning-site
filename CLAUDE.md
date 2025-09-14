@@ -43,30 +43,39 @@ npm run preview:static
 **Enhanced Development Server** (Added 2025-09-14):
 - **Script**: `/scripts/dev-server.sh` - Automated development server management
 - **Features**: Process monitoring, automatic restart, and enhanced logging
-- **Usage**: Improved local development experience with better error handling
+- **Port Management**: Auto-detects port availability (3000 → 3001 fallback)
+- **Browser Integration**: Automatic browser opening with correct URL
+- **Clean Shutdown**: Graceful process termination with Ctrl+C
+
+**Usage**: 
+```bash
+# Use enhanced dev server instead of npm run dev
+./scripts/dev-server.sh
+```
 
 **GitHub Actions Integration**:
 - **Dependabot**: Automated dependency updates for GitHub Actions
 - **Multi-model Testing**: Parallel testing across different Claude models
-- **Cost Optimization**: Smart model selection based on PR complexity
+- **Production Model**: Upgraded to claude-sonnet-4-20250514 for comprehensive reviews
+- **Manual Trigger**: Workflow dispatch for on-demand code reviews
 
 ## Claude Code Review System
 **Status**: ✅ **PRODUCTION READY** - Automated PR reviews via GitHub Actions
 
 **Latest Configuration (Updated 2025-09-14)**:
-- **Production Model**: `claude-3-haiku` (confirmed working in production)
+- **Production Model**: `claude-sonnet-4-20250514` (confirmed working in production)
 - **Test Model**: `claude-3-5-sonnet` (fallback for complex reviews)
-- **API Key**: `secrets.ANTHROPIC_API_KEY` 
-- **Cost**: ~1.2 cents per review
+- **API Key**: `secrets.SWC_WEBSITE` 
+- **Cost**: Premium tier for comprehensive reviews
 - **Workflows**: 
   - `.github/workflows/claude-code-review.yml` (production)
   - `.github/workflows/test-claude-action.yml` (testing)
 
 **Model Evolution History**:
 Recent testing confirmed optimal model selection:
-- ✅ `claude-3-haiku` - Fast, cost-effective for standard reviews
+- ✅ `claude-sonnet-4-20250514` - Current production model (exact model from console)
 - ✅ `claude-3-5-sonnet` - Enhanced for complex code analysis
-- ✅ `claude-sonnet-4` - Premium tier for comprehensive reviews
+- ✅ `claude-3-haiku` - Fast, cost-effective for standard reviews
 
 **Features**:
 - Automated code quality reviews on PRs
@@ -77,7 +86,13 @@ Recent testing confirmed optimal model selection:
 - Mobile-first design verification
 - Dual workflow system (production + testing)
 
-**Response Format**: Claude provides helpful code review assistance while maintaining its identity (doesn't adopt personas).
+**Specialized Review Framework**: Uses Lyra prompt optimization methodology with 4-D approach:
+- **DECONSTRUCT**: Extract code intent and architecture decisions
+- **DIAGNOSE**: Audit for quality gaps and technical debt
+- **DEVELOP**: Apply systematic optimization techniques
+- **DELIVER**: Provide actionable feedback with code examples
+
+**Review Focus**: Brand consistency (#E11D2A), Next.js 14 best practices, TypeScript compliance, accessibility (WCAG), performance optimization, and mobile-first responsive design.
 
 ## Image Management System
 **Enhanced Image Handling**:
@@ -130,13 +145,28 @@ const variants = {
 - **Case Study**: Uses gutter clearing imagery with proper padding (`py-16 md:py-20`)
 - **Process Flow**: WhatsApp integration removed per user feedback
 
+## Logo & Asset Updates (Updated: 2025-09-14)
+
+### Logo Component Enhancements
+- **Auto-sizing**: Added `w-auto` class for proper aspect ratio maintenance
+- **Header Scaling**: Increased logo sizes - `h-24 md:h-32 lg:h-40` for better visibility
+- **Footer Consistency**: Standardized footer logo sizing to `h-24 md:h-28 w-auto`
+- **Asset Cleanup**: Removed duplicate `public/images/logos/logo.svg` file
+- **Logo Management**: Centralized logo handling through Logo component
+
+### Image System Updates
+- **Manifest Updates**: Refreshed image-manifest.ts with latest asset references
+- **Asset Organization**: Maintained structured approach in `/public/images/` directory
+- **Performance**: Optimized image loading with proper width/height ratios
+
 ## Recent Updates (Updated: 2025-09-14)
 
 ### CI/CD Optimization
-- **Model Testing**: Extensive testing of Claude models for code review efficiency
-- **Production Stability**: Confirmed `claude-3-haiku` as optimal production model
-- **Workflow Refinement**: Dual workflow system for production and testing environments
-- **Cost Management**: Optimized model selection reducing review costs while maintaining quality
+- **Model Upgrade**: Successfully upgraded to `claude-sonnet-4-20250514` as production model
+- **Model Testing**: Extensive testing across claude-3-haiku, claude-3-5-sonnet, and claude-sonnet-4
+- **Production Stability**: Confirmed claude-sonnet-4-20250514 working with exact model from console
+- **Workflow Refinement**: Dual workflow system with Lyra optimization methodology
+- **Review Quality**: Enhanced with 4-D methodology for comprehensive code analysis
 
 ### Development Infrastructure
 - **Enhanced Dev Server**: Added automated development server management script
