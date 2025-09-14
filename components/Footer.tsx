@@ -40,7 +40,7 @@ export default function Footer() {
         </div>
         <div className="mt-10 flex items-center justify-between border-t border-white/10 pt-6 text-xs text-white/60">
           <p>© {new Date().getFullYear()} Somerset Window Cleaning. All rights reserved.</p>
-          <p>Made with care in Somerset.</p>
+          <p>Made with care in Somerset, UK.</p>
         </div>
       </div>
     </footer>
