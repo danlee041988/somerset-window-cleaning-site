@@ -77,5 +77,5 @@ export default function ImageWithFallback({
     imageProps.loading = loading
   }
 
-  return <Image {...imageProps} alt={alt} />
+  return <Image {...imageProps} />
 }

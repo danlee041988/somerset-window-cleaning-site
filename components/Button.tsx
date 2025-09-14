@@ -7,7 +7,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode
 }
 
-const base = 'inline-flex items-center justify-center rounded-md px-5 py-3 font-medium transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red disabled:opacity-60 disabled:cursor-not-allowed'
+const base = 'inline-flex items-center justify-center rounded-md px-5 py-3 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red disabled:opacity-60 disabled:cursor-not-allowed'
 const variants = {
   primary: 'bg-[var(--brand-red)] text-white hover:opacity-90 focus:ring-brand-red',
   secondary: 'bg-white text-black hover:bg-neutral-200 focus:ring-white',
