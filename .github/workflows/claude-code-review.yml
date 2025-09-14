@@ -105,4 +105,3 @@ jobs:
           
           claude_args: |
             --model claude-3-5-sonnet-20241022
-            --max-tokens 2000
