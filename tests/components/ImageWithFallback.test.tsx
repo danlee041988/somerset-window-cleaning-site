@@ -93,4 +93,20 @@ describe('ImageWithFallback Component', () => {
     const image = screen.getByTestId('mock-image')
     expect(image).toHaveAttribute('fill')
   })
+
+  it('uses priority instead of loading when priority=true', () => {
+    render(<ImageWithFallback {...defaultProps} priority={true} loading="lazy" />)
+    
+    const image = screen.getByTestId('mock-image')
+    expect(image).toHaveAttribute('priority')
+    expect(image).not.toHaveAttribute('loading')
+  })
+
+  it('uses loading when priority=false', () => {
+    render(<ImageWithFallback {...defaultProps} priority={false} loading="eager" />)
+    
+    const image = screen.getByTestId('mock-image')
+    expect(image).toHaveAttribute('loading', 'eager')
+    expect(image).not.toHaveAttribute('priority')
+  })
 })

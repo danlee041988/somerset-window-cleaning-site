@@ -56,20 +56,26 @@ export default function ImageWithFallback({
     )
   }
 
-  return (
-    <Image
-      src={error ? fallbackSrc : src}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      priority={priority}
-      loading={loading}
-      fill={fill}
-      sizes={sizes}
-      style={style}
-      onError={handleError}
-      onLoad={handleLoad}
-    />
-  )
+  // Build props object conditionally
+  const imageProps: any = {
+    src: error ? fallbackSrc : src,
+    alt,
+    width,
+    height,
+    className,
+    fill,
+    sizes,
+    style,
+    onError: handleError,
+    onLoad: handleLoad,
+  }
+
+  // Only add priority OR loading, not both
+  if (priority) {
+    imageProps.priority = true
+  } else {
+    imageProps.loading = loading
+  }
+
+  return <Image {...imageProps} alt={alt} />
 }
