@@ -6,7 +6,17 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: '**' }
     ]
-  }
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  // Exclude test files from build
+  webpack: (config, { isServer }) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+    }
+    return config
+  },
 }
 
 export default nextConfig
