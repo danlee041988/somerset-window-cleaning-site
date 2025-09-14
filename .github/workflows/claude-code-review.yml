@@ -104,4 +104,4 @@ jobs:
             Review the changed files with this comprehensive framework, focusing on maintaining Somerset Window Cleaning's professional standards while optimizing for performance, accessibility, and maintainability.
           
           claude_args: |
-            --model claude-3-5-sonnet-20240620
+            --model claude-3-5-sonnet-latest
