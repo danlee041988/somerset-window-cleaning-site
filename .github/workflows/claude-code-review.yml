@@ -1,0 +1,47 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths: ['app/**', 'components/**', '*.tsx', '*.ts', '*.js', '*.jsx']
+  
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 'Task for Claude to perform'
+        required: true
+        default: 'Review this code for best practices'
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    name: Claude Code Review
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this Next.js website code for Somerset Window Cleaning:
+            
+            Focus on:
+            - Brand consistency (use #E11D2A for brand-red)
+            - Next.js best practices
+            - TypeScript type safety
+            - Component reusability
+            - Accessibility compliance
+            - Performance optimizations
+            - SEO best practices
+            - Code organization and structure
+            
+            For any issues found, provide specific suggestions with code examples.
+            Highlight what's done well and what could be improved.
+          
+          claude_args: |
+            --model claude-3-5-sonnet-20241022
+            --max-tokens 2000
