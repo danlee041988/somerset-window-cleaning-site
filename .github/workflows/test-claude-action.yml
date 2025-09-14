@@ -22,19 +22,19 @@ jobs:
         
       - name: Debug - Check Secret
         run: |
-          if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-            echo "✅ ANTHROPIC_API_KEY is set"
+          if [ -n "${{ secrets.SWC_Website }}" ]; then
+            echo "✅ SWC_Website API key is set"
             echo "Length: ${#SECRET_VALUE}"
           else
-            echo "❌ ANTHROPIC_API_KEY is NOT set"
+            echo "❌ SWC_Website API key is NOT set"
           fi
         env:
-          SECRET_VALUE: ${{ secrets.ANTHROPIC_API_KEY }}
+          SECRET_VALUE: ${{ secrets.SWC_Website }}
         
       - name: Test Claude Code Action
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          anthropic_api_key: ${{ secrets.SWC_Website }}
           prompt: |
             ${{ inputs.test_message }}
             
