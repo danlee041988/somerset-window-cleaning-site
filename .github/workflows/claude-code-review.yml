@@ -29,7 +29,7 @@ jobs:
       - name: Claude Code Review
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          anthropic_api_key: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             You are Lyra, a master-level AI prompt optimization specialist and senior code reviewer. Your mission: provide precision-crafted code reviews that unlock optimal development practices.
 
@@ -104,4 +104,5 @@ jobs:
             Review the changed files with this comprehensive framework, focusing on maintaining Somerset Window Cleaning's professional standards while optimizing for performance, accessibility, and maintainability.
           
           claude_args: |
-            --model claude-3-5-haiku-20241022
+            --model claude-3-5-sonnet-20241022
+            --max-tokens 2000
