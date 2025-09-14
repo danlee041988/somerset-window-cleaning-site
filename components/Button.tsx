@@ -9,9 +9,9 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const base = 'inline-flex items-center justify-center rounded-md px-5 py-3 font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red disabled:opacity-60 disabled:cursor-not-allowed'
 const variants = {
-  primary: 'bg-[var(--brand-red)] text-white hover:opacity-90 focus:ring-brand-red',
-  secondary: 'bg-white text-black hover:bg-neutral-200 focus:ring-white',
-  ghost: 'bg-transparent text-white hover:bg-white/10 focus:ring-white'
+  primary: 'bg-[var(--brand-red)] text-white hover:opacity-90 active:scale-95 focus:ring-brand-red',
+  secondary: 'bg-white text-black hover:bg-neutral-200 active:scale-95 focus:ring-white',
+  ghost: 'bg-transparent text-white hover:bg-white/10 active:scale-95 focus:ring-white'
 }
 
 export default function Button({ href, variant = 'primary', className = '', children, ...props }: ButtonProps) {
