@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Test Claude Connection
     permissions:
+      id-token: write
       contents: read
       pull-requests: write
     
