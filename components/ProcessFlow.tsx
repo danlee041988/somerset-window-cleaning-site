@@ -33,66 +33,34 @@ const StepIcon = ({ children, number }: { children: React.ReactNode, number: num
 export default function ProcessFlow() {
   const steps: Step[] = [
     {
-      title: 'Get in touch',
-      desc: 'Contact us by form, email, phone or WhatsApp.',
-      icon: (
-        <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-          <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-        </svg>
-      ),
-      number: 1,
-    },
-    {
-      title: 'Quick quote',
-      desc: 'We confirm details and provide a clear price.',
+      title: 'Get Your Quote',
+      desc: 'Quick quote via form, phone, or WhatsApp. Instant pricing, no home visit needed.',
       icon: (
         <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 6a2 2 0 114 0 2 2 0 01-4 0zm6 0a2 2 0 114 0 2 2 0 01-4 0z" clipRule="evenodd" />
         </svg>
       ),
-      number: 2,
+      number: 1,
     },
     {
-      title: 'Book a date',
-      desc: 'Agree a convenient time. No need to be home.',
+      title: 'Book Your Clean',
+      desc: 'Choose your date and we\'ll handle the rest. Automatic reminders and seamless scheduling.',
       icon: (
         <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
         </svg>
       ),
-      number: 3,
+      number: 2,
     },
     {
-      title: 'Reminder',
-      desc: 'We send a reminder just before your clean.',
-      icon: (
-        <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-        </svg>
-      ),
-      number: 4,
-    },
-    {
-      title: 'Clean (guaranteed)',
-      desc: 'Uniformed, fully insured team. Spot‑free results.',
+      title: 'Enjoy Clean Windows',
+      desc: 'Professional guaranteed clean with easy online payment. Uniformed, fully insured team delivers perfection.',
       icon: (
         <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
         </svg>
       ),
-      number: 5,
-    },
-    {
-      title: 'Pay online',
-      desc: 'Invoice by email with easy, secure payment.',
-      icon: (
-        <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-          <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
-        </svg>
-      ),
-      number: 6,
+      number: 3,
     },
   ]
 
