@@ -26,7 +26,7 @@ export default function ServicesPage() {
           />
           <ServiceCard
             title="Gutter Clearing"
-            imageSrc={SERVICE_IMAGES.gutter || '/photos/photo07.jpg'}
+            imageSrc={SERVICE_IMAGES.gutter_clearing || '/photos/photo07.jpg'}
             description="High‑reach vacuum systems clear leaves and debris to help prevent overflows and damp."
             bullets={[
               'Ground‑level, safe methods',

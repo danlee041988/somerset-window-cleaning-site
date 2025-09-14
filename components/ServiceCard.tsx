@@ -1,5 +1,5 @@
 import React from 'react'
-import Image from 'next/image'
+import ImageWithFallback from './ImageWithFallback'
 
 type Props = {
   title: string
@@ -14,13 +14,14 @@ export default function ServiceCard({ title, description, imageSrc, imageAlt, bu
     <div className="overflow-hidden rounded-xl border border-white/10 bg-white/10 transition hover:bg-white/15">
       {imageSrc && (
         <div className="relative aspect-[16/9]">
-          <Image
+          <ImageWithFallback
             src={imageSrc}
+            fallbackSrc="/images/photos/photo02.jpg"
             alt={imageAlt || title}
             fill
             className="object-cover"
             sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
-            priority={false}
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden />
         </div>

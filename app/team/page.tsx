@@ -65,7 +65,7 @@ export default function TeamPage() {
   const caseStudyUrl = process.env.NEXT_PUBLIC_CASE_STUDY_URL || 'https://www.somerset.gov.uk/business-economy-and-licences/somerset-enterprise-centres/case-studies/somerset-window-cleaning-company/'
   return (
     <div className="py-16 md:py-20">
-      <Section title="Meet the team" subtitle="Professional, reliable and local. Fully insured and DBS checked.">
+      <Section title="Meet the Team" subtitle="Professional, reliable and local. Fully insured and DBS checked.">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {TEAM.map((m) => (
             <div key={m.name} className="overflow-hidden rounded-xl border border-white/10 bg-white/10">

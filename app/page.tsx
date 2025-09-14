@@ -3,6 +3,7 @@ import Section from '@/components/Section'
 import ServiceCard from '@/components/ServiceCard'
 import LightboxGallery from '@/components/LightboxGallery'
 import ProcessFlow from '@/components/ProcessFlow'
+import Reviews from '@/components/Reviews'
 import { HERO_IMAGES, GALLERY_IMAGES, SERVICE_IMAGES } from '@/content/image-manifest'
 import Image from 'next/image'
 import CaseStudy from '@/components/CaseStudy'
@@ -51,8 +52,8 @@ export default function HomePage() {
       >
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <ServiceCard title="Window Cleaning" imageSrc={SERVICE_IMAGES.window || '/photos/photo02.jpg'} description="Frames, sills, and glass. Pure water for a spotless finish." />
-          <ServiceCard title="Gutter Cleaning" imageSrc={SERVICE_IMAGES.gutter || '/photos/photo03.jpg'} description="Clear debris to protect your home from damp and overflow." />
-          <ServiceCard title="Conservatories" imageSrc={SERVICE_IMAGES.conservatory || '/photos/photo04.jpg'} description="Restore clarity to glass roofs, sides, and PVC frames." />
+          <ServiceCard title="Gutter Clearing" imageSrc={SERVICE_IMAGES.gutter_clearing || '/photos/photo03.jpg'} description="Clear debris to protect your home from damp and overflow." />
+          <ServiceCard title="Conservatory Roof Cleaning" imageSrc={SERVICE_IMAGES.conservatory || '/photos/photo04.jpg'} description="Restore clarity to glass roofs, sides, and PVC frames." />
           <ServiceCard title="Solar Panels" imageSrc={SERVICE_IMAGES.solar || '/photos/photo05.jpg'} description="Maximise efficiency with gentle, safe cleaning methods." />
         </div>
       </Section>
@@ -74,22 +75,12 @@ export default function HomePage() {
         <ProcessFlow />
       </Section>
 
-      {/* Reviews strip */}
-      <Section>
-        <div className="rounded-xl border border-white/10 bg-white/10 p-5 md:p-6">
-          <div className="mb-3 flex items-center gap-2">
-            {[...Array(5)].map((_, i) => (
-              <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
-                <path fill="#E11D2A" d="M12 17.27 18.18 21 16.54 13.97 22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"/>
-              </svg>
-            ))}
-            <span className="text-sm text-white/80">Friendly, reliable, guaranteed</span>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <blockquote className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-white/80">“Brilliant service and sparkling results. Booking was simple and the reminder was handy.”</blockquote>
-            <blockquote className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-white/80">“Professional, uniformed team. Love that we can pay online and don’t need to be home.”</blockquote>
-          </div>
-        </div>
+      {/* Reviews section */}
+      <Section 
+        title="What our customers say"
+        subtitle="Real reviews from verified Google customers across Somerset."
+      >
+        <Reviews />
       </Section>
 
       {/* CTA */}

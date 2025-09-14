@@ -110,10 +110,18 @@ export default function LightboxGallery({
             Close
           </button>
           <button onClick={prev} aria-label="Previous" className="absolute left-4 top-1/2 -translate-y-1/2 rounded bg-white/10 p-2 text-white hover:bg-white/20">‹</button>
-          <img
+          <Image
             src={images[index]}
             alt={`${captionPrefix} ${index + 1}`}
             className="max-h-[85vh] max-w-[90vw] rounded-lg border border-white/10"
+            width={1200}
+            height={900}
+            style={{
+              maxHeight: '85vh',
+              maxWidth: '90vw',
+              width: 'auto',
+              height: 'auto'
+            }}
           />
           <button onClick={next} aria-label="Next" className="absolute right-4 top-1/2 -translate-y-1/2 rounded bg-white/10 p-2 text-white hover:bg-white/20">›</button>
         </div>

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "dev:3000": "next dev -H localhost -p 3000",
     "dev:clean": "rm -rf .next && next dev -H localhost -p 3000",
     "build": "next build",
@@ -12,7 +12,12 @@
     "lint": "next lint",
     "build:static": "next build",
     "preview:static": "npx --yes serve -l 4321 out || python3 -m http.server 4321 -d out",
-    "gen:images": "node scripts/build-image-manifest.mjs"
+    "gen:images": "node scripts/build-image-manifest.mjs",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed"
   },
   "engines": {
     "node": ">=18.17.0"
@@ -26,6 +31,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@types/node": "^20.12.12",
     "@types/react": "^18.2.66",
     "autoprefixer": "^10.4.20",

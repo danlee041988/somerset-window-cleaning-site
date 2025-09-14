@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 
 const root = process.cwd()
 // Scan the main SWC photos directory recursively (includes `website-photos`)
-const photosDir = join(root, 'public', 'Codex SWC Photos')
+const photosDir = join(root, 'public', 'images', 'photos')
 
 function run(cmd, args) {
   return new Promise((resolve, reject) => {

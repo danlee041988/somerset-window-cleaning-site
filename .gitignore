@@ -7,3 +7,15 @@ dist
 .env*
 !.env.example
 .DS_Store
+
+# Development files
+dev.log
+*.log
+
+# Test results
+test-results/
+playwright-report/
+
+# IDE files
+.vscode/
+.idea/
