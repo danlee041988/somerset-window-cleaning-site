@@ -1,0 +1,8 @@
+version: 2
+updates:
+  # Only monitor GitHub Actions (not npm dependencies)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"  # Less frequent than weekly
+    open-pull-requests-limit: 3
