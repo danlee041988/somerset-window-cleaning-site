@@ -44,4 +44,4 @@ jobs:
             2. The current date/time
             3. A brief analysis of the Somerset Window Cleaning website repository
           claude_args: |
-            --model claude-3-5-sonnet
+            --model claude-3-haiku
