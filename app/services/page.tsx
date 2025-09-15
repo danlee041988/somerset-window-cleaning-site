@@ -1,5 +1,5 @@
 import Section from '@/components/Section'
-import SimpleServiceCard from '@/components/SimpleServiceCard'
+import InteractiveServiceCard from '@/components/InteractiveServiceCard'
 import { SERVICE_IMAGES } from '@/content/image-manifest'
 import { servicesData } from '@/content/services-data'
 
@@ -16,8 +16,8 @@ export default function ServicesPage() {
           Transform your property with our comprehensive cleaning services. Using state-of-the-art equipment and proven techniques, we deliver exceptional results that protect and enhance your investment.
         </p>
         
-        {/* Simplified service grid */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Enhanced interactive service grid */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
           {servicesData.map((service) => {
             // Map service titles to image sources
             const imageMap: Record<string, string> = {
@@ -30,16 +30,19 @@ export default function ServicesPage() {
             }
             
             return (
-              <SimpleServiceCard
+              <InteractiveServiceCard
                 key={service.title}
                 title={service.title}
                 description={service.description}
+                longDescription={service.longDescription}
                 imageSrc={imageMap[service.title]}
                 imageAlt={`${service.title} - Somerset Window Cleaning`}
+                benefits={service.benefits}
                 price={service.price}
                 frequency={service.frequency}
                 ctaText={service.ctaText}
                 ctaHref={service.ctaHref}
+                specialty={service.specialty}
               />
             )
           })}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmailJS Test - Somerset Window Cleaning</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #E11D2A; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #c01622; }
+        .result { margin-top: 20px; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>EmailJS Integration Test</h1>
+    <p>Test the Somerset Window Cleaning EmailJS configuration</p>
+    
+    <form id="testForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="Test Customer" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="test@example.com" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" value="01234567890">
+        </div>
+        
+        <div class="form-group">
+            <label for="customerType">Customer Type:</label>
+            <select id="customerType" name="customerType">
+                <option value="New customer">New customer</option>
+                <option value="Existing customer">Existing customer</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="address">Property Address:</label>
+            <input type="text" id="address" name="address" value="Test Address, Somerset BA1 1AA">
+        </div>
+        
+        <div class="form-group">
+            <label for="propertySize">Property Size:</label>
+            <select id="propertySize" name="propertySize">
+                <option value="1 bedroom">1 bedroom</option>
+                <option value="2-3 bedrooms" selected>2-3 bedrooms</option>
+                <option value="4-5 bedrooms">4-5 bedrooms</option>
+                <option value="6+ bedrooms">6+ bedrooms</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="serviceType">Service Type:</label>
+            <select id="serviceType" name="serviceType">
+                <option value="Window Cleaning" selected>Window Cleaning</option>
+                <option value="Gutter Clearing">Gutter Clearing</option>
+                <option value="Conservatory Roof Cleaning">Conservatory Roof Cleaning</option>
+                <option value="Solar Panel Cleaning">Solar Panel Cleaning</option>
+                <option value="Fascias & Soffits Cleaning">Fascias & Soffits Cleaning</option>
+                <option value="External Commercial Cleaning">External Commercial Cleaning</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4">This is a test message to verify EmailJS integration is working correctly. Please ignore this test submission.</textarea>
+        </div>
+        
+        <button type="submit">Send Test Email</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <script>
+        // Initialize EmailJS
+        emailjs.init('cbA_IhBfxEeDwbEx6');
+        
+        document.getElementById('testForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Sending test email...</p>';
+            
+            // Collect form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                customerType: document.getElementById('customerType').value,
+                address: document.getElementById('address').value,
+                propertySize: document.getElementById('propertySize').value,
+                serviceType: document.getElementById('serviceType').value,
+                message: document.getElementById('message').value
+            };
+            
+            // Send email via EmailJS
+            emailjs.send('service_yfnr1a9', 'template_contact_form', formData)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h3>✅ Success!</h3>
+                            <p>Test email sent successfully!</p>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Response:</strong> ${response.text}</p>
+                            <p>Check the configured email inbox for the test message.</p>
+                        </div>
+                    `;
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h3>❌ Error!</h3>
+                            <p>Test email failed to send.</p>
+                            <p><strong>Error:</strong> ${JSON.stringify(error)}</p>
+                            <p>Please check the EmailJS configuration and try again.</p>
+                        </div>
+                    `;
+                });
+        });
+    </script>
+</body>
+</html>

@@ -59,14 +59,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Services preview - All 6 services */}
+      {/* Services preview - Top 4 services */}
       <Section
-        title="Our Complete Service Range"
-        subtitle="Professional cleaning solutions for every part of your property, inside and out."
+        title="Our Most Popular Services"
+        subtitle="Professional cleaning solutions that transform your property's appearance."
         spacing="relaxed"
         animationDelay={100}
       >
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <ServiceCard 
             title="Window Cleaning" 
             imageSrc={SERVICE_IMAGES.window || '/photos/photo02.jpg'} 
@@ -87,19 +87,17 @@ export default function HomePage() {
             imageSrc={SERVICE_IMAGES.solar || '/photos/photo05.jpg'} 
             description="Maximize energy efficiency. Specialist cleaning that won't void warranties." 
           />
-          <ServiceCard 
-            title="Fascias & Soffits Cleaning" 
-            imageSrc={SERVICE_IMAGES.fascias || '/photos/photo06.jpg'} 
-            description="Brighten weathered PVC. Transform your property's appearance instantly." 
-          />
-          <ServiceCard 
-            title="External Commercial Cleaning" 
-            imageSrc={SERVICE_IMAGES.commercial || '/photos/photo07.jpg'} 
-            description="Professional service for businesses. Flexible scheduling and RAMS documentation." 
-          />
         </div>
-        <div className="mt-8 text-center">
-          <Button href="/services" variant="primary">View Detailed Service Information</Button>
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <Button href="/services" variant="primary" className="text-lg px-8 py-4">
+            View All Services
+          </Button>
+          <p className="flex items-center gap-2 text-sm text-white/70">
+            <span>Also offering:</span>
+            <span className="font-medium">Fascias & Soffits</span>
+            <span>•</span>
+            <span className="font-medium">Commercial Cleaning</span>
+          </p>
         </div>
       </Section>
 
@@ -115,6 +113,7 @@ export default function HomePage() {
         </div>
       </Section>
 
+      {/* Case Study - Featured more prominently */}
       <CaseStudy />
 
       {/* Reviews section */}
