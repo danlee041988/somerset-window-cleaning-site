@@ -32,3 +32,5 @@ export default function Button({ href, variant = 'primary', className = '', chil
 
 // Test comment
 // Final test for Claude review
+// Test comment to trigger Claude Code Review workflow
+export const testFix = 'Claude Action configuration fixed';
