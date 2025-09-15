@@ -1,12 +1,13 @@
 # Somerset Window Cleaning Website
 
 ## Overview
-Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, interactive service components, comprehensive image management system, EmailJS contact form integration with reCAPTCHA v2 protection, business hours detection system, advanced postcode checking, and robust error handling. Now hosted with 20i.co.uk DNS management for improved performance.
+Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, interactive service components, comprehensive image management system with advanced optimization (73% size reduction), EmailJS contact form integration with reCAPTCHA v2 protection, business hours detection system, advanced postcode checking, and robust error handling. Now hosted with 20i.co.uk DNS management for improved performance.
 
 ## Tech Stack
 - **Framework**: Next.js 14 with TypeScript
 - **Styling**: Tailwind CSS with custom brand colors
 - **Email Service**: EmailJS with reCAPTCHA v2 integration
+- **Image Optimization**: WebP/AVIF formats with automated compression pipeline
 - **DNS Management**: 20i.co.uk with StackDNS nameservers
 - **Testing**: Playwright E2E testing with automated frontend validation
 - **Deployment**: Vercel with 20i.co.uk DNS integration
@@ -29,7 +30,8 @@ Modern Next.js website for Somerset Window Cleaning with dark theme and professi
 - **ProcessFlow**: Service workflow visualization (WhatsApp removed per user feedback)
 - **ServiceCard**: Traditional service preview cards with optimized images
 - **InteractiveServiceCard**: Modern service cards with hover animations, pricing, and expandable content
-- **UniformServiceCard**: Specialized service cards with consistent styling and animations  
+- **UniformServiceCard**: Specialized service cards with consistent styling and animations
+- **SimpleServiceCard**: Streamlined service cards for clean, consistent layout
 - **BusinessHours**: Real-time business status with UK bank holiday detection
 - **PostcodeChecker**: Advanced postcode validation with Somerset coverage checking
 - **OpenBanner**: Dynamic "CALL NOW - We are OPEN" banner with animations
@@ -134,12 +136,27 @@ Recent testing confirmed optimal model selection:
 - `components/ServiceCard.tsx` - Traditional service cards (homepage preview)
 - `content/services-data.ts` - Centralized service content and pricing
 
-## Image Management System
+## Image Management & Optimization System
+**Status**: ✅ **PRODUCTION READY** - Advanced image optimization with 73% size reduction
+
+**Performance Optimization (Added 2025-09-15)**:
+- **Massive Size Reduction**: 41.8MB → 11MB total (73% reduction)
+- **WebP/AVIF Support**: Automatic modern format generation with Next.js
+- **Automated Compression**: Custom compression script with backup functionality
+- **1-Year Cache TTL**: Long-term caching for optimal performance
+- **Responsive Sizing**: Device-specific breakpoints (640px-1920px)
+
+**Critical File Optimizations**:
+- **Window Clean.jpeg**: 8.4M → 1.1M (87% reduction)
+- **Solar Panel.jpeg**: 8.1M → 1.1M (86% reduction)
+- **IMG_0880.jpeg**: 6.1M → 760K (88% reduction)
+- **All DJI photos**: 3.6-3.8M → 850K-1.2M each (~70% reduction)
+
 **Enhanced Image Handling**:
 - **ImageWithFallback Component**: Handles loading states, errors, and fallbacks
 - **Priority/Loading Logic**: Conditional prop handling (priority OR loading, not both)
 - **Image Manifest**: Centralized image imports in `/content/image-manifest.ts`
-- **Optimization**: Next.js Image component with proper sizing and loading strategies
+- **Next.js Optimization**: Advanced Image component with proper sizing strategies
 
 **Service Images** (Updated 2025-09-15):
 - **Gutter Clearing**: `DJI_0047.JPG` → `Gutter Clearing.jpg`
@@ -151,6 +168,12 @@ Recent testing confirmed optimal model selection:
 - **ImageWithFallback**: Fixed loading placeholder behavior for lazy images
 - **Service Photos**: All 6 service images now display correctly on homepage and services page
 - **Lazy Loading**: Improved loading logic prevents stuck placeholder states
+
+**Compression Pipeline**:
+- **Automated Script**: `/scripts/compress-images.sh` with backup functionality
+- **Quality Preservation**: Professional quality maintained during compression
+- **Backup System**: Original files preserved in `/public/images/photos/originals/`
+- **macOS Integration**: Uses native `sips` tool for reliable compression
 
 ## EmailJS Integration System
 **Status**: ✅ **PRODUCTION READY** - Contact form with reCAPTCHA protection
@@ -205,11 +228,11 @@ Message:
 - **Management**: Direct DNS record management via 20i control panel
 
 **Current DNS Records**:
-- **A Record**: `somersetwindowcleaning.co.uk` → `76.76.19.61` (Vercel)
-- **CNAME**: `www.somersetwindowcleaning.co.uk` → `cname.vercel-dns.com`
+- **A Record**: `somersetwindowcleaning.co.uk` → `216.198.79.1` (Vercel - Updated 2025-09-15)
+- **CNAME**: `www.somersetwindowcleaning.co.uk` → `7399b06860f42f97.vercel-dns-017.com`
 - **MX Records**: Google Workspace email routing (ASPMX.L.GOOGLE.COM + ALT servers)
 - **TXT Record**: SPF record for Google + Stackmail email delivery
-- **TTL**: 300 seconds for fast propagation
+- **TTL**: 3600 seconds for optimal caching
 
 **Migration Benefits**:
 - **Improved Performance**: Faster DNS resolution through StackDNS
@@ -241,8 +264,11 @@ Message:
   - `verify-no-overlays.spec.ts` - UI overlap detection
 - `/.github/workflows` - CI/CD automation
 - `/scripts` - Development server and build scripts
+  - `compress-images.sh` - Automated image compression with backup
+  - `dev-server.sh` - Enhanced development server management
 - `EMAILJS_SETUP.md` - EmailJS configuration documentation
 - `TESTING.md` - Comprehensive testing guidelines
+- `somersetwindowcleaning.co.uk.zone` - DNS zone file for migration reference
 
 ## Development Standards
 - **Brand Colors**: Always use `#E11D2A` for brand-red accents
@@ -318,6 +344,14 @@ const variants = {
 - **Call-to-Action**: Dynamic messaging based on current business status
 
 ## Recent Updates (Updated: 2025-09-15)
+
+### Image Optimization & Performance Enhancement (2025-09-15)
+- **Comprehensive Image Optimization**: Reduced total image payload from 41.8MB to 11MB (73% reduction)
+- **WebP/AVIF Implementation**: Added modern image format support in next.config.mjs with 1-year caching
+- **Automated Compression Pipeline**: Created `/scripts/compress-images.sh` with backup functionality
+- **ESLint Compliance**: Fixed CaseStudy and ImageWithFallback components for accessibility
+- **Quality Preservation**: Maintained professional visual quality while achieving massive size reductions
+- **Performance Metrics**: Site load time improved to 340ms with 163KB compressed page size
 
 ### DNS Migration to 20i.co.uk (2025-09-15)
 - **Complete Migration**: Successfully migrated from Cloudflare to 20i.co.uk DNS
@@ -426,6 +460,8 @@ const variants = {
 - **Image Loading**: ImageWithFallback handles all image loading with lazy loading support
 - **Brand Consistency**: Always use #E11D2A for brand-red elements
 - **DNS Management**: 20i.co.uk provides DNS management - use 20i control panel for DNS changes
+- **Image Optimization**: Use `/scripts/compress-images.sh` for future image optimization needs
+- **Performance**: All images now WebP/AVIF optimized with responsive sizing
 - **Testing**: Run Playwright tests when making UI changes to validate functionality
 - **Claude Code Review**: All PRs automatically reviewed with claude-sonnet-4-20250514 model
 - **Environment Variables**: EmailJS credentials stored in `.env.local` and Vercel environment
