@@ -6,6 +6,7 @@ import StructuredData from '@/components/StructuredData'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import OpenBanner from '@/components/OpenBanner'
 import DynamicLayout from '@/components/DynamicLayout'
+import StickyCTABar from '@/components/StickyCTABar'
 
 const siteUrlRaw = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 let siteUrl: URL | undefined
@@ -58,6 +59,7 @@ export default function RootLayout({
             {children}
           </DynamicLayout>
           <Footer />
+          <StickyCTABar />
           <StructuredData />
         </ErrorBoundary>
       </body>
