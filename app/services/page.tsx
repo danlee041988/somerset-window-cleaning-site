@@ -4,14 +4,14 @@ import { SERVICE_IMAGES } from '@/content/image-manifest'
 import { servicesData } from '@/content/services-data'
 
 export const metadata = {
-  title: 'Our Services | Somerset Window Cleaning',
+  title: 'Our Exterior Cleaning Services | Somerset Window Cleaning',
   description: 'Professional window, gutter, conservatory, solar panel & commercial cleaning across Somerset. Advanced equipment, expert techniques, guaranteed results.'
 }
 
 export default function ServicesPage() {
   return (
     <div className="py-16 md:py-20">
-      <Section title="Our Services" subtitle="Professional cleaning solutions with advanced equipment and expert techniques.">
+      <Section title="Our Exterior Cleaning Services" subtitle="Professional cleaning solutions with advanced equipment and expert techniques.">
         <p className="mb-12 max-w-prose text-white/80 text-lg leading-relaxed">
           Transform your property with our comprehensive cleaning services. Using state-of-the-art equipment and proven techniques, we deliver exceptional results that protect and enhance your investment.
         </p>

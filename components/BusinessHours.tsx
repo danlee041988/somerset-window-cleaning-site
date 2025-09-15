@@ -160,9 +160,14 @@ export default function BusinessHours({ variant = 'compact', className = '' }: B
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         <div className={`w-2 h-2 rounded-full ${businessStatus.isOpen ? 'bg-green-400' : 'bg-red-400'} animate-pulse`} />
-        <span className="text-xs text-white/70">
-          {businessStatus.isOpen ? 'Open' : 'Closed'}
+        <span className="text-sm text-white/70 font-medium">
+          {businessStatus.isOpen ? 'Open Now' : 'Closed Now'}
         </span>
+        {businessStatus.isOpen ? (
+          <span className="text-xs text-white/60">Call us or message us</span>
+        ) : (
+          <span className="text-xs text-white/60">Message us</span>
+        )}
       </div>
     )
   }

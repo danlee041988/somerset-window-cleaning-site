@@ -16,6 +16,7 @@ type FormValues = {
   preferred_contact: 'Email' | 'Phone'
   
   // Property information (especially for new customers)
+  property_combo?: string // Combined property type and bedrooms
   property_type: string
   bedrooms: string
   has_extension: boolean
@@ -547,64 +548,65 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
             </div>
           </div>
 
-          {/* Property Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <svg className="w-5 h-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              Property Information
-              {customerType === 'new' && <span className="text-xs text-brand-red font-normal">(helps us provide accurate pricing)</span>}
-            </h3>
+          {/* Property Information - Only for new customers */}
+          {customerType === 'new' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <svg className="w-5 h-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Property Information
+                <span className="text-xs text-brand-red font-normal">(helps us provide accurate pricing)</span>
+              </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">
-                  Property Type *
-                </label>
-                <select
-                  className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/5 text-white focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 focus:outline-none transition-colors"
-                  {...register('property_type', { required: 'Please select property type' })}
-                >
-                  <option value="">Select property type</option>
-                  {PROPERTY_TYPE_OPTIONS.map(option => (
-                    <option key={option} value={option} className="bg-gray-800">{option}</option>
-                  ))}
-                </select>
-                {errors.property_type && <p className="mt-1 text-xs text-red-400">{errors.property_type.message}</p>}
-              </div>
-
-              <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-white/90 mb-3">
-                  Property Size & Pricing *
+                  Property Type & Size *
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-                  {BEDROOM_OPTIONS.map((option) => (
-                    <label 
-                      key={option.value}
-                      className="relative flex flex-col p-4 rounded-lg border border-white/20 bg-white/5 cursor-pointer hover:border-brand-red/50 transition-all duration-200 hover:bg-white/10"
-                    >
-                      <input 
-                        type="radio" 
-                        value={option.value}
-                        className="absolute top-3 right-3 accent-brand-red" 
-                        {...register('bedrooms', { required: 'Please select property size' })} 
-                      />
-                      <div className="space-y-2">
-                        <div className="font-medium text-white text-sm">{option.label}</div>
-                        <div className="text-xs text-white/70">{option.description}</div>
-                        <div className="mt-2 pt-2 border-t border-white/10">
-                          <div className="text-sm font-semibold text-green-400">
-                            {option.basePrice ? `From £${option.basePrice}` : 'Visit required'}
-                          </div>
-                          <div className="text-xs text-white/60 mt-1">
-                            {option.basePrice ? '+ surcharges if applicable' : 'Custom quote needed'}
-                          </div>
-                        </div>
-                      </div>
-                    </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {PROPERTY_TYPE_OPTIONS.map((propertyType) => (
+                    <div key={propertyType} className="space-y-2">
+                      <h4 className="text-sm font-semibold text-white/90 px-2">{propertyType}</h4>
+                      {BEDROOM_OPTIONS.map((option) => {
+                        const combinedValue = `${propertyType}|${option.value}`
+                        const adjustedPrice = option.basePrice ? 
+                          (propertyType === 'Detached house' ? option.basePrice + 5 : option.basePrice) : 
+                          null
+                        
+                        return (
+                          <label 
+                            key={combinedValue}
+                            className="relative flex flex-col p-2 rounded-lg border border-white/20 bg-white/5 cursor-pointer hover:border-brand-red/50 transition-all duration-200 hover:bg-white/10"
+                          >
+                            <input 
+                              type="radio" 
+                              value={combinedValue}
+                              className="absolute top-1 right-1 accent-brand-red scale-75" 
+                              {...register('property_combo', { required: 'Please select property type and size' })} 
+                              onChange={(e) => {
+                                const [type, bedrooms] = e.target.value.split('|')
+                                setValue('property_type', type)
+                                setValue('bedrooms', bedrooms)
+                              }}
+                            />
+                            <div className="pr-4">
+                              <div className="font-medium text-white text-xs">{option.label}</div>
+                              <div className="text-sm font-semibold text-green-400 mt-1">
+                                {adjustedPrice ? `£${adjustedPrice}` : 'Quote'}
+                                {propertyType === 'Detached house' && option.basePrice && (
+                                  <span className="text-xs text-white/60 ml-1">(+£5)</span>
+                                )}
+                              </div>
+                            </div>
+                          </label>
+                        )
+                      })}
+                    </div>
                   ))}
                 </div>
+                {errors.property_combo && <p className="mt-2 text-xs text-red-400">{errors.property_combo.message}</p>}
+                {errors.property_type && <p className="mt-2 text-xs text-red-400">{errors.property_type.message}</p>}
                 {errors.bedrooms && <p className="mt-2 text-xs text-red-400">{errors.bedrooms.message}</p>}
               </div>
 
@@ -705,7 +707,8 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                 />
               </div>
             </div>
-          </div>
+            </div>
+          )}
 
           {/* Service Requirements */}
           <div className="space-y-4">

@@ -46,6 +46,38 @@ export default function EnhancedServiceCard({
   const [isExpanded, setIsExpanded] = useState(false)
   const [activeTab, setActiveTab] = useState<'benefits' | 'process' | 'equipment'>('benefits')
 
+  // Dynamic tab labels based on service type
+  const getTabLabels = () => {
+    switch(title) {
+      case 'Window Cleaning':
+        return {
+          benefits: 'Frequency Options',
+          equipment: 'Includes',
+          process: 'Process'
+        }
+      case 'Gutter Clearing':
+        return {
+          benefits: 'Service Includes',
+          equipment: 'Recommended',
+          process: 'Process'
+        }
+      case 'Conservatory Roof Cleaning':
+        return {
+          benefits: 'Factors Affecting Price',
+          equipment: 'Benefits',
+          process: 'Process'
+        }
+      default:
+        return {
+          benefits: 'Benefits',
+          equipment: 'Equipment',
+          process: 'Process'
+        }
+    }
+  }
+
+  const tabLabels = getTabLabels()
+
   return (
     <div 
       data-testid="service-card"
@@ -89,19 +121,9 @@ export default function EnhancedServiceCard({
       )}
 
       {/* Content Container - Fixed Height Structure */}
-      <div className="relative flex-1 p-6 flex flex-col min-h-[400px]">
+      <div className="relative flex-1 p-6 flex flex-col h-[500px]">
         {/* Fixed Header Section */}
         <div className="mb-4">
-          {/* Specialty Badge - More Subtle */}
-          {specialty && (
-            <div data-testid="specialty-badge" className="inline-flex items-center gap-2 mb-3 px-2 py-1 rounded-md bg-white/10 border border-white/20">
-              <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
-              <span className="text-xs font-medium text-white/70 uppercase tracking-wide">
-                {specialty}
-              </span>
-            </div>
-          )}
-
           {/* Title and Price */}
           <div className="flex items-start justify-between mb-2">
             <div className="flex-1">
@@ -111,7 +133,7 @@ export default function EnhancedServiceCard({
                 {title}
               </h3>
               {frequency && (
-                <p className="text-xs text-white/60 mt-1">{frequency}</p>
+                <p className="text-xs text-white mt-1">{frequency}</p>
               )}
             </div>
             {price && (
@@ -157,7 +179,7 @@ export default function EnhancedServiceCard({
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                         }`}
                       >
-                        Benefits
+                        {tabLabels.benefits}
                       </button>
                     )}
                     {process.length > 0 && (
@@ -169,7 +191,7 @@ export default function EnhancedServiceCard({
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                         }`}
                       >
-                        Process
+                        {tabLabels.process}
                       </button>
                     )}
                     {equipment.length > 0 && (
@@ -181,13 +203,13 @@ export default function EnhancedServiceCard({
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                         }`}
                       >
-                        Equipment
+                        {tabLabels.equipment}
                       </button>
                     )}
                   </div>
 
                   {/* Tab Content - Fixed Height */}
-                  <div className="min-h-[120px]">
+                  <div className="h-[140px] overflow-y-auto">
                     {activeTab === 'benefits' && benefits.length > 0 && (
                       <div className="space-y-2">
                         {benefits.map((benefit, index) => (

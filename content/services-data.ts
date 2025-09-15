@@ -4,12 +4,10 @@ export const servicesData = [
     description: "Crystal-clear windows that let the light shine through. Professional cleaning for frames, sills, and glass using pure water technology.",
     longDescription: "Our window cleaning service transforms your property's appearance with streak-free, spot-free results. We use advanced pure water systems that leave no residue, ensuring your windows stay cleaner for longer. Perfect for both residential and commercial properties.",
     benefits: [
-      { icon: "•", text: "Streak-free, crystal-clear finish" },
-      { icon: "•", text: "Regular 4 or 8-weekly schedules" },
-      { icon: "•", text: "No need to be home during cleaning" },
-      { icon: "•", text: "Frames & sills included as standard" },
-      { icon: "•", text: "100% satisfaction guarantee" },
-      { icon: "•", text: "Same-day ad hoc service available" }
+      { icon: "•", text: "Every 4 weeks (best value)" },
+      { icon: "•", text: "Every 8 weeks" },
+      { icon: "•", text: "Every 12 weeks" },
+      { icon: "•", text: "One-off cleans available" }
     ],
     process: [
       "Initial assessment of property and access requirements",
@@ -19,17 +17,16 @@ export const servicesData = [
       "Final quality check and customer sign-off"
     ],
     equipment: [
-      "Pure water filtration systems (0 TDS)",
-      "Professional squeegees and applicators",
-      "Telescopic poles for safe high access",
-      "Eco-friendly cleaning solutions",
-      "Safety equipment and protective covers"
+      "All windows & frames",
+      "Sills & door frames", 
+      "Pure water technology",
+      "No need to be home"
     ],
     guarantee: "100% satisfaction guarantee. If you're not happy with our service, we'll return within 24 hours to make it right at no extra cost.",
     price: "From £20",
     frequency: "Every 4-8 weeks",
     specialty: "Most Popular",
-    ctaText: "Book Window Clean",
+    ctaText: "Book Window Cleaning",
     ctaHref: "/get-in-touch?service=window-cleaning"
   },
   {
@@ -37,12 +34,10 @@ export const servicesData = [
     description: "Protect your property from water damage with our safe, ground-level gutter clearing service. Advanced vacuum technology removes all debris.",
     longDescription: "Blocked gutters can cause serious damage to your property. Our high-reach vacuum systems safely clear leaves, moss, and debris from ground level, preventing costly overflows and damp issues. We provide photo evidence of work completed.",
     benefits: [
-      { icon: "•", text: "Prevents expensive water damage" },
-      { icon: "•", text: "Safe ground-level access methods" },
-      { icon: "•", text: "Before & after photos provided" },
-      { icon: "•", text: "Clears blockages & improves drainage" },
-      { icon: "•", text: "Fully insured for your peace of mind" },
-      { icon: "•", text: "Full gutter inspection included" }
+      { icon: "•", text: "Complete gutter clearing" },
+      { icon: "•", text: "Downpipe checks" },
+      { icon: "•", text: "Before & after photos" },
+      { icon: "•", text: "Ground-level vacuum system" }
     ],
     process: [
       "Comprehensive gutter inspection and assessment",
@@ -52,17 +47,15 @@ export const servicesData = [
       "Photographic evidence and completion report"
     ],
     equipment: [
-      "High-reach vacuum systems (up to 4 stories)",
-      "Industrial-grade suction equipment",
-      "Ground-level operation for safety",
-      "Debris collection and disposal bags",
-      "Camera equipment for before/after photos"
+      "Annually (minimum)",
+      "After autumn leaves fall",
+      "Properties near trees: 2x yearly"
     ],
     guarantee: "Complete debris removal guarantee. We ensure all gutters flow freely and provide photographic proof of work completed.",
     price: "From £80",
     frequency: "Annually or as needed",
     specialty: "Essential",
-    ctaText: "Clear Gutters",
+    ctaText: "Book Gutter Clearing",
     ctaHref: "/get-in-touch?service=gutter-clearing"
   },
   {
@@ -70,12 +63,10 @@ export const servicesData = [
     description: "Restore your conservatory's clarity and brightness. Gentle cleaning that protects seals and coatings while removing stubborn dirt and algae.",
     longDescription: "A clean conservatory roof dramatically improves natural light and extends the life of your conservatory. Our non-abrasive methods safely remove dirt, algae, and weathering without damaging delicate seals or protective coatings.",
     benefits: [
-      { icon: "•", text: "Dramatically increases natural light" },
-      { icon: "•", text: "Non-abrasive, seal-safe methods" },
-      { icon: "•", text: "Panels, frames & roof included" },
-      { icon: "•", text: "Protects warranties & coatings" },
-      { icon: "•", text: "Removes algae & weathering stains" },
-      { icon: "•", text: "Extends conservatory lifespan" }
+      { icon: "•", text: "Roof size & type" },
+      { icon: "•", text: "Access requirements" },
+      { icon: "•", text: "Level of soiling" },
+      { icon: "•", text: "Glass or polycarbonate" }
     ],
     process: [
       "Detailed inspection of conservatory structure",
@@ -85,16 +76,14 @@ export const servicesData = [
       "Final inspection and seal condition check"
     ],
     equipment: [
-      "Soft-bristle cleaning brushes",
-      "Biodegradable algae removal treatments",
-      "Pure water rinsing systems",
-      "Seal-safe cleaning solutions",
-      "Protective ground covering"
+      "Increases natural light",
+      "Extends roof lifespan", 
+      "Improves appearance"
     ],
     guarantee: "Warranty-safe cleaning guarantee. We protect all seals and coatings while dramatically improving clarity and light transmission.",
     price: "Price on application",
     specialty: "Specialist",
-    ctaText: "Restore Clarity",
+    ctaText: "Book Conservatory Cleaning",
     ctaHref: "/get-in-touch?service=conservatory-cleaning"
   },
   {
@@ -126,7 +115,7 @@ export const servicesData = [
     guarantee: "Warranty protection guarantee. Our methods are approved by all major solar panel manufacturers and will not void your warranty.",
     price: "Price on application",
     specialty: "High-Tech",
-    ctaText: "Boost Efficiency",
+    ctaText: "Book Solar Panel Cleaning",
     ctaHref: "/get-in-touch?service=solar-cleaning"
   },
   {
@@ -158,7 +147,7 @@ export const servicesData = [
     guarantee: "Restoration guarantee. We'll brighten your PVC exterior or return to address any areas that don't meet our high standards.",
     price: "From £80",
     frequency: "Annually or with other services",
-    ctaText: "Refresh Exterior",
+    ctaText: "Book Fascias & Soffits",
     ctaHref: "/get-in-touch?service=fascias-soffits"
   },
   {
@@ -188,10 +177,10 @@ export const servicesData = [
       "Documentation and reporting systems"
     ],
     guarantee: "Professional service guarantee. Full RAMS documentation, comprehensive insurance, and commitment to minimal business disruption.",
-    price: "Quote on request",
+    price: "Price on application",
     frequency: "Weekly to monthly",
     specialty: "Business",
-    ctaText: "Get Commercial Quote",
+    ctaText: "Book Commercial Cleaning",
     ctaHref: "/get-in-touch?service=commercial-cleaning"
   }
 ]

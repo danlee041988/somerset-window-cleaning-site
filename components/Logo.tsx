@@ -17,9 +17,9 @@ export default function Logo({ className = '', height, width }: Props) {
   if (height && !width) style.width = 'auto'
   if (width && !height) style.height = 'auto'
   
-  // Use natural aspect ratio if only one dimension is specified
-  const imgWidth = width || (height ? undefined : 300)
-  const imgHeight = height || (width ? undefined : 100)
+  // Use natural aspect ratio if only one dimension is specified - optimized for narrow/horizontal layout
+  const imgWidth = width || (height ? undefined : 400)
+  const imgHeight = height || (width ? undefined : 80)
   
   return (
     <ImageWithFallback

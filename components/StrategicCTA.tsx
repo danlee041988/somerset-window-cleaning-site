@@ -8,8 +8,8 @@ export default function StrategicCTA() {
   
   const stats = [
     { value: "500+", label: "Properties Cleaned" },
-    { value: "5.0", label: "Google Rating" },
-    { value: "195+", label: "Happy Customers" }
+    { value: "4.9★", label: "Google Rating" },
+    { value: "195+", label: "Google Reviews" }
   ]
 
   // Rotate stats every 3 seconds

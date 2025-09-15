@@ -141,13 +141,13 @@ export default function AreasPage() {
 
               {/* Areas List */}
               <div className="p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   {data.areas.map((area) => (
                     <div 
                       key={area.code}
                       className="group flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-200"
                     >
-                      <div className={`font-mono font-bold ${data.iconColor} bg-white/10 px-2 py-1 rounded text-xs`}>
+                      <div className={`font-mono font-bold ${data.iconColor} bg-white/10 px-2 py-1 rounded text-xs min-w-[80px] text-center`}>
                         {area.code}
                       </div>
                       <div className="flex-1">

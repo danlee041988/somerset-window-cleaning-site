@@ -184,7 +184,7 @@ export default function Reviews() {
                   </svg>
                 ))}
               </div>
-              <div className="text-xs text-white/60">Over 195 star reviews</div>
+              <div className="text-xs text-white/60">195+ Google Reviews</div>
             </div>
             
             <div className="h-12 w-px bg-white/20" />

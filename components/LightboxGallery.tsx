@@ -72,7 +72,7 @@ export default function LightboxGallery({
 
   return (
     <div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((src, i) => (
           <button
             key={src}
@@ -85,7 +85,7 @@ export default function LightboxGallery({
                 alt={`${captionPrefix} ${i + 1}`}
                 fill
                 className="object-cover transition group-hover:scale-[1.03]"
-                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 priority={false}
               />
             </div>
