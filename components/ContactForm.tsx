@@ -211,7 +211,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
       return { requiresVisit: true, breakdown: [] }
     }
 
-    const breakdown = [
+    const breakdown: Array<{ item: string; price: number }> = [
       { item: selectedBedrooms, price: bedroomOption.basePrice }
     ]
 

@@ -121,7 +121,7 @@ export default function EnhancedServiceCard({
       )}
 
       {/* Content Container - Fixed Height Structure */}
-      <div className="relative flex-1 p-6 flex flex-col h-[500px]">
+      <div className="relative flex-1 p-6 flex flex-col h-[600px]">
         {/* Fixed Header Section */}
         <div className="mb-4">
           {/* Title and Price */}
@@ -209,7 +209,7 @@ export default function EnhancedServiceCard({
                   </div>
 
                   {/* Tab Content - Fixed Height */}
-                  <div className="h-[140px] overflow-y-auto">
+                  <div className="h-[160px] overflow-y-auto">
                     {activeTab === 'benefits' && benefits.length > 0 && (
                       <div className="space-y-2">
                         {benefits.map((benefit, index) => (
@@ -289,7 +289,7 @@ export default function EnhancedServiceCard({
                     </div>
                   ))}
                   {benefits.length > 3 && (
-                    <p className="text-xs text-white/60 ml-7">+{benefits.length - 3} more benefits...</p>
+                    <p className="text-xs text-white/60 ml-7">+{benefits.length - 3} more...</p>
                   )}
                 </div>
               )}

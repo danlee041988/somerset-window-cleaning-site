@@ -1,7 +1,7 @@
 export const servicesData = [
   {
     title: "Window Cleaning",
-    description: "Crystal-clear windows that let the light shine through. Professional cleaning for frames, sills, and glass using pure water technology.",
+    description: "Crystal-clear windows using pure water technology. Professional cleaning for frames, sills, and glass.",
     longDescription: "Our window cleaning service transforms your property's appearance with streak-free, spot-free results. We use advanced pure water systems that leave no residue, ensuring your windows stay cleaner for longer. Perfect for both residential and commercial properties.",
     benefits: [
       { icon: "•", text: "Every 4 weeks (best value)" },
@@ -31,7 +31,7 @@ export const servicesData = [
   },
   {
     title: "Gutter Clearing",
-    description: "Protect your property from water damage with our safe, ground-level gutter clearing service. Advanced vacuum technology removes all debris.",
+    description: "Protect your property from water damage with safe ground-level clearing. Advanced vacuum technology removes all debris.",
     longDescription: "Blocked gutters can cause serious damage to your property. Our high-reach vacuum systems safely clear leaves, moss, and debris from ground level, preventing costly overflows and damp issues. We provide photo evidence of work completed.",
     benefits: [
       { icon: "•", text: "Complete gutter clearing" },
@@ -60,7 +60,7 @@ export const servicesData = [
   },
   {
     title: "Conservatory Roof Cleaning",
-    description: "Restore your conservatory's clarity and brightness. Gentle cleaning that protects seals and coatings while removing stubborn dirt and algae.",
+    description: "Restore your conservatory's clarity and brightness. Gentle cleaning protects seals while removing dirt and algae.",
     longDescription: "A clean conservatory roof dramatically improves natural light and extends the life of your conservatory. Our non-abrasive methods safely remove dirt, algae, and weathering without damaging delicate seals or protective coatings.",
     benefits: [
       { icon: "•", text: "Roof size & type" },

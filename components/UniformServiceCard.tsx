@@ -59,10 +59,10 @@ export default function UniformServiceCard({
     >
       {/* Swirl Animation Border */}
       <div className={`absolute inset-0 rounded-2xl transition-all duration-700 ${
-        isSelected ? 'animate-spin-slow' : ''
+        isExpanded ? 'animate-spin-slow' : ''
       }`}>
         <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-red via-transparent to-brand-red opacity-0 transition-opacity duration-500 ${
-          isSelected ? 'opacity-30' : ''
+          isExpanded ? 'opacity-30' : ''
         }`} />
       </div>
 
@@ -109,7 +109,7 @@ export default function UniformServiceCard({
           <div className="flex items-start justify-between mb-2">
             <div className="flex-1">
               <h3 className={`text-xl font-bold transition-colors duration-300 ${
-                isSelected ? 'text-brand-red' : 'text-white group-hover:text-brand-red'
+                isExpanded ? 'text-brand-red' : 'text-white group-hover:text-brand-red'
               }`}>
                 {title}
               </h3>
@@ -168,7 +168,7 @@ export default function UniformServiceCard({
 
         {/* Selection indicator */}
         <div className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r from-brand-red to-transparent transition-all duration-500 ${
-          isSelected ? 'w-full opacity-100' : isHovered ? 'w-3/4 opacity-75' : 'w-0 opacity-0'
+          isExpanded ? 'w-full opacity-100' : isHovered ? 'w-3/4 opacity-75' : 'w-0 opacity-0'
         }`} />
       </div>
     </div>

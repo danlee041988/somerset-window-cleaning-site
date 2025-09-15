@@ -125,7 +125,7 @@ export default function Header() {
       <div className="border-b border-white/10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-1">
           <Link href="/" className="flex items-center gap-3 text-white" aria-label="Somerset Window Cleaning home">
-            <Logo className="h-12 md:h-14 lg:h-16 w-auto max-w-[200px] md:max-w-[250px] lg:max-w-[300px]" />
+            <Logo className="h-14 md:h-16 lg:h-20 w-auto max-w-[240px] md:max-w-[300px] lg:max-w-[360px]" />
           </Link>
           
           {/* Desktop Navigation */}

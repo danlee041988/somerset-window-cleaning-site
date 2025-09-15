@@ -1,12 +1,12 @@
 "use client"
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Section from '@/components/Section'
 import ContactForm from '@/components/ContactForm'
 import BusinessHours from '@/components/BusinessHours'
 
-export default function GetInTouchPage() {
+function GetInTouchContent() {
   const searchParams = useSearchParams()
   const postcode = searchParams.get('postcode')
   const area = searchParams.get('area')
@@ -132,5 +132,13 @@ export default function GetInTouchPage() {
         </div>
       </Section>
     </div>
+  )
+}
+
+export default function GetInTouchPage() {
+  return (
+    <Suspense fallback={<div className="py-16 md:py-20"><div className="text-white text-center">Loading...</div></div>}>
+      <GetInTouchContent />
+    </Suspense>
   )
 }

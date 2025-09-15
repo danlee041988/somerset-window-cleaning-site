@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="col-span-2">
             <div className="mb-4 flex items-center gap-3">
-              <Logo className="h-16 md:h-18 w-auto max-w-[200px] md:max-w-[250px]" />
+              <Logo className="h-20 md:h-22 w-auto max-w-[240px] md:max-w-[300px]" />
             </div>
             <p className="text-sm text-white/70 max-w-prose">Crystal-clear windows for homes and businesses across Somerset. Friendly, reliable, fully insured.</p>
           </div>
