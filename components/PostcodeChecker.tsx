@@ -201,7 +201,7 @@ export default function PostcodeChecker({
         <div className="absolute top-full mt-2 left-0 right-0 z-10">
           <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-2 text-center">
             <span className="text-xs text-red-400">
-              Sorry, we don't currently cover {formatPostcode(postcode)}. Call us on 01458 860339.
+              Sorry, we don&apos;t currently cover {formatPostcode(postcode)}. Call us on 01458 860339.
             </span>
           </div>
         </div>

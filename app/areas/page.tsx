@@ -207,7 +207,7 @@ export default function AreasPage() {
         <div className="text-center p-8 rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-transparent">
           <h3 className="text-xl font-bold text-white mb-3">Ready to Book?</h3>
           <p className="text-white/80 mb-6 max-w-2xl mx-auto">
-            Found your area? Get your free quote today. Not listed? Call us - we're always expanding our coverage!
+            Found your area? Get your free quote today. Not listed? Call us - we&apos;re always expanding our coverage!
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Button href="/get-in-touch" variant="primary">

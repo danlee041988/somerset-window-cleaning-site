@@ -75,7 +75,7 @@ export default function ServicesPage() {
                 </svg>
               </div>
               <h4 className="text-lg font-semibold text-white mb-2">Sign-written Vans</h4>
-              <p className="text-sm text-white/70">All vehicles are professionally sign-written and easily identifiable, so you know exactly who's on your property.</p>
+              <p className="text-sm text-white/70">All vehicles are professionally sign-written and easily identifiable, so you know exactly who&apos;s on your property.</p>
             </div>
 
             {/* Text Reminders */}
@@ -87,7 +87,7 @@ export default function ServicesPage() {
                 </svg>
               </div>
               <h4 className="text-lg font-semibold text-white mb-2">Text Reminders</h4>
-              <p className="text-sm text-white/70">Convenient text message reminders before each visit, so you're always informed about scheduled cleaning.</p>
+              <p className="text-sm text-white/70">Convenient text message reminders before each visit, so you&apos;re always informed about scheduled cleaning.</p>
             </div>
 
             {/* Online Payments */}
