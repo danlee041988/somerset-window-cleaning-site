@@ -3,6 +3,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import emailjs from '@emailjs/browser'
+import ReCaptcha from './ReCaptcha'
 
 type CustomerType = 'new' | 'existing'
 
@@ -12,9 +13,10 @@ type FormValues = {
   email: string
   mobile: string
   postcode: string
-  preferred_contact: 'Email' | 'Phone' | 'WhatsApp'
+  preferred_contact: 'Email' | 'Phone'
   
   // Property information (especially for new customers)
+  property_type: string
   bedrooms: string
   has_extension: boolean
   has_conservatory: boolean
@@ -34,6 +36,9 @@ type FormValues = {
   
   // Honeypot
   website?: string
+  
+  // reCAPTCHA
+  recaptcha?: string
 }
 
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
@@ -56,11 +61,21 @@ const BEDROOM_OPTIONS = [
   '7+ bedrooms',
 ] as const
 
+const PROPERTY_TYPE_OPTIONS = [
+  'Detached house',
+  'Semi-detached house',
+  'Terraced house',
+  'Bungalow',
+  'Flat/Apartment',
+  'Cottage',
+  'Commercial property',
+] as const
+
 interface ContactFormProps {
-  customerType: CustomerType
+  // No props needed - customer type is now selected inside the form
 }
 
-export default function ContactForm({ customerType }: ContactFormProps) {
+export default function ContactForm({}: ContactFormProps = {}) {
   const formRef = React.useRef<HTMLFormElement>(null)
   const { 
     register, 
@@ -78,24 +93,39 @@ export default function ContactForm({ customerType }: ContactFormProps) {
       frequency: '8-weeks',
       has_extension: false,
       has_conservatory: false,
-      customer_type: customerType
+      customer_type: 'new'
     }
   })
   
   const [status, setStatus] = React.useState<'idle' | 'success' | 'error'>('idle')
+  const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
   const start = React.useRef<number>(Date.now())
 
   const selectedServices = watch('services') || []
   const preferredContact = watch('preferred_contact')
   const selectedFrequency = watch('frequency')
+  const customerType = watch('customer_type') || 'new'
+  const hasWindowCleaning = selectedServices.includes('Window Cleaning')
+
+  // reCAPTCHA handlers
+  const handleRecaptchaChange = (token: string | null) => {
+    setRecaptchaToken(token)
+    if (token) {
+      clearErrors('recaptcha')
+    }
+  }
+
+  const handleRecaptchaExpired = () => {
+    setRecaptchaToken(null)
+    setError('recaptcha', { type: 'manual', message: 'reCAPTCHA expired, please try again' })
+  }
 
   // Set hidden timestamp fields
   React.useEffect(() => {
     const now = new Date()
     setValue('submission_date', now.toISOString().split('T')[0])
     setValue('submission_time', now.toTimeString().split(' ')[0])
-    setValue('customer_type', customerType)
-  }, [customerType, setValue])
+  }, [setValue])
 
   const onSubmit = async (values: FormValues) => {
     setStatus('idle')
@@ -111,6 +141,13 @@ export default function ContactForm({ customerType }: ContactFormProps) {
       return
     }
     clearErrors('services')
+
+    // reCAPTCHA validation
+    if (!recaptchaToken) {
+      setError('recaptcha', { type: 'manual', message: 'Please complete the reCAPTCHA verification' })
+      return
+    }
+    clearErrors('recaptcha')
 
     // Prepare data for EmailJS
     const form = formRef.current
@@ -135,6 +172,7 @@ export default function ContactForm({ customerType }: ContactFormProps) {
     ensureHidden('name', fullName)
     ensureHidden('phone', values.mobile)
     ensureHidden('services_list', values.services.join(', '))
+    ensureHidden('property_type_field', values.property_type)
     ensureHidden('property_bedrooms', values.bedrooms)
     ensureHidden('property_extension', values.has_extension ? 'Yes' : 'No')
     ensureHidden('property_conservatory', values.has_conservatory ? 'Yes' : 'No')
@@ -143,10 +181,12 @@ export default function ContactForm({ customerType }: ContactFormProps) {
     ensureHidden('submitted_at', now.toLocaleString('en-GB'))
     ensureHidden('submitted_date', now.toLocaleDateString('en-GB'))
     ensureHidden('submitted_time', now.toLocaleTimeString('en-GB'))
+    ensureHidden('recaptcha_token', recaptchaToken)
 
     try {
       await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY)
       setStatus('success')
+      setRecaptchaToken(null) // Reset reCAPTCHA
       reset()
     } catch (e) {
       console.error('EmailJS Error:', e)
@@ -208,6 +248,44 @@ export default function ContactForm({ customerType }: ContactFormProps) {
         </div>
 
         <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Customer Type Selection */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <svg className="w-5 h-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+              I am a...
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label className="flex items-start gap-3 p-4 rounded-lg border border-white/20 bg-white/5 cursor-pointer hover:border-brand-red/50 transition-colors">
+                <input 
+                  type="radio" 
+                  value="new" 
+                  className="mt-1 accent-brand-red" 
+                  {...register('customer_type', { required: true })} 
+                />
+                <div>
+                  <div className="font-medium text-white">New Customer</div>
+                  <div className="text-sm text-white/70 mt-1">Ready to book our services? Get a comprehensive quotation for your property.</div>
+                </div>
+              </label>
+              
+              <label className="flex items-start gap-3 p-4 rounded-lg border border-white/20 bg-white/5 cursor-pointer hover:border-brand-red/50 transition-colors">
+                <input 
+                  type="radio" 
+                  value="existing" 
+                  className="mt-1 accent-brand-red" 
+                  {...register('customer_type', { required: true })} 
+                />
+                <div>
+                  <div className="font-medium text-white">Existing Customer</div>
+                  <div className="text-sm text-white/70 mt-1">Update your details, book additional services, or make changes to your schedule.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
           {/* Personal Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -330,15 +408,6 @@ export default function ContactForm({ customerType }: ContactFormProps) {
                     />
                     Phone
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-white cursor-pointer">
-                    <input 
-                      type="radio" 
-                      value="WhatsApp" 
-                      className="accent-brand-red" 
-                      {...register('preferred_contact', { required: true })} 
-                    />
-                    WhatsApp
-                  </label>
                 </div>
               </div>
             </div>
@@ -355,6 +424,22 @@ export default function ContactForm({ customerType }: ContactFormProps) {
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-2">
+                  Property Type *
+                </label>
+                <select
+                  className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/5 text-white focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 focus:outline-none transition-colors"
+                  {...register('property_type', { required: 'Please select property type' })}
+                >
+                  <option value="">Select property type</option>
+                  {PROPERTY_TYPE_OPTIONS.map(option => (
+                    <option key={option} value={option} className="bg-gray-800">{option}</option>
+                  ))}
+                </select>
+                {errors.property_type && <p className="mt-1 text-xs text-red-400">{errors.property_type.message}</p>}
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-white/90 mb-2">
                   Number of Bedrooms *
@@ -438,57 +523,59 @@ export default function ContactForm({ customerType }: ContactFormProps) {
               {errors.services && <p className="mt-1 text-xs text-red-400">{errors.services.message}</p>}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-white/90 mb-2">
-                How often would you like your windows cleaned? *
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <label className="flex items-center gap-2 p-3 rounded-lg border border-white/20 bg-white/5 text-sm text-white cursor-pointer hover:border-brand-red/50 transition-colors">
-                  <input 
-                    type="radio" 
-                    value="4-weeks" 
-                    className="accent-brand-red" 
-                    {...register('frequency', { required: true })} 
-                  />
-                  Every 4 weeks
+            {hasWindowCleaning && (
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-2">
+                  How often would you like your windows cleaned? *
                 </label>
-                <label className="flex items-center gap-2 p-3 rounded-lg border border-white/20 bg-white/5 text-sm text-white cursor-pointer hover:border-brand-red/50 transition-colors">
-                  <input 
-                    type="radio" 
-                    value="8-weeks" 
-                    className="accent-brand-red" 
-                    {...register('frequency', { required: true })} 
-                  />
-                  Every 8 weeks
-                </label>
-                <label className="flex items-center gap-2 p-3 rounded-lg border border-white/20 bg-white/5 text-sm text-white cursor-pointer hover:border-brand-red/50 transition-colors">
-                  <input 
-                    type="radio" 
-                    value="12-weeks" 
-                    className="accent-brand-red" 
-                    {...register('frequency', { required: true })} 
-                  />
-                  Every 12 weeks
-                </label>
-                <label className="flex items-center gap-2 p-3 rounded-lg border border-white/20 bg-white/5 text-sm text-white cursor-pointer hover:border-brand-red/50 transition-colors">
-                  <input 
-                    type="radio" 
-                    value="ad-hoc" 
-                    className="accent-brand-red" 
-                    {...register('frequency', { required: true })} 
-                  />
-                  Ad hoc basis
-                </label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <label className="flex items-center gap-2 p-3 rounded-lg border border-white/20 bg-white/5 text-sm text-white cursor-pointer hover:border-brand-red/50 transition-colors">
+                    <input 
+                      type="radio" 
+                      value="4-weeks" 
+                      className="accent-brand-red" 
+                      {...register('frequency', { required: hasWindowCleaning })} 
+                    />
+                    Every 4 weeks
+                  </label>
+                  <label className="flex items-center gap-2 p-3 rounded-lg border border-white/20 bg-white/5 text-sm text-white cursor-pointer hover:border-brand-red/50 transition-colors">
+                    <input 
+                      type="radio" 
+                      value="8-weeks" 
+                      className="accent-brand-red" 
+                      {...register('frequency', { required: hasWindowCleaning })} 
+                    />
+                    Every 8 weeks
+                  </label>
+                  <label className="flex items-center gap-2 p-3 rounded-lg border border-white/20 bg-white/5 text-sm text-white cursor-pointer hover:border-brand-red/50 transition-colors">
+                    <input 
+                      type="radio" 
+                      value="12-weeks" 
+                      className="accent-brand-red" 
+                      {...register('frequency', { required: hasWindowCleaning })} 
+                    />
+                    Every 12 weeks
+                  </label>
+                  <label className="flex items-center gap-2 p-3 rounded-lg border border-white/20 bg-white/5 text-sm text-white cursor-pointer hover:border-brand-red/50 transition-colors">
+                    <input 
+                      type="radio" 
+                      value="ad-hoc" 
+                      className="accent-brand-red" 
+                      {...register('frequency', { required: hasWindowCleaning })} 
+                    />
+                    Ad hoc basis
+                  </label>
+                </div>
+                {selectedFrequency === 'ad-hoc' && (
+                  <p className="mt-2 text-xs text-yellow-400 flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    Ad hoc cleans cost more than regular scheduled services.
+                  </p>
+                )}
               </div>
-              {selectedFrequency === 'ad-hoc' && (
-                <p className="mt-2 text-xs text-yellow-400 flex items-center gap-1">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  Ad hoc cleans cost more than regular scheduled services.
-                </p>
-              )}
-            </div>
+            )}
           </div>
 
           {/* Additional Message */}
@@ -519,10 +606,21 @@ export default function ContactForm({ customerType }: ContactFormProps) {
             {...register('website')} 
           />
 
+          {/* reCAPTCHA */}
+          <div className="space-y-2">
+            <ReCaptcha
+              onChange={handleRecaptchaChange}
+              onExpired={handleRecaptchaExpired}
+              className="pt-4"
+            />
+            {errors.recaptcha && <p className="text-xs text-red-400 text-center">{errors.recaptcha.message}</p>}
+          </div>
+
           {/* Hidden fields for EmailJS template compatibility */}
           <input type="hidden" name="name" />
           <input type="hidden" name="phone" />
           <input type="hidden" name="services_list" />
+          <input type="hidden" name="property_type_field" />
           <input type="hidden" name="property_bedrooms" />
           <input type="hidden" name="property_extension" />
           <input type="hidden" name="property_conservatory" />
@@ -531,12 +629,13 @@ export default function ContactForm({ customerType }: ContactFormProps) {
           <input type="hidden" name="submitted_at" />
           <input type="hidden" name="submitted_date" />
           <input type="hidden" name="submitted_time" />
+          <input type="hidden" name="recaptcha_token" />
 
           {/* Submit Button */}
           <div className="pt-4">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !recaptchaToken}
               className="w-full px-8 py-4 bg-gradient-to-r from-brand-red to-brand-red/90 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-brand-red/25 transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? (
@@ -551,7 +650,7 @@ export default function ContactForm({ customerType }: ContactFormProps) {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
-                  Send My Message
+                  {!recaptchaToken ? 'Complete reCAPTCHA to Send' : 'Send My Message'}
                 </span>
               )}
             </button>

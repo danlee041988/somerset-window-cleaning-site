@@ -56,7 +56,7 @@ Map your template variables to the following keys:
 ## Pages
 - `/` Home (hero, services preview, CTA)
 - `/services` Services
-- `/contact` Contact form (EmailJS)
+- `/get-in-touch` Contact form (EmailJS)
 - Auto-generated: `/robots.txt`, `/sitemap.xml`
 
 ## Brand

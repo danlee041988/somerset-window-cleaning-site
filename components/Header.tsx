@@ -22,11 +22,11 @@ export default function Header() {
           <Link href="/gallery" className="text-white/80 hover:text-white">Gallery</Link>
           
           <Link href="/team" className="text-white/80 hover:text-white">Meet the Team</Link>
-          <Link href="/contact" className="text-white/80 hover:text-white">Contact</Link>
-          <Button href="/contact" className="ml-2">Get in Touch</Button>
+          <Link href="/get-in-touch" className="text-white/80 hover:text-white">Get in Touch</Link>
+          <Button href="/get-in-touch" className="ml-2">Get in Touch</Button>
         </nav>
         <div className="flex items-center gap-2 md:hidden">
-          <Button href="/contact" className="text-sm px-3 py-2">Get in Touch</Button>
+          <Button href="/get-in-touch" className="text-sm px-3 py-2">Get in Touch</Button>
           <button
             aria-label="Toggle menu"
             aria-controls="mobile-menu"
@@ -51,9 +51,9 @@ export default function Header() {
               <Link href="/services" onClick={() => setOpen(false)} className="text-white/90">Services</Link>
               <Link href="/gallery" onClick={() => setOpen(false)} className="text-white/90">Gallery</Link>
               <Link href="/team" onClick={() => setOpen(false)} className="text-white/90">Meet the Team</Link>
-              <Link href="/contact" onClick={() => setOpen(false)} className="text-white/90">Contact</Link>
+              <Link href="/get-in-touch" onClick={() => setOpen(false)} className="text-white/90">Get in Touch</Link>
               <div className="pt-2">
-                <Button href="/contact" className="w-full justify-center">Get in Touch</Button>
+                <Button href="/get-in-touch" className="w-full justify-center">Get in Touch</Button>
               </div>
             </div>
           </div>

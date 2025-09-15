@@ -33,7 +33,7 @@ export default function InteractiveServiceCard({
   price,
   frequency,
   ctaText = "Book Now",
-  ctaHref = "/contact",
+  ctaHref = "/get-in-touch",
   specialty
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false)

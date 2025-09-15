@@ -44,7 +44,7 @@ export default function HomePage() {
             Streak‑free, sparkling windows for homes and businesses across Somerset. Professional service, transparent pricing, flexible scheduling.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button href="/contact">Get in Touch</Button>
+            <Button href="/get-in-touch">Get in Touch</Button>
             <Button href="/services" variant="ghost">Explore services</Button>
           </div>
         </div>

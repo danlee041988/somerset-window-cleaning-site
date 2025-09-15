@@ -1,5 +1,5 @@
 import Section from '@/components/Section'
-import InteractiveServiceCard from '@/components/InteractiveServiceCard'
+import UniformServiceCard from '@/components/UniformServiceCard'
 import { SERVICE_IMAGES } from '@/content/image-manifest'
 import { servicesData } from '@/content/services-data'
 
@@ -16,9 +16,9 @@ export default function ServicesPage() {
           Transform your property with our comprehensive cleaning services. Using state-of-the-art equipment and proven techniques, we deliver exceptional results that protect and enhance your investment.
         </p>
         
-        {/* Interactive service grid with improved layout */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 auto-rows-max">
-          {servicesData.map((service, index) => {
+        {/* Uniform service grid with consistent sizing */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {servicesData.map((service) => {
             // Map service titles to image sources
             const imageMap: Record<string, string> = {
               'Window Cleaning': SERVICE_IMAGES.window || '/photos/photo06.jpg',
@@ -30,7 +30,7 @@ export default function ServicesPage() {
             }
             
             return (
-              <InteractiveServiceCard
+              <UniformServiceCard
                 key={service.title}
                 title={service.title}
                 description={service.description}
@@ -65,10 +65,10 @@ export default function ServicesPage() {
                 Get Custom Quote
               </a>
               <a
-                href="/contact"
+                href="/get-in-touch"
                 className="inline-flex items-center justify-center rounded-md px-8 py-3 font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red disabled:opacity-60 disabled:cursor-not-allowed bg-transparent text-white hover:bg-white/10 active:scale-95 focus:ring-white border border-white/20"
               >
-                Contact Us
+                Get in Touch
               </a>
             </div>
           </div>
