@@ -16,20 +16,29 @@ export default function Logo({ className = '', height, width }: Props) {
   if (width) style.width = width
   if (height && !width) style.width = 'auto'
   if (width && !height) style.height = 'auto'
+  
+  // Use natural aspect ratio if only one dimension is specified
+  const imgWidth = width || (height ? undefined : 300)
+  const imgHeight = height || (width ? undefined : 100)
+  
   return (
     <ImageWithFallback
       src={SWC_LOGO}
-      fallbackSrc="/images/logos/logo.svg"
+      fallbackSrc="/images/logos/brand.svg"
       alt="Somerset Window Cleaning"
-      className={`logo-blend ${className}`}
+      className={`logo-blend transition-all duration-300 ${className}`}
       style={{
         ...style,
-        // Fallback for browsers that don't support mix-blend-mode
-        mixBlendMode: 'lighten',
-        filter: 'brightness(1.2) contrast(1.1)',
+        objectFit: 'contain',
+        // Seamless black header integration
+        mixBlendMode: 'screen',
+        filter: 'brightness(1.8) contrast(1.3) saturate(1.1)',
+        background: 'transparent',
+        border: 'none',
+        outline: 'none',
       }}
-      width={width || 300}
-      height={height || 100}
+      width={imgWidth}
+      height={imgHeight}
       priority={true}
     />
   )

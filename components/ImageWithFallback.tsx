@@ -42,8 +42,8 @@ export default function ImageWithFallback({
     setIsLoading(false)
   }
 
-  // Show loading placeholder
-  if (isLoading && !priority) {
+  // Don't show loading placeholder for lazy images since they should load seamlessly
+  if (isLoading && !priority && loading !== 'lazy') {
     return (
       <div 
         className={`bg-white/10 animate-pulse flex items-center justify-center ${className}`}

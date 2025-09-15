@@ -12,10 +12,10 @@ export default function Header() {
     return () => { document.body.style.overflow = '' }
   }, [open])
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
         <Link href="/" className="flex items-center gap-3 text-white" aria-label="Somerset Window Cleaning home">
-          <Logo className="h-20 md:h-24 lg:h-28" />
+          <Logo className="h-24 md:h-32 lg:h-40 w-auto" />
         </Link>
         <nav className="hidden items-center gap-6 text-sm md:flex">
           <Link href="/services" className="text-white/80 hover:text-white">Services</Link>
@@ -23,10 +23,10 @@ export default function Header() {
           
           <Link href="/team" className="text-white/80 hover:text-white">Meet the Team</Link>
           <Link href="/contact" className="text-white/80 hover:text-white">Contact</Link>
-          <Button href="/quote" className="ml-2">Quote me</Button>
+          <Button href="/contact" className="ml-2">Get in Touch</Button>
         </nav>
         <div className="flex items-center gap-2 md:hidden">
-          <Button href="/quote" className="text-sm px-3 py-2">Quote me</Button>
+          <Button href="/contact" className="text-sm px-3 py-2">Get in Touch</Button>
           <button
             aria-label="Toggle menu"
             aria-controls="mobile-menu"
@@ -53,7 +53,7 @@ export default function Header() {
               <Link href="/team" onClick={() => setOpen(false)} className="text-white/90">Meet the Team</Link>
               <Link href="/contact" onClick={() => setOpen(false)} className="text-white/90">Contact</Link>
               <div className="pt-2">
-                <Button href="/quote" className="w-full justify-center">Quote me</Button>
+                <Button href="/contact" className="w-full justify-center">Get in Touch</Button>
               </div>
             </div>
           </div>

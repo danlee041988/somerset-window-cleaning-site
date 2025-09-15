@@ -1,78 +1,77 @@
 import Section from '@/components/Section'
-import ServiceCard from '@/components/ServiceCard'
+import InteractiveServiceCard from '@/components/InteractiveServiceCard'
 import { SERVICE_IMAGES } from '@/content/image-manifest'
+import { servicesData } from '@/content/services-data'
 
 export const metadata = {
-  title: 'Services',
-  description: 'Professional window, gutter, fascia, conservatory, and solar panel cleaning across Somerset for homes and businesses.'
+  title: 'Our Services | Somerset Window Cleaning',
+  description: 'Professional window, gutter, conservatory, solar panel & commercial cleaning across Somerset. Advanced equipment, expert techniques, guaranteed results.'
 }
 
 export default function ServicesPage() {
   return (
     <div className="py-16 md:py-20">
-      <Section title="Our services" subtitle="High standards, safe methods, and clear results every time.">
-        <p className="mb-8 max-w-prose text-white/80">Professional exterior cleaning for homes and businesses across Somerset. We use safe, modern methods for a spotless finish and clear communication from quote to job completion.</p>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <ServiceCard
-            title="Window Cleaning"
-            imageSrc={SERVICE_IMAGES.window || '/photos/photo06.jpg'}
-            description="Frames, sills and glass — interior and exterior options. Pure water for a streak‑free, spot‑free finish."
-            bullets={[
-              '4‑ or 8‑weekly; ad hoc available (additional cost)',
-              'Frames & sills included',
-              'No need to be home',
-              'Satisfaction guarantee',
-            ]}
-          />
-          <ServiceCard
-            title="Gutter Clearing"
-            imageSrc={SERVICE_IMAGES.gutter_clearing || '/photos/photo07.jpg'}
-            description="High‑reach vacuum systems clear leaves and debris to help prevent overflows and damp."
-            bullets={[
-              'Ground‑level, safe methods',
-              'Photos available on request',
-              'Fully insured',
-            ]}
-          />
-          <ServiceCard
-            title="Conservatory Roof Cleaning"
-            imageSrc={SERVICE_IMAGES.conservatory || '/photos/photo08.jpg'}
-            description="Gentle, effective cleaning of roofs and panels to restore clarity without damage."
-            bullets={[
-              'Non‑abrasive, careful methods',
-              'Panels, frames & roof',
-              'Protects seals & coatings',
-            ]}
-          />
-          <ServiceCard
-            title="Solar Panel Cleaning"
-            imageSrc={SERVICE_IMAGES.solar || '/photos/photo09.jpg'}
-            description="Non‑abrasive, deionised water protects coatings and supports panel efficiency."
-            bullets={[
-              'Deionised water only',
-              'Safe access methods',
-              'Efficiency‑minded care',
-            ]}
-          />
-          <ServiceCard
-            title="Fascias & Soffits Cleaning"
-            imageSrc={SERVICE_IMAGES.fascias || '/photos/photo10.jpg'}
-            description="Lift kerb appeal with careful PVC cleaning around fascias, soffits and trims."
-            bullets={[
-              'Brightens exterior PVC',
-              'Great paired with window or gutter service',
-            ]}
-          />
-          <ServiceCard
-            title="External Commercial Cleaning"
-            imageSrc={SERVICE_IMAGES.commercial || '/photos/photo11.jpg'}
-            description="Shops, offices and managed properties — flexible scheduling and safe methods."
-            bullets={[
-              'Regular schedules available',
-              'Early/late slots on request',
-              'RAMS available',
-            ]}
-          />
+      <Section title="Our Services" subtitle="Professional cleaning solutions with advanced equipment and expert techniques.">
+        <p className="mb-12 max-w-prose text-white/80 text-lg leading-relaxed">
+          Transform your property with our comprehensive cleaning services. Using state-of-the-art equipment and proven techniques, we deliver exceptional results that protect and enhance your investment.
+        </p>
+        
+        {/* Interactive service grid with improved layout */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 auto-rows-max">
+          {servicesData.map((service, index) => {
+            // Map service titles to image sources
+            const imageMap: Record<string, string> = {
+              'Window Cleaning': SERVICE_IMAGES.window || '/photos/photo06.jpg',
+              'Gutter Clearing': SERVICE_IMAGES.gutter_clearing || '/photos/photo07.jpg', 
+              'Conservatory Roof Cleaning': SERVICE_IMAGES.conservatory || '/photos/photo08.jpg',
+              'Solar Panel Cleaning': SERVICE_IMAGES.solar || '/photos/photo09.jpg',
+              'Fascias & Soffits Cleaning': SERVICE_IMAGES.fascias || '/photos/photo10.jpg',
+              'External Commercial Cleaning': SERVICE_IMAGES.commercial || '/photos/photo11.jpg'
+            }
+            
+            return (
+              <InteractiveServiceCard
+                key={service.title}
+                title={service.title}
+                description={service.description}
+                longDescription={service.longDescription}
+                imageSrc={imageMap[service.title]}
+                imageAlt={`${service.title} - Somerset Window Cleaning`}
+                benefits={service.benefits}
+                price={service.price}
+                frequency={service.frequency}
+                specialty={service.specialty}
+                ctaText={service.ctaText}
+                ctaHref={service.ctaHref}
+              />
+            )
+          })}
+        </div>
+        
+        {/* Call to action section */}
+        <div className="mt-16 text-center">
+          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-8 backdrop-blur-sm">
+            <h3 className="text-2xl font-bold text-white mb-4">
+              Need a custom quote or multiple services?
+            </h3>
+            <p className="text-white/80 mb-6 max-w-2xl mx-auto">
+              Get a personalized quote for your specific needs. We offer package deals for multiple services and can create a maintenance schedule that works for you.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a
+                href="/quote"
+                className="inline-flex items-center justify-center rounded-md px-8 py-3 font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red disabled:opacity-60 disabled:cursor-not-allowed bg-[var(--brand-red)] text-white hover:opacity-90 active:scale-95 focus:ring-brand-red"
+              >
+                Get Custom Quote
+              </a>
+              <a
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-md px-8 py-3 font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red disabled:opacity-60 disabled:cursor-not-allowed bg-transparent text-white hover:bg-white/10 active:scale-95 focus:ring-white border border-white/20"
+              >
+                Contact Us
+              </a>
+            </div>
+          </div>
         </div>
       </Section>
     </div>

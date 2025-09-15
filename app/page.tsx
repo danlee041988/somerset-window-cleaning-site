@@ -4,6 +4,7 @@ import ServiceCard from '@/components/ServiceCard'
 import LightboxGallery from '@/components/LightboxGallery'
 import ProcessFlow from '@/components/ProcessFlow'
 import Reviews from '@/components/Reviews'
+import StrategicCTA from '@/components/StrategicCTA'
 import { HERO_IMAGES, GALLERY_IMAGES, SERVICE_IMAGES } from '@/content/image-manifest'
 import Image from 'next/image'
 import CaseStudy from '@/components/CaseStudy'
@@ -20,7 +21,8 @@ export default function HomePage() {
           aria-hidden="true"
           fill
           priority
-          className="absolute inset-0 object-cover opacity-50"
+          className="absolute inset-0 object-cover opacity-60"
+          style={{ filter: 'brightness(1.4)' }}
           sizes="100vw"
         />
         {/* Gradient overlay for readability but lighter */}
@@ -29,7 +31,11 @@ export default function HomePage() {
         <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 pb-24 pt-24 md:pb-28 md:pt-28">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
             <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--brand-red)' }} />
-            Local • Reliable • Fully Insured
+            Local
+            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--brand-red)' }} />
+            Reliable
+            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--brand-red)' }} />
+            Fully Insured
           </span>
           <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl">
             Somerset Window Cleaning
@@ -38,7 +44,7 @@ export default function HomePage() {
             Streak‑free, sparkling windows for homes and businesses across Somerset. Professional service, transparent pricing, flexible scheduling.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button href="/quote">Quote me</Button>
+            <Button href="/contact">Get in Touch</Button>
             <Button href="/services" variant="ghost">Explore services</Button>
           </div>
         </div>
@@ -47,8 +53,9 @@ export default function HomePage() {
       {/* Services preview */}
       <Section
         title="Services tailored to your property"
-        subtitle="From regular maintenance to one‑off deep cleans, we’ve got you covered."
-        className="py-16 md:py-20"
+        subtitle="From regular maintenance to one‑off deep cleans, we've got you covered."
+        spacing="relaxed"
+        animationDelay={100}
       >
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <ServiceCard title="Window Cleaning" imageSrc={SERVICE_IMAGES.window || '/photos/photo02.jpg'} description="Frames, sills, and glass. Pure water for a spotless finish." />
@@ -59,19 +66,24 @@ export default function HomePage() {
       </Section>
 
       {/* Trust signals */}
-      <Section className="py-4">
-        <div className="flex flex-wrap items-center gap-4 text-sm text-white/70">
-          <span className="rounded bg-white/10 px-3 py-1">Fully insured</span>
-          <span className="rounded bg-white/10 px-3 py-1">Domestic & Commercial</span>
-          <span className="rounded bg-white/10 px-3 py-1">Flexible bookings</span>
-          <span className="rounded bg-white/10 px-3 py-1">Friendly local team</span>
+      <Section spacing="compact" animationDelay={200}>
+        <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-white/70">
+          <span className="rounded-full bg-white/10 px-4 py-2 transition-colors hover:bg-white/15">Fully insured</span>
+          <span className="rounded-full bg-white/10 px-4 py-2 transition-colors hover:bg-white/15">Domestic & Commercial</span>
+          <span className="rounded-full bg-white/10 px-4 py-2 transition-colors hover:bg-white/15">Flexible bookings</span>
+          <span className="rounded-full bg-white/10 px-4 py-2 transition-colors hover:bg-white/15">Friendly local team</span>
         </div>
       </Section>
 
       <CaseStudy />
 
       {/* How it works */}
-      <Section title="Clean and simple, start to finish" subtitle="Our straightforward process makes booking and paying easy.">
+      <Section 
+        title="Clean and simple, start to finish" 
+        subtitle="Our straightforward process makes booking and paying easy."
+        spacing="relaxed"
+        animationDelay={300}
+      >
         <ProcessFlow />
       </Section>
 
@@ -79,23 +91,24 @@ export default function HomePage() {
       <Section 
         title="What our customers say"
         subtitle="Real reviews from verified Google customers across Somerset."
+        spacing="relaxed"
+        animationDelay={400}
       >
         <Reviews />
       </Section>
 
-      {/* CTA */}
-      <Section className="py-16 md:py-20">
-        <div className="rounded-xl border border-white/10 bg-white/10 p-8 text-center md:p-10">
-          <h2 className="text-2xl font-semibold">Ready for a streak‑free shine?</h2>
-          <p className="mx-auto mt-2 max-w-2xl text-white/70">Tell us a little about your property and we’ll get back with a quick quote.</p>
-          <div className="mt-6 flex justify-center">
-            <Button href="/quote">Quote me</Button>
-          </div>
-        </div>
+      {/* Strategic CTA */}
+      <Section spacing="relaxed" animationDelay={500}>
+        <StrategicCTA />
       </Section>
 
       {/* Recent work preview */}
-      <Section title="Recent work" subtitle="A quick look at some of our cleaning results." className="pb-16 md:pb-24">
+      <Section 
+        title="Recent work" 
+        subtitle="A quick look at some of our cleaning results." 
+        spacing="generous"
+        animationDelay={600}
+      >
         <LightboxGallery images={(GALLERY_IMAGES && GALLERY_IMAGES.length ? GALLERY_IMAGES.slice(0, 12) : ['/photos/photo01.jpg','/photos/photo02.jpg','/photos/photo03.jpg','/photos/photo04.jpg'])} />
         <div className="mt-6"> 
           <Button href="/gallery" variant="ghost">View full gallery</Button>
