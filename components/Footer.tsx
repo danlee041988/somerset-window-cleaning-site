@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Logo from './Logo'
 import WhatsAppButton from './WhatsAppButton'
+import BusinessHours from './BusinessHours'
 
 export default function Footer() {
   return (
@@ -17,7 +18,7 @@ export default function Footer() {
             <h4 className="mb-3 font-semibold">Quick links</h4>
             <ul className="space-y-2 text-sm text-white/80">
               <li><Link href="/services" className="hover:text-white">Services</Link></li>
-              <li><Link href="/quote" className="hover:text-white">Quote me</Link></li>
+              <li><Link href="/areas" className="hover:text-white">Areas We Cover</Link></li>
               <li><Link href="/get-in-touch" className="hover:text-white">Get in Touch</Link></li>
               <li><Link href="/privacy" className="hover:text-white">Privacy</Link></li>
             </ul>
@@ -29,13 +30,19 @@ export default function Footer() {
               <li><a href="tel:01458860339" className="hover:text-white">01458 860 339</a></li>
               <li><a href="mailto:info@somersetwindowcleaning.co.uk" className="hover:text-white">info@somersetwindowcleaning.co.uk</a></li>
             </ul>
-            <div className="mt-3">
+            <div className="mt-4">
               <WhatsAppButton text="WhatsApp us" />
             </div>
           </div>
           <div>
-            <h4 className="mb-3 font-semibold">Hours</h4>
-            <p className="text-sm text-white/80">Mon–Fri: 9am–4pm</p>
+            <h4 className="mb-3 font-semibold">Business Hours</h4>
+            <div className="text-sm">
+              <BusinessHours variant="compact" className="mb-2" />
+              <div className="space-y-1 text-white/80">
+                <div>Mon-Fri: 9:00 AM - 4:00 PM</div>
+                <div className="text-red-400">Sat-Sun: Closed</div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="mt-10 flex items-center justify-between border-t border-white/10 pt-6 text-xs text-white/60">

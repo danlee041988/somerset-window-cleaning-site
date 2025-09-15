@@ -21,6 +21,9 @@ type Props = {
   ctaText?: string
   ctaHref?: string
   specialty?: string
+  process?: string[]
+  equipment?: string[]
+  guarantee?: string
 }
 
 export default function UniformServiceCard({ 
@@ -34,22 +37,25 @@ export default function UniformServiceCard({
   frequency,
   ctaText = "Get Quote",
   ctaHref = "/get-in-touch",
-  specialty
+  specialty,
+  process = [],
+  equipment = [],
+  guarantee
 }: Props) {
   const [isHovered, setIsHovered] = useState(false)
-  const [isSelected, setIsSelected] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [activeTab, setActiveTab] = useState<'benefits' | 'process' | 'equipment'>('benefits')
 
   return (
     <div 
       data-testid="service-card"
-      className={`group relative h-[400px] overflow-hidden rounded-2xl border transition-all duration-500 cursor-pointer ${
-        isSelected 
+      className={`group relative overflow-hidden rounded-2xl border transition-all duration-500 ${
+        isExpanded 
           ? 'border-brand-red bg-gradient-to-br from-brand-red/20 to-brand-red/5 shadow-2xl shadow-brand-red/20' 
           : 'border-white/20 bg-gradient-to-br from-white/10 to-white/5 hover:border-white/30'
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => setIsSelected(!isSelected)}
     >
       {/* Swirl Animation Border */}
       <div className={`absolute inset-0 rounded-2xl transition-all duration-700 ${

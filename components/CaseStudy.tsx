@@ -28,31 +28,38 @@ export default function CaseStudy({
         {/* Accent gradient line at top */}
         <div className="h-1 w-full bg-gradient-to-r from-transparent via-brand-red to-transparent" />
         
-        {/* Header section with badge */}
+        {/* Header section with badge and logo */}
         <div className="relative p-8 md:p-10">
-          <div className="relative mb-6 inline-flex items-center gap-4 rounded-xl border border-white/20 bg-black/40 px-4 py-3 backdrop-blur-sm">
-            <div className="flex items-center gap-3">
-              <span 
-                className="inline-block h-3 w-3 animate-pulse rounded-full shadow-lg" 
-                style={{ backgroundColor: 'var(--brand-red)', boxShadow: '0 0 10px var(--brand-red)' }} 
-                aria-hidden 
-              />
-              <div className="flex flex-col">
-                <p className="text-xs font-medium uppercase tracking-wider text-brand-red">Featured</p>
-                <p className="text-xs uppercase tracking-wide text-white/70">Case Study</p>
+          {/* Top row with properly aligned boxes */}
+          <div className="mb-6 flex items-center justify-between">
+            {/* Featured Case Study Badge */}
+            <div className="relative inline-flex items-center gap-4 rounded-xl border border-white/20 bg-black/40 px-4 py-3 backdrop-blur-sm">
+              <div className="flex items-center gap-3">
+                <span 
+                  className="inline-block h-3 w-3 animate-pulse rounded-full shadow-lg" 
+                  style={{ backgroundColor: 'var(--brand-red)', boxShadow: '0 0 10px var(--brand-red)' }} 
+                  aria-hidden 
+                />
+                <div className="flex flex-col">
+                  <p className="text-xs font-medium uppercase tracking-wider text-brand-red">Featured</p>
+                  <p className="text-xs uppercase tracking-wide text-white/70">Case Study</p>
+                </div>
               </div>
             </div>
             
-            {/* Dynamic connecting line extending to the right */}
-            <div className="hidden md:block absolute top-1/2 left-full ml-4 h-px w-32 bg-gradient-to-r from-brand-red via-brand-red/60 to-brand-red/20 transform -translate-y-1/2">
-              <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
-                <div className="w-2 h-2 bg-brand-red rounded-full animate-pulse shadow-lg" style={{ boxShadow: '0 0 8px var(--brand-red)' }}></div>
+            {/* Somerset Council Logo - Aligned with badge */}
+            <div className="flex items-center gap-3 rounded-xl border border-white/20 bg-black/40 px-4 py-3 backdrop-blur-sm">
+              <img
+                src="https://somerset.concessionarytravelpass.co.uk/buspass/Content/Images/somerset/logo.png"
+                alt="Somerset Council"
+                className="h-12 w-auto md:h-14 opacity-90 hover:opacity-100 transition-opacity"
+              />
+              <div className="hidden sm:flex flex-col">
+                <span className="text-xs font-medium text-white/90">Somerset Council</span>
+                <span className="text-xs text-white/60">Official Partner</span>
               </div>
             </div>
           </div>
-          
-          {/* Extended flowing line across the section */}
-          <div className="hidden md:block absolute top-[5.5rem] left-[280px] right-8 h-px bg-gradient-to-r from-brand-red/60 via-brand-red/30 to-transparent"></div>
         </div>
         
         {/* Main content section */}

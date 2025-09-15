@@ -4,6 +4,8 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StructuredData from '@/components/StructuredData'
 import ErrorBoundary from '@/components/ErrorBoundary'
+import OpenBanner from '@/components/OpenBanner'
+import DynamicLayout from '@/components/DynamicLayout'
 
 const siteUrlRaw = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 let siteUrl: URL | undefined
@@ -50,10 +52,11 @@ export default function RootLayout({
       <body className="min-h-screen bg-brand-black text-brand-white antialiased">
         <ErrorBoundary>
           <a href="#content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-brand-white text-black px-3 py-2 rounded">Skip to content</a>
+          <OpenBanner />
           <Header />
-          <main id="content" className="pt-36 md:pt-44 lg:pt-48">
+          <DynamicLayout>
             {children}
-          </main>
+          </DynamicLayout>
           <Footer />
           <StructuredData />
         </ErrorBoundary>

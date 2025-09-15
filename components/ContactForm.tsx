@@ -55,10 +55,36 @@ const SERVICE_OPTIONS = [
 ] as const
 
 const BEDROOM_OPTIONS = [
-  '1-2 bedrooms',
-  '3-4 bedrooms',
-  '5-6 bedrooms',
-  '7+ bedrooms',
+  {
+    label: '1-2 bedrooms',
+    value: '1-2 bedrooms',
+    basePrice: 18,
+    description: 'Small property'
+  },
+  {
+    label: '3 bedrooms',
+    value: '3 bedrooms', 
+    basePrice: 25,
+    description: 'Family home'
+  },
+  {
+    label: '4 bedrooms',
+    value: '4 bedrooms',
+    basePrice: 30,
+    description: 'Large family home'
+  },
+  {
+    label: '5 bedrooms',
+    value: '5 bedrooms',
+    basePrice: 35,
+    description: 'Large property'
+  },
+  {
+    label: '6+ bedrooms',
+    value: '6+ bedrooms',
+    basePrice: null, // Requires visit
+    description: 'Very large property - requires visit'
+  },
 ] as const
 
 const PROPERTY_TYPE_OPTIONS = [
@@ -72,11 +98,46 @@ const PROPERTY_TYPE_OPTIONS = [
 ] as const
 
 interface ContactFormProps {
-  // No props needed - customer type is now selected inside the form
+  defaultPostcode?: string
+  defaultService?: string
 }
 
-export default function ContactForm({}: ContactFormProps = {}) {
+export default function ContactForm({ defaultPostcode, defaultService }: ContactFormProps = {}) {
   const formRef = React.useRef<HTMLFormElement>(null)
+  
+  // Utility function to format postcodes with proper spacing
+  const formatPostcode = (input: string): string => {
+    // Remove all spaces and convert to uppercase
+    const cleaned = input.replace(/\s/g, '').toUpperCase()
+    
+    // UK postcode format: AA9A 9AA, AA9 9AA, AA99 9AA, A9A 9AA, A9 9AA, A99 9AA
+    // Match the pattern and add space before the last 3 characters
+    if (cleaned.length >= 5) {
+      const beforeSpace = cleaned.slice(0, -3)
+      const afterSpace = cleaned.slice(-3)
+      return `${beforeSpace} ${afterSpace}`
+    }
+    
+    return cleaned
+  }
+
+  // Map service query parameter to actual service name
+  const getServiceName = (serviceParam?: string) => {
+    if (!serviceParam) return []
+    
+    const serviceMap: Record<string, string> = {
+      'window-cleaning': 'Window Cleaning',
+      'gutter-clearing': 'Gutter Clearing',
+      'conservatory-cleaning': 'Conservatory Roof Cleaning',
+      'solar-cleaning': 'Solar Panel Cleaning',
+      'fascias-soffits': 'Fascias & Soffits Cleaning',
+      'commercial-cleaning': 'External Commercial Cleaning',
+    }
+    
+    const serviceName = serviceMap[serviceParam]
+    return serviceName ? [serviceName] : []
+  }
+  
   const { 
     register, 
     handleSubmit, 
@@ -88,14 +149,85 @@ export default function ContactForm({}: ContactFormProps = {}) {
     formState: { errors, isSubmitting } 
   } = useForm<FormValues>({
     defaultValues: { 
+      postcode: defaultPostcode ? formatPostcode(defaultPostcode) : '',
       preferred_contact: 'Email', 
-      services: [],
+      services: getServiceName(defaultService),
       frequency: '8-weeks',
       has_extension: false,
       has_conservatory: false,
       customer_type: 'new'
     }
   })
+  
+  // Handler for postcode input formatting
+  const handlePostcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPostcode(e.target.value)
+    setValue('postcode', formatted)
+  }
+
+  // Pricing calculation function
+  const calculateWindowCleaningPrice = () => {
+    const selectedBedrooms = watch('bedrooms')
+    const propertyType = watch('property_type')
+    const hasExtension = watch('has_extension')
+    const hasConservatory = watch('has_conservatory')
+
+    // Find the selected bedroom option
+    const bedroomOption = BEDROOM_OPTIONS.find(option => option.value === selectedBedrooms)
+    if (!bedroomOption || bedroomOption.basePrice === null) {
+      return null // Requires visit
+    }
+
+    let total = bedroomOption.basePrice
+
+    // Add detached house surcharge
+    if (propertyType === 'Detached house') {
+      total += 5
+    }
+
+    // Add extension surcharge
+    if (hasExtension) {
+      total += 5
+    }
+
+    // Add conservatory surcharge
+    if (hasConservatory) {
+      total += 5
+    }
+
+    return total
+  }
+
+  // Get pricing breakdown
+  const getPricingBreakdown = () => {
+    const selectedBedrooms = watch('bedrooms')
+    const propertyType = watch('property_type')
+    const hasExtension = watch('has_extension')
+    const hasConservatory = watch('has_conservatory')
+
+    const bedroomOption = BEDROOM_OPTIONS.find(option => option.value === selectedBedrooms)
+    if (!bedroomOption || bedroomOption.basePrice === null) {
+      return { requiresVisit: true, breakdown: [] }
+    }
+
+    const breakdown = [
+      { item: selectedBedrooms, price: bedroomOption.basePrice }
+    ]
+
+    if (propertyType === 'Detached house') {
+      breakdown.push({ item: 'Detached house surcharge', price: 5 })
+    }
+
+    if (hasExtension) {
+      breakdown.push({ item: 'Extension cleaning', price: 5 })
+    }
+
+    if (hasConservatory) {
+      breakdown.push({ item: 'Conservatory cleaning', price: 5 })
+    }
+
+    return { requiresVisit: false, breakdown }
+  }
   
   const [status, setStatus] = React.useState<'idle' | 'success' | 'error'>('idle')
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
@@ -374,12 +506,14 @@ export default function ContactForm({}: ContactFormProps = {}) {
                   type="text"
                   className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/5 text-white placeholder-white/50 focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 focus:outline-none transition-colors"
                   placeholder="BA16 0HW"
+                  maxLength={8}
                   {...register('postcode', { 
                     required: 'Postcode is required',
                     pattern: {
                       value: /^[A-Z]{1,2}[0-9][A-Z0-9]?\s?[0-9][A-Z]{2}$/i,
                       message: 'Please enter a valid UK postcode'
-                    }
+                    },
+                    onChange: handlePostcodeChange
                   })}
                 />
                 {errors.postcode && <p className="mt-1 text-xs text-red-400">{errors.postcode.message}</p>}
@@ -440,20 +574,38 @@ export default function ContactForm({}: ContactFormProps = {}) {
                 {errors.property_type && <p className="mt-1 text-xs text-red-400">{errors.property_type.message}</p>}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">
-                  Number of Bedrooms *
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-white/90 mb-3">
+                  Property Size & Pricing *
                 </label>
-                <select
-                  className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/5 text-white focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 focus:outline-none transition-colors"
-                  {...register('bedrooms', { required: 'Please select number of bedrooms' })}
-                >
-                  <option value="">Select bedrooms</option>
-                  {BEDROOM_OPTIONS.map(option => (
-                    <option key={option} value={option} className="bg-gray-800">{option}</option>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                  {BEDROOM_OPTIONS.map((option) => (
+                    <label 
+                      key={option.value}
+                      className="relative flex flex-col p-4 rounded-lg border border-white/20 bg-white/5 cursor-pointer hover:border-brand-red/50 transition-all duration-200 hover:bg-white/10"
+                    >
+                      <input 
+                        type="radio" 
+                        value={option.value}
+                        className="absolute top-3 right-3 accent-brand-red" 
+                        {...register('bedrooms', { required: 'Please select property size' })} 
+                      />
+                      <div className="space-y-2">
+                        <div className="font-medium text-white text-sm">{option.label}</div>
+                        <div className="text-xs text-white/70">{option.description}</div>
+                        <div className="mt-2 pt-2 border-t border-white/10">
+                          <div className="text-sm font-semibold text-green-400">
+                            {option.basePrice ? `From £${option.basePrice}` : 'Visit required'}
+                          </div>
+                          <div className="text-xs text-white/60 mt-1">
+                            {option.basePrice ? '+ surcharges if applicable' : 'Custom quote needed'}
+                          </div>
+                        </div>
+                      </div>
+                    </label>
                   ))}
-                </select>
-                {errors.bedrooms && <p className="mt-1 text-xs text-red-400">{errors.bedrooms.message}</p>}
+                </div>
+                {errors.bedrooms && <p className="mt-2 text-xs text-red-400">{errors.bedrooms.message}</p>}
               </div>
 
               <div className="md:col-span-1">
@@ -467,7 +619,7 @@ export default function ContactForm({}: ContactFormProps = {}) {
                       className="accent-brand-red" 
                       {...register('has_extension')} 
                     />
-                    Has extension
+                    Has extension (+£5)
                   </label>
                   <label className="flex items-center gap-2 text-sm text-white cursor-pointer">
                     <input 
@@ -475,10 +627,71 @@ export default function ContactForm({}: ContactFormProps = {}) {
                       className="accent-brand-red" 
                       {...register('has_conservatory')} 
                     />
-                    Has conservatory
+                    Has conservatory (+£5)
                   </label>
                 </div>
               </div>
+
+              {/* Dynamic Pricing Calculator */}
+              {(watch('bedrooms') || watch('property_type') || watch('has_extension') || watch('has_conservatory')) && (
+                <div className="md:col-span-2">
+                  <div className="rounded-lg border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-500/5 p-4">
+                    <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                      Window Cleaning Quote Calculator
+                    </h4>
+                    
+                    {(() => {
+                      const pricingInfo = getPricingBreakdown()
+                      const totalPrice = calculateWindowCleaningPrice()
+                      
+                      if (pricingInfo.requiresVisit) {
+                        return (
+                          <div className="text-center p-4 rounded-lg bg-orange-500/20 border border-orange-500/30">
+                            <div className="text-orange-400 font-semibold mb-2">🏠 Property Visit Required</div>
+                            <p className="text-sm text-white/90">
+                              For properties with 6+ bedrooms, we provide custom quotes after a free property assessment.
+                            </p>
+                          </div>
+                        )
+                      }
+                      
+                      if (pricingInfo.breakdown.length === 0) {
+                        return (
+                          <p className="text-sm text-white/70">
+                            Select your property details above to see pricing
+                          </p>
+                        )
+                      }
+                      
+                      return (
+                        <div className="space-y-3">
+                          <div className="space-y-2">
+                            {pricingInfo.breakdown.map((item, index) => (
+                              <div key={index} className="flex justify-between items-center text-sm">
+                                <span className="text-white/90">{item.item}</span>
+                                <span className="text-green-400 font-medium">£{item.price}</span>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          <div className="border-t border-white/20 pt-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-lg font-semibold text-white">Total Price:</span>
+                              <span className="text-2xl font-bold text-green-400">£{totalPrice}</span>
+                            </div>
+                            <p className="text-xs text-white/60 mt-1">
+                              * Final price may vary based on property access and specific requirements
+                            </p>
+                          </div>
+                        </div>
+                      )
+                    })()}
+                  </div>
+                </div>
+              )}
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-white/90 mb-2">

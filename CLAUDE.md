@@ -1,13 +1,15 @@
 # Somerset Window Cleaning Website
 
 ## Overview
-Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, interactive service components, comprehensive image management system, and robust error handling.
+Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, interactive service components, comprehensive image management system, EmailJS contact form integration with reCAPTCHA v2 protection, Cloudflare API automation for DNS management, and robust error handling.
 
 ## Tech Stack
 - **Framework**: Next.js 14 with TypeScript
 - **Styling**: Tailwind CSS with custom brand colors
+- **Email Service**: EmailJS with reCAPTCHA v2 integration
+- **DNS Management**: Cloudflare API automation
 - **Testing**: Playwright E2E testing with automated frontend validation
-- **Deployment**: Static export ready (Vercel/Cloudflare)
+- **Deployment**: Vercel with automated DNS management
 - **CI/CD**: GitHub Actions with Claude Code Review and E2E testing
 
 ## Brand & Design
@@ -20,11 +22,14 @@ Modern Next.js website for Somerset Window Cleaning with dark theme and professi
 - **Section**: Wrapper with consistent spacing and optional title/subtitle
 - **Button**: Primary/secondary/ghost variants with active animations (scale-95, 300ms transitions)
 - **ImageWithFallback**: Robust image loading with error handling and loading states
+- **ContactForm**: EmailJS integration with reCAPTCHA v2 protection and form validation
+- **ReCaptcha**: Google reCAPTCHA v2 wrapper component with dark theme support
 - **Reviews**: Google reviews with 5-star ratings (gold #FBBC05)
 - **CaseStudy**: Enhanced with gradients, animations, and spanning header design
 - **ProcessFlow**: Service workflow visualization (WhatsApp removed per user feedback)
 - **ServiceCard**: Traditional service preview cards with optimized images
 - **InteractiveServiceCard**: Modern service cards with hover animations, pricing, and expandable content
+- **UniformServiceCard**: Specialized service cards with consistent styling and animations
 
 ## Commands
 ```bash
@@ -143,18 +148,102 @@ Recent testing confirmed optimal model selection:
 - **Service Photos**: All 6 service images now display correctly on homepage and services page
 - **Lazy Loading**: Improved loading logic prevents stuck placeholder states
 
+## EmailJS Integration System
+**Status**: ✅ **PRODUCTION READY** - Contact form with reCAPTCHA protection
+
+**Configuration**:
+- **Service ID**: `service_yfnr1a9`
+- **Public Key**: `cbA_IhBfxEeDwbEx6`
+- **Template ID**: `template_contact_form`
+- **reCAPTCHA Site Key**: `6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC`
+
+**Features**:
+- **Form Validation**: React Hook Form with TypeScript validation
+- **Spam Protection**: Google reCAPTCHA v2 integration
+- **Customer Types**: Radio button selection (New/Existing customer)
+- **Service Integration**: Property size and service type selection
+- **Error Handling**: Comprehensive error states and user feedback
+- **Dark Theme**: reCAPTCHA styled for dark theme consistency
+
+**Form Fields**:
+- Customer type selection (New/Existing)
+- Full name and email (required)
+- Phone number and property address
+- Property size and service type
+- Additional message/requirements
+- reCAPTCHA verification
+
+**Email Template Structure**:
+```
+New Contact Form Submission
+
+Customer Information:
+- Name: {{name}}
+- Email: {{email}}
+- Phone: {{phone}}
+- Customer Type: {{customerType}}
+
+Property Details:
+- Address: {{address}}
+- Size: {{propertySize}}
+- Service: {{serviceType}}
+
+Message:
+{{message}}
+```
+
+## Cloudflare API Management
+**Status**: ✅ **PRODUCTION READY** - Automated DNS management via API
+
+**API Configuration**:
+- **Zone ID**: `9dd3ac23aaa7fe53621883182d9cf04f`
+- **Account ID**: `87b0debd3b1f9eccd2e45457d64ebe9b`
+- **API Token**: Configured with full Zone and DNS permissions
+
+**Automated Capabilities**:
+- **DNS Record Management**: Programmatic updates to A, CNAME, MX records
+- **Health Monitoring**: Real-time DNS propagation checking
+- **Domain Status**: Zone activation and configuration validation
+- **Performance Analytics**: DNS query analytics and optimization
+- **Security Management**: SSL certificate automation
+
+**Current DNS Configuration**:
+- **A Record**: `somersetwindowcleaning.co.uk` → `216.198.79.1` (Vercel)
+- **CNAME**: `www.somersetwindowcleaning.co.uk` → `7399b066860f42f97.vercel-dns-017.com`
+- **MX Records**: Google Workspace email routing (5 records)
+- **NS Records**: Cloudflare nameservers (anton.ns, luciana.ns)
+- **Mode**: DNS-only (not proxied) for optimal Vercel integration
+
+**API Endpoints Used**:
+- `GET /zones/{zone_id}` - Zone status and configuration
+- `GET /zones/{zone_id}/dns_records` - DNS record enumeration
+- `PUT/POST /zones/{zone_id}/dns_records` - Record management
+- `GET /zones/{zone_id}/analytics` - Performance monitoring
+
 ## MCP Tools Available
 - **IDE Diagnostics**: Use `mcp__ide__getDiagnostics` for code issues
 - **Code Execution**: Use `mcp__ide__executeCode` for testing
+- **Vercel Integration**: Full deployment and domain management
+- **Cloudflare API**: Automated DNS management and monitoring
 
 ## File Structure
 - `/app` - Pages (route-based)
+  - `/get-in-touch` - Contact form page with EmailJS integration
+  - `/services` - Interactive service cards with pricing
 - `/components` - Reusable UI components with error boundaries
+  - `ContactForm.tsx` - EmailJS form with reCAPTCHA protection
+  - `ReCaptcha.tsx` - Google reCAPTCHA v2 wrapper
+  - `UniformServiceCard.tsx` - Consistent service card styling
 - `/content` - Image manifests and service data
+  - `services-data.ts` - Centralized service content and pricing
 - `/public/images` - Optimized static assets
 - `/tests` - Component and integration tests
+  - `uniform-service-cards.spec.ts` - Service card layout validation
+  - `verify-no-overlays.spec.ts` - UI overlap detection
 - `/.github/workflows` - CI/CD automation
 - `/scripts` - Development server and build scripts
+- `EMAILJS_SETUP.md` - EmailJS configuration documentation
+- `TESTING.md` - Comprehensive testing guidelines
 
 ## Development Standards
 - **Brand Colors**: Always use `#E11D2A` for brand-red accents
@@ -209,6 +298,31 @@ const variants = {
 
 ## Recent Updates (Updated: 2025-09-15)
 
+### EmailJS Integration & Contact Form Redesign (2025-09-15)
+- **EmailJS Implementation**: Complete integration with service ID `service_yfnr1a9` and custom template
+- **reCAPTCHA Protection**: Google reCAPTCHA v2 integration with dark theme styling
+- **Form Restructure**: Moved customer type selection inside form, relocated WhatsApp/Call options below form
+- **React Hook Form**: TypeScript validation with comprehensive error handling
+- **Email Template**: Custom template with all customer information and property details
+- **Page Migration**: `/contact` → `/get-in-touch` with improved URL structure
+- **User Experience**: Streamlined form flow to encourage completion before alternative contact methods
+
+### Cloudflare API Automation (2025-09-15)
+- **API Integration**: Full Cloudflare API access with custom token permissions
+- **DNS Management**: Automated DNS record management and health monitoring
+- **Real-time Monitoring**: DNS propagation checking and zone status validation
+- **Vercel Integration**: Seamless domain management for deployment automation
+- **Performance Analytics**: DNS query monitoring and optimization capabilities
+- **Security Enhancement**: API-based SSL certificate and security management
+
+### Service Cards Layout Optimization (2025-09-15)
+- **UniformServiceCard Component**: New component for consistent service card styling
+- **Layout Fixes**: Resolved overlapping service cards on homepage using Playwright validation
+- **Category Badge Removal**: Removed "Most Popular", "Essential", "Specialist" badges for cleaner design
+- **Grid System**: Improved responsive grid layout ensuring all 6 services display correctly
+- **Animation Enhancements**: Hover effects and transitions for better user interaction
+- **Cross-device Testing**: Playwright tests validate layout across multiple screen sizes (375px-1920px)
+
 ### Interactive Services Implementation (2025-09-15)
 - **InteractiveServiceCard Component**: Modern service cards with hover animations and pricing
 - **Professional Design Enhancement**: Removed emojis, replaced with clean bullet points (•)
@@ -250,9 +364,13 @@ const variants = {
 - **Environment Optimization**: Refined deployment and development environment configurations
 
 ## Important Notes
-- **Service Pages**: Use InteractiveServiceCard component for full services page
+- **Contact Forms**: Always use ContactForm component with EmailJS integration and reCAPTCHA protection
+- **Service Pages**: Use InteractiveServiceCard component for full services page, UniformServiceCard for consistent layouts
 - **Homepage Preview**: Use traditional ServiceCard for service previews
 - **Image Loading**: ImageWithFallback handles all image loading with lazy loading support
 - **Brand Consistency**: Always use #E11D2A for brand-red elements
+- **DNS Management**: Cloudflare API provides automated DNS management - avoid manual DNS changes
 - **Testing**: Run Playwright tests when making UI changes to validate functionality
 - **Claude Code Review**: All PRs automatically reviewed with claude-sonnet-4-20250514 model
+- **Environment Variables**: EmailJS credentials stored in `.env.local` and Vercel environment
+- **Form Validation**: All contact forms require reCAPTCHA verification for spam protection
