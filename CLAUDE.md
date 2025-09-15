@@ -1,22 +1,22 @@
 # Somerset Window Cleaning Website
 
 ## Overview
-Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, interactive service components, comprehensive image management system, EmailJS contact form integration with reCAPTCHA v2 protection, Cloudflare API automation for DNS management, and robust error handling.
+Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, interactive service components, comprehensive image management system, EmailJS contact form integration with reCAPTCHA v2 protection, business hours detection system, advanced postcode checking, and robust error handling. Now hosted with 20i.co.uk DNS management for improved performance.
 
 ## Tech Stack
 - **Framework**: Next.js 14 with TypeScript
 - **Styling**: Tailwind CSS with custom brand colors
 - **Email Service**: EmailJS with reCAPTCHA v2 integration
-- **DNS Management**: Cloudflare API automation
+- **DNS Management**: 20i.co.uk with StackDNS nameservers
 - **Testing**: Playwright E2E testing with automated frontend validation
-- **Deployment**: Vercel with automated DNS management
+- **Deployment**: Vercel with 20i.co.uk DNS integration
 - **CI/CD**: GitHub Actions with Claude Code Review and E2E testing
 
 ## Brand & Design
 - **Primary Color**: `#E11D2A` (brand-red)
 - **Theme**: Dark with glass-morphism effects
 - **Typography**: Clean, modern with gradient text effects
-- **Logo**: SWC Logo with advanced blend modes for seamless header integration
+- **Logo**: SWC Narrow Logo (20% enlarged) with advanced blend modes for seamless header integration
 
 ## Key Components
 - **Section**: Wrapper with consistent spacing and optional title/subtitle
@@ -29,7 +29,11 @@ Modern Next.js website for Somerset Window Cleaning with dark theme and professi
 - **ProcessFlow**: Service workflow visualization (WhatsApp removed per user feedback)
 - **ServiceCard**: Traditional service preview cards with optimized images
 - **InteractiveServiceCard**: Modern service cards with hover animations, pricing, and expandable content
-- **UniformServiceCard**: Specialized service cards with consistent styling and animations
+- **UniformServiceCard**: Specialized service cards with consistent styling and animations  
+- **BusinessHours**: Real-time business status with UK bank holiday detection
+- **PostcodeChecker**: Advanced postcode validation with Somerset coverage checking
+- **OpenBanner**: Dynamic "CALL NOW - We are OPEN" banner with animations
+- **EnhancedServiceCard**: Professional service cards with tabbed content and dynamic pricing
 
 ## Commands
 ```bash
@@ -192,44 +196,39 @@ Message:
 {{message}}
 ```
 
-## Cloudflare API Management
-**Status**: ✅ **PRODUCTION READY** - Automated DNS management via API
+## DNS Management with 20i.co.uk
+**Status**: ✅ **PRODUCTION READY** - Migrated from Cloudflare to 20i.co.uk (September 2025)
 
-**API Configuration**:
-- **Zone ID**: `9dd3ac23aaa7fe53621883182d9cf04f`
-- **Account ID**: `87b0debd3b1f9eccd2e45457d64ebe9b`
-- **API Token**: Configured with full Zone and DNS permissions
+**DNS Configuration**:
+- **Provider**: 20i.co.uk with StackDNS nameservers
+- **Nameservers**: `ns1.stackdns.com`, `ns2.stackdns.com`, `ns3.stackdns.com`, `ns4.stackdns.com`
+- **Management**: Direct DNS record management via 20i control panel
 
-**Automated Capabilities**:
-- **DNS Record Management**: Programmatic updates to A, CNAME, MX records
-- **Health Monitoring**: Real-time DNS propagation checking
-- **Domain Status**: Zone activation and configuration validation
-- **Performance Analytics**: DNS query analytics and optimization
-- **Security Management**: SSL certificate automation
+**Current DNS Records**:
+- **A Record**: `somersetwindowcleaning.co.uk` → `76.76.19.61` (Vercel)
+- **CNAME**: `www.somersetwindowcleaning.co.uk` → `cname.vercel-dns.com`
+- **MX Records**: Google Workspace email routing (ASPMX.L.GOOGLE.COM + ALT servers)
+- **TXT Record**: SPF record for Google + Stackmail email delivery
+- **TTL**: 300 seconds for fast propagation
 
-**Current DNS Configuration**:
-- **A Record**: `somersetwindowcleaning.co.uk` → `216.198.79.1` (Vercel)
-- **CNAME**: `www.somersetwindowcleaning.co.uk` → `7399b066860f42f97.vercel-dns-017.com`
-- **MX Records**: Google Workspace email routing (5 records)
-- **NS Records**: Cloudflare nameservers (anton.ns, luciana.ns)
-- **Mode**: DNS-only (not proxied) for optimal Vercel integration
-
-**API Endpoints Used**:
-- `GET /zones/{zone_id}` - Zone status and configuration
-- `GET /zones/{zone_id}/dns_records` - DNS record enumeration
-- `PUT/POST /zones/{zone_id}/dns_records` - Record management
-- `GET /zones/{zone_id}/analytics` - Performance monitoring
+**Migration Benefits**:
+- **Improved Performance**: Faster DNS resolution through StackDNS
+- **Simplified Management**: Direct control via 20i.co.uk panel
+- **Cost Optimization**: Better pricing structure for DNS services
+- **Email Continuity**: Seamless Google Workspace email integration
 
 ## MCP Tools Available
 - **IDE Diagnostics**: Use `mcp__ide__getDiagnostics` for code issues
 - **Code Execution**: Use `mcp__ide__executeCode` for testing
 - **Vercel Integration**: Full deployment and domain management
-- **Cloudflare API**: Automated DNS management and monitoring
+- **20i.co.uk DNS**: Direct DNS management and monitoring
 
 ## File Structure
 - `/app` - Pages (route-based)
   - `/get-in-touch` - Contact form page with EmailJS integration
   - `/services` - Interactive service cards with pricing
+  - `/areas` - Service area coverage with postcode checking
+  - `/pricing` - Comprehensive pricing calculator with business hours
 - `/components` - Reusable UI components with error boundaries
   - `ContactForm.tsx` - EmailJS form with reCAPTCHA protection
   - `ReCaptcha.tsx` - Google reCAPTCHA v2 wrapper
@@ -296,7 +295,65 @@ const variants = {
 - **Asset Organization**: Maintained structured approach in `/public/images/` directory
 - **Performance**: Optimized image loading with proper width/height ratios
 
+## Business Hours System
+**Status**: ✅ **PRODUCTION READY** - Real-time business status detection
+
+**Latest Implementation (Added 2025-09-15)**:
+- **Business Hours**: Monday-Friday 9:00 AM - 4:00 PM operational hours
+- **Bank Holiday Support**: UK bank holiday detection (2024-2026) with automatic closure
+- **Dynamic Header**: "CALL NOW - We are OPEN" banner appears during business hours
+- **Real-time Status**: Live business status checking across all components
+- **Weekend Closure**: Automatic closure detection for weekends
+
+**Features**:
+- **OpenBanner Component**: Prominent animated banner during business hours
+- **BusinessHours Component**: Compact and full status displays with opening hours
+- **DynamicLayout**: Automatic padding adjustment based on banner visibility
+- **Cross-component Integration**: Consistent business status across site
+
+**Business Logic**:
+- **Operational Hours**: 9:00 AM - 4:00 PM, Monday-Friday
+- **Closed**: Weekends and UK bank holidays
+- **Status Indicators**: Green dot (open), red dot (closed) with animations
+- **Call-to-Action**: Dynamic messaging based on current business status
+
 ## Recent Updates (Updated: 2025-09-15)
+
+### DNS Migration to 20i.co.uk (2025-09-15)
+- **Complete Migration**: Successfully migrated from Cloudflare to 20i.co.uk DNS
+- **StackDNS Nameservers**: Using ns1-ns4.stackdns.com for improved performance
+- **Zone File Management**: Streamlined DNS record management via 20i control panel
+- **Email Continuity**: Maintained Google Workspace email with proper MX records
+- **SSL Integration**: Seamless SSL certificate provisioning through Vercel
+- **Propagation Monitoring**: Real-time DNS propagation validation and testing
+
+### Logo Enhancement & Visual Improvements (2025-09-15)
+- **Narrow Logo Implementation**: Switched to "SWC narrow Logo.jpg" for better horizontal layout
+- **20% Size Increase**: Enhanced logo visibility across header and footer
+- **Advanced Blend Modes**: Optimized CSS blend modes for seamless dark header integration
+- **Cross-browser Compatibility**: Progressive enhancement with fallback support
+- **Asset Organization**: Cleaned up duplicate logo files and optimized image manifest
+
+### Business Hours & Dynamic UI System (2025-09-15)
+- **Real-time Business Detection**: Live business hours with UK bank holiday support
+- **Dynamic OpenBanner**: Animated "CALL NOW - We are OPEN" banner during business hours
+- **Intelligent Layout**: DynamicLayout component adjusts spacing based on banner visibility
+- **Enhanced User Experience**: Clear business status indicators with appropriate call-to-actions
+- **Cross-component Integration**: Consistent business status across all site components
+
+### Areas & Pricing Pages Implementation (2025-09-15)
+- **Service Areas Page**: Comprehensive coverage map with postcode validation
+- **Advanced Postcode Checker**: Real-time Somerset postcode validation with visual feedback
+- **Pricing Calculator**: Dynamic pricing based on property type, bedrooms, and surcharges
+- **Business Hours Integration**: Pricing page shows current business status
+- **Professional Layout**: Grid-based responsive design with enhanced user experience
+
+### Enhanced Service Card System (2025-09-15)
+- **EnhancedServiceCard**: Professional tabbed interface with benefits, process, and equipment tabs
+- **Dynamic Tab Labels**: Context-aware tab labels based on service type
+- **Fixed Height Layout**: Consistent 600px height with overflow handling
+- **Professional Styling**: Removed emoji bullets, enhanced with clean bullet points
+- **Improved CTAs**: Service-specific call-to-action buttons with enhanced animations
 
 ### EmailJS Integration & Contact Form Redesign (2025-09-15)
 - **EmailJS Implementation**: Complete integration with service ID `service_yfnr1a9` and custom template
@@ -307,13 +364,12 @@ const variants = {
 - **Page Migration**: `/contact` → `/get-in-touch` with improved URL structure
 - **User Experience**: Streamlined form flow to encourage completion before alternative contact methods
 
-### Cloudflare API Automation (2025-09-15)
-- **API Integration**: Full Cloudflare API access with custom token permissions
-- **DNS Management**: Automated DNS record management and health monitoring
-- **Real-time Monitoring**: DNS propagation checking and zone status validation
-- **Vercel Integration**: Seamless domain management for deployment automation
-- **Performance Analytics**: DNS query monitoring and optimization capabilities
-- **Security Enhancement**: API-based SSL certificate and security management
+### TypeScript & Build Improvements (2025-09-15)
+- **ESLint Fixes**: Resolved unescaped apostrophes in JSX preventing Vercel deployment
+- **TypeScript Compliance**: Fixed ContactForm pricing calculation and component type errors
+- **Build Optimization**: Improved Next.js build configuration for better performance
+- **Component Safety**: Enhanced error boundaries and fallback states
+- **Development Experience**: Improved type safety across all components
 
 ### Service Cards Layout Optimization (2025-09-15)
 - **UniformServiceCard Component**: New component for consistent service card styling
@@ -369,7 +425,7 @@ const variants = {
 - **Homepage Preview**: Use traditional ServiceCard for service previews
 - **Image Loading**: ImageWithFallback handles all image loading with lazy loading support
 - **Brand Consistency**: Always use #E11D2A for brand-red elements
-- **DNS Management**: Cloudflare API provides automated DNS management - avoid manual DNS changes
+- **DNS Management**: 20i.co.uk provides DNS management - use 20i control panel for DNS changes
 - **Testing**: Run Playwright tests when making UI changes to validate functionality
 - **Claude Code Review**: All PRs automatically reviewed with claude-sonnet-4-20250514 model
 - **Environment Variables**: EmailJS credentials stored in `.env.local` and Vercel environment

@@ -86,17 +86,20 @@ const BEDROOM_OPTIONS = [
     basePrice: null, // Requires visit
     description: 'Very large property - requires visit'
   },
+  {
+    label: 'Commercial',
+    value: 'commercial',
+    basePrice: null, // Always requires custom quote
+    description: 'Business property'
+  },
 ] as const
 
 const PROPERTY_TYPE_OPTIONS = [
   'Detached house',
-  'Semi-detached house',
-  'Terraced house',
-  'Bungalow',
-  'Flat/Apartment',
-  'Cottage',
-  'Commercial property',
+  'Terraced / Semi-detached house',
 ] as const
+
+const COMMERCIAL_OPTION = 'Commercial property'
 
 interface ContactFormProps {
   defaultPostcode?: string
@@ -205,6 +208,11 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     const propertyType = watch('property_type')
     const hasExtension = watch('has_extension')
     const hasConservatory = watch('has_conservatory')
+
+    // Commercial properties always require custom quote
+    if (propertyType === COMMERCIAL_OPTION || selectedBedrooms === 'commercial') {
+      return { requiresVisit: true, breakdown: [], isCommercial: true }
+    }
 
     const bedroomOption = BEDROOM_OPTIONS.find(option => option.value === selectedBedrooms)
     if (!bedroomOption || bedroomOption.basePrice === null) {
@@ -605,6 +613,34 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                     </div>
                   ))}
                 </div>
+
+                {/* Commercial Property Option */}
+                <div className="mt-6">
+                  <h4 className="text-sm font-semibold text-white/90 mb-3">Commercial Property</h4>
+                  <label className="relative flex flex-col p-3 rounded-lg border border-white/20 bg-white/5 cursor-pointer hover:border-brand-red/50 transition-all duration-200 hover:bg-white/10">
+                    <input 
+                      type="radio" 
+                      value={`${COMMERCIAL_OPTION}|commercial`}
+                      className="absolute top-2 right-2 accent-brand-red" 
+                      {...register('property_combo', { required: 'Please select property type and size' })} 
+                      onChange={(e) => {
+                        setValue('property_type', COMMERCIAL_OPTION)
+                        setValue('bedrooms', 'commercial')
+                      }}
+                    />
+                    <div className="pr-6">
+                      <div className="font-medium text-white text-sm">{COMMERCIAL_OPTION}</div>
+                      <div className="text-xs text-white/60 mt-1">Office, shop, restaurant, or other business</div>
+                      <div className="text-sm font-semibold text-blue-400 mt-2">
+                        Custom Quote Required
+                      </div>
+                      <div className="text-xs text-white/50 mt-1">
+                        Pricing based on size, access, and requirements
+                      </div>
+                    </div>
+                  </label>
+                </div>
+
                 {errors.property_combo && <p className="mt-2 text-xs text-red-400">{errors.property_combo.message}</p>}
                 {errors.property_type && <p className="mt-2 text-xs text-red-400">{errors.property_type.message}</p>}
                 {errors.bedrooms && <p className="mt-2 text-xs text-red-400">{errors.bedrooms.message}</p>}

@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 
 export default function CaseStudy({
   title = 'Featured Business Success Story',
@@ -49,9 +50,11 @@ export default function CaseStudy({
             
             {/* Somerset Council Logo - Aligned with badge */}
             <div className="flex items-center gap-3 rounded-xl border border-white/20 bg-black/40 px-4 py-3 backdrop-blur-sm">
-              <img
+              <Image
                 src="https://somerset.concessionarytravelpass.co.uk/buspass/Content/Images/somerset/logo.png"
                 alt="Somerset Council"
+                width={80}
+                height={56}
                 className="h-12 w-auto md:h-14 opacity-90 hover:opacity-100 transition-opacity"
               />
               <div className="hidden sm:flex flex-col">
