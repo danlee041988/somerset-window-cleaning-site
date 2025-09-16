@@ -62,28 +62,8 @@ export default function InteractiveServiceCard({
             loading="lazy"
           />
           
-          {/* Dynamic gradient overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-t transition-opacity duration-500 ${
-            isHovered 
-              ? 'from-black/60 via-black/20 to-transparent opacity-90' 
-              : 'from-black/40 to-transparent opacity-70'
-          }`} />
-          
-          {/* Floating specialty badge */}
-          {specialty && (
-            <div className="absolute top-4 right-4 rounded-full border border-brand-red/30 bg-brand-red/20 px-3 py-1 backdrop-blur-sm">
-              <span className="text-xs font-medium text-brand-red">{specialty}</span>
-            </div>
-          )}
-          
-          {/* Animated service icon overlay */}
-          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform transition-all duration-500 ${
-            isHovered ? 'scale-110 opacity-100' : 'scale-100 opacity-80'
-          }`}>
-            <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-sm">
-              <ServiceIcon title={title} className="h-8 w-8 text-white" />
-            </div>
-          </div>
+          {/* Minimal gradient overlay for better image visibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
         </div>
       )}
 
@@ -183,40 +163,3 @@ export default function InteractiveServiceCard({
   )
 }
 
-// Service Icon Component
-function ServiceIcon({ title, className }: { title: string; className?: string }) {
-  const icons = {
-    'Window Cleaning': (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
-    ),
-    'Gutter Clearing': (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16l-3-9m3 9l3-9" />
-      </svg>
-    ),
-    'Conservatory Roof Cleaning': (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4 4 4 0 004-4V5z" />
-      </svg>
-    ),
-    'Solar Panel Cleaning': (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ),
-    'Fascias & Soffits Cleaning': (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-      </svg>
-    ),
-    'External Commercial Cleaning': (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
-    ),
-  }
-  
-  return icons[title as keyof typeof icons] || icons['Window Cleaning']
-}

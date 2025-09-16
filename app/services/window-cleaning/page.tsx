@@ -265,7 +265,6 @@ export default function WindowCleaningPage() {
       >
         <LightboxGallery 
           images={GALLERY_IMAGES.slice(0, 6)} 
-          columns={3}
         />
       </Section>
 

@@ -341,7 +341,6 @@ export default function ConservatoryRoofCleaningPage() {
         </div>
         <LightboxGallery 
           images={GALLERY_IMAGES.slice(4, 10)} 
-          columns={3}
         />
       </Section>
 

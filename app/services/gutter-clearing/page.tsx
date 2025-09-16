@@ -370,7 +370,6 @@ export default function GutterClearingPage() {
         </div>
         <LightboxGallery 
           images={GALLERY_IMAGES.slice(2, 8)} 
-          columns={3}
         />
       </Section>
 

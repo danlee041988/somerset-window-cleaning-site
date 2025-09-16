@@ -246,9 +246,14 @@ export default function WellsBA5Page() {
         
         <div className="mt-8 text-center">
           <p className="text-white/80 mb-4">See more reviews from Wells customers</p>
-          <Button href="https://g.page/r/CYYz0MzUhvD-EBM/review" variant="ghost" target="_blank">
+          <a 
+            href="https://g.page/r/CYYz0MzUhvD-EBM/review" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-md px-5 py-3 font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red bg-transparent text-white hover:bg-white/10 active:scale-95 focus:ring-white"
+          >
             Read All Google Reviews
-          </Button>
+          </a>
         </div>
       </Section>
 
