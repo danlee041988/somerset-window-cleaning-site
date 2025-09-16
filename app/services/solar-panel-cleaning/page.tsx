@@ -151,7 +151,6 @@ export default function SolarPanelCleaningPage() {
             imageAlt="Solar panel cleaning service"
             benefits={solarService.benefits}
             price={solarService.price}
-            frequency={solarService.frequency}
             ctaText="Book Solar Panel Cleaning"
             ctaHref="/get-in-touch?service=solar-panel-cleaning"
             specialty={solarService.specialty}

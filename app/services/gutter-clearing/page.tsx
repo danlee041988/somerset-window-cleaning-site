@@ -111,7 +111,6 @@ export default function GutterClearingPage() {
             imageAlt="Gutter clearing service"
             benefits={gutterService.benefits}
             price={gutterService.price}
-            frequency={gutterService.frequency}
             ctaText="Book Gutter Clearing"
             ctaHref="/get-in-touch?service=gutter-clearing"
             specialty={gutterService.specialty}

@@ -176,7 +176,7 @@ export default function CompareServicesPage() {
                       const serviceData = servicesData.find(s => s.title === service)
                       return (
                         <td key={service} className="text-center p-4 text-white/70">
-                          {serviceData?.frequency || 'As needed'}
+                          {'As needed'}
                         </td>
                       )
                     })}

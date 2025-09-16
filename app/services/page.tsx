@@ -39,7 +39,6 @@ export default function ServicesPage() {
                   imageAlt={`${service.title} - Somerset Window Cleaning`}
                   benefits={service.benefits}
                   price={service.price}
-                  frequency={service.frequency}
                   ctaText={service.ctaText}
                   ctaHref={service.ctaHref}
                   specialty={service.specialty}

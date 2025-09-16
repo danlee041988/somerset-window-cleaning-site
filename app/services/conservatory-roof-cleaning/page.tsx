@@ -111,7 +111,6 @@ export default function ConservatoryRoofCleaningPage() {
             imageAlt="Conservatory roof cleaning service"
             benefits={conservatoryService.benefits}
             price={conservatoryService.price}
-            frequency={conservatoryService.frequency}
             ctaText="Book Conservatory Cleaning"
             ctaHref="/get-in-touch?service=conservatory-roof-cleaning"
             specialty={conservatoryService.specialty}

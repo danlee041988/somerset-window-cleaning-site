@@ -79,7 +79,6 @@ export default function WindowCleaningPage() {
             imageAlt="Window cleaning service"
             benefits={windowService.benefits}
             price={windowService.price}
-            frequency={windowService.frequency}
             ctaText="Book Window Cleaning"
             ctaHref="/get-in-touch?service=window-cleaning"
             specialty={windowService.specialty}
