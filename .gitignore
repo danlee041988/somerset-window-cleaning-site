@@ -20,3 +20,12 @@ playwright-report/
 .vscode/
 .idea/
 .env*.local
+
+# Google Cloud credentials and sensitive files
+service-account-key.json
+*-key.json
+*.key
+.cleanshot-state.json
+cleanshot-analysis-*.md
+performance-report-*.md
+performance-data-*.json

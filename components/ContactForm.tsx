@@ -4,6 +4,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import emailjs from '@emailjs/browser'
 import ReCaptcha from './ReCaptcha'
+import { analytics } from '@/lib/analytics'
 
 type CustomerType = 'new' | 'existing'
 
@@ -240,6 +241,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
   
   const [status, setStatus] = React.useState<'idle' | 'success' | 'error'>('idle')
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
+  const [formStarted, setFormStarted] = React.useState<boolean>(false)
   const start = React.useRef<number>(Date.now())
 
   const selectedServices = watch('services') || []
@@ -248,18 +250,30 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
   const customerType = watch('customer_type') || 'new'
   const hasWindowCleaning = selectedServices.includes('Window Cleaning')
 
+  // Form interaction tracking
+  const firstService = React.useMemo(() => selectedServices[0], [selectedServices])
+  
+  const trackFormStart = React.useCallback(() => {
+    if (!formStarted) {
+      setFormStarted(true)
+      analytics.formStart(firstService)
+    }
+  }, [formStarted, firstService])
+
   // reCAPTCHA handlers
   const handleRecaptchaChange = (token: string | null) => {
     console.log('reCAPTCHA token received:', token ? 'Valid token received' : 'No token/token cleared')
     setRecaptchaToken(token)
     if (token) {
       clearErrors('recaptcha')
+      analytics.recaptchaComplete()
     }
   }
 
   const handleRecaptchaExpired = () => {
     setRecaptchaToken(null)
     setError('recaptcha', { type: 'manual', message: 'reCAPTCHA expired, please try again' })
+    analytics.recaptchaError('expired')
   }
 
   // Set hidden timestamp fields
@@ -327,11 +341,24 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
 
     try {
       await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY)
+      
+      // Track successful form submission
+      analytics.formSubmit({
+        serviceType: values.services?.[0],
+        propertySize: values.bedrooms,
+        customerType: customerType,
+        email: values.email
+      })
+      
       setStatus('success')
       setRecaptchaToken(null) // Reset reCAPTCHA
       reset()
     } catch (e) {
       console.error('EmailJS Error:', e)
+      
+      // Track form error
+      analytics.formError('submission_failed', e instanceof Error ? e.message : 'Unknown error')
+      
       setStatus('error')
     }
   }
@@ -446,6 +473,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                   type="text"
                   className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/5 text-white placeholder-white/50 focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 focus:outline-none transition-colors"
                   placeholder="Your first name"
+                  onFocus={trackFormStart}
                   {...register('first_name', { 
                     required: 'First name is required',
                     minLength: { value: 2, message: 'First name must be at least 2 characters' }

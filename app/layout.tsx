@@ -7,6 +7,7 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import OpenBanner from '@/components/OpenBanner'
 import DynamicLayout from '@/components/DynamicLayout'
 import StickyCTABar from '@/components/StickyCTABar'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
 
 const siteUrlRaw = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 let siteUrl: URL | undefined
@@ -50,6 +51,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body className="min-h-screen bg-brand-black text-brand-white antialiased">
         <ErrorBoundary>
           <a href="#content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-brand-white text-black px-3 py-2 rounded">Skip to content</a>
