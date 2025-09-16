@@ -4,12 +4,10 @@ export const servicesData = [
     description: "Crystal-clear windows using pure water technology. Professional cleaning for frames, sills, and glass.",
     longDescription: "Our window cleaning service transforms your property's appearance with streak-free, spot-free results. We use advanced pure water systems that leave no residue, ensuring your windows stay cleaner for longer. Perfect for both residential and commercial properties.",
     benefits: [
-      { icon: "✨", text: "Every 4 weeks (best value)" },
-      { icon: "📅", text: "Every 8 weeks" },
-      { icon: "⏰", text: "Every 12 weeks" },
-      { icon: "🎯", text: "One-off cleans available" },
-      { icon: "💧", text: "Pure water technology" },
-      { icon: "🏠", text: "No need to be home" }
+      { icon: "•", text: "Pure water technology" },
+      { icon: "•", text: "Frames, sills & glass included" },
+      { icon: "•", text: "No need to be home" },
+      { icon: "•", text: "Satisfaction guarantee" }
     ],
     process: [
       "Initial assessment of property and access requirements",
@@ -26,7 +24,6 @@ export const servicesData = [
     ],
     guarantee: "100% satisfaction guarantee. If you're not happy with our service, we'll return within 24 hours to make it right at no extra cost.",
     price: "From £20",
-    frequency: "Every 4-8 weeks",
     specialty: "Most Popular",
     ctaText: "Book Window Cleaning",
     ctaHref: "/get-in-touch?service=window-cleaning"
@@ -36,12 +33,10 @@ export const servicesData = [
     description: "Protect your property from water damage with safe ground-level clearing. Advanced vacuum technology removes all debris.",
     longDescription: "Blocked gutters can cause serious damage to your property. Our high-reach vacuum systems safely clear leaves, moss, and debris from ground level, preventing costly overflows and damp issues. We provide photo evidence of work completed.",
     benefits: [
-      { icon: "🔧", text: "Complete gutter clearing" },
-      { icon: "🚿", text: "Downpipe checks" },
-      { icon: "📸", text: "Before & after photos" },
-      { icon: "🏗️", text: "Ground-level vacuum system" },
-      { icon: "🛡️", text: "Prevents water damage" },
-      { icon: "🍂", text: "Removes all debris" }
+      { icon: "•", text: "Complete gutter clearing" },
+      { icon: "•", text: "Ground-level vacuum system" },
+      { icon: "•", text: "Before & after photos" },
+      { icon: "•", text: "Prevents water damage" }
     ],
     process: [
       "Comprehensive gutter inspection and assessment",
@@ -57,7 +52,6 @@ export const servicesData = [
     ],
     guarantee: "Complete debris removal guarantee. We ensure all gutters flow freely and provide photographic proof of work completed.",
     price: "From £80",
-    frequency: "Annually or as needed",
     specialty: "Essential",
     ctaText: "Book Gutter Clearing",
     ctaHref: "/get-in-touch?service=gutter-clearing"
@@ -67,12 +61,10 @@ export const servicesData = [
     description: "Restore your conservatory's clarity and brightness. Gentle cleaning protects seals while removing dirt and algae.",
     longDescription: "A clean conservatory roof dramatically improves natural light and extends the life of your conservatory. Our non-abrasive methods safely remove dirt, algae, and weathering without damaging delicate seals or protective coatings.",
     benefits: [
-      { icon: "☀️", text: "Restores natural light" },
-      { icon: "🏠", text: "Protects roof structure" },
-      { icon: "✨", text: "Removes algae & moss" },
-      { icon: "💎", text: "Crystal clear finish" },
-      { icon: "🛡️", text: "Seal-safe cleaning" },
-      { icon: "🌿", text: "Eco-friendly methods" }
+      { icon: "•", text: "Restores natural light" },
+      { icon: "•", text: "Removes algae & moss" },
+      { icon: "•", text: "Seal-safe cleaning" },
+      { icon: "•", text: "Eco-friendly methods" }
     ],
     process: [
       "Detailed inspection of conservatory structure",
@@ -97,12 +89,10 @@ export const servicesData = [
     description: "Maximize your solar investment with professional panel cleaning. Deionised water preserves coatings while boosting energy efficiency.",
     longDescription: "Dirty solar panels can reduce efficiency by up to 25%. Our specialized deionised water cleaning removes dirt, bird waste, and pollution without scratching delicate surfaces or voiding warranties. See immediate improvements in energy output.",
     benefits: [
-      { icon: "⚡", text: "Increase energy output up to 25%" },
-      { icon: "💧", text: "Pure deionised water only - no chemicals" },
-      { icon: "🧲", text: "Safe access with specialized equipment" },
-      { icon: "🔒", text: "Warranty-safe cleaning methods" },
-      { icon: "📈", text: "Maximum efficiency optimization" },
-      { icon: "💰", text: "Improved return on investment" }
+      { icon: "•", text: "Increase energy output up to 25%" },
+      { icon: "•", text: "Pure deionised water only" },
+      { icon: "•", text: "Warranty-safe cleaning methods" },
+      { icon: "•", text: "Improved return on investment" }
     ],
     process: [
       "Safety assessment and panel inspection",
@@ -129,12 +119,10 @@ export const servicesData = [
     description: "Brighten your home's exterior with professional PVC cleaning. Remove years of weathering and restore that 'like new' appearance.",
     longDescription: "Fascias and soffits are often overlooked but make a huge difference to your property's curb appeal. Our careful cleaning brightens weathered PVC, removes staining, and restores the fresh appearance your home deserves.",
     benefits: [
-      { icon: "✨", text: "Dramatically improves curb appeal" },
-      { icon: "🌟", text: "Brightens weathered exterior PVC" },
-      { icon: "🎯", text: "Perfect add-on to window/gutter service" },
-      { icon: "🧽", text: "Removes stubborn weathering stains" },
-      { icon: "💸", text: "Cost-effective exterior refresh" },
-      { icon: "🏠", text: "Restores 'like new' appearance" }
+      { icon: "•", text: "Dramatically improves curb appeal" },
+      { icon: "•", text: "Brightens weathered exterior PVC" },
+      { icon: "•", text: "Removes stubborn weathering stains" },
+      { icon: "•", text: "Cost-effective exterior refresh" }
     ],
     process: [
       "Assessment of PVC condition and staining",
@@ -152,7 +140,6 @@ export const servicesData = [
     ],
     guarantee: "Restoration guarantee. We'll brighten your PVC exterior or return to address any areas that don't meet our high standards.",
     price: "From £80",
-    frequency: "Annually or with other services",
     ctaText: "Book Fascias & Soffits",
     ctaHref: "/get-in-touch?service=fascias-soffits"
   },
@@ -161,12 +148,10 @@ export const servicesData = [
     description: "Professional commercial exterior cleaning with flexible scheduling. RAMS documentation and early/late slots available for business needs.",
     longDescription: "Maintain your business's professional image with our comprehensive commercial cleaning service. We understand business needs with flexible scheduling, proper documentation, and minimal disruption to your operations.",
     benefits: [
-      { icon: "🏢", text: "Professional business image" },
-      { icon: "📅", text: "Flexible scheduling around your business" },
-      { icon: "🌅", text: "Early morning & late evening slots" },
-      { icon: "📄", text: "RAMS documentation provided" },
-      { icon: "🔄", text: "Regular maintenance contracts available" },
-      { icon: "🤝", text: "Minimal disruption to operations" }
+      { icon: "•", text: "Professional business image" },
+      { icon: "•", text: "Flexible scheduling options" },
+      { icon: "•", text: "RAMS documentation provided" },
+      { icon: "•", text: "Minimal disruption to operations" }
     ],
     process: [
       "Site survey and risk assessment (RAMS)",
@@ -184,7 +169,6 @@ export const servicesData = [
     ],
     guarantee: "Professional service guarantee. Full RAMS documentation, comprehensive insurance, and commitment to minimal business disruption.",
     price: "Price on application",
-    frequency: "Weekly to monthly",
     specialty: "Business",
     ctaText: "Book Commercial Cleaning",
     ctaHref: "/get-in-touch?service=commercial-cleaning"

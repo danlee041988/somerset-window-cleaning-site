@@ -17,7 +17,7 @@ export default function ServicesPage() {
         </p>
         
         {/* Enhanced interactive service grid */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="services-equal-height gap-6 md:gap-8 lg:gap-6">
           {servicesData.map((service) => {
             // Map service titles to image sources
             const imageMap: Record<string, string> = {
@@ -30,20 +30,21 @@ export default function ServicesPage() {
             }
             
             return (
-              <InteractiveServiceCard
-                key={service.title}
-                title={service.title}
-                description={service.description}
-                longDescription={service.longDescription}
-                imageSrc={imageMap[service.title]}
-                imageAlt={`${service.title} - Somerset Window Cleaning`}
-                benefits={service.benefits}
-                price={service.price}
-                frequency={service.frequency}
-                ctaText={service.ctaText}
-                ctaHref={service.ctaHref}
-                specialty={service.specialty}
-              />
+              <div key={service.title} className="flex">
+                <InteractiveServiceCard
+                  title={service.title}
+                  description={service.description}
+                  longDescription={service.longDescription}
+                  imageSrc={imageMap[service.title]}
+                  imageAlt={`${service.title} - Somerset Window Cleaning`}
+                  benefits={service.benefits}
+                  price={service.price}
+                  frequency={service.frequency}
+                  ctaText={service.ctaText}
+                  ctaHref={service.ctaHref}
+                  specialty={service.specialty}
+                />
+              </div>
             )
           })}
         </div>

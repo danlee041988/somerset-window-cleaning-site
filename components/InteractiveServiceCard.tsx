@@ -36,14 +36,11 @@ export default function InteractiveServiceCard({
   ctaHref = "/get-in-touch",
   specialty
 }: Props) {
-  const [isExpanded, setIsExpanded] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
   return (
     <div 
-      className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-brand-red/10 ${
-        isExpanded ? 'row-span-2' : ''
-      }`}
+      className={`service-card group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-brand-red/10`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -68,16 +65,13 @@ export default function InteractiveServiceCard({
       )}
 
       {/* Content Section */}
-      <div className="p-6">
+      <div className="p-6 flex-1 flex flex-col">
         {/* Header with price */}
         <div className="mb-4 flex items-start justify-between">
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-white group-hover:text-brand-red transition-colors duration-300">
+            <h3 className="text-xl font-bold text-white transition-colors duration-300">
               {title}
             </h3>
-            {frequency && (
-              <p className="text-xs text-white/60 mt-1">{frequency}</p>
-            )}
           </div>
           {price && (
             <div className="ml-4 text-right">
@@ -93,10 +87,8 @@ export default function InteractiveServiceCard({
 
         {/* Benefits with icons */}
         {benefits.length > 0 && (
-          <div className={`space-y-2 transition-all duration-500 ${
-            isExpanded ? 'mb-6' : 'mb-4'
-          }`}>
-            {benefits.slice(0, isExpanded ? benefits.length : 3).map((benefit, index) => (
+          <div className="space-y-2 mb-4">
+            {benefits.slice(0, 4).map((benefit, index) => (
               <div 
                 key={index} 
                 className={`flex items-center gap-3 transition-all duration-300 ${
@@ -104,8 +96,8 @@ export default function InteractiveServiceCard({
                 }`}
                 style={{ transitionDelay: `${index * 50}ms` }}
               >
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-red/20">
-                  <span className="text-xs">{benefit.icon}</span>
+                <div className="flex h-6 w-6 items-center justify-center">
+                  <span className="text-brand-red font-bold text-lg">{benefit.icon}</span>
                 </div>
                 <span className="text-sm text-white/90">{benefit.text}</span>
               </div>
@@ -113,17 +105,9 @@ export default function InteractiveServiceCard({
           </div>
         )}
 
-        {/* Expanded content */}
-        {isExpanded && longDescription && (
-          <div className="mb-6 animate-fadeIn">
-            <p className="text-sm text-white/70 leading-relaxed">
-              {longDescription}
-            </p>
-          </div>
-        )}
 
         {/* Action buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mt-auto">
           <Button 
             href={ctaHref}
             variant="primary"
@@ -134,24 +118,6 @@ export default function InteractiveServiceCard({
             {ctaText}
           </Button>
           
-          {benefits.length > 3 && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/20 bg-white/10 text-white/80 transition-all duration-300 hover:bg-white/20 hover:text-white"
-              aria-label={isExpanded ? 'Show less' : 'Show more'}
-            >
-              <svg 
-                className={`h-4 w-4 transition-transform duration-300 ${
-                  isExpanded ? 'rotate-180' : 'rotate-0'
-                }`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-          )}
         </div>
 
         {/* Hover effect indicator */}
