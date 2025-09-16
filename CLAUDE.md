@@ -1,23 +1,22 @@
 # Somerset Window Cleaning Website
 
 ## Overview
-Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, interactive service components, comprehensive image management system with advanced optimization (73% size reduction), EmailJS contact form integration with reCAPTCHA v2 protection, business hours detection system, advanced postcode checking, and robust error handling. Now hosted with 20i.co.uk DNS management for improved performance.
+Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, comprehensive service pages with individual route structures, service comparison tools, area-specific pages, Vercel DNS management, EmailJS contact form integration with reCAPTCHA v2 protection, and robust error handling with advanced testing infrastructure.
 
 ## Tech Stack
 - **Framework**: Next.js 14 with TypeScript
 - **Styling**: Tailwind CSS with custom brand colors
 - **Email Service**: EmailJS with reCAPTCHA v2 integration
-- **Image Optimization**: WebP/AVIF formats with automated compression pipeline
-- **DNS Management**: 20i.co.uk with StackDNS nameservers
+- **DNS Management**: Vercel DNS with SPF record automation
 - **Testing**: Playwright E2E testing with automated frontend validation
-- **Deployment**: Vercel with 20i.co.uk DNS integration
+- **Deployment**: Vercel with automated DNS management
 - **CI/CD**: GitHub Actions with Claude Code Review and E2E testing
 
 ## Brand & Design
 - **Primary Color**: `#E11D2A` (brand-red)
 - **Theme**: Dark with glass-morphism effects
 - **Typography**: Clean, modern with gradient text effects
-- **Logo**: SWC Narrow Logo (20% enlarged) with advanced blend modes for seamless header integration
+- **Logo**: SWC Logo with advanced blend modes for seamless header integration
 
 ## Key Components
 - **Section**: Wrapper with consistent spacing and optional title/subtitle
@@ -30,12 +29,7 @@ Modern Next.js website for Somerset Window Cleaning with dark theme and professi
 - **ProcessFlow**: Service workflow visualization (WhatsApp removed per user feedback)
 - **ServiceCard**: Traditional service preview cards with optimized images
 - **InteractiveServiceCard**: Modern service cards with hover animations, pricing, and expandable content
-- **UniformServiceCard**: Specialized service cards with consistent styling and animations
-- **SimpleServiceCard**: Streamlined service cards for clean, consistent layout
-- **BusinessHours**: Real-time business status with UK bank holiday detection
-- **PostcodeChecker**: Advanced postcode validation with Somerset coverage checking
-- **OpenBanner**: Dynamic "CALL NOW - We are OPEN" banner with animations
-- **EnhancedServiceCard**: Professional service cards with tabbed content and dynamic pricing
+- **StickyCTABar**: Persistent call-to-action bar for service pages
 
 ## Commands
 ```bash
@@ -107,21 +101,30 @@ Recent testing confirmed optimal model selection:
 
 **Review Focus**: Brand consistency (#E11D2A), Next.js 14 best practices, TypeScript compliance, accessibility (WCAG), performance optimization, and mobile-first responsive design.
 
-## Interactive Services System
-**Status**: ✅ **PRODUCTION READY** - Modern interactive service cards with animations
+## Service Architecture System
+**Status**: ✅ **PRODUCTION READY** - Complete service ecosystem with individual pages
 
-**Latest Implementation (Added 2025-09-15)**:
-- **InteractiveServiceCard Component**: Modern service cards with hover effects and pricing
-- **Professional Design**: Removed emoji bullets, replaced with clean bullet points (•)
-- **Service Data Structure**: Centralized service data in `/content/services-data.ts`
-- **Pricing Strategy**: Mix of fixed pricing and "Price on application" for specialized services
+**Individual Service Pages (Added 2025-09-16)**:
+- **Window Cleaning**: `/app/services/window-cleaning/page.tsx` - Comprehensive 400+ line service page
+- **Gutter Clearing**: `/app/services/gutter-clearing/page.tsx` - Full service documentation with processes
+- **Conservatory Roof Cleaning**: `/app/services/conservatory-roof-cleaning/page.tsx` - Specialist service details
+- **Solar Panel Cleaning**: `/app/services/solar-panel-cleaning/page.tsx` - High-tech service specifications
 
-**Service Features**:
-- **Hover Animations**: Image zoom effects, dynamic overlays, and smooth transitions
-- **Expandable Content**: "Show more" functionality for detailed service information
-- **Specialty Badges**: "Most Popular", "Essential", "High-Tech", "Business" indicators
-- **Interactive CTAs**: Service-specific call-to-action buttons with animations
-- **Professional Styling**: Clean bullet points instead of emojis for business appeal
+**Service Comparison Tool (Added 2025-09-16)**:
+- **Comparison Page**: `/app/compare-services/page.tsx` - Side-by-side service comparison
+- **Layout Component**: `/app/compare-services/layout.tsx` - Specialized layout for comparison views
+- **Features**: Direct service comparisons, pricing, and suitability analysis
+
+**Area-Specific Services (Added 2025-09-16)**:
+- **Wells BA5 Page**: `/app/areas/wells-ba5/page.tsx` - Location-specific service delivery
+- **Local Testimonials**: Area-specific customer reviews and success stories
+- **Coverage Maps**: Detailed area coverage with postcode validation
+
+**Service Components**:
+- `components/InteractiveServiceCard.tsx` - Modern interactive cards (redesigned)
+- `components/ServiceCard.tsx` - Traditional service cards (homepage preview)
+- `components/StickyCTABar.tsx` - Persistent conversion element
+- `content/services-data.ts` - Centralized service content and pricing
 
 **Current Service Pricing**:
 - **Window Cleaning**: From £20 (Most Popular)
@@ -131,32 +134,40 @@ Recent testing confirmed optimal model selection:
 - **Fascias & Soffits Cleaning**: From £80
 - **External Commercial Cleaning**: Quote on request (Business)
 
-**Service Components**:
-- `components/InteractiveServiceCard.tsx` - Modern interactive cards
-- `components/ServiceCard.tsx` - Traditional service cards (homepage preview)
-- `content/services-data.ts` - Centralized service content and pricing
+## Vercel DNS Integration System
+**Status**: ✅ **PRODUCTION READY** - Complete DNS migration from 20i.co.uk
 
-## Image Management & Optimization System
-**Status**: ✅ **PRODUCTION READY** - Advanced image optimization with 73% size reduction
+**DNS Migration Success (Completed 2025-09-16)**:
+- **DNS Provider**: Migrated from 20i.co.uk StackDNS to Vercel DNS
+- **Nameservers**: `ns1.vercel-dns.com`, `ns2.vercel-dns.com`
+- **Domain Registration**: Kept at 20i.co.uk (domain ownership unchanged)
+- **Email Continuity**: Google Workspace MX records migrated successfully
 
-**Performance Optimization (Added 2025-09-15)**:
-- **Massive Size Reduction**: 41.8MB → 11MB total (73% reduction)
-- **WebP/AVIF Support**: Automatic modern format generation with Next.js
-- **Automated Compression**: Custom compression script with backup functionality
-- **1-Year Cache TTL**: Long-term caching for optimal performance
-- **Responsive Sizing**: Device-specific breakpoints (640px-1920px)
+**Current DNS Configuration**:
+- **A Records**: `216.198.79.1`, `64.29.17.1` (Vercel edge infrastructure)
+- **CNAME**: `www.somersetwindowcleaning.co.uk` → Project-specific Vercel target
+- **MX Records**: Complete Google Workspace email setup (5 records)
+- **SPF Record**: `v=spf1 include:_spf.google.com include:spf.stackmail.com -all`
+- **SSL**: Automatic Let's Encrypt certificate provisioning
 
-**Critical File Optimizations**:
-- **Window Clean.jpeg**: 8.4M → 1.1M (87% reduction)
-- **Solar Panel.jpeg**: 8.1M → 1.1M (86% reduction)
-- **IMG_0880.jpeg**: 6.1M → 760K (88% reduction)
-- **All DJI photos**: 3.6-3.8M → 850K-1.2M each (~70% reduction)
+**Vercel CLI Integration**:
+- **CLI Version**: 48.0.0 installed and configured
+- **DNS Management**: `npx vercel dns add/ls/rm` commands available
+- **SPF Automation**: Automated SPF record creation via CLI
+- **Record ID**: `rec_a3d3a2a0e3213dc125d251a7` for SPF record tracking
 
+**Migration Benefits**:
+- **Faster Propagation**: Immediate DNS updates (no 20i.co.uk delays)
+- **Unified Management**: Single dashboard for hosting + DNS
+- **API Access**: Programmatic DNS management capabilities
+- **Global Performance**: Vercel's edge network for DNS resolution
+
+## Image Management System
 **Enhanced Image Handling**:
 - **ImageWithFallback Component**: Handles loading states, errors, and fallbacks
 - **Priority/Loading Logic**: Conditional prop handling (priority OR loading, not both)
 - **Image Manifest**: Centralized image imports in `/content/image-manifest.ts`
-- **Next.js Optimization**: Advanced Image component with proper sizing strategies
+- **Optimization**: Next.js Image component with proper sizing and loading strategies
 
 **Service Images** (Updated 2025-09-15):
 - **Gutter Clearing**: `DJI_0047.JPG` → `Gutter Clearing.jpg`
@@ -168,12 +179,6 @@ Recent testing confirmed optimal model selection:
 - **ImageWithFallback**: Fixed loading placeholder behavior for lazy images
 - **Service Photos**: All 6 service images now display correctly on homepage and services page
 - **Lazy Loading**: Improved loading logic prevents stuck placeholder states
-
-**Compression Pipeline**:
-- **Automated Script**: `/scripts/compress-images.sh` with backup functionality
-- **Quality Preservation**: Professional quality maintained during compression
-- **Backup System**: Original files preserved in `/public/images/photos/originals/`
-- **macOS Integration**: Uses native `sips` tool for reliable compression
 
 ## EmailJS Integration System
 **Status**: ✅ **PRODUCTION READY** - Contact form with reCAPTCHA protection
@@ -219,56 +224,58 @@ Message:
 {{message}}
 ```
 
-## DNS Management with 20i.co.uk
-**Status**: ✅ **PRODUCTION READY** - Migrated from Cloudflare to 20i.co.uk (September 2025)
+## Testing Infrastructure
+**Enhanced Testing Suite (Added 2025-09-16)**:
+- **EmailJS Testing**: Multiple test files for EmailJS integration validation
+  - `test-emailjs-simple.cjs` - Browser-based testing script
+  - `tests/emailjs-integration.spec.ts` - Playwright integration tests
+  - `tests/emailjs-live-test.spec.ts` - Live deployment testing
+  - `scripts/test-emailjs.html` - Manual testing interface
 
-**DNS Configuration**:
-- **Provider**: 20i.co.uk with StackDNS nameservers
-- **Nameservers**: `ns1.stackdns.com`, `ns2.stackdns.com`, `ns3.stackdns.com`, `ns4.stackdns.com`
-- **Management**: Direct DNS record management via 20i control panel
-
-**Current DNS Records**:
-- **A Record**: `somersetwindowcleaning.co.uk` → `216.198.79.1` (Vercel - Updated 2025-09-15)
-- **CNAME**: `www.somersetwindowcleaning.co.uk` → `7399b06860f42f97.vercel-dns-017.com`
-- **MX Records**: Google Workspace email routing (ASPMX.L.GOOGLE.COM + ALT servers)
-- **TXT Record**: SPF record for Google + Stackmail email delivery
-- **TTL**: 3600 seconds for optimal caching
-
-**Migration Benefits**:
-- **Improved Performance**: Faster DNS resolution through StackDNS
-- **Simplified Management**: Direct control via 20i.co.uk panel
-- **Cost Optimization**: Better pricing structure for DNS services
-- **Email Continuity**: Seamless Google Workspace email integration
+**Test Coverage**:
+- Component and integration tests
+- UI overlap detection
+- Service card layout validation
+- Cross-device responsive testing
+- Email form submission workflows
 
 ## MCP Tools Available
 - **IDE Diagnostics**: Use `mcp__ide__getDiagnostics` for code issues
 - **Code Execution**: Use `mcp__ide__executeCode` for testing
 - **Vercel Integration**: Full deployment and domain management
-- **20i.co.uk DNS**: Direct DNS management and monitoring
+- **Vercel DNS**: Automated DNS management and monitoring
 
 ## File Structure
 - `/app` - Pages (route-based)
   - `/get-in-touch` - Contact form page with EmailJS integration
-  - `/services` - Interactive service cards with pricing
-  - `/areas` - Service area coverage with postcode checking
-  - `/pricing` - Comprehensive pricing calculator with business hours
+  - `/services` - Service overview page + individual service pages
+    - `/window-cleaning` - Dedicated window cleaning service page
+    - `/gutter-clearing` - Dedicated gutter clearing service page
+    - `/conservatory-roof-cleaning` - Specialist conservatory service page
+    - `/solar-panel-cleaning` - High-tech solar panel service page
+  - `/areas` - Service area coverage
+    - `/wells-ba5` - Wells-specific service page with local testimonials
+  - `/compare-services` - Service comparison tool with dedicated layout
 - `/components` - Reusable UI components with error boundaries
   - `ContactForm.tsx` - EmailJS form with reCAPTCHA protection
   - `ReCaptcha.tsx` - Google reCAPTCHA v2 wrapper
-  - `UniformServiceCard.tsx` - Consistent service card styling
-- `/content` - Image manifests and service data
+  - `InteractiveServiceCard.tsx` - Redesigned service cards with professional styling
+  - `StickyCTABar.tsx` - Persistent call-to-action component
+- `/content` - Service data and image manifests
   - `services-data.ts` - Centralized service content and pricing
 - `/public/images` - Optimized static assets
-- `/tests` - Component and integration tests
+  - `/photos/originals` - Backup of original images pre-compression
+- `/tests` - Comprehensive testing suite
+  - `emailjs-integration.spec.ts` - EmailJS workflow testing
   - `uniform-service-cards.spec.ts` - Service card layout validation
   - `verify-no-overlays.spec.ts` - UI overlap detection
 - `/.github/workflows` - CI/CD automation
-- `/scripts` - Development server and build scripts
-  - `compress-images.sh` - Automated image compression with backup
+- `/scripts` - Development and build scripts
   - `dev-server.sh` - Enhanced development server management
+  - `test-emailjs.html` - Manual EmailJS testing interface
+- `test-emailjs-simple.cjs` - Simplified EmailJS testing script
 - `EMAILJS_SETUP.md` - EmailJS configuration documentation
 - `TESTING.md` - Comprehensive testing guidelines
-- `somersetwindowcleaning.co.uk.zone` - DNS zone file for migration reference
 
 ## Development Standards
 - **Brand Colors**: Always use `#E11D2A` for brand-red accents
@@ -292,177 +299,65 @@ const variants = {
 }
 ```
 
-## Service Updates
-- **"Quote me"** → **"Book Now"** (improved CTA)
-- **Service Names**: "Gutter Clearing" and "Conservatory Roof Cleaning"
-- **Case Study**: Enhanced featured badge spans across to founder quote section
-- **Process Flow**: WhatsApp integration removed per user feedback
+## Recent Major Updates (Updated: 2025-09-16)
 
-## Logo & Asset Updates (Updated: 2025-09-15)
+### Complete DNS Migration to Vercel (2025-09-16)
+- **Successful Migration**: Completed full DNS migration from 20i.co.uk to Vercel DNS
+- **Nameserver Change**: Updated domain registration to use `ns1.vercel-dns.com` and `ns2.vercel-dns.com`
+- **Vercel CLI Integration**: Installed Vercel CLI v48.0.0 for programmatic DNS management
+- **SPF Record Automation**: Added SPF record via CLI (`rec_a3d3a2a0e3213dc125d251a7`)
+- **Global DNS Propagation**: Verified successful propagation across Google DNS, Cloudflare DNS
+- **Email Continuity**: Maintained Google Workspace email with proper MX record migration
+- **SSL Automation**: Automatic Let's Encrypt certificate provisioning through Vercel
 
-### Advanced Logo Integration System
-- **Seamless Header Blending**: Eliminated visible black background using advanced CSS blend modes
-- **Mix Blend Mode**: `multiply` with `invert(1)` filter for perfect black header integration
-- **Cross-browser Support**: Progressive enhancement with fallbacks for older browsers
-- **Auto-sizing**: Added `w-auto` class for proper aspect ratio maintenance
-- **Header Scaling**: Increased logo sizes - `h-24 md:h-32 lg:h-40` for better visibility
-- **Footer Consistency**: Standardized footer logo sizing to `h-24 md:h-28 w-auto`
-- **Asset Cleanup**: Removed duplicate `public/images/logos/logo.svg` file
-- **E2E Validation**: Automated testing ensures logo displays seamlessly across devices
+### Major Service Architecture Expansion (2025-09-16)
+- **Individual Service Pages**: Created dedicated pages for all major services
+  - Window Cleaning: Comprehensive 400+ line service page with process details
+  - Gutter Clearing: Full service documentation with equipment and techniques
+  - Conservatory Roof Cleaning: Specialist service with safety protocols
+  - Solar Panel Cleaning: High-tech service with efficiency improvements
+- **Service Comparison Tool**: Built comprehensive comparison page with side-by-side analysis
+- **Area-Specific Pages**: Wells BA5 page with local testimonials and coverage maps
+- **StickyCTABar Component**: Added persistent conversion element for service pages
 
-### Hero Section Enhancements
-- **Three Red Dots**: Replaced bullet characters with three branded red dots (#E11D2A)
-- **Proper Spacing**: Individual span elements for "Local • Reliable • Fully Insured"
-- **Brand Consistency**: All dots use CSS custom property `var(--brand-red)`
-- **Header Background**: Solid black header (`bg-black`) for seamless logo integration
+### Component Redesign and Professional Styling (2025-09-16)
+- **InteractiveServiceCard Redesign**: Removed expandable content, standardized height to 600px
+- **Professional Styling**: Eliminated emoji bullets, implemented clean bullet points (•)
+- **Fixed Height Layout**: Consistent card sizing with proper content overflow handling
+- **Service Card Consolidation**: Removed EnhancedServiceCard and UniformServiceCard components
+- **Brand Consistency**: Implemented CSS custom properties for brand color management
 
-### Image System Updates
-- **Manifest Updates**: Refreshed image-manifest.ts with latest asset references
-- **Asset Organization**: Maintained structured approach in `/public/images/` directory
-- **Performance**: Optimized image loading with proper width/height ratios
+### TypeScript Build Optimization (2025-09-16)
+- **Build Error Resolution**: Fixed TypeScript errors preventing Vercel deployment
+- **Button Component Fix**: Removed unsupported `target` prop from Button component usage
+- **LightboxGallery Fix**: Removed invalid `columns` prop across all service pages
+- **Component Type Safety**: Enhanced type safety across InteractiveServiceCard component
+- **Frequency Property Cleanup**: Removed unused frequency property from service data structure
 
-## Business Hours System
-**Status**: ✅ **PRODUCTION READY** - Real-time business status detection
+### Enhanced Testing Infrastructure (2025-09-16)
+- **EmailJS Testing Suite**: Multiple testing approaches for EmailJS integration
+  - Browser-based testing script (`test-emailjs-simple.cjs`)
+  - Playwright integration tests (`emailjs-integration.spec.ts`)
+  - Live deployment testing (`emailjs-live-test.spec.ts`)
+  - Manual testing interface (`scripts/test-emailjs.html`)
+- **DNS Migration Validation**: Comprehensive DNS propagation testing and monitoring
+- **Cross-browser Testing**: Validated service card layouts across multiple screen sizes
 
-**Latest Implementation (Added 2025-09-15)**:
-- **Business Hours**: Monday-Friday 9:00 AM - 4:00 PM operational hours
-- **Bank Holiday Support**: UK bank holiday detection (2024-2026) with automatic closure
-- **Dynamic Header**: "CALL NOW - We are OPEN" banner appears during business hours
-- **Real-time Status**: Live business status checking across all components
-- **Weekend Closure**: Automatic closure detection for weekends
-
-**Features**:
-- **OpenBanner Component**: Prominent animated banner during business hours
-- **BusinessHours Component**: Compact and full status displays with opening hours
-- **DynamicLayout**: Automatic padding adjustment based on banner visibility
-- **Cross-component Integration**: Consistent business status across site
-
-**Business Logic**:
-- **Operational Hours**: 9:00 AM - 4:00 PM, Monday-Friday
-- **Closed**: Weekends and UK bank holidays
-- **Status Indicators**: Green dot (open), red dot (closed) with animations
-- **Call-to-Action**: Dynamic messaging based on current business status
-
-## Recent Updates (Updated: 2025-09-15)
-
-### Image Optimization & Performance Enhancement (2025-09-15)
-- **Comprehensive Image Optimization**: Reduced total image payload from 41.8MB to 11MB (73% reduction)
-- **WebP/AVIF Implementation**: Added modern image format support in next.config.mjs with 1-year caching
-- **Automated Compression Pipeline**: Created `/scripts/compress-images.sh` with backup functionality
-- **ESLint Compliance**: Fixed CaseStudy and ImageWithFallback components for accessibility
-- **Quality Preservation**: Maintained professional visual quality while achieving massive size reductions
-- **Performance Metrics**: Site load time improved to 340ms with 163KB compressed page size
-
-### DNS Migration to 20i.co.uk (2025-09-15)
-- **Complete Migration**: Successfully migrated from Cloudflare to 20i.co.uk DNS
-- **StackDNS Nameservers**: Using ns1-ns4.stackdns.com for improved performance
-- **Zone File Management**: Streamlined DNS record management via 20i control panel
-- **Email Continuity**: Maintained Google Workspace email with proper MX records
-- **SSL Integration**: Seamless SSL certificate provisioning through Vercel
-- **Propagation Monitoring**: Real-time DNS propagation validation and testing
-
-### Logo Enhancement & Visual Improvements (2025-09-15)
-- **Narrow Logo Implementation**: Switched to "SWC narrow Logo.jpg" for better horizontal layout
-- **20% Size Increase**: Enhanced logo visibility across header and footer
-- **Advanced Blend Modes**: Optimized CSS blend modes for seamless dark header integration
-- **Cross-browser Compatibility**: Progressive enhancement with fallback support
-- **Asset Organization**: Cleaned up duplicate logo files and optimized image manifest
-
-### Business Hours & Dynamic UI System (2025-09-15)
-- **Real-time Business Detection**: Live business hours with UK bank holiday support
-- **Dynamic OpenBanner**: Animated "CALL NOW - We are OPEN" banner during business hours
-- **Intelligent Layout**: DynamicLayout component adjusts spacing based on banner visibility
-- **Enhanced User Experience**: Clear business status indicators with appropriate call-to-actions
-- **Cross-component Integration**: Consistent business status across all site components
-
-### Areas & Pricing Pages Implementation (2025-09-15)
-- **Service Areas Page**: Comprehensive coverage map with postcode validation
-- **Advanced Postcode Checker**: Real-time Somerset postcode validation with visual feedback
-- **Pricing Calculator**: Dynamic pricing based on property type, bedrooms, and surcharges
-- **Business Hours Integration**: Pricing page shows current business status
-- **Professional Layout**: Grid-based responsive design with enhanced user experience
-
-### Enhanced Service Card System (2025-09-15)
-- **EnhancedServiceCard**: Professional tabbed interface with benefits, process, and equipment tabs
-- **Dynamic Tab Labels**: Context-aware tab labels based on service type
-- **Fixed Height Layout**: Consistent 600px height with overflow handling
-- **Professional Styling**: Removed emoji bullets, enhanced with clean bullet points
-- **Improved CTAs**: Service-specific call-to-action buttons with enhanced animations
-
-### EmailJS Integration & Contact Form Redesign (2025-09-15)
-- **EmailJS Implementation**: Complete integration with service ID `service_yfnr1a9` and custom template
-- **reCAPTCHA Protection**: Google reCAPTCHA v2 integration with dark theme styling
-- **Form Restructure**: Moved customer type selection inside form, relocated WhatsApp/Call options below form
-- **React Hook Form**: TypeScript validation with comprehensive error handling
-- **Email Template**: Custom template with all customer information and property details
-- **Page Migration**: `/contact` → `/get-in-touch` with improved URL structure
-- **User Experience**: Streamlined form flow to encourage completion before alternative contact methods
-
-### TypeScript & Build Improvements (2025-09-15)
-- **ESLint Fixes**: Resolved unescaped apostrophes in JSX preventing Vercel deployment
-- **TypeScript Compliance**: Fixed ContactForm pricing calculation and component type errors
-- **Build Optimization**: Improved Next.js build configuration for better performance
-- **Component Safety**: Enhanced error boundaries and fallback states
-- **Development Experience**: Improved type safety across all components
-
-### Service Cards Layout Optimization (2025-09-15)
-- **UniformServiceCard Component**: New component for consistent service card styling
-- **Layout Fixes**: Resolved overlapping service cards on homepage using Playwright validation
-- **Category Badge Removal**: Removed "Most Popular", "Essential", "Specialist" badges for cleaner design
-- **Grid System**: Improved responsive grid layout ensuring all 6 services display correctly
-- **Animation Enhancements**: Hover effects and transitions for better user interaction
-- **Cross-device Testing**: Playwright tests validate layout across multiple screen sizes (375px-1920px)
-
-### Interactive Services Implementation (2025-09-15)
-- **InteractiveServiceCard Component**: Modern service cards with hover animations and pricing
-- **Professional Design Enhancement**: Removed emojis, replaced with clean bullet points (•)
-- **Service Pricing Strategy**: Updated pricing - Window Cleaning £20, specialized services on application
-- **Service Content Structure**: Centralized service data in `/content/services-data.ts`
-- **Animation System**: Custom fadeIn animations for expandable content
-- **CTA Optimization**: Service-specific call-to-action buttons with targeted URLs
-
-### Image System Improvements (2025-09-15)
-- **Hero Image Enhancement**: 40% brightness increase with CSS filters for better visibility
-- **Service Photo Validation**: Fixed all 6 service images loading correctly
-- **ImageWithFallback Fix**: Resolved lazy loading placeholder issues preventing image display
-- **Image Loading Logic**: Improved conditional rendering for lazy vs priority images
-
-### User Experience Enhancements (2025-09-15)
-- **CaseStudy Layout**: Fixed duplicate quote sections and improved grid-based responsive layout
-- **Quote Attribution**: Updated attribution from "Dan Lee, Founder" to "Alan Smith, Business Advisor"
-- **Professional Aesthetics**: Removed tacky emoji styling in favor of clean, corporate design
-- **Header Integration**: Solid black header background for seamless logo blending
-- **Repository Cleanup**: Closed unnecessary test PRs (#8, #10) via GitHub Actions integration
-- **Responsive Design**: Enhanced mobile-first approach with improved service card layouts
-
-### CI/CD Optimization (2025-09-14)
-- **Model Upgrade**: Successfully upgraded to `claude-sonnet-4-20250514` as production model
-- **Model Testing**: Extensive testing across claude-3-haiku, claude-3-5-sonnet, and claude-sonnet-4
-- **Production Stability**: Confirmed claude-sonnet-4-20250514 working with exact model from console
-- **Workflow Refinement**: Dual workflow system with Lyra optimization methodology
-- **Review Quality**: Enhanced with 4-D methodology for comprehensive code analysis
-
-### Development Infrastructure (2025-09-14)
-- **Enhanced Dev Server**: Added automated development server management script
-- **Dependency Management**: Integrated Dependabot for GitHub Actions updates
-- **Error Handling**: Improved error boundaries and fallback states across components
-- **Testing Dependencies**: Added @testing-library/react and @testing-library/jest-dom
-
-### Configuration Management (2025-09-14)
-- **Settings Validation**: Fixed Claude Code settings file validation issues
-- **Permission Management**: Streamlined tool permissions for enhanced security
-- **Environment Optimization**: Refined deployment and development environment configurations
+### Service Content Structure Refinement (2025-09-16)
+- **Centralized Service Data**: Enhanced `content/services-data.ts` with comprehensive service information
+- **Service Pricing Updates**: Refined pricing strategy with clear "From £X" and "Price on application" structure
+- **Professional Descriptions**: Removed casual language, implemented business-focused messaging
+- **Service Categorization**: Clear differentiation between standard and specialist services
 
 ## Important Notes
+- **DNS Management**: Now handled entirely through Vercel DNS - use `npx vercel dns` commands
+- **Service Pages**: Each major service has dedicated route with comprehensive content
 - **Contact Forms**: Always use ContactForm component with EmailJS integration and reCAPTCHA protection
-- **Service Pages**: Use InteractiveServiceCard component for full services page, UniformServiceCard for consistent layouts
-- **Homepage Preview**: Use traditional ServiceCard for service previews
+- **Service Cards**: Use InteractiveServiceCard for service pages, ServiceCard for homepage previews
 - **Image Loading**: ImageWithFallback handles all image loading with lazy loading support
 - **Brand Consistency**: Always use #E11D2A for brand-red elements
-- **DNS Management**: 20i.co.uk provides DNS management - use 20i control panel for DNS changes
-- **Image Optimization**: Use `/scripts/compress-images.sh` for future image optimization needs
-- **Performance**: All images now WebP/AVIF optimized with responsive sizing
-- **Testing**: Run Playwright tests when making UI changes to validate functionality
+- **Testing**: Comprehensive EmailJS testing suite available for integration validation
 - **Claude Code Review**: All PRs automatically reviewed with claude-sonnet-4-20250514 model
 - **Environment Variables**: EmailJS credentials stored in `.env.local` and Vercel environment
 - **Form Validation**: All contact forms require reCAPTCHA verification for spam protection
+- **Vercel CLI**: Use `npx vercel dns ls somersetwindowcleaning.co.uk` to view current DNS records
