@@ -250,6 +250,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
 
   // reCAPTCHA handlers
   const handleRecaptchaChange = (token: string | null) => {
+    console.log('reCAPTCHA token received:', token ? 'Valid token received' : 'No token/token cleared')
     setRecaptchaToken(token)
     if (token) {
       clearErrors('recaptcha')

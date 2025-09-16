@@ -137,7 +137,20 @@ function GetInTouchContent() {
 
 export default function GetInTouchPage() {
   return (
-    <Suspense fallback={<div className="py-16 md:py-20"><div className="text-white text-center">Loading...</div></div>}>
+    <Suspense fallback={
+      <div className="py-16 md:py-20">
+        <Section 
+          title="Get in touch" 
+          subtitle="Tell us about your property and we'll provide transparent pricing with no hidden fees. We'll get back to you within the first working day."
+          spacing="relaxed"
+        >
+          <div className="text-white text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-red mx-auto mb-4"></div>
+            <p>Loading contact form...</p>
+          </div>
+        </Section>
+      </div>
+    }>
       <GetInTouchContent />
     </Suspense>
   )

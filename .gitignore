@@ -19,3 +19,4 @@ playwright-report/
 # IDE files
 .vscode/
 .idea/
+.env*.local
