@@ -39,18 +39,51 @@ export default function ServicesPage() {
                   imageAlt={`${service.title} - Somerset Window Cleaning`}
                   benefits={service.benefits}
                   price={service.price}
+                  frequency={service.frequency}
                   ctaText={service.ctaText}
                   ctaHref={service.ctaHref}
                   specialty={service.specialty}
+                  process={service.process}
+                  equipment={service.equipment}
+                  guarantee={service.guarantee}
                 />
               </div>
             )
           })}
         </div>
-        
+
+        {/* Performance highlights + testimonial */}
+        <div className="mt-16 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-white/0 p-6 backdrop-blur-sm">
+            <h3 className="text-xl font-semibold text-white mb-6">Service impact at a glance</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4 text-center">
+                <p className="text-3xl font-bold text-white">4,000+</p>
+                <p className="text-xs uppercase tracking-wide text-white/60">Customers looked after</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4 text-center">
+                <p className="text-3xl font-bold text-white">98%</p>
+                <p className="text-xs uppercase tracking-wide text-white/60">Repeat custom rate</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4 text-center">
+                <p className="text-3xl font-bold text-white">4 weeks</p>
+                <p className="text-xs uppercase tracking-wide text-white/60">Local service cycle</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-brand-red/30 bg-brand-red/10 p-6 backdrop-blur-sm">
+            <p className="text-sm uppercase tracking-wide text-brand-red mb-3 font-semibold">Client feedback</p>
+            <blockquote className="text-white/90 text-base leading-relaxed">
+              "Somerset Window Cleaning handle our window, gutter, and fascia maintenance across four sites. We get photo proof after every visit and they always jump on urgent requests within a day."
+            </blockquote>
+            <p className="mt-4 text-sm font-semibold text-white">- Claire Hawthorne, Facilities Manager</p>
+          </div>
+        </div>
+
         {/* Professional Service Features */}
         <div className="mt-16">
-          <h3 className="text-2xl font-bold text-white mb-8 text-center">Why Choose Somerset Window Cleaning?</h3>
+          <h3 className="text-2xl font-bold text-white mb-8 text-center">Why homeowners and businesses choose us</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {/* Uniformed Staff */}
             <div className="text-center p-6 rounded-xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm">
@@ -59,8 +92,8 @@ export default function ServicesPage() {
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h4 className="text-lg font-semibold text-white mb-2">Uniformed Staff</h4>
-              <p className="text-sm text-white/70">Professional appearance with clearly identifiable Somerset Window Cleaning uniforms for your peace of mind.</p>
+              <h4 className="text-lg font-semibold text-white mb-2">Ladder-free safety</h4>
+              <p className="text-sm text-white/70">Water-fed poles and engineered access systems keep our team safely on the ground wherever possible, with ladders reserved only when the job truly needs them.</p>
             </div>
 
             {/* Sign-written Vans */}
@@ -71,8 +104,8 @@ export default function ServicesPage() {
                   <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707L16 7.586A1 1 0 0015.414 7H14z" />
                 </svg>
               </div>
-              <h4 className="text-lg font-semibold text-white mb-2">Sign-written Vans</h4>
-              <p className="text-sm text-white/70">All vehicles are professionally sign-written and easily identifiable, so you know exactly who&apos;s on your property.</p>
+              <h4 className="text-lg font-semibold text-white mb-2">Photo proof reporting</h4>
+              <p className="text-sm text-white/70">Available on request: receive time-stamped before &amp; after photos for gutters, conservatories, and commercial projects to share with stakeholders.</p>
             </div>
 
             {/* Text Reminders */}
@@ -83,8 +116,8 @@ export default function ServicesPage() {
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                 </svg>
               </div>
-              <h4 className="text-lg font-semibold text-white mb-2">Text Reminders</h4>
-              <p className="text-sm text-white/70">Convenient text message reminders before each visit, so you&apos;re always informed about scheduled cleaning.</p>
+              <h4 className="text-lg font-semibold text-white mb-2">48-hour revisit promise</h4>
+              <p className="text-sm text-white/70">If anything isn&apos;t spotless we return within 48 hours - no quibble, no extra charge, just guaranteed results.</p>
             </div>
 
             {/* Online Payments */}
@@ -95,8 +128,8 @@ export default function ServicesPage() {
                   <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h4 className="text-lg font-semibold text-white mb-2">Online Payments</h4>
-              <p className="text-sm text-white/70">Secure online payment options for your convenience. Pay easily via card, bank transfer, or digital wallet.</p>
+              <h4 className="text-lg font-semibold text-white mb-2">Regular window cleaning routes</h4>
+              <p className="text-sm text-white/70">Window cleaning is our core service — we&apos;re in your area every 4 weeks, giving you dependable 4- or 8-week cleans that keep frames, sills, and glass looking their best.</p>
             </div>
           </div>
         </div>

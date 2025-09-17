@@ -4,8 +4,9 @@ import React from 'react'
 import Link from 'next/link'
 import Button from './Button'
 import Logo from './Logo'
-import PostcodeChecker from './PostcodeChecker'
+import AreaCombobox from './AreaCombobox'
 import BusinessHours from './BusinessHours'
+import { FLATTENED_AREAS } from '@/content/service-areas'
 
 // UK Bank Holidays
 const UK_BANK_HOLIDAYS = [
@@ -129,9 +130,14 @@ export default function Header() {
           
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-4 xl:gap-6">
-            {/* Postcode Checker */}
-            <div className="relative">
-              <PostcodeChecker variant="header" placeholder="Check your postcode" />
+            <div className="relative w-72">
+              <AreaCombobox 
+                areas={FLATTENED_AREAS}
+                containerClassName="mx-0"
+                placeholder="Check your postcode"
+                showLabel={false}
+                inputId="header-area-search"
+              />
             </div>
             
             <nav className="flex items-center gap-4 xl:gap-6 text-sm">
@@ -204,9 +210,13 @@ export default function Header() {
       {open && (
         <div id="mobile-menu" className="lg:hidden fixed inset-0 z-40 bg-black/95 backdrop-blur-sm pt-28">
           <div className="mx-auto max-w-6xl px-4 py-6">
-            {/* Mobile Postcode Checker */}
             <div className="mb-6">
-              <PostcodeChecker variant="hero" placeholder="Check your postcode" className="w-full" />
+              <AreaCombobox 
+                areas={FLATTENED_AREAS}
+                containerClassName="mx-0"
+                placeholder="Enter your postcode or town"
+                inputId="mobile-area-search"
+              />
             </div>
             
             <div className="grid gap-4 text-lg">

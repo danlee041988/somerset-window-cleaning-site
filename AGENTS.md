@@ -24,6 +24,13 @@ Set these for local dev and on Vercel:
 - `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID` – EmailJS template ID
 - `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` – reCAPTCHA v2 (checkbox) site key (optional; UI loads only on Step 4)
 
+Server-side integrations also expect:
+- `NOTION_API_KEY` and `NOTION_DATABASE_ID` – required for `/api/notion` and `/api/notion-direct`
+- `GOOGLE_ADS_CUSTOMER_ID`, `GOOGLE_ADS_DEVELOPER_TOKEN`, `GOOGLE_ADS_CLIENT_ID`, `GOOGLE_ADS_CLIENT_SECRET`, `GOOGLE_ADS_REFRESH_TOKEN` – Google Ads API access
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` plus `NEXT_PUBLIC_GA_TRACKING_ENABLED=true` – enable GA4 analytics hooks
+- `NEXT_PUBLIC_PAGESPEED_API_KEY` – PageSpeed Insights monitoring (`lib/pagespeed.ts`)
+- `WHATSAPP_WEBHOOK_VERIFY_TOKEN` – required for `/api/whatsapp/webhook` verification callbacks
+
 ## Branding & Content
 - Theme: black/red/white.
 - Logos: `public/Codex SWC Photos/SWC Logo.png` used in header/footer; keep header/footer logos prominent.
@@ -69,7 +76,7 @@ If pricing changes, edit only `lib/pricing.ts` and adjust UI labels accordingly.
 ### Forms & Anti‑spam
 - Quote form uses EmailJS `sendForm`.
 - Anti‑spam: hidden honeypot `website`, time‑trap (>= ~1.2s), optional reCAPTCHA v2 checkbox on Step 4.
-- Photos: allow up to 8 images, each ≤ 10MB.
+- Photos: allow up to 5 images, each ≤ 10MB.
 - First clean date must be a weekday (Mon–Fri).
 
 ## Images
@@ -110,6 +117,15 @@ If pricing changes, edit only `lib/pricing.ts` and adjust UI labels accordingly.
 - Store output under `~/.playwright-mcp/` (or use `PLAYWRIGHT_SNAPSHOT_DIR`).
 - Example tool args: `{ "url": "http://localhost:3000", "fullPage": true }`.
 - Purpose: verify visuals locally without exposing the site or relying on public URLs.
+
+## API Reference
+- `/api/notion-direct` is the primary Notion writer; expects the customer payload in the “Somerset Window Cleaning API” doc (includes `addressValidation`, `customerPhotos`, pricing hints). Missing required fields return `400` with an `error` string (no `success` flag); successful requests return `{ success, customerId, url }`.
+- `/api/notion` remains as the typed wrapper around `lib/notion.ts#createNotionCustomer` using the same core fields; the Notion data model lives in `lib/notion.ts` (`NotionCustomerData`).
+- `/api/upload-photo` accepts multipart uploads (`file`, `filename`), enforces ≤10 MB and JPEG/PNG/WebP/HEIC types, and responds with `{ success, fileUploadId, filename, size, type }` on success.
+- `/api/google-ads` wraps `lib/google-ads.ts` with `GET ?action=` handlers (`campaigns`, `keywords`, `performance`, `recommendations`, `weekly-report`, `auto-optimize`) and `POST ?action=` handlers (`update-budget`, `update-keyword-bid`, `add-negative-keyword`, `optimize-with-notion-data`, `execute-optimizations`). Auth is OAuth2 via the Google Ads refresh token.
+- `/api/google-ads-integration` combines Notion and GA4 data for recommendations. Its `integration-status` check currently looks for `NOTION_TOKEN`; make sure to set that or update the code to use `NOTION_API_KEY` before relying on it.
+- `/api/whatsapp/webhook` handles the Business API challenge/response using `WHATSAPP_WEBHOOK_VERIFY_TOKEN` and processes inbound messages (tracking hooks live in `lib/analytics.ts`). `/api/debug-env` is a lightweight Notion credential validator.
+- Supporting analytics utilities live in `lib/analytics.ts` (GA4 events require `NEXT_PUBLIC_GA_TRACKING_ENABLED=true`) and `lib/pagespeed.ts` (needs `NEXT_PUBLIC_PAGESPEED_API_KEY`).
 
 ## Open Items / Nice‑to‑haves
 - Add small tooltips/modifiers under the Window card (Detached +£5, etc.).

@@ -21,6 +21,9 @@ type Props = {
   ctaText?: string
   ctaHref?: string
   specialty?: string
+  process?: string[]
+  equipment?: string[]
+  guarantee?: string
 }
 
 export default function InteractiveServiceCard({ 
@@ -34,13 +37,17 @@ export default function InteractiveServiceCard({
   frequency,
   ctaText = "Book Now",
   ctaHref = "/get-in-touch",
-  specialty
+  specialty,
+  process = [],
+  equipment = [],
+  guarantee
 }: Props) {
   const [isHovered, setIsHovered] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
 
   return (
     <div 
-      className={`service-card group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-brand-red/10`}
+      className={`service-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-brand-red/10`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -61,6 +68,12 @@ export default function InteractiveServiceCard({
           
           {/* Minimal gradient overlay for better image visibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+
+          {specialty && (
+            <div className="absolute left-4 top-4 rounded-full bg-brand-red/90 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow-lg">
+              {specialty}
+            </div>
+          )}
         </div>
       )}
 
@@ -75,15 +88,23 @@ export default function InteractiveServiceCard({
           </div>
           {price && (
             <div className="ml-4 text-right">
-              <span className="text-lg font-bold text-brand-red">{price}</span>
+              <span className="text-sm font-semibold uppercase tracking-wide text-brand-red whitespace-nowrap">
+                {price}
+              </span>
             </div>
           )}
         </div>
 
         {/* Description */}
-        <p className="text-sm text-white/80 leading-relaxed mb-4">
+        <p className="text-sm text-white/80 leading-relaxed mb-2">
           {description}
         </p>
+
+        {frequency && (
+          <p className="mb-4 text-xs font-semibold tracking-wide text-brand-red/80">
+            Suggested schedule: {frequency}
+          </p>
+        )}
 
         {/* Benefits with icons */}
         {benefits.length > 0 && (
@@ -105,19 +126,70 @@ export default function InteractiveServiceCard({
           </div>
         )}
 
+        {/* Details toggle + action */}
+        <div className="mt-auto space-y-3">
+          {(longDescription || process.length > 0 || equipment.length > 0 || guarantee) && (
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowDetails((prev) => !prev)}
+                className="text-sm font-semibold text-brand-red transition-colors hover:text-brand-red/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                aria-expanded={showDetails}
+              >
+                {showDetails ? 'Hide detailed breakdown' : 'View service breakdown'}
+              </button>
 
-        {/* Action buttons */}
-        <div className="flex items-center gap-3 mt-auto">
-          <Button 
-            href={ctaHref}
-            variant="primary"
-            className={`flex-1 transform transition-all duration-300 ${
-              isHovered ? 'scale-105 shadow-lg shadow-brand-red/20' : 'scale-100'
-            }`}
-          >
-            {ctaText}
-          </Button>
-          
+              {showDetails && (
+                <div className="mt-4 space-y-6 rounded-xl border border-white/10 bg-black/20 p-4">
+                  {longDescription && (
+                    <p className="text-sm text-white/80 leading-relaxed">
+                      {longDescription}
+                    </p>
+                  )}
+
+                  {process.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold uppercase tracking-wide text-white/70 mb-2">How we work</h4>
+                      <ol className="space-y-1 text-sm text-white/70 list-decimal list-inside">
+                        {process.slice(0, 5).map((step, index) => (
+                          <li key={index}>{step}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
+
+                  {equipment.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold uppercase tracking-wide text-white/70 mb-2">Best suited for</h4>
+                      <ul className="space-y-1 text-sm text-white/70 list-disc list-inside">
+                        {equipment.slice(0, 5).map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {guarantee && (
+                    <div className="rounded-lg bg-white/5 p-3 text-sm text-white/80 border border-white/10">
+                      <span className="font-semibold text-white">Our Guarantee:</span> {guarantee}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="flex items-center gap-3">
+            <Button 
+              href={ctaHref}
+              variant="primary"
+              className={`flex-1 transform transition-all duration-300 ${
+                isHovered ? 'scale-105 shadow-lg shadow-brand-red/20' : 'scale-100'
+              }`}
+            >
+              {ctaText}
+            </Button>
+          </div>
         </div>
 
         {/* Hover effect indicator */}
@@ -128,4 +200,3 @@ export default function InteractiveServiceCard({
     </div>
   )
 }
-

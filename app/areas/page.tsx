@@ -1,6 +1,8 @@
 import Section from '@/components/Section'
 import Button from '@/components/Button'
 import PostcodeChecker from '@/components/PostcodeChecker'
+import AreaCombobox from '@/components/AreaCombobox'
+import { POSTCODE_AREAS, FLATTENED_AREAS, buildAreaDomId } from '@/content/service-areas'
 
 export const metadata = {
   title: 'Areas We Cover | Somerset Window Cleaning Service Areas',
@@ -9,76 +11,6 @@ export const metadata = {
 }
 
 // Organized by postcode prefix for clarity
-const postcodeAreas = {
-  "BA": {
-    name: "Bath & East Somerset",
-    color: "from-white/10 to-white/5",
-    borderColor: "border-brand-red/20",
-    iconColor: "text-brand-red",
-    areas: [
-      { code: "BA3", town: "Radstock", keywords: "Midsomer Norton, Paulton" },
-      { code: "BA4", town: "Shepton Mallet", keywords: "Pilton, Croscombe" },
-      { code: "BA5", town: "Wells", keywords: "Cathedral City, Coxley, Wookey" },
-      { code: "BA6", town: "Glastonbury", keywords: "Street, Meare, Ashcott" },
-      { code: "BA7", town: "Castle Cary", keywords: "Ansford, Galhampton" },
-      { code: "BA8", town: "Templecombe", keywords: "Abbas Combe, Henstridge" },
-      { code: "BA9", town: "Wincanton", keywords: "Bayford, Stoke Trister" },
-      { code: "BA10", town: "Bruton", keywords: "Pitcombe, Cole" },
-      { code: "BA11", town: "Frome", keywords: "Westbury, Warminster" },
-      { code: "BA16", town: "Street", keywords: "Walton, Butleigh" },
-      { code: "BA20/21/22", town: "Yeovil", keywords: "All areas - West, Central, East, Preston, Mudford" }
-    ]
-  },
-  "BS": {
-    name: "Bristol & North Somerset",
-    color: "from-white/10 to-white/5",
-    borderColor: "border-white/20",
-    iconColor: "text-white/90",
-    areas: [
-      { code: "BS21", town: "Clevedon", keywords: "Walton Bay, Court House" },
-      { code: "BS22/23/24", town: "Weston-super-Mare", keywords: "All areas - Worle, Milton, Town Centre, Hillside" },
-      { code: "BS25", town: "Winscombe", keywords: "Churchill, Sandford" },
-      { code: "BS26", town: "Axbridge", keywords: "Cross, Compton Bishop" },
-      { code: "BS27", town: "Cheddar", keywords: "Draycott, Rodney Stoke" },
-      { code: "BS28", town: "Wedmore", keywords: "Theale, Blackford" },
-      { code: "BS29", town: "Banwell", keywords: "Locking, Hutton" },
-      { code: "BS39", town: "Clutton", keywords: "Temple Cloud, Farrington" },
-      { code: "BS40", town: "Chew Valley", keywords: "Blagdon, Ubley" },
-      { code: "BS49", town: "Wrington", keywords: "Redhill, Langford" }
-    ]
-  },
-  "TA": {
-    name: "Taunton & West Somerset",
-    color: "from-white/10 to-white/5",
-    borderColor: "border-brand-red/30",
-    iconColor: "text-brand-red/80",
-    areas: [
-      { code: "TA2", town: "Taunton", keywords: "County Town, Priorswood" },
-      { code: "TA6/7", town: "Bridgwater", keywords: "All areas - North, South, Hamp, Eastover, Wembdon" },
-      { code: "TA8", town: "Burnham-on-Sea", keywords: "Highbridge, Berrow" },
-      { code: "TA9", town: "Highbridge", keywords: "West Huntspill, Watchfield" },
-      { code: "TA10", town: "Langport", keywords: "Huish Episcopi, Long Sutton" },
-      { code: "TA11", town: "Somerton", keywords: "Long Sutton, Kingsdon" },
-      { code: "TA12", town: "Martock", keywords: "South Petherton, Ash" },
-      { code: "TA13", town: "South Petherton", keywords: "Seavington, Shepton" },
-      { code: "TA14", town: "Stoke-sub-Hamdon", keywords: "Norton, Chiselborough" },
-      { code: "TA18", town: "Crewkerne", keywords: "Misterton, Haselbury" },
-      { code: "TA19", town: "Ilminster", keywords: "Dowlish, Donyatt" },
-      { code: "TA20", town: "Chard", keywords: "Tatworth, Forton" },
-      { code: "TA21", town: "Wellington", keywords: "Rockwell Green, West Buckland" }
-    ]
-  },
-  "DT": {
-    name: "Dorset Border",
-    color: "from-white/10 to-white/5",
-    borderColor: "border-white/15",
-    iconColor: "text-white/70",
-    areas: [
-      { code: "DT9", town: "Sherborne", keywords: "Milborne Port, Bishops Caundle" }
-    ]
-  }
-}
-
 export default function AreasPage() {
   return (
     <div className="py-16 md:py-20">
@@ -104,7 +36,7 @@ export default function AreasPage() {
         <div className="mb-12 text-center">
           <h3 className="text-xl font-bold text-white mb-4">Our Coverage by Postcode Area</h3>
           <div className="inline-flex flex-wrap gap-3 justify-center">
-            {Object.entries(postcodeAreas).map(([prefix, data]) => (
+            {Object.entries(POSTCODE_AREAS).map(([prefix, data]) => (
               <div 
                 key={prefix}
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${data.color} border ${data.borderColor}`}
@@ -118,11 +50,11 @@ export default function AreasPage() {
 
         {/* Postcode Areas Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {Object.entries(postcodeAreas).map(([prefix, data]) => (
-            <div 
-              key={prefix} 
-              className={`rounded-xl border ${data.borderColor} bg-gradient-to-br ${data.color} backdrop-blur-sm overflow-hidden`}
-            >
+            {Object.entries(POSTCODE_AREAS).map(([prefix, data]) => (
+              <div 
+                key={prefix} 
+                className={`rounded-xl border ${data.borderColor} bg-gradient-to-br ${data.color} backdrop-blur-sm overflow-hidden`}
+              >
               {/* Header */}
               <div className="p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
@@ -145,6 +77,7 @@ export default function AreasPage() {
                   {data.areas.map((area) => (
                     <div 
                       key={area.code}
+                      id={buildAreaDomId(prefix, area.code)}
                       className="group flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-200"
                     >
                       <div className={`font-mono font-bold ${data.iconColor} bg-white/10 px-2 py-1 rounded text-xs min-w-[80px] text-center`}>
@@ -201,6 +134,15 @@ export default function AreasPage() {
               </ul>
             </div>
           </div>
+        </div>
+
+        {/* Area search combobox */}
+        <div className="mt-12">
+          <h3 className="text-lg font-bold text-white mb-4 text-center">Find your town or postcode</h3>
+          <p className="text-center text-sm text-white/70 mb-6 max-w-2xl mx-auto">
+            Start typing to jump straight to your area or view dedicated local pages where available.
+          </p>
+          <AreaCombobox areas={FLATTENED_AREAS} containerClassName="mx-auto" />
         </div>
 
       </Section>

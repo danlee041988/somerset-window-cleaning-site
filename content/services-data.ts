@@ -9,6 +9,7 @@ export const servicesData = [
       { icon: "•", text: "No need to be home" },
       { icon: "•", text: "Satisfaction guarantee" }
     ],
+    frequency: "Every 4–8 weeks",
     process: [
       "Initial assessment of property and access requirements",
       "Set up pure water system and safety equipment",
@@ -38,6 +39,7 @@ export const servicesData = [
       { icon: "•", text: "Before & after photos" },
       { icon: "•", text: "Prevents water damage" }
     ],
+    frequency: "Once or twice per year",
     process: [
       "Comprehensive gutter inspection and assessment",
       "Position high-reach vacuum equipment safely",
@@ -66,6 +68,7 @@ export const servicesData = [
       { icon: "•", text: "Seal-safe cleaning" },
       { icon: "•", text: "Eco-friendly methods" }
     ],
+    frequency: "Recommended every 12 months",
     process: [
       "Detailed inspection of conservatory structure",
       "Apply specialized biodegradable treatments",
@@ -79,7 +82,7 @@ export const servicesData = [
       "Improves appearance"
     ],
     guarantee: "Warranty-safe cleaning guarantee. We protect all seals and coatings while dramatically improving clarity and light transmission.",
-    price: "Price on application",
+    price: "Custom quote",
     specialty: "Specialist",
     ctaText: "Book Conservatory Cleaning",
     ctaHref: "/get-in-touch?service=conservatory-cleaning"
@@ -94,6 +97,7 @@ export const servicesData = [
       { icon: "•", text: "Warranty-safe cleaning methods" },
       { icon: "•", text: "Improved return on investment" }
     ],
+    frequency: "Quarterly or bi-annually",
     process: [
       "Safety assessment and panel inspection",
       "Set up specialized solar panel equipment",
@@ -109,7 +113,7 @@ export const servicesData = [
       "Digital efficiency monitoring tools"
     ],
     guarantee: "Warranty protection guarantee. Our methods are approved by all major solar panel manufacturers and will not void your warranty.",
-    price: "Price on application",
+    price: "Custom quote",
     specialty: "High-Tech",
     ctaText: "Book Solar Panel Cleaning",
     ctaHref: "/get-in-touch?service=solar-cleaning"
@@ -124,6 +128,7 @@ export const servicesData = [
       { icon: "•", text: "Removes stubborn weathering stains" },
       { icon: "•", text: "Cost-effective exterior refresh" }
     ],
+    frequency: "Ideal every 12–18 months",
     process: [
       "Assessment of PVC condition and staining",
       "Pre-treatment of stubborn stains",
@@ -153,6 +158,7 @@ export const servicesData = [
       { icon: "•", text: "RAMS documentation provided" },
       { icon: "•", text: "Minimal disruption to operations" }
     ],
+    frequency: "Tailored maintenance plans",
     process: [
       "Site survey and risk assessment (RAMS)",
       "Flexible scheduling to suit business hours",
@@ -168,7 +174,7 @@ export const servicesData = [
       "Documentation and reporting systems"
     ],
     guarantee: "Professional service guarantee. Full RAMS documentation, comprehensive insurance, and commitment to minimal business disruption.",
-    price: "Price on application",
+    price: "Custom quote",
     specialty: "Business",
     ctaText: "Book Commercial Cleaning",
     ctaHref: "/get-in-touch?service=commercial-cleaning"
