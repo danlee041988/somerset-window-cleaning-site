@@ -13,7 +13,6 @@ export const GALLERY_IMAGES = [
   "/images/photos/DJI_0070.JPG",
   "/images/photos/DJI_0092.JPG",
   "/images/photos/IMG_0880.jpeg",
-  "/images/photos/photo02.jpg",
   "/images/photos/photo05.jpg",
   "/images/photos/photo09.jpg",
   "/images/photos/photo12.jpg"

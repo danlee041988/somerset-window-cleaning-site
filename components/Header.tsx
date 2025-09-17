@@ -138,18 +138,15 @@ export default function Header() {
             <nav className="flex items-center gap-4 xl:gap-6 text-sm">
               <Link href="/services" className="text-white/80 hover:text-white transition-colors">Services</Link>
               <Link href="/areas" className="text-white/80 hover:text-white transition-colors">Areas</Link>
-              <Link href="/pricing" className="text-white/80 hover:text-white transition-colors">Pricing</Link>
               <Link href="/gallery" className="text-white/80 hover:text-white transition-colors">Gallery</Link>
               
               {/* Dynamic Call/Phone Button */}
               <HeaderCallButton />
               
-              <div className="relative inline-flex flex-col items-center gap-1 px-4 py-2 bg-[var(--brand-red)] text-white font-bold rounded-lg hover:opacity-90 transition-all duration-300 hover:scale-105 shadow-lg ml-2">
-                <a href="/get-in-touch" className="flex items-center gap-2">
-                  <span>BOOK NOW</span>
-                </a>
+              <a href="/get-in-touch" className="relative inline-flex flex-col items-center gap-1 px-4 py-2 bg-[var(--brand-red)] text-white font-bold rounded-lg hover:opacity-90 transition-all duration-300 hover:scale-105 shadow-lg ml-2">
+                <span>BOOK NOW</span>
                 <div className="text-xs opacity-80">Free Quotes</div>
-              </div>
+              </a>
             </nav>
           </div>
           
@@ -216,7 +213,6 @@ export default function Header() {
             <div className="grid gap-4 text-lg">
               <Link href="/services" onClick={() => setOpen(false)} className="text-white/90 hover:text-white transition-colors py-2 border-b border-white/10">Services</Link>
               <Link href="/areas" onClick={() => setOpen(false)} className="text-white/90 hover:text-white transition-colors py-2 border-b border-white/10">Areas We Cover</Link>
-              <Link href="/pricing" onClick={() => setOpen(false)} className="text-white/90 hover:text-white transition-colors py-2 border-b border-white/10">Pricing Guide</Link>
               <Link href="/gallery" onClick={() => setOpen(false)} className="text-white/90 hover:text-white transition-colors py-2 border-b border-white/10">Gallery</Link>
               <Link href="/team" onClick={() => setOpen(false)} className="text-white/90 hover:text-white transition-colors py-2 border-b border-white/10">Meet the Team</Link>
               

@@ -4,7 +4,10 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import emailjs from '@emailjs/browser'
 import ReCaptcha from './ReCaptcha'
+import AddressAutocomplete from './AddressAutocomplete'
 import { analytics } from '@/lib/analytics'
+import { validateAddress, getServiceAreaInfo, type AddressValidationResult } from '@/lib/google-maps'
+import { sendBookingConfirmation, validateWhatsAppNumber } from '@/lib/whatsapp-business'
 
 type CustomerType = 'new' | 'existing'
 
@@ -13,7 +16,7 @@ type FormValues = {
   last_name: string
   email: string
   mobile: string
-  postcode: string
+  property_address: string
   preferred_contact: 'Email' | 'Phone'
   
   // Property information (especially for new customers)
@@ -30,6 +33,9 @@ type FormValues = {
   
   // Additional message
   message?: string
+  
+  // Photo uploads
+  customer_photos?: FileList
   
   // Hidden fields for EmailJS
   customer_type?: CustomerType
@@ -154,7 +160,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     formState: { errors, isSubmitting } 
   } = useForm<FormValues>({
     defaultValues: { 
-      postcode: defaultPostcode ? formatPostcode(defaultPostcode) : '',
+      property_address: defaultPostcode || '',
       preferred_contact: 'Email', 
       services: getServiceName(defaultService),
       frequency: '8-weeks',
@@ -164,10 +170,21 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     }
   })
   
-  // Handler for postcode input formatting
-  const handlePostcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPostcode(e.target.value)
-    setValue('postcode', formatted)
+  // Handler for address change from AddressAutocomplete component
+  const handleAddressChange = (address: string) => {
+    setValue('property_address', address)
+  }
+
+  // Handler for address validation result from AddressAutocomplete
+  const handleAddressValidation = (validation: AddressValidationResult) => {
+    setAddressValidation(validation)
+    
+    // Track service area analytics
+    if (validation.inServiceArea) {
+      analytics.trackCustomEvent('address_validated', 'Contact Form', 'Service Area Confirmed', 1)
+    } else {
+      analytics.trackCustomEvent('address_validated', 'Contact Form', 'Outside Service Area', 0)
+    }
   }
 
   // Pricing calculation function
@@ -242,9 +259,16 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
   const [status, setStatus] = React.useState<'idle' | 'success' | 'error'>('idle')
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
   const [formStarted, setFormStarted] = React.useState<boolean>(false)
+  const [addressValidation, setAddressValidation] = React.useState<AddressValidationResult | null>(null)
+  const [validatingAddress, setValidatingAddress] = React.useState<boolean>(false)
+  const [whatsappOptIn, setWhatsappOptIn] = React.useState<boolean>(false)
+  const [whatsappValidation, setWhatsappValidation] = React.useState<{ isValid: boolean; error?: string } | null>(null)
+  const [uploadedPhotos, setUploadedPhotos] = React.useState<File[]>([])
+  const [photoUploadError, setPhotoUploadError] = React.useState<string | null>(null)
   const start = React.useRef<number>(Date.now())
 
-  const selectedServices = watch('services') || []
+  const watchedServices = watch('services')
+  const selectedServices = React.useMemo(() => watchedServices || [], [watchedServices])
   const preferredContact = watch('preferred_contact')
   const selectedFrequency = watch('frequency')
   const customerType = watch('customer_type') || 'new'
@@ -260,6 +284,17 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     }
   }, [formStarted, firstService])
 
+  // WhatsApp phone number validation
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phoneNumber = e.target.value
+    if (phoneNumber && phoneNumber.length >= 10) {
+      const validation = validateWhatsAppNumber(phoneNumber)
+      setWhatsappValidation(validation)
+    } else {
+      setWhatsappValidation(null)
+    }
+  }
+
   // reCAPTCHA handlers
   const handleRecaptchaChange = (token: string | null) => {
     console.log('reCAPTCHA token received:', token ? 'Valid token received' : 'No token/token cleared')
@@ -274,6 +309,42 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     setRecaptchaToken(null)
     setError('recaptcha', { type: 'manual', message: 'reCAPTCHA expired, please try again' })
     analytics.recaptchaError('expired')
+  }
+
+  // Photo upload handlers
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    setPhotoUploadError(null)
+    
+    // Validation
+    const maxFiles = 5
+    const maxSize = 10 * 1024 * 1024 // 10MB per file
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic']
+    
+    if (uploadedPhotos.length + files.length > maxFiles) {
+      setPhotoUploadError(`Maximum ${maxFiles} photos allowed`)
+      return
+    }
+    
+    for (const file of files) {
+      if (file.size > maxSize) {
+        setPhotoUploadError(`File "${file.name}" is too large. Maximum size is 10MB per photo.`)
+        return
+      }
+      
+      if (!allowedTypes.includes(file.type)) {
+        setPhotoUploadError(`File "${file.name}" is not a supported image format. Please use JPG, PNG, WebP, or HEIC.`)
+        return
+      }
+    }
+    
+    setUploadedPhotos(prev => [...prev, ...files])
+    analytics.trackCustomEvent('photos_uploaded', 'Contact Form', 'Photo Upload', files.length)
+  }
+  
+  const removePhoto = (index: number) => {
+    setUploadedPhotos(prev => prev.filter((_, i) => i !== index))
+    analytics.trackCustomEvent('photo_removed', 'Contact Form', 'Photo Removed', 1)
   }
 
   // Set hidden timestamp fields
@@ -327,6 +398,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     // Map form data to EmailJS template fields
     ensureHidden('name', fullName)
     ensureHidden('phone', values.mobile)
+    ensureHidden('property_address', values.property_address)
     ensureHidden('services_list', values.services.join(', '))
     ensureHidden('property_type_field', values.property_type)
     ensureHidden('property_bedrooms', values.bedrooms)
@@ -340,7 +412,89 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     ensureHidden('recaptcha_token', recaptchaToken)
 
     try {
-      await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY)
+      // Upload photos to Notion first if any
+      let uploadedFileIds: string[] = []
+      if (uploadedPhotos.length > 0) {
+        console.log(`📸 Uploading ${uploadedPhotos.length} photos to Notion...`)
+        
+        try {
+          const photoUploadPromises = uploadedPhotos.map(async (photo) => {
+            const formData = new FormData()
+            formData.append('file', photo)
+            formData.append('filename', photo.name)
+            
+            const response = await fetch('/api/upload-photo', {
+              method: 'POST',
+              body: formData
+            })
+            
+            if (!response.ok) {
+              throw new Error(`Failed to upload ${photo.name}`)
+            }
+            
+            const result = await response.json()
+            return result.fileUploadId
+          })
+          
+          uploadedFileIds = await Promise.all(photoUploadPromises)
+          console.log(`✅ Successfully uploaded ${uploadedFileIds.length} photos`)
+        } catch (photoError) {
+          console.warn('⚠️ Photo upload failed:', photoError)
+          // Continue with form submission even if photos fail
+        }
+      }
+      
+      // Send to both EmailJS and Notion in parallel
+      const [emailResult, notionResult] = await Promise.allSettled([
+        // EmailJS submission
+        emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY),
+        
+        // Notion submission
+        fetch('/api/notion-direct', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: values.first_name,
+            lastName: values.last_name,
+            email: values.email,
+            phone: values.mobile,
+            postcode: values.property_address,
+            propertyType: values.property_type,
+            propertySize: values.bedrooms,
+            services: values.services,
+            frequency: values.frequency,
+            customerType: customerType,
+            message: values.message,
+            preferredContact: values.preferred_contact,
+            hasExtension: values.has_extension,
+            hasConservatory: values.has_conservatory,
+            propertyNotes: values.property_notes,
+            whatsappOptIn: whatsappOptIn,
+            addressValidation: addressValidation,
+            calculatedPrice: hasWindowCleaning ? calculateWindowCleaningPrice() : null,
+            customerPhotos: uploadedFileIds
+          })
+        }).then(res => res.json())
+      ])
+
+      // Check EmailJS result (critical)
+      if (emailResult.status === 'rejected') {
+        throw new Error('Email submission failed')
+      }
+
+      // Log Notion result (non-critical)
+      if (notionResult.status === 'fulfilled') {
+        const notionData = notionResult.value
+        if (notionData.success) {
+          console.log('✅ Customer created in Notion:', notionData.customerId)
+        } else if (!notionData.skipError) {
+          console.warn('⚠️ Notion submission failed:', notionData.error)
+        }
+      } else {
+        console.warn('⚠️ Notion request failed:', notionResult.reason)
+      }
       
       // Track successful form submission
       analytics.formSubmit({
@@ -349,12 +503,38 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
         customerType: customerType,
         email: values.email
       })
+
+      // Send WhatsApp confirmation if opted in
+      if (whatsappOptIn && whatsappValidation?.isValid && whatsappValidation.formattedNumber) {
+        try {
+          const confirmationCode = `SWC-${Date.now().toString(36).toUpperCase()}`
+          const success = await sendBookingConfirmation({
+            customerName: fullName,
+            customerPhone: whatsappValidation.formattedNumber,
+            serviceType: values.services?.[0] || 'Window Cleaning',
+            appointmentDate: 'To be scheduled',
+            appointmentTime: 'To be confirmed',
+            propertyAddress: values.property_address,
+            confirmationCode,
+            estimatedDuration: 120,
+          })
+          
+          if (success) {
+            console.log('✅ WhatsApp confirmation sent')
+            analytics.trackCustomEvent('whatsapp_sent', 'Contact Form', 'Booking Confirmation', 1)
+          }
+        } catch (error) {
+          console.warn('WhatsApp confirmation failed:', error)
+          // Don't fail the form submission for WhatsApp issues
+        }
+      }
       
       setStatus('success')
       setRecaptchaToken(null) // Reset reCAPTCHA
+      setUploadedPhotos([]) // Clear uploaded photos
       reset()
     } catch (e) {
-      console.error('EmailJS Error:', e)
+      console.error('Form submission error:', e)
       
       // Track form error
       analytics.formError('submission_failed', e instanceof Error ? e.message : 'Unknown error')
@@ -530,31 +710,62 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                     pattern: {
                       value: /^(\+44|0)[0-9\s-()]{10,}$/,
                       message: 'Please enter a valid UK mobile number'
-                    }
+                    },
+                    onChange: handlePhoneChange
                   })}
                 />
                 {errors.mobile && <p className="mt-1 text-xs text-red-400">{errors.mobile.message}</p>}
+                
+                {/* WhatsApp validation feedback */}
+                {whatsappValidation && (
+                  <div className={`mt-2 p-2 rounded-lg text-xs ${
+                    whatsappValidation.isValid 
+                      ? 'bg-green-500/10 text-green-400 border border-green-500/30' 
+                      : 'bg-orange-500/10 text-orange-400 border border-orange-500/30'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      {whatsappValidation.isValid ? (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span>✅ WhatsApp compatible number</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01" />
+                          </svg>
+                          <span>{whatsappValidation.error}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-white/90 mb-2">
-                  Postcode *
+                  Property Address *
                 </label>
+                <AddressAutocomplete
+                  value={watch('property_address') || ''}
+                  onChange={handleAddressChange}
+                  onAddressSelect={handleAddressValidation}
+                  placeholder="Start typing your full address..."
+                  required
+                />
+                {errors.property_address && <p className="mt-1 text-xs text-red-400">{errors.property_address.message}</p>}
                 <input
-                  type="text"
-                  className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/5 text-white placeholder-white/50 focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 focus:outline-none transition-colors"
-                  placeholder="BA16 0HW"
-                  maxLength={8}
-                  {...register('postcode', { 
-                    required: 'Postcode is required',
-                    pattern: {
-                      value: /^[A-Z]{1,2}[0-9][A-Z0-9]?\s?[0-9][A-Z]{2}$/i,
-                      message: 'Please enter a valid UK postcode'
-                    },
-                    onChange: handlePostcodeChange
+                  type="hidden"
+                  {...register('property_address', { 
+                    required: 'Property address is required',
+                    minLength: {
+                      value: 10,
+                      message: 'Please enter a complete address including postcode'
+                    }
                   })}
                 />
-                {errors.postcode && <p className="mt-1 text-xs text-red-400">{errors.postcode.message}</p>}
               </div>
 
               <div>
@@ -583,6 +794,45 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                 </div>
               </div>
             </div>
+
+            {/* WhatsApp Opt-in Section */}
+            {whatsappValidation?.isValid && (
+              <div className="mt-6">
+                <div className="rounded-lg border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-500/5 p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <label className="flex items-start gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={whatsappOptIn}
+                          onChange={(e) => setWhatsappOptIn(e.target.checked)}
+                          className="mt-1 accent-green-500 scale-110"
+                        />
+                        <div>
+                          <div className="text-white font-medium mb-1">
+                            📱 Get instant updates via WhatsApp
+                          </div>
+                          <div className="text-white/80 text-sm mb-2">
+                            Receive booking confirmations, appointment reminders, and service updates directly on WhatsApp.
+                          </div>
+                          <div className="text-white/60 text-xs">
+                            ✅ Instant notifications • ✅ Before & after photos • ✅ Easy rescheduling • ✅ Payment links
+                          </div>
+                          <div className="text-white/50 text-xs mt-1">
+                            Optional - You can opt out anytime by replying STOP
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Property Information - Only for new customers */}
@@ -872,6 +1122,90 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
             />
           </div>
 
+          {/* Photo Upload Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <svg className="w-5 h-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Upload Photos
+              <span className="text-xs text-white/60 font-normal">(optional)</span>
+            </h3>
+            
+            <div className="space-y-3">
+              <p className="text-sm text-white/80">
+                📸 Help us provide a more accurate quote by uploading photos of your property, specific areas of concern, or damage that needs attention.
+              </p>
+              
+              {/* File Upload Input */}
+              <div className="relative">
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/30 rounded-lg cursor-pointer bg-white/5 hover:bg-white/10 hover:border-brand-red/50 transition-all duration-200">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg className="w-8 h-8 mb-2 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p className="mb-1 text-sm text-white/90">
+                      <span className="font-semibold">Click to upload photos</span> or drag and drop
+                    </p>
+                    <p className="text-xs text-white/60">
+                      JPG, PNG, WebP or HEIC up to 10MB each (max 5 photos)
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/heic"
+                    className="hidden"
+                    onChange={handlePhotoUpload}
+                    {...register('customer_photos')}
+                  />
+                </label>
+              </div>
+              
+              {/* Photo Upload Error */}
+              {photoUploadError && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+                  ⚠️ {photoUploadError}
+                </div>
+              )}
+              
+              {/* Uploaded Photos Preview */}
+              {uploadedPhotos.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium text-white/90">
+                    Uploaded Photos ({uploadedPhotos.length}/5)
+                  </h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                    {uploadedPhotos.map((photo, index) => (
+                      <div key={index} className="relative group">
+                        <div className="aspect-square rounded-lg overflow-hidden bg-white/10 border border-white/20">
+                          <img
+                            src={URL.createObjectURL(photo)}
+                            alt={`Uploaded photo ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removePhoto(index)}
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                        >
+                          ×
+                        </button>
+                        <div className="mt-1 text-xs text-white/60 truncate">
+                          {photo.name}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-white/60">
+                    💡 <strong>Tip:</strong> Photos showing property size, window access, and specific areas help us provide the most accurate quote.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Hidden Fields for EmailJS */}
           <input type="hidden" {...register('customer_type')} />
           <input type="hidden" {...register('submission_date')} />
@@ -917,7 +1251,11 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
             <button
               type="submit"
               disabled={isSubmitting || !recaptchaToken}
-              className="w-full px-8 py-4 bg-gradient-to-r from-brand-red to-brand-red/90 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-brand-red/25 transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className={`w-full px-8 py-4 font-semibold rounded-xl shadow-lg transition-all duration-300 ${
+                isSubmitting || !recaptchaToken
+                  ? 'bg-gray-600 text-gray-300 cursor-not-allowed opacity-60'
+                  : 'bg-gradient-to-r from-brand-red to-brand-red/90 text-white hover:shadow-xl hover:shadow-brand-red/25 hover:scale-105 active:scale-95'
+              }`}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
@@ -931,10 +1269,19 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
-                  {!recaptchaToken ? 'Complete reCAPTCHA to Send' : 'Send My Message'}
+                  {!recaptchaToken ? '🔒 Complete reCAPTCHA to Send' : '✅ Send My Message'}
                 </span>
               )}
             </button>
+            
+            {!recaptchaToken && (
+              <p className="mt-2 text-sm text-yellow-400 text-center flex items-center justify-center gap-1">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                Please complete the reCAPTCHA verification above to send your message
+              </p>
+            )}
             
             {status === 'error' && (
               <p className="mt-4 text-sm text-red-400 text-center">

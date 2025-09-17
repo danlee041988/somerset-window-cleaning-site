@@ -29,3 +29,5 @@ service-account-key.json
 cleanshot-analysis-*.md
 performance-report-*.md
 performance-data-*.json
+google-ads-credentials.json
+*-credentials.json
