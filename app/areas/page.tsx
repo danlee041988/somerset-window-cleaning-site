@@ -203,51 +203,6 @@ export default function AreasPage() {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className="text-center p-8 rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-transparent">
-          <h3 className="text-xl font-bold text-white mb-3">Ready to Book?</h3>
-          <p className="text-white/80 mb-6 max-w-2xl mx-auto">
-            Found your area? Get your free quote today. Not listed? Call us - we&apos;re always expanding our coverage!
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button href="/get-in-touch" variant="primary">
-              Get Your Free Quote
-            </Button>
-            <a 
-              href="tel:01458860339" 
-              className="inline-flex items-center justify-center rounded-md px-5 py-3 font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red disabled:opacity-60 disabled:cursor-not-allowed bg-transparent text-white hover:bg-white/10 active:scale-95 focus:ring-white border border-white/20"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              Call 01458 860339
-            </a>
-          </div>
-        </div>
-
-        {/* Trust Signals */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-4 text-sm text-white/70">
-          <span className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            45+ Towns Covered
-          </span>
-          <span className="hidden md:inline">•</span>
-          <span className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-            </svg>
-            4 Postcode Zones
-          </span>
-          <span className="hidden md:inline">•</span>
-          <span className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-            </svg>
-            Professional Local Team
-          </span>
-        </div>
       </Section>
     </div>
   )
