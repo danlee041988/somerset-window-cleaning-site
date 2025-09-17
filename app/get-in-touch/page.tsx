@@ -3,7 +3,7 @@
 import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Section from '@/components/Section'
-import ContactFormEnhanced from '@/components/ContactFormEnhanced'
+import ContactForm from '@/components/ContactForm'
 import BusinessHours from '@/components/BusinessHours'
 
 function GetInTouchContent() {
@@ -31,7 +31,7 @@ function GetInTouchContent() {
         )}
 
         {/* Contact Form */}
-        <ContactFormEnhanced 
+        <ContactForm 
           defaultPostcode={postcode || undefined}
           defaultService={service || undefined}
         />

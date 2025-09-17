@@ -5,11 +5,11 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import emailjs from '@emailjs/browser'
 import ReCaptcha from './ReCaptcha'
-import AddressAutocomplete from './AddressAutocomplete'
+import SimpleAddressInput from './SimpleAddressInput'
 import { FormField, FormInput, FormTextarea } from './form/FormField'
 import { FormErrorSummary, SubmissionError } from './form/FormErrorSummary'
 import { analytics } from '@/lib/analytics'
-import { validateAddress, getServiceAreaInfo, type AddressValidationResult } from '@/lib/google-maps'
+// Google Maps functionality temporarily removed for billing reasons
 import { sendBookingConfirmation, validateWhatsAppNumber } from '@/lib/whatsapp-business'
 import { 
   contactFormSchema, 
@@ -103,7 +103,7 @@ export default function ContactFormEnhanced({ defaultPostcode, defaultService }:
   const [submissionError, setSubmissionError] = React.useState<string | null>(null)
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
   const [formStarted, setFormStarted] = React.useState<boolean>(false)
-  const [addressValidation, setAddressValidation] = React.useState<AddressValidationResult | null>(null)
+  // Address validation temporarily disabled due to Google Maps billing requirements
   const [whatsappOptIn, setWhatsappOptIn] = React.useState<boolean>(false)
   const [whatsappValidation, setWhatsappValidation] = React.useState<{ isValid: boolean; error?: string; formattedNumber?: string } | null>(null)
   const [uploadedPhotos, setUploadedPhotos] = React.useState<File[]>([])
@@ -160,21 +160,10 @@ export default function ContactFormEnhanced({ defaultPostcode, defaultService }:
     }
   }, [mobileValue])
 
-  // Address change handler
+  // Address change handler (simplified without Google Maps validation)
   const handleAddressChange = (address: string) => {
     setValue('property_address', address)
     validateFieldInRealTime('property_address', address)
-  }
-
-  // Address validation result handler  
-  const handleAddressValidation = (validation: AddressValidationResult) => {
-    setAddressValidation(validation)
-    
-    if (validation.inServiceArea) {
-      analytics.trackCustomEvent('address_validated', 'Contact Form', 'Service Area Confirmed', 1)
-    } else {
-      analytics.trackCustomEvent('address_validated', 'Contact Form', 'Outside Service Area', 0)
-    }
   }
 
   // reCAPTCHA handlers
@@ -371,7 +360,6 @@ export default function ContactFormEnhanced({ defaultPostcode, defaultService }:
             hasConservatory: values.has_conservatory,
             propertyNotes: values.property_notes,
             whatsappOptIn: whatsappOptIn,
-            addressValidation: addressValidation,
             customerPhotos: uploadedFileIds
           })
         }).then(res => res.json())

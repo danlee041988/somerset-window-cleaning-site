@@ -2,7 +2,8 @@
 
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { validateAddress, type AddressValidationResult } from '@/lib/google-maps'
+// Google Maps functionality temporarily disabled for billing reasons
+// import { validateAddress, type AddressValidationResult } from '@/lib/google-maps'
 import { 
   getAvailableSlots, 
   bookAppointment, 
@@ -50,7 +51,8 @@ export default function AppointmentBooking({
   })
 
   const [step, setStep] = React.useState<'form' | 'slots' | 'confirmation'>('form')
-  const [addressValidation, setAddressValidation] = React.useState<AddressValidationResult | null>(null)
+  // Address validation temporarily disabled due to Google Maps billing requirements
+  // const [addressValidation, setAddressValidation] = React.useState<AddressValidationResult | null>(null)
   const [availableSlots, setAvailableSlots] = React.useState<AvailableSlot[]>([])
   const [selectedSlot, setSelectedSlot] = React.useState<AvailableSlot | null>(null)
   const [bookingResult, setBookingResult] = React.useState<any>(null)
@@ -66,7 +68,8 @@ export default function AppointmentBooking({
       if (propertyAddress && propertyAddress.length > 10) {
         setValidatingAddress(true)
         try {
-          const result = await validateAddress(propertyAddress)
+          // Address validation temporarily disabled
+          // const result = await validateAddress(propertyAddress)
           setAddressValidation(result)
           
           if (!result.inServiceArea) {

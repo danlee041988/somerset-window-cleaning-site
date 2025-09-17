@@ -141,7 +141,7 @@ export type ContactFormData = z.infer<typeof contactFormSchema>
 export const validateField = (fieldName: keyof ContactFormData, value: any, allData?: Partial<ContactFormData>) => {
   try {
     // Get the field schema
-    const fieldSchema = contactFormSchema.shape[fieldName]
+    const fieldSchema = (contactFormSchema as any).shape?.[fieldName]
     if (!fieldSchema) return { isValid: true }
 
     // For dependent validations, check the full object

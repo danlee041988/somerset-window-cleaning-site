@@ -105,7 +105,7 @@ export async function createNotionCustomer(data: NotionCustomerData) {
 
     // Add cleaning frequency if provided
     if (data.frequency) {
-      properties['Cleaning Frequency'] = {
+      (properties as any)['Cleaning Frequency'] = {
         select: {
           name: data.frequency.replace('-', ' ')
         }
@@ -114,7 +114,7 @@ export async function createNotionCustomer(data: NotionCustomerData) {
 
     // Add message if provided
     if (data.message) {
-      properties['Notes'] = {
+      (properties as any)['Notes'] = {
         rich_text: [
           {
             text: {
@@ -137,7 +137,7 @@ export async function createNotionCustomer(data: NotionCustomerData) {
     return {
       success: true,
       customerId: response.id,
-      url: response.url
+      url: (response as any).url
     }
 
   } catch (error) {

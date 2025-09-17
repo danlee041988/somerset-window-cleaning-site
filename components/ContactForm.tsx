@@ -4,9 +4,9 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import emailjs from '@emailjs/browser'
 import ReCaptcha from './ReCaptcha'
-import AddressAutocomplete from './AddressAutocomplete'
+import SimpleAddressInput from './SimpleAddressInput'
 import { analytics } from '@/lib/analytics'
-import { validateAddress, getServiceAreaInfo, type AddressValidationResult } from '@/lib/google-maps'
+// Google Maps functionality temporarily removed for billing reasons
 import { sendBookingConfirmation, validateWhatsAppNumber } from '@/lib/whatsapp-business'
 
 type CustomerType = 'new' | 'existing'
@@ -170,22 +170,12 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     }
   })
   
-  // Handler for address change from AddressAutocomplete component
+  // Handler for address change from SimpleAddressInput component
   const handleAddressChange = (address: string) => {
     setValue('property_address', address)
   }
 
-  // Handler for address validation result from AddressAutocomplete
-  const handleAddressValidation = (validation: AddressValidationResult) => {
-    setAddressValidation(validation)
-    
-    // Track service area analytics
-    if (validation.inServiceArea) {
-      // analytics.trackCustomEvent('address_validated', 'Contact Form', 'Service Area Confirmed', 1)
-    } else {
-      // analytics.trackCustomEvent('address_validated', 'Contact Form', 'Outside Service Area', 0)
-    }
-  }
+  // Address validation temporarily disabled due to Google Maps billing
 
   // Pricing calculation function
   const calculateWindowCleaningPrice = () => {
@@ -259,7 +249,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
   const [status, setStatus] = React.useState<'idle' | 'success' | 'error'>('idle')
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
   const [formStarted, setFormStarted] = React.useState<boolean>(false)
-  const [addressValidation, setAddressValidation] = React.useState<AddressValidationResult | null>(null)
+  // Address validation state removed due to Google Maps billing requirements
   const [validatingAddress, setValidatingAddress] = React.useState<boolean>(false)
   const [whatsappOptIn, setWhatsappOptIn] = React.useState<boolean>(false)
   const [whatsappValidation, setWhatsappValidation] = React.useState<{ isValid: boolean; error?: string } | null>(null)
@@ -472,7 +462,6 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
             hasConservatory: values.has_conservatory,
             propertyNotes: values.property_notes,
             whatsappOptIn: whatsappOptIn,
-            addressValidation: addressValidation,
             calculatedPrice: hasWindowCleaning ? calculateWindowCleaningPrice() : null,
             customerPhotos: uploadedFileIds
           })
@@ -510,7 +499,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
           const confirmationCode = `SWC-${Date.now().toString(36).toUpperCase()}`
           const success = await sendBookingConfirmation({
             customerName: fullName,
-            customerPhone: values.phone,
+            customerPhone: values.mobile,
             serviceType: values.services?.[0] || 'Window Cleaning',
             appointmentDate: 'To be scheduled',
             appointmentTime: 'To be confirmed',
@@ -748,11 +737,10 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                 <label className="block text-sm font-medium text-white/90 mb-2">
                   Property Address *
                 </label>
-                <AddressAutocomplete
+                <SimpleAddressInput
                   value={watch('property_address') || ''}
                   onChange={handleAddressChange}
-                  onAddressSelect={handleAddressValidation}
-                  placeholder="Start typing your full address..."
+                  placeholder="Enter your full address including postcode..."
                   required
                 />
                 {errors.property_address && <p className="mt-1 text-xs text-red-400">{errors.property_address.message}</p>}
@@ -1156,8 +1144,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                     multiple
                     accept="image/jpeg,image/jpg,image/png,image/webp,image/heic"
                     className="hidden"
-                    onChange={handlePhotoUpload}
-                    {...register('customer_photos')}
+                    {...register('customer_photos', { onChange: handlePhotoUpload })}
                   />
                 </label>
               </div>

@@ -356,7 +356,7 @@ class GoogleAdsClient {
     }, {} as Record<string, number>)
 
     const topServices = Object.entries(serviceDistribution)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([,a], [,b]) => (b as number) - (a as number))
       .slice(0, 3)
 
     topServices.forEach(([service, count]) => {
@@ -418,7 +418,7 @@ export async function automatedKeywordOptimization(customerId: string) {
   // Increase bids for high converters
   const highConverters = keywords.filter(k => 
     k.conversions > 2 && 
-    k.conversionRate > 0.05
+    (k as any).conversionRate > 0.05
   )
 
   for (const keyword of highConverters) {

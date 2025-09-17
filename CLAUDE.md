@@ -517,3 +517,47 @@ const variants = {
 - **Pricing**: No dedicated pricing page - pricing information integrated into service pages
 - **Business Workflow**: Notion database provides complete customer management with photos from inquiry to completion
 - **Photo Uploads**: Customers can upload up to 5 property photos (10MB each) for accurate quoting
+
+## Future Development Plan
+
+### Planned Features (Post MVP)
+These features have been temporarily disabled due to billing/complexity requirements but are planned for future implementation:
+
+#### Google Maps Integration (High Priority)
+- **Status**: Temporarily disabled for billing reasons
+- **Components Disabled**: 
+  - `AddressAutocomplete.tsx` → `AddressAutocomplete.tsx.disabled`
+  - `ServiceAreaMap.tsx` → `ServiceAreaMap.tsx.disabled`
+  - `AppointmentBooking.tsx` → `AppointmentBooking.tsx.disabled`
+  - `lib/google-maps.ts` → `lib/google-maps.ts.disabled`
+- **Features to Restore**:
+  - Address autocomplete with UK postcode validation
+  - Service area verification and mapping
+  - Distance-based pricing calculations
+  - Interactive service area maps
+  - Appointment booking with location validation
+- **Implementation Notes**:
+  - Requires Google Maps API key and billing setup
+  - Current fallback: SimpleAddressInput component for manual address entry
+  - Address validation currently disabled in contact forms
+  - Service area checking disabled - all addresses accepted
+
+#### Advanced Appointment Booking (Medium Priority)
+- **Status**: Component disabled pending Google Maps integration
+- **Features**:
+  - Real-time availability checking
+  - Calendar integration with service schedule
+  - Location-based appointment optimization
+  - Customer preference management
+
+#### Enhanced Analytics Dashboard (Low Priority)
+- **Features**: 
+  - Google Ads performance integration
+  - Customer journey tracking
+  - Service area heat maps
+  - Revenue forecasting
+
+### Technical Debt
+- **TypeScript**: Several `any` type assertions added during Google Maps removal - needs proper typing
+- **Component Cleanup**: Disabled components should be properly archived or removed
+- **Environment Variables**: Google Maps API key references should be cleaned up
