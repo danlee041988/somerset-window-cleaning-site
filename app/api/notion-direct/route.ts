@@ -193,9 +193,6 @@ export async function POST(request: NextRequest) {
     if (body.preferredContact) {
       serviceDetails.push(`Preferred contact method: ${body.preferredContact}`)
     }
-    if (body.whatsappOptIn) {
-      serviceDetails.push(`WhatsApp notifications: Yes`)
-    }
     if (body.calculatedPrice) {
       serviceDetails.push(`Estimated window cleaning price: £${body.calculatedPrice}`)
     }

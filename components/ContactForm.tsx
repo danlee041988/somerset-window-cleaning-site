@@ -7,7 +7,7 @@ import ReCaptcha from './ReCaptcha'
 import SimpleAddressInput from './SimpleAddressInput'
 import { analytics } from '@/lib/analytics'
 // Google Maps functionality temporarily removed for billing reasons
-import { sendBookingConfirmation, validateWhatsAppNumber } from '@/lib/whatsapp-business'
+// WhatsApp functionality removed by user request
 
 type CustomerType = 'new' | 'existing'
 
@@ -52,6 +52,15 @@ type FormValues = {
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
 const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || ''
 const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || ''
+
+// Log environment variable status
+if (typeof window !== 'undefined') {
+  console.log('EmailJS Environment Variables:', {
+    PUBLIC_KEY: PUBLIC_KEY ? '✓ Set' : '✗ Missing',
+    SERVICE_ID: SERVICE_ID ? '✓ Set' : '✗ Missing', 
+    TEMPLATE_ID: TEMPLATE_ID ? '✓ Set' : '✗ Missing'
+  })
+}
 
 const SERVICE_OPTIONS = [
   'Window Cleaning',
@@ -251,8 +260,6 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
   const [formStarted, setFormStarted] = React.useState<boolean>(false)
   // Address validation state removed due to Google Maps billing requirements
   const [validatingAddress, setValidatingAddress] = React.useState<boolean>(false)
-  const [whatsappOptIn, setWhatsappOptIn] = React.useState<boolean>(false)
-  const [whatsappValidation, setWhatsappValidation] = React.useState<{ isValid: boolean; error?: string } | null>(null)
   const [uploadedPhotos, setUploadedPhotos] = React.useState<File[]>([])
   const [photoUploadError, setPhotoUploadError] = React.useState<string | null>(null)
   const start = React.useRef<number>(Date.now())
@@ -274,16 +281,6 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     }
   }, [formStarted, firstService])
 
-  // WhatsApp phone number validation
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const phoneNumber = e.target.value
-    if (phoneNumber && phoneNumber.length >= 10) {
-      const validation = validateWhatsAppNumber(phoneNumber)
-      setWhatsappValidation(validation)
-    } else {
-      setWhatsappValidation(null)
-    }
-  }
 
   // reCAPTCHA handlers
   const handleRecaptchaChange = (token: string | null) => {
@@ -345,12 +342,20 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
   }, [setValue])
 
   const onSubmit = async (values: FormValues) => {
-    setStatus('idle')
+    // Don't reset status here - keep current state
+    console.log('Form submission started', values)
     
     // Honeypot + time-trap
-    if (values.website) return
+    if (values.website) {
+      console.warn('Honeypot triggered - bot submission blocked')
+      return
+    }
     const elapsed = Date.now() - start.current
-    if (elapsed < 2000) return // Prevent bot submissions
+    if (elapsed < 2000) {
+      console.warn('Time trap triggered - submission too fast')
+      setStatus('error')
+      return
+    }
 
     // Validation
     if (!values.services || values.services.length === 0) {
@@ -368,8 +373,15 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
 
     // Prepare data for EmailJS
     const form = formRef.current
-    if (!form) return
+    if (!form) {
+      console.error('Form reference not found')
+      setStatus('error')
+      return
+    }
 
+    // Set submitting status
+    console.log('Setting status to submitting...')
+    
     const fullName = `${values.first_name} ${values.last_name}`.trim()
     const now = new Date()
 
@@ -402,6 +414,8 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     ensureHidden('recaptcha_token', recaptchaToken)
 
     try {
+      console.log('Starting form submission process...')
+      
       // Upload photos to Notion first if any
       let uploadedFileIds: string[] = []
       if (uploadedPhotos.length > 0) {
@@ -435,6 +449,9 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
       }
       
       // Send to both EmailJS and Notion in parallel
+      console.log('Sending to EmailJS and Notion...')
+      console.log('EmailJS config:', { SERVICE_ID, TEMPLATE_ID, PUBLIC_KEY: PUBLIC_KEY ? 'Set' : 'Missing' })
+      
       const [emailResult, notionResult] = await Promise.allSettled([
         // EmailJS submission
         emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY),
@@ -461,7 +478,6 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
             hasExtension: values.has_extension,
             hasConservatory: values.has_conservatory,
             propertyNotes: values.property_notes,
-            whatsappOptIn: whatsappOptIn,
             calculatedPrice: hasWindowCleaning ? calculateWindowCleaningPrice() : null,
             customerPhotos: uploadedFileIds
           })
@@ -493,30 +509,6 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
         email: values.email
       })
 
-      // Send WhatsApp confirmation if opted in
-      if (whatsappOptIn && whatsappValidation?.isValid) {
-        try {
-          const confirmationCode = `SWC-${Date.now().toString(36).toUpperCase()}`
-          const success = await sendBookingConfirmation({
-            customerName: fullName,
-            customerPhone: values.mobile,
-            serviceType: values.services?.[0] || 'Window Cleaning',
-            appointmentDate: 'To be scheduled',
-            appointmentTime: 'To be confirmed',
-            propertyAddress: values.property_address,
-            confirmationCode,
-            estimatedDuration: 120,
-          })
-          
-          if (success) {
-            console.log('✅ WhatsApp confirmation sent')
-            // analytics.trackCustomEvent('whatsapp_sent', 'Contact Form', 'Booking Confirmation', 1)
-          }
-        } catch (error) {
-          console.warn('WhatsApp confirmation failed:', error)
-          // Don't fail the form submission for WhatsApp issues
-        }
-      }
       
       setStatus('success')
       setRecaptchaToken(null) // Reset reCAPTCHA
@@ -529,6 +521,13 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
       analytics.formError('submission_failed', e instanceof Error ? e.message : 'Unknown error')
       
       setStatus('error')
+      
+      // Show specific error message
+      const errorMessage = e instanceof Error ? e.message : 'Unknown error occurred'
+      console.error('Detailed error:', errorMessage)
+      
+      // Scroll to top to show error message
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -699,38 +698,10 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                     pattern: {
                       value: /^(\+44|0)[0-9\s-()]{10,}$/,
                       message: 'Please enter a valid UK mobile number'
-                    },
-                    onChange: handlePhoneChange
+                    }
                   })}
                 />
                 {errors.mobile && <p className="mt-1 text-xs text-red-400">{errors.mobile.message}</p>}
-                
-                {/* WhatsApp validation feedback */}
-                {whatsappValidation && (
-                  <div className={`mt-2 p-2 rounded-lg text-xs ${
-                    whatsappValidation.isValid 
-                      ? 'bg-green-500/10 text-green-400 border border-green-500/30' 
-                      : 'bg-orange-500/10 text-orange-400 border border-orange-500/30'
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      {whatsappValidation.isValid ? (
-                        <>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span>✅ WhatsApp compatible number</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01" />
-                          </svg>
-                          <span>{whatsappValidation.error}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
               </div>
 
               <div>
@@ -783,44 +754,6 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
               </div>
             </div>
 
-            {/* WhatsApp Opt-in Section */}
-            {whatsappValidation?.isValid && (
-              <div className="mt-6">
-                <div className="rounded-lg border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-500/5 p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={whatsappOptIn}
-                          onChange={(e) => setWhatsappOptIn(e.target.checked)}
-                          className="mt-1 accent-green-500 scale-110"
-                        />
-                        <div>
-                          <div className="text-white font-medium mb-1">
-                            📱 Get instant updates via WhatsApp
-                          </div>
-                          <div className="text-white/80 text-sm mb-2">
-                            Receive booking confirmations, appointment reminders, and service updates directly on WhatsApp.
-                          </div>
-                          <div className="text-white/60 text-xs">
-                            ✅ Instant notifications • ✅ Before & after photos • ✅ Easy rescheduling • ✅ Payment links
-                          </div>
-                          <div className="text-white/50 text-xs mt-1">
-                            Optional - You can opt out anytime by replying STOP
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Property Information - Only for new customers */}

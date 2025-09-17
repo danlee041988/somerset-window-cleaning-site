@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Logo from './Logo'
-import WhatsAppButton from './WhatsAppButton'
 import BusinessHours from './BusinessHours'
 
 export default function Footer() {
@@ -36,9 +35,6 @@ export default function Footer() {
               <li><a href="tel:01458860339" className="hover:text-white">01458 860 339</a></li>
               <li><a href="mailto:info@somersetwindowcleaning.co.uk" className="hover:text-white">info@somersetwindowcleaning.co.uk</a></li>
             </ul>
-            <div className="mt-4">
-              <WhatsAppButton text="WhatsApp us" />
-            </div>
           </div>
           <div>
             <h4 className="mb-3 font-semibold relative">
