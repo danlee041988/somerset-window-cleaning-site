@@ -214,7 +214,7 @@ export default function AppointmentBooking({
               </div>
               <h3 className="text-2xl font-bold text-white mb-4">Appointment Booked!</h3>
               <p className="text-white/80 mb-6">
-                Your appointment has been successfully scheduled. We'll send you a confirmation email shortly.
+                Your appointment has been successfully scheduled. We&apos;ll send you a confirmation email shortly.
               </p>
               
               {bookingResult.confirmationCode && (

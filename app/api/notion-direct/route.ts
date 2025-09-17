@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
               'Every 12 weeks': 'Every 12 weeks'
             }
             
-            return frequencyMap[body.frequency] || 'Not specified'
+            return frequencyMap[body.frequency as keyof typeof frequencyMap] || 'Not specified'
           })()
         }
       },
@@ -223,7 +223,7 @@ export async function POST(request: NextRequest) {
     }
     
     if (notesContent) {
-      properties['Notes'] = {
+      (properties as any)['Notes'] = {
         rich_text: [
           {
             text: {

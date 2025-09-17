@@ -221,7 +221,7 @@ export default function ServiceAreaMap({
           
           <div className="mt-3 text-xs text-white/60">
             <p>
-              📍 Don't see your area listed? Contact us to discuss special arrangements for locations outside our standard service areas.
+              📍 Don&apos;t see your area listed? Contact us to discuss special arrangements for locations outside our standard service areas.
             </p>
           </div>
         </div>
