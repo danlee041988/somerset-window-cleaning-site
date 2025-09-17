@@ -76,14 +76,14 @@ export class GoogleBusinessManager {
       name: 'locations/ChIJd8BlQ2LZZEgRABb7HyKhuPs', // Google Place ID
       locationName: 'Somerset Window Cleaning',
       address: {
-        addressLines: ['15 Rockhaven Business Centre', 'Gravenchon Way'],
+        addressLines: ['13 Rockhaven Business Centre', 'Gravenchon Way'],
         locality: 'Walton, Street',
         administrativeArea: 'Somerset',
         postalCode: 'BA16 0RW',
         regionCode: 'GB'
       },
       primaryPhone: {
-        number: '+441458860539'
+        number: '+441458860339'
       },
       websiteUrl: 'https://somersetwindowcleaning.co.uk',
       regularHours: {
@@ -92,31 +92,31 @@ export class GoogleBusinessManager {
             openDay: 'MONDAY',
             openTime: '09:00',
             closeDay: 'MONDAY',
-            closeTime: '18:00'
+            closeTime: '16:00'
           },
           {
             openDay: 'TUESDAY',
             openTime: '09:00',
             closeDay: 'TUESDAY',
-            closeTime: '18:00'
+            closeTime: '16:00'
           },
           {
             openDay: 'WEDNESDAY',
             openTime: '09:00',
             closeDay: 'WEDNESDAY',
-            closeTime: '18:00'
+            closeTime: '16:00'
           },
           {
             openDay: 'THURSDAY',
             openTime: '09:00',
             closeDay: 'THURSDAY',
-            closeTime: '18:00'
+            closeTime: '16:00'
           },
           {
             openDay: 'FRIDAY',
             openTime: '09:00',
             closeDay: 'FRIDAY',
-            closeTime: '18:00'
+            closeTime: '16:00'
           }
         ]
       }
@@ -173,9 +173,9 @@ export class GoogleBusinessManager {
       ];
       return positiveResponses[Math.floor(Math.random() * positiveResponses.length)];
     } else if (review.starRating === 3) {
-      return `Thank you for your feedback. We appreciate you taking the time to review our service. We'd love to discuss how we can improve your experience - please contact us directly at info@somersetwindowcleaning.co.uk or 01458 860539. - ${ownerName} at ${businessName}`;
+      return `Thank you for your feedback. We appreciate you taking the time to review our service. We'd love to discuss how we can improve your experience - please contact us directly at info@somersetwindowcleaning.co.uk or 01458 860339. - ${ownerName} at ${businessName}`;
     } else {
-      return `Thank you for bringing this to our attention. We take all feedback seriously and would like to resolve any concerns you may have. Please contact us directly at info@somersetwindowcleaning.co.uk or 01458 860539 so we can make this right. - ${ownerName} at ${businessName}`;
+      return `Thank you for bringing this to our attention. We take all feedback seriously and would like to resolve any concerns you may have. Please contact us directly at info@somersetwindowcleaning.co.uk or 01458 860339 so we can make this right. - ${ownerName} at ${businessName}`;
     }
   }
 
