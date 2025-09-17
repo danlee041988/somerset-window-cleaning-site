@@ -1,0 +1,47 @@
+name: Test Claude Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_message:
+        description: 'Test message for Claude'
+        required: true
+        default: 'Hello Claude, please confirm you are working'
+
+jobs:
+  test-claude:
+    runs-on: ubuntu-latest
+    name: Test Claude Connection
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Debug - Check Secret
+        run: |
+          if [ -n "${{ secrets.SWC_Website }}" ]; then
+            echo "✅ SWC_Website API key is set"
+            echo "Length: ${#SECRET_VALUE}"
+          else
+            echo "❌ SWC_Website API key is NOT set"
+          fi
+        env:
+          SECRET_VALUE: ${{ secrets.SWC_Website }}
+        
+      - name: Test Claude Code Action
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.SWC_Website }}
+          prompt: |
+            ${{ inputs.test_message }}
+            
+            Please respond with:
+            1. Confirmation that you received this message
+            2. The current date/time
+            3. A brief analysis of the Somerset Window Cleaning website repository
+          claude_args: |
+            --model claude-sonnet-4-20250514

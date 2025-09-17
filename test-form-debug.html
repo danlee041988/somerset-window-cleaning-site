@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Debug Test</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #2a2a2a;
+            color: white;
+        }
+        button {
+            background: #E11D2A;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .success {
+            background: #4CAF50;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .error {
+            background: #f44336;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .debug {
+            background: #2196F3;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        #recaptcha-container {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contact Form Debug Test</h1>
+    
+    <div id="debug-info" class="debug">
+        Loading debug information...
+    </div>
+    
+    <div id="message-container"></div>
+    
+    <form id="contact-form">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required value="Test User">
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required value="test@example.com">
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" required value="07123456789">
+        </div>
+        
+        <div class="form-group">
+            <label for="services_list">Services:</label>
+            <input type="text" id="services_list" name="services_list" required value="Window Cleaning">
+        </div>
+        
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4">Test message from debug form</textarea>
+        </div>
+        
+        <!-- Hidden fields that EmailJS expects -->
+        <input type="hidden" name="property_address" value="Test Address, BA5 1AA">
+        <input type="hidden" name="property_type_field" value="Detached house">
+        <input type="hidden" name="property_bedrooms" value="3 bedrooms">
+        <input type="hidden" name="property_extension" value="No">
+        <input type="hidden" name="property_conservatory" value="No">
+        <input type="hidden" name="cleaning_frequency" value="8 weeks">
+        <input type="hidden" name="customer_type_field" value="New Customer">
+        <input type="hidden" name="submitted_at" value="">
+        <input type="hidden" name="submitted_date" value="">
+        <input type="hidden" name="submitted_time" value="">
+        <input type="hidden" name="recaptcha_token" value="">
+        
+        <div id="recaptcha-container" class="g-recaptcha" 
+             data-sitekey="YOUR_RECAPTCHA_SITE_KEY"
+             data-theme="dark"></div>
+        
+        <button type="submit" id="submit-btn">Send Test Message</button>
+    </form>
+    
+    <script>
+        // Configuration - Replace with your actual values from .env.local
+        const CONFIG = {
+            SERVICE_ID: 'YOUR_SERVICE_ID', // From NEXT_PUBLIC_EMAILJS_SERVICE_ID
+            TEMPLATE_ID: 'YOUR_TEMPLATE_ID', // From NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+            PUBLIC_KEY: 'YOUR_PUBLIC_KEY', // From NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+            RECAPTCHA_SITE_KEY: 'YOUR_RECAPTCHA_SITE_KEY' // From NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+        };
+        
+        let recaptchaToken = null;
+        
+        // Debug info function
+        function updateDebugInfo(info) {
+            const debugEl = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugEl.textContent = `[${timestamp}] DEBUG INFO:
+${JSON.stringify(info, null, 2)}`;
+        }
+        
+        // Show message function
+        function showMessage(message, type = 'info') {
+            const container = document.getElementById('message-container');
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(div);
+        }
+        
+        // reCAPTCHA callback
+        window.onRecaptchaSuccess = function(token) {
+            recaptchaToken = token;
+            updateDebugInfo({
+                status: 'reCAPTCHA completed',
+                token: token ? 'Token received (length: ' + token.length + ')' : 'No token',
+                config: CONFIG
+            });
+            console.log('✅ reCAPTCHA token received:', token ? 'Yes' : 'No');
+        };
+        
+        // Initialize EmailJS
+        window.addEventListener('load', function() {
+            updateDebugInfo({
+                status: 'Initializing EmailJS',
+                config: CONFIG
+            });
+            
+            try {
+                emailjs.init(CONFIG.PUBLIC_KEY);
+                updateDebugInfo({
+                    status: 'EmailJS initialized',
+                    publicKey: CONFIG.PUBLIC_KEY,
+                    serviceId: CONFIG.SERVICE_ID,
+                    templateId: CONFIG.TEMPLATE_ID
+                });
+                console.log('✅ EmailJS initialized successfully');
+            } catch (error) {
+                updateDebugInfo({
+                    status: 'EmailJS initialization failed',
+                    error: error.message
+                });
+                console.error('❌ EmailJS initialization failed:', error);
+            }
+        });
+        
+        // Form submission
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            updateDebugInfo({
+                status: 'Form submission started',
+                hasRecaptchaToken: !!recaptchaToken
+            });
+            
+            if (!recaptchaToken) {
+                showMessage('Please complete the reCAPTCHA verification', 'error');
+                return;
+            }
+            
+            // Set timestamp fields
+            const now = new Date();
+            document.querySelector('[name="submitted_at"]').value = now.toLocaleString('en-GB');
+            document.querySelector('[name="submitted_date"]').value = now.toLocaleDateString('en-GB');
+            document.querySelector('[name="submitted_time"]').value = now.toLocaleTimeString('en-GB');
+            document.querySelector('[name="recaptcha_token"]').value = recaptchaToken;
+            
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            
+            try {
+                updateDebugInfo({
+                    status: 'Sending email via EmailJS',
+                    serviceId: CONFIG.SERVICE_ID,
+                    templateId: CONFIG.TEMPLATE_ID
+                });
+                
+                const result = await emailjs.sendForm(
+                    CONFIG.SERVICE_ID,
+                    CONFIG.TEMPLATE_ID,
+                    this,
+                    CONFIG.PUBLIC_KEY
+                );
+                
+                updateDebugInfo({
+                    status: 'Email sent successfully',
+                    result: result
+                });
+                
+                showMessage('✅ Email sent successfully! Check your EmailJS dashboard.', 'success');
+                console.log('✅ EmailJS success:', result);
+                
+                // Reset form
+                this.reset();
+                grecaptcha.reset();
+                recaptchaToken = null;
+                
+            } catch (error) {
+                updateDebugInfo({
+                    status: 'Email sending failed',
+                    error: error.message,
+                    details: error
+                });
+                
+                showMessage('❌ Failed to send email: ' + error.message, 'error');
+                console.error('❌ EmailJS error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Test Message';
+            }
+        });
+    </script>
+</body>
+</html>

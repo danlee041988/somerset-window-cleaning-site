@@ -1,0 +1,33 @@
+node_modules
+.next
+out
+dist
+.turbo
+.vercel
+.env*
+!.env.example
+.DS_Store
+
+# Development files
+dev.log
+*.log
+
+# Test results
+test-results/
+playwright-report/
+
+# IDE files
+.vscode/
+.idea/
+.env*.local
+
+# Google Cloud credentials and sensitive files
+service-account-key.json
+*-key.json
+*.key
+.cleanshot-state.json
+cleanshot-analysis-*.md
+performance-report-*.md
+performance-data-*.json
+google-ads-credentials.json
+*-credentials.json

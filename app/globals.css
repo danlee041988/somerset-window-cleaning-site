@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-red: #E11D2A;
+  --brand-black: #0B0B0B;
+  --brand-white: #FFFFFF;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--brand-black);
+  color: var(--brand-white);
+}
+
+/* Logo blend mode for seamless header integration */
+.logo-blend {
+  /* Eliminate black background and blend with header */
+  mix-blend-mode: multiply;
+  background: transparent;
+  border: none;
+  outline: none;
+  /* Invert to make white text visible, then enhance */
+  -webkit-filter: invert(1) brightness(1.2) contrast(1.1);
+  filter: invert(1) brightness(1.2) contrast(1.1);
+}
+
+/* Progressive enhancement for browsers that don't support mix-blend-mode */
+@supports not (mix-blend-mode: multiply) {
+  .logo-blend {
+    opacity: 0.95;
+    filter: invert(1) brightness(1.1) contrast(1.05) drop-shadow(0 0 1px rgba(255,255,255,0.1));
+    background: transparent;
+    border: none;
+  }
+}
+
+.container-prose p + p {
+  margin-top: 1rem;
+}
+
+/* Custom animations for interactive service cards */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* reCAPTCHA custom styling for dark theme */
+.recaptcha-container iframe {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+}
+
+/* Fix reCAPTCHA positioning in form */
+.recaptcha-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Force equal heights for service cards */
+.services-equal-height {
+  display: grid !important;
+  grid-template-columns: repeat(1, 1fr);
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .services-equal-height {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .services-equal-height {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.services-equal-height > div {
+  display: flex;
+  height: 100%;
+}
+
+.services-equal-height .service-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

@@ -1,0 +1,20 @@
+; Zone file for somersetwindowcleaning.co.uk
+; Generated for 20i.co.uk DNS migration
+$ORIGIN somersetwindowcleaning.co.uk.
+$TTL 300
+
+; A record - Main domain pointing to Vercel
+@               IN  A       76.76.19.61
+
+; CNAME record - WWW subdomain pointing to Vercel
+www             IN  CNAME   cname.vercel-dns.com.
+
+; MX records - Google Workspace email
+@               IN  MX  1   ASPMX.L.GOOGLE.COM.
+@               IN  MX  5   ALT1.ASPMX.L.GOOGLE.COM.
+@               IN  MX  5   ALT2.ASPMX.L.GOOGLE.COM.
+@               IN  MX  10  ALT3.ASPMX.L.GOOGLE.COM.
+@               IN  MX  10  ALT4.ASPMX.L.GOOGLE.COM.
+
+; TXT record - SPF for email delivery
+@               IN  TXT     "v=spf1 include:_spf.google.com include:spf.stackmail.com -all"

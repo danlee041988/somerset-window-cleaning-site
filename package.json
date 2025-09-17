@@ -1,0 +1,63 @@
+{
+  "name": "somerset-window-cleaning",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "dev:3000": "next dev -H localhost -p 3000",
+    "dev:clean": "rm -rf .next && next dev -H localhost -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "build:static": "next build",
+    "preview:static": "npx --yes serve -l 4321 out || python3 -m http.server 4321 -d out",
+    "dev:preview": "npm run build:static && npm run preview:static",
+    "dev:fallback": "next dev -p 3001",
+    "dev:enhanced": "./scripts/dev-server.sh",
+    "gen:images": "node scripts/build-image-manifest.mjs",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:frontend": "playwright test frontend-changes.spec.ts",
+    "test:frontend:headed": "playwright test frontend-changes.spec.ts --headed"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@hookform/resolvers": "^5.2.2",
+    "@notionhq/client": "^5.1.0",
+    "@types/react-google-recaptcha": "^2.1.9",
+    "clsx": "^2.1.1",
+    "google-auth-library": "^10.3.0",
+    "googleapis": "^160.0.0",
+    "gtag": "^1.0.1",
+    "next": "^14.2.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-google-recaptcha": "^3.1.0",
+    "react-hook-form": "^7.51.5",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.2.66",
+    "autoprefixer": "^10.4.20",
+    "dotenv": "^17.2.2",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.5",
+    "postcss": "^8.4.41",
+    "puppeteer": "^24.21.0",
+    "tailwindcss": "^3.4.7",
+    "typescript": "^5.5.3",
+    "vercel": "^48.0.0"
+  }
+}

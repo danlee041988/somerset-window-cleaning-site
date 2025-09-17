@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Form Debug</title>
+</head>
+<body>
+    <h1>Contact Form Debug Instructions</h1>
+    
+    <p><strong>To debug the form submission issue:</strong></p>
+    
+    <ol>
+        <li>Open the website: <a href="http://localhost:3000/get-in-touch" target="_blank">http://localhost:3000/get-in-touch</a></li>
+        <li>Open browser Developer Tools (F12)</li>
+        <li>Go to the Console tab</li>
+        <li>Fill out the contact form and try to submit</li>
+        <li>Watch for these console messages:
+            <ul>
+                <li>📝 Form onSubmit triggered</li>
+                <li>🚀 Form submission started</li>
+                <li>📋 Form values</li>
+                <li>🔒 reCAPTCHA token status</li>
+                <li>Any error messages</li>
+            </ul>
+        </li>
+    </ol>
+    
+    <h2>Common Issues to Check:</h2>
+    <ul>
+        <li><strong>reCAPTCHA:</strong> Make sure to complete the reCAPTCHA verification</li>
+        <li><strong>Services:</strong> Select at least one service</li>
+        <li><strong>Required Fields:</strong> Fill in all required fields (marked with *)</li>
+        <li><strong>Console Errors:</strong> Look for JavaScript errors in the console</li>
+    </ul>
+    
+    <h2>Expected Console Output:</h2>
+    <pre>
+📝 Form onSubmit triggered
+🎯 Form validity: true
+📋 Form errors: {}
+🚀 Form submission started
+📋 Form values: {first_name: "...", ...}
+🔒 reCAPTCHA token: Present
+📊 Services selected: ["Window Cleaning"]
+✅ All validations passed - proceeding with submission
+    </pre>
+    
+    <p><em>If you don't see "Form onSubmit triggered", the issue is with the form handler not being called at all.</em></p>
+</body>
+</html>

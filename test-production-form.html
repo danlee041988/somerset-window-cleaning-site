@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Production Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .loading { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .instructions {
+            background: #e7f3ff;
+            border: 1px solid #b3d4fc;
+            color: #004085;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Production Form Test - somersetwindowcleaning.co.uk</h1>
+    
+    <div class="instructions">
+        <h3>📋 Test Instructions:</h3>
+        <ol>
+            <li><strong>Load Test:</strong> Check if the form loads (no more "Loading contact form..." message)</li>
+            <li><strong>reCAPTCHA Test:</strong> Verify the reCAPTCHA widget appears</li>
+            <li><strong>Form Fields:</strong> Check all form fields are visible and functional</li>
+            <li><strong>Submission Test:</strong> Fill out the form and submit to test EmailJS + Notion</li>
+        </ol>
+        <p><strong>Expected:</strong> Form should load with all fields, reCAPTCHA widget, and allow submission.</p>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 Live Form Test</h2>
+        <p>Loading your production contact form below...</p>
+        <div id="status" class="status loading">
+            ⏳ Loading form from production site...
+        </div>
+        
+        <iframe 
+            src="https://somersetwindowcleaning.co.uk/get-in-touch" 
+            onload="updateStatus()"
+            onerror="showError()">
+        </iframe>
+    </div>
+
+    <div class="test-section">
+        <h2>⚡ Quick Actions</h2>
+        <button onclick="refreshFrame()">🔄 Refresh Form</button>
+        <button onclick="openInNewWindow()">🔗 Open in New Window</button>
+        <button onclick="checkConsole()">🐛 Check Console</button>
+    </div>
+
+    <div class="test-section">
+        <h2>✅ Test Checklist</h2>
+        <div id="checklist">
+            <p>Use this checklist to verify form functionality:</p>
+            <label><input type="checkbox"> Form loads (no loading spinner)</label><br>
+            <label><input type="checkbox"> reCAPTCHA widget appears</label><br>
+            <label><input type="checkbox"> All form fields visible</label><br>
+            <label><input type="checkbox"> "Send My Message" button enabled after reCAPTCHA</label><br>
+            <label><input type="checkbox"> Form submits successfully</label><br>
+            <label><input type="checkbox"> Success message appears</label><br>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus() {
+            document.getElementById('status').className = 'status success';
+            document.getElementById('status').innerHTML = '✅ Form loaded successfully! Check the iframe above and test the form.';
+        }
+
+        function showError() {
+            document.getElementById('status').className = 'status error';
+            document.getElementById('status').innerHTML = '❌ Error loading form. Check your internet connection.';
+        }
+
+        function refreshFrame() {
+            const iframe = document.querySelector('iframe');
+            iframe.src = iframe.src;
+            document.getElementById('status').className = 'status loading';
+            document.getElementById('status').innerHTML = '⏳ Refreshing form...';
+        }
+
+        function openInNewWindow() {
+            window.open('https://somersetwindowcleaning.co.uk/get-in-touch', '_blank');
+        }
+
+        function checkConsole() {
+            alert('📋 Instructions:\n\n1. Open Developer Tools (F12)\n2. Go to Console tab\n3. Look for:\n   • EmailJS initialization messages\n   • reCAPTCHA loading messages\n   • Any error messages\n\n4. In Network tab, check:\n   • No failed requests\n   • EmailJS script loads\n   • reCAPTCHA script loads');
+        }
+
+        // Auto-refresh every 30 seconds to check for updates
+        setTimeout(() => {
+            if (document.getElementById('status').className.includes('loading')) {
+                refreshFrame();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
