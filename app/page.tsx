@@ -1,14 +1,17 @@
 import Button from '@/components/Button'
 import Section from '@/components/Section'
-import ServiceCard from '@/components/ServiceCard'
 import LightboxGallery from '@/components/LightboxGallery'
 import Reviews from '@/components/Reviews'
 import PostcodeChecker from '@/components/PostcodeChecker'
-import { HERO_IMAGES, GALLERY_IMAGES, SERVICE_IMAGES } from '@/content/image-manifest'
+import { HERO_IMAGES, GALLERY_IMAGES } from '@/content/image-manifest'
 import Image from 'next/image'
 import CaseStudy from '@/components/CaseStudy'
+import ServiceTabsPreview from '@/components/ServiceTabsPreview'
 
 export default function HomePage() {
+  const galleryImages = Array.from(new Set(GALLERY_IMAGES ?? [])).slice(0, 12)
+  const fallbackGallery = ['/photos/photo01.jpg','/photos/photo02.jpg','/photos/photo03.jpg','/photos/photo04.jpg']
+
   return (
     <div>
       {/* Hero with background image */}
@@ -59,46 +62,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Services preview - Top 4 services */}
+      {/* Services preview - Tabbed experience */}
       <Section
-        title="Our Most Popular Services"
-        subtitle="Professional cleaning solutions that transform your property's appearance."
+        title="Our most-requested services"
+        subtitle="Switch between core services to see benefits, pricing, and how we schedule them across Somerset."
         spacing="relaxed"
         animationDelay={100}
       >
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <ServiceCard 
-            title="Window Cleaning" 
-            imageSrc={SERVICE_IMAGES.window || '/photos/photo02.jpg'} 
-            description="Crystal-clear windows using pure water technology. Frames, sills, and glass included." 
-          />
-          <ServiceCard 
-            title="Gutter Clearing" 
-            imageSrc={SERVICE_IMAGES.gutter_clearing || '/photos/photo03.jpg'} 
-            description="Protect your property from water damage. Safe ground-level vacuum clearing." 
-          />
-          <ServiceCard 
-            title="Conservatory Roof Cleaning" 
-            imageSrc={SERVICE_IMAGES.conservatory || '/photos/photo04.jpg'} 
-            description="Restore brightness to glass and polycarbonate roofs. Gentle, seal-safe methods." 
-          />
-          <ServiceCard 
-            title="Solar Panel Cleaning" 
-            imageSrc={SERVICE_IMAGES.solar || '/photos/photo05.jpg'} 
-            description="Maximize energy efficiency. Specialist cleaning that won't void warranties." 
-          />
-        </div>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Button href="/services" variant="primary" className="text-lg px-8 py-4">
-            View All Services
-          </Button>
-          <p className="flex items-center gap-2 text-sm text-white/70">
-            <span>Also offering:</span>
-            <span className="font-medium">Fascias & Soffits</span>
-            <span>•</span>
-            <span className="font-medium">Commercial Cleaning</span>
-          </p>
-        </div>
+        <ServiceTabsPreview />
       </Section>
 
       {/* Trust signals */}
@@ -133,10 +104,7 @@ export default function HomePage() {
         spacing="generous"
         animationDelay={400}
       >
-        <LightboxGallery images={(GALLERY_IMAGES && GALLERY_IMAGES.length ? GALLERY_IMAGES.slice(0, 12) : ['/photos/photo01.jpg','/photos/photo02.jpg','/photos/photo03.jpg','/photos/photo04.jpg'])} />
-        <div className="mt-6"> 
-          <Button href="/gallery" variant="ghost">View full gallery</Button>
-        </div>
+        <LightboxGallery images={galleryImages.length ? galleryImages : fallbackGallery} />
       </Section>
     </div>
   )
