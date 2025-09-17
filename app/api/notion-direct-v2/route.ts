@@ -7,25 +7,24 @@ export async function POST(request: NextRequest) {
     // Get environment variables at runtime
     const apiKey = process.env.NOTION_API_KEY
     const databaseId = process.env.NOTION_DATABASE_ID
-    
-    // Use environment variable or fallback for development
-    const workingApiKey = process.env.NOTION_API_KEY || apiKey
-    const workingDatabaseId = process.env.NOTION_DATABASE_ID || '2707c58a-5877-81af-9e26-ff0d9a5e0ae3'
+    const dataSourceId = process.env.NOTION_DATA_SOURCE_ID
     
     console.log('🔧 Notion Configuration:', {
-      hasApiKey: !!workingApiKey,
-      databaseId: workingDatabaseId,
-      apiKeyLength: workingApiKey?.length || 0
+      hasApiKey: !!apiKey,
+      apiKeyPrefix: apiKey?.substring(0, 7),
+      databaseId: databaseId || 'NOT SET',
+      dataSourceId: dataSourceId || 'NOT SET'
     })
     
-    if (!workingApiKey || !workingDatabaseId) {
+    if (!apiKey || !databaseId) {
       console.error('❌ Notion configuration missing:', {
-        apiKey: !!workingApiKey,
-        databaseId: !!workingDatabaseId
+        apiKey: !!apiKey,
+        databaseId: !!databaseId
       })
       return NextResponse.json({
         success: false,
-        error: 'Notion not configured - missing API key or database ID'
+        error: 'Notion not configured - missing API key or database ID',
+        skipError: true
       })
     }
     
@@ -48,6 +47,35 @@ export async function POST(request: NextRequest) {
       services: body.services,
       customerType: body.customerType
     })
+
+    // First, get the data source ID if not provided
+    let workingDataSourceId = dataSourceId
+    
+    if (!workingDataSourceId) {
+      console.log('📊 Fetching data source ID from database...')
+      
+      const dbResponse = await fetch(`https://api.notion.com/v1/databases/${databaseId}`, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Notion-Version': '2025-09-03',
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (!dbResponse.ok) {
+        const error = await dbResponse.json()
+        console.error('❌ Failed to fetch database:', error)
+        
+        // Fall back to old API version
+        console.log('⚠️ Falling back to API version 2022-06-28...')
+      } else {
+        const dbData = await dbResponse.json()
+        if (dbData.data_sources && dbData.data_sources.length > 0) {
+          workingDataSourceId = dbData.data_sources[0].id
+          console.log('✅ Found data source ID:', workingDataSourceId)
+        }
+      }
+    }
 
     // Create page properties
     const properties = {
@@ -173,8 +201,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Add optional fields to Notes section
-
-    // Combine message and other details in Notes
     let notesContent = ''
     if (body.message) {
       notesContent += body.message
@@ -212,24 +238,6 @@ export async function POST(request: NextRequest) {
       notesContent += (notesContent ? '\n\n' : '') + 'SERVICE PREFERENCES:\n' + serviceDetails.join('\n')
     }
     
-    // Address validation section
-    if (body.addressValidation) {
-      const addressDetails = []
-      if (body.addressValidation.inServiceArea !== undefined) {
-        addressDetails.push(`In service area: ${body.addressValidation.inServiceArea ? 'Yes' : 'No'}`)
-      }
-      if (body.addressValidation.formattedAddress) {
-        addressDetails.push(`Formatted address: ${body.addressValidation.formattedAddress}`)
-      }
-      if (body.addressValidation.coordinates) {
-        addressDetails.push(`Location: ${body.addressValidation.coordinates.lat}, ${body.addressValidation.coordinates.lng}`)
-      }
-      
-      if (addressDetails.length > 0) {
-        notesContent += (notesContent ? '\n\n' : '') + 'ADDRESS VALIDATION:\n' + addressDetails.join('\n')
-      }
-    }
-    
     if (notesContent) {
       (properties as any)['Notes'] = {
         rich_text: [
@@ -242,19 +250,37 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Determine which parent to use based on available IDs
+    let parent: any
+    let apiVersion = '2022-06-28'
+    
+    if (workingDataSourceId) {
+      // Use new API structure with data source
+      parent = {
+        type: 'data_source_id',
+        data_source_id: workingDataSourceId
+      }
+      apiVersion = '2025-09-03'
+      console.log('🚀 Using new API with data source ID')
+    } else {
+      // Fall back to old API structure
+      parent = {
+        type: 'database_id',
+        database_id: databaseId
+      }
+      console.log('⚠️ Using legacy API with database ID')
+    }
+
     // Create page using direct API call
     const response = await fetch('https://api.notion.com/v1/pages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${workingApiKey}`,
-        'Notion-Version': '2022-06-28',
+        'Authorization': `Bearer ${apiKey}`,
+        'Notion-Version': apiVersion,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        parent: {
-          type: 'database_id',
-          database_id: workingDatabaseId
-        },
+        parent,
         properties
       })
     })
@@ -285,7 +311,8 @@ export async function POST(request: NextRequest) {
         status: response.status,
         statusText: response.statusText,
         error: result,
-        databaseId: workingDatabaseId
+        apiVersion,
+        parentType: parent.type
       })
       
       // Check for specific Notion error types

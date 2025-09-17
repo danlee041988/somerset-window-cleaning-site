@@ -457,7 +457,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
         emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY),
         
         // Notion submission
-        fetch('/api/notion-direct', {
+        fetch('/api/notion-direct-v2', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
