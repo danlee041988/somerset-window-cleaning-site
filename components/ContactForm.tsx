@@ -277,7 +277,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     return { requiresVisit: false, breakdown }
   }
   
-  const [status, setStatus] = React.useState<'idle' | 'success' | 'error'>('idle')
+  const [status, setStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
   const [formStarted, setFormStarted] = React.useState<boolean>(false)
   // Address validation state removed due to Google Maps billing requirements
@@ -378,8 +378,11 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
   }, [setValue])
 
   const onSubmit = async (values: FormValues) => {
-    // Don't reset status here - keep current state
     console.log('🚀 Form submission started', values)
+    
+    // Set status to idle first to clear any previous errors
+    setStatus('idle')
+    
     console.log('📊 Form state:', {
       isSubmitting,
       recaptchaToken: recaptchaToken ? 'Present' : 'Missing',
@@ -437,6 +440,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
 
     // Set submitting status
     console.log('Setting status to submitting...')
+    setStatus('idle') // Reset any previous error state
     
     const fullName = `${values.first_name} ${values.last_name}`.trim()
     const now = new Date()
@@ -471,6 +475,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
 
     try {
       console.log('Starting form submission process...')
+      setStatus('submitting') // Show loading state during submission
       
       // Upload photos to Notion first if any
       let uploadedFileIds: string[] = []
@@ -566,10 +571,15 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
       })
 
       
+      // Success - ensure state updates trigger re-render
+      console.log('✅ Form submission completed successfully')
       setStatus('success')
       setRecaptchaToken(null) // Reset reCAPTCHA
       setUploadedPhotos([]) // Clear uploaded photos
       reset()
+      
+      // Scroll to top to show success message
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (e) {
       console.error('❌ Form submission error:', e)
       console.error('❌ Error details:', {
@@ -581,6 +591,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
       // Track form error
       analytics.formError('submission_failed', e instanceof Error ? e.message : 'Unknown error')
       
+      console.log('❌ Setting error status and showing user feedback')
       setStatus('error')
       
       // Show specific error message
@@ -1243,20 +1254,21 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
           <div className="pt-4">
             <button
               type="submit"
-              disabled={isSubmitting || (!recaptchaToken && !recaptchaFailed)}
+              disabled={status === 'submitting' || (!recaptchaToken && !recaptchaFailed)}
               onClick={() => console.log('🔴 Submit button clicked!', {
+                status,
                 isSubmitting,
                 hasRecaptchaToken: !!recaptchaToken,
                 recaptchaFailed,
-                isDisabled: isSubmitting || (!recaptchaToken && !recaptchaFailed)
+                isDisabled: status === 'submitting' || (!recaptchaToken && !recaptchaFailed)
               })}
               className={`w-full px-8 py-4 font-semibold rounded-xl shadow-lg transition-all duration-300 ${
-                isSubmitting || (!recaptchaToken && !recaptchaFailed)
+                status === 'submitting' || (!recaptchaToken && !recaptchaFailed)
                   ? 'bg-gray-600 text-gray-300 cursor-not-allowed opacity-60'
                   : 'bg-gradient-to-r from-brand-red to-brand-red/90 text-white hover:shadow-xl hover:shadow-brand-red/25 hover:scale-105 active:scale-95'
               }`}
             >
-              {isSubmitting ? (
+              {status === 'submitting' ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -1273,7 +1285,16 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
               )}
             </button>
             
-            {!recaptchaToken && !recaptchaFailed && (
+            {status === 'submitting' && (
+              <p className="mt-2 text-sm text-blue-400 text-center flex items-center justify-center gap-1">
+                <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Sending your message... Please wait.
+              </p>
+            )}
+            
+            {status === 'idle' && !recaptchaToken && !recaptchaFailed && (
               <p className="mt-2 text-sm text-yellow-400 text-center flex items-center justify-center gap-1">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
