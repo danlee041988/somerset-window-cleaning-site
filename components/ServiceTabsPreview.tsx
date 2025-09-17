@@ -32,7 +32,7 @@ const TAB_SERVICES = [
       'Downpipes flushed where needed'
     ],
     price: 'from £65 per property',
-    image: SERVICE_IMAGES.gutter_clearing || '/photos/photo03.jpg',
+    image: SERVICE_IMAGES.gutter || '/photos/photo03.jpg',
     cta: {
       label: 'Schedule gutter clear',
       href: '/services/gutter-cleaning'

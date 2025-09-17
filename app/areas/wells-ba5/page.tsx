@@ -201,7 +201,7 @@ export default function WellsBA5Page() {
           />
           <ServiceCard 
             title="Gutter Clearing" 
-            imageSrc={SERVICE_IMAGES.gutter_clearing || '/photos/photo03.jpg'} 
+            imageSrc={SERVICE_IMAGES.gutter || '/photos/photo03.jpg'} 
             description="Essential in Wells due to tree-lined streets. Protect your property from water damage year-round." 
           />
           <ServiceCard 

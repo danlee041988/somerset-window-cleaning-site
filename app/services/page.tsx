@@ -22,7 +22,7 @@ export default function ServicesPage() {
             // Map service titles to image sources
             const imageMap: Record<string, string> = {
               'Window Cleaning': SERVICE_IMAGES.window || '/photos/photo06.jpg',
-              'Gutter Clearing': SERVICE_IMAGES.gutter_clearing || '/photos/photo07.jpg', 
+              'Gutter Clearing': SERVICE_IMAGES.gutter || '/photos/photo07.jpg', 
               'Conservatory Roof Cleaning': SERVICE_IMAGES.conservatory || '/photos/photo08.jpg',
               'Solar Panel Cleaning': SERVICE_IMAGES.solar || '/photos/photo09.jpg',
               'Fascias & Soffits Cleaning': SERVICE_IMAGES.fascias || '/photos/photo10.jpg',
@@ -75,7 +75,7 @@ export default function ServicesPage() {
           <div className="rounded-2xl border border-brand-red/30 bg-brand-red/10 p-6 backdrop-blur-sm">
             <p className="text-sm uppercase tracking-wide text-brand-red mb-3 font-semibold">Client feedback</p>
             <blockquote className="text-white/90 text-base leading-relaxed">
-              "Somerset Window Cleaning handle our window, gutter, and fascia maintenance across four sites. We get photo proof after every visit and they always jump on urgent requests within a day."
+              &ldquo;Somerset Window Cleaning handle our window, gutter, and fascia maintenance across four sites. We get photo proof after every visit and they always jump on urgent requests within a day.&rdquo;
             </blockquote>
             <p className="mt-4 text-sm font-semibold text-white">- Claire Hawthorne, Facilities Manager</p>
           </div>

@@ -1,12 +1,13 @@
 import React from 'react'
 import ImageWithFallback from './ImageWithFallback'
-import { SWC_LOGO } from '@/content/image-manifest'
 
 type Props = {
   className?: string
   height?: number
   width?: number
 }
+
+const LOGO_SRC = '/Codex SWC Photos/SWC Logo.png'
 
 // Renders the actual brand file placed at /public/logo.png (or jpeg)
 // For best results, export a transparent PNG around 600–900px wide.
@@ -23,7 +24,7 @@ export default function Logo({ className = '', height, width }: Props) {
   
   return (
     <ImageWithFallback
-      src={SWC_LOGO}
+      src={LOGO_SRC}
       fallbackSrc="/images/logos/brand.svg"
       alt="Somerset Window Cleaning"
       className={`logo-blend transition-all duration-300 ${className}`}

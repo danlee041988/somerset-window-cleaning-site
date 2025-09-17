@@ -21,7 +21,7 @@ export default function GutterClearingPage() {
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b border-white/10 bg-black">
         <Image
-          src={SERVICE_IMAGES.gutter_clearing || '/photos/photo03.jpg'}
+          src={SERVICE_IMAGES.gutter || '/photos/photo03.jpg'}
           alt="Professional gutter clearing in Somerset"
           fill
           priority
@@ -107,7 +107,7 @@ export default function GutterClearingPage() {
             title={gutterService.title}
             description={gutterService.description}
             longDescription={gutterService.longDescription}
-            imageSrc={SERVICE_IMAGES.gutter_clearing || '/photos/photo03.jpg'}
+            imageSrc={SERVICE_IMAGES.gutter || '/photos/photo03.jpg'}
             imageAlt="Gutter clearing service"
             benefits={gutterService.benefits}
             price={gutterService.price}
