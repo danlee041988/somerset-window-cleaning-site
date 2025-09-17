@@ -120,7 +120,7 @@ export default function AppointmentBooking({
         setStep('slots')
         
         // Track progression to slot selection
-        analytics.trackCustomEvent('booking_form_completed', 'Appointments', data.serviceType, 1)
+        // analytics.trackCustomEvent('booking_form_completed', 'Appointments', data.serviceType, 1)
       } catch (error) {
         console.error('Error loading slots:', error)
         setError('serviceType', {
@@ -151,10 +151,10 @@ export default function AppointmentBooking({
         
         if (result.success) {
           // Track successful booking
-          analytics.trackCustomEvent('appointment_booked', 'Appointments', data.serviceType, 10)
+          // analytics.trackCustomEvent('appointment_booked', 'Appointments', data.serviceType, 10)
         } else {
           // Track booking failure
-          analytics.trackCustomEvent('booking_failed', 'Appointments', result.error || 'Unknown error', 0)
+          // analytics.trackCustomEvent('booking_failed', 'Appointments', result.error || 'Unknown error', 0)
         }
       } catch (error) {
         console.error('Booking error:', error)

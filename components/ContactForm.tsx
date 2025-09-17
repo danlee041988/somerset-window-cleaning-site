@@ -181,9 +181,9 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     
     // Track service area analytics
     if (validation.inServiceArea) {
-      analytics.trackCustomEvent('address_validated', 'Contact Form', 'Service Area Confirmed', 1)
+      // analytics.trackCustomEvent('address_validated', 'Contact Form', 'Service Area Confirmed', 1)
     } else {
-      analytics.trackCustomEvent('address_validated', 'Contact Form', 'Outside Service Area', 0)
+      // analytics.trackCustomEvent('address_validated', 'Contact Form', 'Outside Service Area', 0)
     }
   }
 
@@ -339,12 +339,12 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     }
     
     setUploadedPhotos(prev => [...prev, ...files])
-    analytics.trackCustomEvent('photos_uploaded', 'Contact Form', 'Photo Upload', files.length)
+    // analytics.trackCustomEvent('photos_uploaded', 'Contact Form', 'Photo Upload', files.length)
   }
   
   const removePhoto = (index: number) => {
     setUploadedPhotos(prev => prev.filter((_, i) => i !== index))
-    analytics.trackCustomEvent('photo_removed', 'Contact Form', 'Photo Removed', 1)
+    // analytics.trackCustomEvent('photo_removed', 'Contact Form', 'Photo Removed', 1)
   }
 
   // Set hidden timestamp fields
@@ -505,12 +505,12 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
       })
 
       // Send WhatsApp confirmation if opted in
-      if (whatsappOptIn && whatsappValidation?.isValid && whatsappValidation.formattedNumber) {
+      if (whatsappOptIn && whatsappValidation?.isValid) {
         try {
           const confirmationCode = `SWC-${Date.now().toString(36).toUpperCase()}`
           const success = await sendBookingConfirmation({
             customerName: fullName,
-            customerPhone: whatsappValidation.formattedNumber,
+            customerPhone: values.phone,
             serviceType: values.services?.[0] || 'Window Cleaning',
             appointmentDate: 'To be scheduled',
             appointmentTime: 'To be confirmed',
@@ -521,7 +521,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
           
           if (success) {
             console.log('✅ WhatsApp confirmation sent')
-            analytics.trackCustomEvent('whatsapp_sent', 'Contact Form', 'Booking Confirmation', 1)
+            // analytics.trackCustomEvent('whatsapp_sent', 'Contact Form', 'Booking Confirmation', 1)
           }
         } catch (error) {
           console.warn('WhatsApp confirmation failed:', error)

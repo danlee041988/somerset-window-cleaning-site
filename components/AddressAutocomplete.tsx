@@ -137,8 +137,8 @@ export default function AddressAutocomplete({
     }
 
     return () => {
-      if (autocompleteRef.current) {
-        google.maps.event.clearInstanceListeners(autocompleteRef.current)
+      if (autocompleteRef.current && (window as any).google?.maps?.event) {
+        (window as any).google.maps.event.clearInstanceListeners(autocompleteRef.current)
       }
     }
   }, [apiLoaded])
@@ -158,7 +158,7 @@ export default function AddressAutocomplete({
       }
 
       // Track address selection
-      analytics.trackCustomEvent('address_selected', 'Address Input', validation.inServiceArea ? 'Service Area' : 'Outside Area', 1)
+      // analytics.trackCustomEvent('address_selected', 'Address Input', validation.inServiceArea ? 'Service Area' : 'Outside Area', 1)
     } catch (error) {
       console.error('Address validation error:', error)
       setAddressValidation(null)
