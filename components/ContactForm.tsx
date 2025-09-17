@@ -55,10 +55,15 @@ const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || ''
 
 // Log environment variable status
 if (typeof window !== 'undefined') {
-  console.log('EmailJS Environment Variables:', {
+  console.log('🔧 EmailJS Environment Variables:', {
     PUBLIC_KEY: PUBLIC_KEY ? '✓ Set' : '✗ Missing',
     SERVICE_ID: SERVICE_ID ? '✓ Set' : '✗ Missing', 
     TEMPLATE_ID: TEMPLATE_ID ? '✓ Set' : '✗ Missing'
+  })
+  console.log('📝 Actual values:', {
+    PUBLIC_KEY: PUBLIC_KEY ? PUBLIC_KEY.substring(0, 10) + '...' : 'NOT SET',
+    SERVICE_ID: SERVICE_ID || 'NOT SET', 
+    TEMPLATE_ID: TEMPLATE_ID || 'NOT SET'
   })
 }
 
@@ -124,6 +129,23 @@ interface ContactFormProps {
 
 export default function ContactForm({ defaultPostcode, defaultService }: ContactFormProps = {}) {
   const formRef = React.useRef<HTMLFormElement>(null)
+  
+  // Initialize EmailJS when component mounts
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        console.log('🚀 Initializing EmailJS with public key:', PUBLIC_KEY ? PUBLIC_KEY.substring(0, 10) + '...' : 'MISSING')
+        if (PUBLIC_KEY) {
+          emailjs.init(PUBLIC_KEY)
+          console.log('✅ EmailJS initialized successfully')
+        } else {
+          console.error('❌ Cannot initialize EmailJS - public key missing')
+        }
+      } catch (error) {
+        console.error('❌ EmailJS initialization error:', error)
+      }
+    }
+  }, [])
   
   // Utility function to format postcodes with proper spacing
   const formatPostcode = (input: string): string => {
@@ -343,41 +365,58 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
 
   const onSubmit = async (values: FormValues) => {
     // Don't reset status here - keep current state
-    console.log('Form submission started', values)
+    console.log('🚀 Form submission started', values)
+    console.log('📊 Form state:', {
+      isSubmitting,
+      recaptchaToken: recaptchaToken ? 'Present' : 'Missing',
+      emailJsConfig: {
+        SERVICE_ID: SERVICE_ID ? 'Set' : 'Missing',
+        TEMPLATE_ID: TEMPLATE_ID ? 'Set' : 'Missing',
+        PUBLIC_KEY: PUBLIC_KEY ? 'Set' : 'Missing'
+      }
+    })
     
     // Honeypot + time-trap
     if (values.website) {
-      console.warn('Honeypot triggered - bot submission blocked')
+      console.warn('🚫 Honeypot triggered - bot submission blocked')
       return
     }
     const elapsed = Date.now() - start.current
     if (elapsed < 2000) {
-      console.warn('Time trap triggered - submission too fast')
+      console.warn('⏰ Time trap triggered - submission too fast')
       setStatus('error')
       return
     }
 
     // Validation
+    console.log('✅ Validating form...')
     if (!values.services || values.services.length === 0) {
+      console.error('❌ No services selected')
       setError('services', { type: 'manual', message: 'Please select at least one service' })
       return
     }
     clearErrors('services')
+    console.log('✅ Services validated:', values.services)
 
     // reCAPTCHA validation
+    console.log('🔐 Checking reCAPTCHA...')
     if (!recaptchaToken) {
+      console.error('❌ reCAPTCHA token missing')
       setError('recaptcha', { type: 'manual', message: 'Please complete the reCAPTCHA verification' })
       return
     }
     clearErrors('recaptcha')
+    console.log('✅ reCAPTCHA validated')
 
     // Prepare data for EmailJS
+    console.log('📋 Getting form reference...')
     const form = formRef.current
     if (!form) {
-      console.error('Form reference not found')
+      console.error('❌ Form reference not found - formRef.current is null')
       setStatus('error')
       return
     }
+    console.log('✅ Form reference found:', form)
 
     // Set submitting status
     console.log('Setting status to submitting...')
@@ -515,7 +554,12 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
       setUploadedPhotos([]) // Clear uploaded photos
       reset()
     } catch (e) {
-      console.error('Form submission error:', e)
+      console.error('❌ Form submission error:', e)
+      console.error('❌ Error details:', {
+        message: e instanceof Error ? e.message : 'Unknown error',
+        stack: e instanceof Error ? e.stack : undefined,
+        error: e
+      })
       
       // Track form error
       analytics.formError('submission_failed', e instanceof Error ? e.message : 'Unknown error')
@@ -524,10 +568,15 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
       
       // Show specific error message
       const errorMessage = e instanceof Error ? e.message : 'Unknown error occurred'
-      console.error('Detailed error:', errorMessage)
+      console.error('❌ Detailed error:', errorMessage)
       
       // Scroll to top to show error message
       window.scrollTo({ top: 0, behavior: 'smooth' })
+    } finally {
+      console.log('📊 Form submission complete - final state:', {
+        status,
+        isSubmitting
+      })
     }
   }
 
@@ -541,7 +590,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
         </div>
         <h3 className="text-2xl font-bold text-white mb-4">Message sent successfully!</h3>
         <p className="text-white/80 mb-6">
-          Thank you for getting in touch. We&apos;ll review your requirements and get back to you within the first working day.
+          We have received your booking and we&apos;ll be in touch soon.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div className="flex items-center gap-2 justify-center">
@@ -584,7 +633,14 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
           </p>
         </div>
 
-        <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form 
+          ref={formRef} 
+          onSubmit={(e) => {
+            console.log('🟢 Form onSubmit triggered')
+            handleSubmit(onSubmit)(e)
+          }} 
+          className="space-y-6"
+        >
           {/* Customer Type Selection */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -1171,6 +1227,11 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
             <button
               type="submit"
               disabled={isSubmitting || !recaptchaToken}
+              onClick={() => console.log('🔴 Submit button clicked!', {
+                isSubmitting,
+                hasRecaptchaToken: !!recaptchaToken,
+                isDisabled: isSubmitting || !recaptchaToken
+              })}
               className={`w-full px-8 py-4 font-semibold rounded-xl shadow-lg transition-all duration-300 ${
                 isSubmitting || !recaptchaToken
                   ? 'bg-gray-600 text-gray-300 cursor-not-allowed opacity-60'

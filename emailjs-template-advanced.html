@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Customer Enquiry - Somerset Window Cleaning</title>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style>
+        /* Reset styles */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+        
+        /* Main styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background-color: #f0f2f5;
+        }
+        
+        .email-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+        
+        /* Header styles */
+        .header {
+            background: linear-gradient(135deg, #E11D2A 0%, #C71920 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Customer type badges */
+        .customer-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .customer-new {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .customer-existing {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+        
+        /* Content sections */
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .section:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #E11D2A;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #E11D2A, #C71920);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .section h3 {
+            margin: 0;
+            color: #1a1a1a;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        /* Info grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .info-label {
+            font-size: 13px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+        
+        .info-value a {
+            color: #E11D2A;
+            text-decoration: none;
+        }
+        
+        .info-value a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Service pills */
+        .service-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .service-pill {
+            background: linear-gradient(135deg, #E11D2A, #C71920);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        /* Message box */
+        .message-box {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            font-style: italic;
+            color: #495057;
+            position: relative;
+            border-left: 4px solid #E11D2A;
+        }
+        
+        .message-box::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 30px;
+            color: #E11D2A;
+            opacity: 0.3;
+        }
+        
+        /* Photos section */
+        .photos-indicator {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .photos-icon {
+            font-size: 24px;
+        }
+        
+        .photos-text {
+            flex: 1;
+        }
+        
+        .photos-count {
+            background: #E11D2A;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .timestamp {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .timestamp-item {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .timestamp-item strong {
+            color: #E11D2A;
+        }
+        
+        .action-required {
+            background: #E11D2A;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            display: inline-block;
+            font-weight: 600;
+            margin-top: 20px;
+            text-decoration: none;
+            animation: attention 2s ease-in-out infinite;
+        }
+        
+        @keyframes attention {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .security-info {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+        
+        /* Priority indicator */
+        .priority-high {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            animation: blink 2s ease-in-out infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Responsive design */
+        @media screen and (max-width: 600px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Somerset Window Cleaning</h1>
+            <p>New Customer Enquiry Received</p>
+            <div class="status-badge">📥 FORM SUBMISSION</div>
+            {{#customer_type_field}}
+            {{#if (eq customer_type_field "New Customer")}}
+            <div class="priority-high">NEW LEAD</div>
+            {{/if}}
+            {{/customer_type_field}}
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Customer Information -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">👤</div>
+                    <h3>Customer Information</h3>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value">{{name}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Customer Type</div>
+                        <div class="info-value">
+                            {{#if (eq customer_type_field "New Customer")}}
+                            <span class="customer-badge customer-new">{{customer_type_field}}</span>
+                            {{else}}
+                            <span class="customer-badge customer-existing">{{customer_type_field}}</span>
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email Address</div>
+                        <div class="info-value"><a href="mailto:{{email}}">{{email}}</a></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Mobile Number</div>
+                        <div class="info-value"><a href="tel:{{phone}}">{{phone}}</a></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Property Postcode</div>
+                        <div class="info-value">{{postcode}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Preferred Contact</div>
+                        <div class="info-value">{{preferred_contact}}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Property Details -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🏠</div>
+                    <h3>Property Details</h3>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Property Type</div>
+                        <div class="info-value">{{property_type_field}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Number of Bedrooms</div>
+                        <div class="info-value">{{property_bedrooms}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Has Extension</div>
+                        <div class="info-value">{{property_extension}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Has Conservatory</div>
+                        <div class="info-value">{{property_conservatory}}</div>
+                    </div>
+                </div>
+                {{#property_notes}}
+                <div class="message-box">
+                    <strong>Property Access Notes:</strong><br>
+                    {{property_notes}}
+                </div>
+                {{/property_notes}}
+                {{#customer_photos_count}}
+                <div class="photos-indicator">
+                    <div class="photos-icon">📸</div>
+                    <div class="photos-text">
+                        <strong>Customer Photos Uploaded</strong><br>
+                        <span style="font-size: 14px;">Property photos available in Notion database</span>
+                    </div>
+                    <div class="photos-count">{{customer_photos_count}} photos</div>
+                </div>
+                {{/customer_photos_count}}
+            </div>
+            
+            <!-- Service Requirements -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🧹</div>
+                    <h3>Service Requirements</h3>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div class="info-label">Requested Services</div>
+                    <div class="service-pills">
+                        {{#each services_array}}
+                        <span class="service-pill">{{this}}</span>
+                        {{/each}}
+                    </div>
+                </div>
+                {{#cleaning_frequency}}
+                <div class="info-item" style="margin-top: 15px;">
+                    <div class="info-label">Window Cleaning Frequency</div>
+                    <div class="info-value">{{cleaning_frequency}}</div>
+                </div>
+                {{/cleaning_frequency}}
+                {{#estimated_price}}
+                <div class="info-item" style="margin-top: 15px;">
+                    <div class="info-label">Estimated Price (Window Cleaning)</div>
+                    <div class="info-value" style="font-size: 20px; color: #E11D2A; font-weight: 600;">{{estimated_price}}</div>
+                </div>
+                {{/estimated_price}}
+            </div>
+            
+            <!-- Customer Message -->
+            {{#message}}
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">💬</div>
+                    <h3>Customer Message</h3>
+                </div>
+                <div class="message-box" style="margin-top: 0;">
+                    {{message}}
+                </div>
+            </div>
+            {{/message}}
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="timestamp">
+                <div class="timestamp-item"><strong>Submitted:</strong> {{submitted_at}}</div>
+                <div class="timestamp-item"><strong>Date:</strong> {{submitted_date}}</div>
+                <div class="timestamp-item"><strong>Time:</strong> {{submitted_time}}</div>
+                <div class="timestamp-item"><strong>Form ID:</strong> #{{form_id}}</div>
+            </div>
+            
+            <a href="#" class="action-required">RESPOND WITHIN 1 WORKING DAY</a>
+            
+            <div class="security-info">
+                <div>This form submission has been verified and processed securely</div>
+                <div class="security-badge">
+                    🔒 reCAPTCHA Protected • Score: {{recaptcha_score}}
+                </div>
+                <div class="security-badge">
+                    ✓ Notion Database: {{notion_status}}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
