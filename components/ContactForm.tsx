@@ -467,7 +467,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     ensureHidden('submitted_at', now.toLocaleString('en-GB'))
     ensureHidden('submitted_date', now.toLocaleDateString('en-GB'))
     ensureHidden('submitted_time', now.toLocaleTimeString('en-GB'))
-    ensureHidden('recaptcha_token', recaptchaToken)
+    ensureHidden('recaptcha_token', recaptchaToken || '')
 
     try {
       console.log('Starting form submission process...')
