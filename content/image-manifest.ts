@@ -23,6 +23,7 @@ export const TEAM_IMAGES = [
 
 export const SERVICE_IMAGES = {
   "window": "/images/photos/Window Clean.jpeg",
+  "gutter": "/images/photos/Gutter Clearing.jpg",
   "gutter_clearing": "/images/photos/Gutter Clearing.jpg",
   "conservatory": "/images/photos/DJI_0052.JPG",
   "solar": "/images/photos/Solar Panel .jpeg",

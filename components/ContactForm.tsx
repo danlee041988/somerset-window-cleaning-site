@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react'
+import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import emailjs from '@emailjs/browser'
 import ReCaptcha from './ReCaptcha'
@@ -283,6 +284,7 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
   // Address validation state removed due to Google Maps billing requirements
   const [validatingAddress, setValidatingAddress] = React.useState<boolean>(false)
   const [uploadedPhotos, setUploadedPhotos] = React.useState<File[]>([])
+  const [photoPreviews, setPhotoPreviews] = React.useState<string[]>([])
   const [photoUploadError, setPhotoUploadError] = React.useState<string | null>(null)
   const [recaptchaFailed, setRecaptchaFailed] = React.useState<boolean>(false)
   const start = React.useRef<number>(Date.now())
@@ -303,6 +305,15 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
       analytics.formStart(firstService)
     }
   }, [formStarted, firstService])
+
+  React.useEffect(() => {
+    const urls = uploadedPhotos.map(file => URL.createObjectURL(file))
+    setPhotoPreviews(urls)
+
+    return () => {
+      urls.forEach(url => URL.revokeObjectURL(url))
+    }
+  }, [uploadedPhotos])
 
 
   // reCAPTCHA timeout detection
@@ -1182,12 +1193,16 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                     {uploadedPhotos.map((photo, index) => (
                       <div key={index} className="relative group">
-                        <div className="aspect-square rounded-lg overflow-hidden bg-white/10 border border-white/20">
-                          <img
-                            src={URL.createObjectURL(photo)}
-                            alt={`Uploaded photo ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
+                        <div className="relative aspect-square rounded-lg overflow-hidden bg-white/10 border border-white/20">
+                          {photoPreviews[index] && (
+                            <Image
+                              src={photoPreviews[index]}
+                              alt={`Uploaded photo ${index + 1}`}
+                              fill
+                              className="object-cover"
+                              sizes="(min-width: 1024px) 180px, 45vw"
+                            />
+                          )}
                         </div>
                         <button
                           type="button"
