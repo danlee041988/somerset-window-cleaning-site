@@ -90,7 +90,21 @@ export const analytics = {
       value: 10 // Assign value for conversion tracking
     });
 
-    // Also track as conversion
+    // Also track as conversion when GA4 is enabled and gtag is available
+    if (!GA_ENABLED) {
+      return;
+    }
+
+    if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
+      console.log('📊 GA4 conversion skipped: gtag not available');
+      return;
+    }
+
+    if (!GA_MEASUREMENT_ID) {
+      console.log('📊 GA4 conversion skipped: measurement ID missing');
+      return;
+    }
+
     window.gtag('event', 'conversion', {
       send_to: GA_MEASUREMENT_ID,
       value: 10,
@@ -150,6 +164,11 @@ export const analytics = {
       area_name: areaName,
       value: 3
     });
+  },
+
+  // Expose custom event tracking for integrations expecting analytics.trackCustomEvent
+  trackCustomEvent: (eventName: string, category: string, label?: string, value?: number) => {
+    trackCustomEvent(eventName, category, label, value)
   }
 };
 
@@ -170,12 +189,12 @@ export const trackPageView = (url: string, title: string) => {
 /**
  * Custom event tracking
  */
-export const trackCustomEvent = (
-  eventName: string, 
-  category: string, 
-  label?: string, 
+export function trackCustomEvent(
+  eventName: string,
+  category: string,
+  label?: string,
   value?: number
-) => {
+) {
   if (!GA_ENABLED || typeof window === 'undefined' || !window.gtag) {
     return;
   }
@@ -185,4 +204,4 @@ export const trackCustomEvent = (
     event_label: label,
     value: value
   });
-};
+}
