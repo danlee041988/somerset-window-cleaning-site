@@ -6,7 +6,7 @@
  */
 
 import { Metadata } from 'next'
-import GoogleAdsDashboard from '@/components/GoogleAdsdashboard'
+import GoogleAdsDashboard from '@/components/GoogleAdsDashboard-disabled'
 
 export const metadata: Metadata = {
   title: 'Google Ads Dashboard - Somerset Window Cleaning Admin',

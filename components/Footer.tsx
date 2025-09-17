@@ -15,7 +15,10 @@ export default function Footer() {
             <p className="text-sm text-white/70 max-w-prose">Crystal-clear windows for homes and businesses across Somerset. Friendly, reliable, fully insured.</p>
           </div>
           <div>
-            <h4 className="mb-3 font-semibold">Quick links</h4>
+            <h4 className="mb-3 font-semibold relative">
+              Quick links
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-[#E11D2A] to-transparent opacity-60"></div>
+            </h4>
             <ul className="space-y-2 text-sm text-white/80">
               <li><Link href="/services" className="hover:text-white">Services</Link></li>
               <li><Link href="/areas" className="hover:text-white">Areas We Cover</Link></li>
@@ -24,7 +27,10 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="mb-3 font-semibold">Contact</h4>
+            <h4 className="mb-3 font-semibold relative">
+              Contact
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-[#E11D2A] to-transparent opacity-60"></div>
+            </h4>
             <ul className="space-y-2 text-sm text-white/80">
               <li>13 Rockhaven Business Centre<br />Gravenchon Way<br />BA16 0HW, UK</li>
               <li><a href="tel:01458860339" className="hover:text-white">01458 860 339</a></li>
@@ -35,7 +41,10 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h4 className="mb-3 font-semibold">Business Hours</h4>
+            <h4 className="mb-3 font-semibold relative">
+              Business Hours
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-[#E11D2A] to-transparent opacity-60"></div>
+            </h4>
             <div className="text-sm">
               <BusinessHours variant="compact" className="mb-2" />
               <div className="space-y-1 text-white/80">
