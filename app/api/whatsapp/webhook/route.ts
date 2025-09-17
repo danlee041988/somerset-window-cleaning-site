@@ -134,7 +134,7 @@ async function processIncomingMessage(message: any) {
 
   try {
     // Track incoming message
-    analytics.trackCustomEvent('whatsapp_received', 'WhatsApp', type, 1);
+    // analytics.trackCustomEvent('whatsapp_received', 'WhatsApp', type, 1);
 
     // Handle different message types
     switch (type) {
@@ -228,7 +228,7 @@ async function processMessageStatus(status: any) {
   console.log(`📊 Message ${id} to ${recipient_id}: ${messageStatus}`);
 
   // Track message delivery analytics
-  analytics.trackCustomEvent(`whatsapp_${messageStatus}`, 'WhatsApp Status', messageStatus, 1);
+  // analytics.trackCustomEvent(`whatsapp_${messageStatus}`, 'WhatsApp Status', messageStatus, 1);
 
   // Update message status in database if needed
   // await updateMessageStatus(id, messageStatus, timestamp);

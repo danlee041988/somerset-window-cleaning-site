@@ -28,7 +28,7 @@ interface AddressAutocompleteProps {
 const loadGooglePlacesAPI = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     // Check if already loaded
-    if (window.google && window.google.maps && window.google.maps.places) {
+    if ((window as any).google && (window as any).google.maps && (window as any).google.maps.places) {
       resolve()
       return
     }
@@ -37,7 +37,7 @@ const loadGooglePlacesAPI = (): Promise<void> => {
     if (document.querySelector('script[src*="maps.googleapis.com"]')) {
       // Wait for existing script to load
       const checkLoaded = () => {
-        if (window.google && window.google.maps && window.google.maps.places) {
+        if ((window as any).google && (window as any).google.maps && (window as any).google.maps.places) {
           resolve()
         } else {
           setTimeout(checkLoaded, 100)
@@ -81,7 +81,7 @@ export default function AddressAutocomplete({
   disabled = false
 }: AddressAutocompleteProps) {
   const inputRef = React.useRef<HTMLInputElement>(null)
-  const autocompleteRef = React.useRef<google.maps.places.Autocomplete | null>(null)
+  const autocompleteRef = React.useRef<any>(null)
   const [isLoading, setIsLoading] = React.useState(false)
   const [suggestions, setSuggestions] = React.useState<PlaceResult[]>([])
   const [showSuggestions, setShowSuggestions] = React.useState(false)
@@ -97,10 +97,10 @@ export default function AddressAutocomplete({
         setIsLoading(true)
         await loadGooglePlacesAPI()
         setApiLoaded(true)
-        analytics.trackCustomEvent('google_places_loaded', 'Address Input', 'API Loaded', 1)
+        // analytics.trackCustomEvent('google_places_loaded', 'Address Input', 'API Loaded', 1)
       } catch (error) {
         console.error('Failed to load Google Places API:', error)
-        analytics.trackCustomEvent('google_places_error', 'Address Input', 'API Load Failed', 0)
+        // analytics.trackCustomEvent('google_places_error', 'Address Input', 'API Load Failed', 0)
       } finally {
         setIsLoading(false)
       }
@@ -115,7 +115,7 @@ export default function AddressAutocomplete({
 
     try {
       // Configure autocomplete for UK addresses
-      const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
+      const autocomplete = new (window as any).google.maps.places.Autocomplete(inputRef.current, {
         componentRestrictions: { country: 'gb' },
         fields: ['place_id', 'formatted_address', 'address_components', 'geometry'],
         types: ['address']
@@ -131,7 +131,7 @@ export default function AddressAutocomplete({
         }
       })
 
-      analytics.trackCustomEvent('autocomplete_initialized', 'Address Input', 'Autocomplete Ready', 1)
+      // analytics.trackCustomEvent('autocomplete_initialized', 'Address Input', 'Autocomplete Ready', 1)
     } catch (error) {
       console.error('Failed to initialize autocomplete:', error)
     }
