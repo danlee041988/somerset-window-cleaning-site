@@ -24,18 +24,15 @@ export default function ReCaptcha({ onChange, onExpired, className = '' }: ReCap
   if (!siteKey) {
     console.error('ReCAPTCHA site key not found in environment variables')
     
-    // Show error in development but fail silently in production
-    if (process.env.NODE_ENV === 'development') {
-      return (
-        <div className={`flex justify-center ${className}`}>
-          <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-2 rounded text-sm">
-            ⚠️ reCAPTCHA site key missing from environment variables
-          </div>
+    // Always show error - this is critical for form functionality
+    return (
+      <div className={`flex justify-center ${className}`}>
+        <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-2 rounded text-sm text-center">
+          ⚠️ reCAPTCHA configuration error
+          <div className="text-xs mt-1">Please contact support if this persists</div>
         </div>
-      )
-    }
-    
-    return null
+      </div>
+    )
   }
 
   return (
