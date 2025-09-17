@@ -6,6 +6,7 @@ const databaseId = process.env.NOTION_DATABASE_ID;
 
 console.log('Testing Notion API...');
 console.log('API Key:', apiKey ? `${apiKey.substring(0, 10)}...` : 'NOT SET');
+console.log('API Key prefix:', apiKey ? apiKey.substring(0, 4) : 'NOT SET');
 console.log('Database ID:', databaseId || 'NOT SET');
 
 // Test 1: Check if API key is valid

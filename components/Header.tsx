@@ -223,7 +223,7 @@ export default function Header() {
                   </svg>
                   Call 01458 860339
                 </a>
-                <Button href="/get-in-touch" className="w-full justify-center">BOOK NOW</Button>
+                <Button href="/book-appointment" className="w-full justify-center">BOOK NOW</Button>
               </div>
             </div>
           </div>
