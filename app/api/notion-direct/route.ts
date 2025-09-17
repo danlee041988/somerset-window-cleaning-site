@@ -10,9 +10,19 @@ export async function POST(request: NextRequest) {
     
     // Use environment variable or fallback for development
     const workingApiKey = process.env.NOTION_API_KEY || apiKey
-    const workingDatabaseId = '2707c58a-5877-81af-9e26-ff0d9a5e0ae3'
+    const workingDatabaseId = process.env.NOTION_DATABASE_ID || '2707c58a-5877-81af-9e26-ff0d9a5e0ae3'
+    
+    console.log('🔧 Notion Configuration:', {
+      hasApiKey: !!workingApiKey,
+      databaseId: workingDatabaseId,
+      apiKeyLength: workingApiKey?.length || 0
+    })
     
     if (!workingApiKey || !workingDatabaseId) {
+      console.error('❌ Notion configuration missing:', {
+        apiKey: !!workingApiKey,
+        databaseId: !!workingDatabaseId
+      })
       return NextResponse.json({
         success: false,
         error: 'Notion not configured - missing API key or database ID'
@@ -34,8 +44,9 @@ export async function POST(request: NextRequest) {
     console.log('📋 Received data:', {
       name: `${body.firstName} ${body.lastName}`,
       photos: body.customerPhotos ? `${body.customerPhotos.length} photos` : 'No photos',
-      whatsappOptIn: body.whatsappOptIn,
-      calculatedPrice: body.calculatedPrice
+      calculatedPrice: body.calculatedPrice,
+      services: body.services,
+      customerType: body.customerType
     })
 
     // Create page properties
@@ -247,7 +258,18 @@ export async function POST(request: NextRequest) {
       })
     })
 
-    const result = await response.json()
+    const responseText = await response.text()
+    let result: any
+    
+    try {
+      result = JSON.parse(responseText)
+    } catch (parseError) {
+      console.error('❌ Failed to parse Notion response:', responseText)
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid response from Notion API'
+      })
+    }
 
     if (response.ok) {
       console.log('✅ Customer created in Notion:', result.id)
@@ -258,11 +280,30 @@ export async function POST(request: NextRequest) {
         url: result.url
       })
     } else {
-      console.error('❌ Notion API Error:', result)
+      console.error('❌ Notion API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: result,
+        databaseId: workingDatabaseId
+      })
+      
+      // Check for specific Notion error types
+      let errorMessage = 'Failed to create customer in Notion'
+      
+      if (result.code === 'unauthorized') {
+        errorMessage = 'Notion API key is invalid or lacks permissions'
+      } else if (result.code === 'object_not_found') {
+        errorMessage = 'Notion database not found - check database ID'
+      } else if (result.code === 'validation_error') {
+        errorMessage = `Notion validation error: ${result.message}`
+      } else if (result.message) {
+        errorMessage = result.message
+      }
       
       return NextResponse.json({
         success: false,
-        error: result.message || 'Failed to create customer in Notion'
+        error: errorMessage,
+        details: result
       })
     }
 
