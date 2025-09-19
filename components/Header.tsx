@@ -214,7 +214,7 @@ export default function Header() {
             className="inline-flex shrink-0 items-center gap-3 rounded-md text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
             aria-label="Somerset Window Cleaning home"
           >
-            <Logo className="h-14 w-auto max-w-[260px] md:h-16 md:max-w-[320px] lg:h-[5rem] lg:max-w-[380px]" />
+            <Logo className="h-28 w-auto max-w-[520px] md:h-32 md:max-w-[640px] lg:h-[10rem] lg:max-w-[760px]" />
           </Link>
 
           {/* Desktop Navigation */}
