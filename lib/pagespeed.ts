@@ -223,7 +223,7 @@ function generateRecommendations(mobile: PageSpeedMetrics, desktop: PageSpeedMet
  */
 export const MONITORED_PAGES = [
   'https://somersetwindowcleaning.co.uk',
-  'https://somersetwindowcleaning.co.uk/get-in-touch',
+  'https://somersetwindowcleaning.co.uk/book-appointment',
   'https://somersetwindowcleaning.co.uk/services',
   'https://somersetwindowcleaning.co.uk/services/window-cleaning',
   'https://somersetwindowcleaning.co.uk/services/gutter-clearing'

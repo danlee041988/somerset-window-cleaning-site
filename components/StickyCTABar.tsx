@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Button from './Button'
+import Button from '@/components/ui/Button'
 import BusinessHours from './BusinessHours'
 
 export default function StickyCTABar() {
@@ -57,7 +57,7 @@ export default function StickyCTABar() {
                   <span className="sm:hidden">Call</span>
                 </a>
                 
-                <Button href="/get-in-touch" variant="primary" className="text-sm px-4 py-2">
+                <Button href="/book-appointment?intent=book" variant="primary" className="text-sm px-4 py-2">
                   Get Free Quote
                 </Button>
                 
@@ -88,7 +88,7 @@ export default function StickyCTABar() {
                 </a>
                 <span className="text-white/40">|</span>
                 <a
-                  href="/get-in-touch"
+                  href="/book-appointment?intent=quote"
                   className="text-sm text-brand-red hover:text-brand-red/80 font-medium"
                 >
                   Get Quote

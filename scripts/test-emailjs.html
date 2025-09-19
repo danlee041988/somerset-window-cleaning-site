@@ -105,7 +105,7 @@
             };
             
             // Send email via EmailJS
-            emailjs.send('service_yfnr1a9', 'template_contact_form', formData)
+            emailjs.send('service_yfnr1a9', 'template_booking_form', formData)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     resultDiv.innerHTML = `

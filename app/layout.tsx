@@ -4,7 +4,6 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StructuredData from '@/components/StructuredData'
 import ErrorBoundary from '@/components/ErrorBoundary'
-import OpenBanner from '@/components/OpenBanner'
 import DynamicLayout from '@/components/DynamicLayout'
 import StickyCTABar from '@/components/StickyCTABar'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
@@ -57,7 +56,6 @@ export default function RootLayout({
       <body className="min-h-screen bg-brand-black text-brand-white antialiased">
         <ErrorBoundary>
           <a href="#content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-brand-white text-black px-3 py-2 rounded">Skip to content</a>
-          <OpenBanner />
           <Header />
           <DynamicLayout>
             {children}

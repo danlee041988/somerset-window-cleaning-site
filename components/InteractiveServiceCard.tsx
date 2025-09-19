@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import ImageWithFallback from './ImageWithFallback'
-import Button from './Button'
+import ImageWithFallback from '@/components/ui/ImageWithFallback'
+import Button from '@/components/ui/Button'
 
 type ServiceBenefit = {
   icon: string
@@ -24,6 +24,8 @@ type Props = {
   process?: string[]
   equipment?: string[]
   guarantee?: string
+  learnMoreHref?: string
+  learnMoreText?: string
 }
 
 export default function InteractiveServiceCard({ 
@@ -36,11 +38,13 @@ export default function InteractiveServiceCard({
   price,
   frequency,
   ctaText = "Book Now",
-  ctaHref = "/get-in-touch",
+  ctaHref = "/book-appointment?intent=book",
   specialty,
   process = [],
   equipment = [],
-  guarantee
+  guarantee,
+  learnMoreHref,
+  learnMoreText = 'View service details'
 }: Props) {
   const [isHovered, setIsHovered] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
@@ -189,6 +193,15 @@ export default function InteractiveServiceCard({
             >
               {ctaText}
             </Button>
+            {learnMoreHref && (
+              <Button
+                href={learnMoreHref}
+                variant="ghost"
+                className="flex-1"
+              >
+                {learnMoreText}
+              </Button>
+            )}
           </div>
         </div>
 

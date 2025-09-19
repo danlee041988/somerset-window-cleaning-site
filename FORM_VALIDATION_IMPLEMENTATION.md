@@ -148,7 +148,7 @@ npm install zod @hookform/resolvers clsx tailwind-merge
 2. **Replace ContactForm import** in `/app/get-in-touch/page.tsx`:
    ```typescript
    // Change from:
-   import ContactForm from '@/components/ContactForm'
+   import ContactForm from '@/components/features/contact/ContactForm'
    
    // To:
    import ContactFormEnhanced from '@/components/ContactFormEnhanced'

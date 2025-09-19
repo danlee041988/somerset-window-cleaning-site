@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { notionConfig } from '@/lib/config/env'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
     // Get environment variables at runtime
-    const apiKey = process.env.NOTION_API_KEY
-    const databaseId = process.env.NOTION_DATABASE_ID
+    const { apiKey, databaseId, dataSourceId } = notionConfig
     
     // Use environment variable or fallback for development
-    const workingApiKey = process.env.NOTION_API_KEY || apiKey
-    const workingDatabaseId = process.env.NOTION_DATABASE_ID || '2707c58a-5877-81af-9e26-ff0d9a5e0ae3'
+    const workingApiKey = apiKey
+    const workingDatabaseId = databaseId || '2707c58a-5877-81af-9e26-ff0d9a5e0ae3'
     
     console.log('🔧 Notion Configuration:', {
       hasApiKey: !!workingApiKey,
@@ -148,12 +148,10 @@ export async function POST(request: NextRequest) {
             // Map form values to database options
             const frequencyMap = {
               '4-weeks': 'Every 4 weeks',
-              '8-weeks': 'Every 8 weeks', 
-              '12-weeks': 'Every 12 weeks',
+              '8-weeks': 'Every 8 weeks',
               'ad-hoc': 'Ad hoc basis',
               'Every 4 weeks': 'Every 4 weeks',
               'Every 8 weeks': 'Every 8 weeks',
-              'Every 12 weeks': 'Every 12 weeks'
             }
             
             return frequencyMap[body.frequency as keyof typeof frequencyMap] || 'Not specified'

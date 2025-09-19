@@ -15,7 +15,7 @@ The error you're seeing is because the environment variables are not set in your
    |-----|-------|
    | `NEXT_PUBLIC_EMAILJS_SERVICE_ID` | `service_yfnr1a9` |
    | `NEXT_PUBLIC_EMAILJS_PUBLIC_KEY` | `cbA_IhBfxEeDwbEx6` |
-   | `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID` | `template_contact_form` |
+   | `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID` | `template_booking_form` |
    | `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | `6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC` |
 
 5. Click **Save** for each variable
@@ -42,7 +42,7 @@ The error you're seeing is because the environment variables are not set in your
    # Enter value: cbA_IhBfxEeDwbEx6
 
    vercel env add NEXT_PUBLIC_EMAILJS_TEMPLATE_ID production preview development
-   # Enter value: template_contact_form
+   # Enter value: template_booking_form
 
    vercel env add NEXT_PUBLIC_RECAPTCHA_SITE_KEY production preview development
    # Enter value: 6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC
@@ -60,7 +60,7 @@ Create a `.env.production` file with the same variables:
 ```env
 NEXT_PUBLIC_EMAILJS_SERVICE_ID=service_yfnr1a9
 NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=cbA_IhBfxEeDwbEx6
-NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=template_contact_form
+NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=template_booking_form
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC
 ```
 

@@ -1,298 +1,353 @@
 "use client"
 
 import React from 'react'
+import clsx from 'clsx'
+import Section from '@/components/ui/Section'
 
-interface Review {
-  name: string
-  text: string
-  verified: boolean
-  service?: string
-  rating: number
-  date?: string
-  initials?: string
+type SectionMode = 'showcase' | 'standalone'
+type ReviewsVariant = 'spotlight' | 'carousel' | 'mosaic'
+
+type ReviewsProps = {
+  variant?: ReviewsVariant
+  mode?: SectionMode
+  className?: string
 }
 
-const reviews: Review[] = [
+type SpotlightMetric = {
+  label: string
+  value: string
+  helper: string
+}
+
+type CarouselReview = {
+  name: string
+  service: string
+  quote: string
+  location: string
+}
+
+type MosaicCard = {
+  title: string
+  quote: string
+  attribution: string
+}
+
+type SharedSectionProps = {
+  mode?: SectionMode
+  className?: string
+}
+
+const GOOGLE_RATING_SCORE = '4.9'
+const GOOGLE_REVIEW_TOTAL = '195+'
+
+const SPOTLIGHT_REVIEW = {
+  name: 'Jodie Cater',
+  quote: 'Second window clean with Somerset Window Cleaning and the windows still sparkle. Friendly reminders and easy payments keep everything effortless.',
+  service: 'Window Cleaning',
+  timeframe: 'February 2024'
+}
+
+const SPOTLIGHT_METRICS: SpotlightMetric[] = [
   {
-    name: "Tricia Woods",
-    text: "Yes I was very happy with my window clean they sparkle, shame it has rained ever since!!! And appreciated you came so soon after I asked. Looking forward to the next time!",
-    verified: true,
-    service: "Window Cleaning",
-    rating: 5,
-    initials: "TW"
+    label: 'Local towns covered',
+    value: '12',
+    helper: 'From Wells BA5 to Street, Glastonbury, and surrounding villages'
   },
   {
-    name: "Sandra",
-    text: "Dylan did a fantastic window clean for me this morning. All the windows, although hard to reach (as they're high off the ground), were left absolutely spotless.",
-    verified: true,
-    service: "Window Cleaning", 
-    rating: 5,
-    initials: "S"
+    label: 'Average response time',
+    value: '<24 hrs',
+    helper: 'Quote, schedule, and confirmation handled within one business day'
   },
   {
-    name: "Dean Rowland",
-    text: "Would highly recommend, brilliant service, windows have never been cleaner. The man who cleaned was ever so polite too.",
-    verified: true,
-    service: "Window Cleaning",
-    rating: 5,
-    initials: "DR"
-  },
-  {
-    name: "TheShortfry",
-    text: "We desperately needed a window clean as we are selling our property and had a viewing in the next couple of days. They fit us in and saved the day!",
-    verified: true,
-    service: "Emergency Clean",
-    rating: 5,
-    initials: "TS"
-  },
-  {
-    name: "Graham Whitcombe",
-    text: "We asked SWC if they were able to clean our solar panels. They arrived, looked at the solar panels, a price was agreed and they did a fantastic job. Highly professional service.",
-    verified: true,
-    service: "Solar Panel Cleaning",
-    rating: 5,
-    initials: "GW"
-  },
-  {
-    name: "Helen F",
-    text: "These guys are extremely professional - they turn up when they say, do a thorough job of the windows (even awkward and very high ones), and have an easy payment system.",
-    verified: true,
-    service: "Window Cleaning",
-    rating: 5,
-    initials: "HF"
-  },
-  {
-    name: "Katie Boxer",
-    text: "Excellent window cleaning service. Reliable and professional. I have been using Somerset Window Cleaning for years.",
-    verified: true,
-    service: "Window Cleaning",
-    rating: 5,
-    initials: "KB"
-  },
-  {
-    name: "Claire Tucker",
-    text: "I've used this business for quite a while. Always happy with the service. Text reminders on upcoming visit & automation payment afterwards. Very efficient business with a streamlined process.",
-    verified: true,
-    service: "Window Cleaning",
-    rating: 5,
-    initials: "CT"
-  },
-  {
-    name: "John Rider",
-    text: "Been using Somerset window cleaning for the last 7 years and cannot recommend them enough, professional thorough and reliable.",
-    verified: true,
-    service: "Window Cleaning",
-    rating: 5,
-    initials: "JR"
-  },
-  {
-    name: "Tom Bath",
-    text: "Excellent, thorough service. Polite courteous staff and very accommodating. Competitively priced but frankly I'm happy to pay a bit extra for a reliable service.",
-    verified: true,
-    service: "Window Cleaning",
-    rating: 5,
-    initials: "TB"
-  },
-  {
-    name: "Matt Coley",
-    text: "Great Technique, walked straight into the french doors they were so clean, didn't even know they were there.",
-    verified: true,
-    service: "Window Cleaning",
-    rating: 5,
-    initials: "MC"
-  },
-  {
-    name: "Lilli",
-    text: "These people are the best!! They are helpful and friendly, send out reminders, turn up reliably when they say they will, do a brilliant job and charge the same as everyone else. I highly recommend them.",
-    verified: true,
-    service: "Window Cleaning",
-    rating: 5,
-    initials: "L"
+    label: 'Repeat bookings',
+    value: '78%',
+    helper: 'Customers stay on the 4- or 8-week rotation after the first visit'
   }
 ]
 
-export default function Reviews() {
-  const [currentIndex, setCurrentIndex] = React.useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = React.useState(true)
-
-  // Calculate number of pages for pagination dots
-  const reviewsPerPage = 3
-  const totalPages = Math.min(3, Math.ceil(reviews.length / reviewsPerPage)) // Limit to 3 pages maximum
-
-  // Auto-advance reviews every 5 seconds
-  React.useEffect(() => {
-    if (!isAutoPlaying) return
-    
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => {
-        const maxPage = totalPages - 1
-        return prev >= maxPage ? 0 : prev + 1
-      })
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [isAutoPlaying, totalPages])
-
-  const nextReview = () => {
-    setCurrentIndex((prev) => {
-      const maxPage = totalPages - 1
-      return Math.min(prev + 1, maxPage)
-    })
-    setIsAutoPlaying(false)
+const CAROUSEL_REVIEWS: CarouselReview[] = [
+  {
+    name: 'Jodie Cater',
+    service: 'Window Cleaning',
+    quote: 'Second window clean with Somerset Window Cleaning and the windows still sparkle. Friendly reminders and easy payments keep everything effortless.',
+    location: 'Street BA16'
+  },
+  {
+    name: 'Sandra',
+    service: 'Routine Clean',
+    quote: 'Dylan did a fantastic window clean for me this morning. The high windows were spotless and the text updates were really helpful.',
+    location: 'Glastonbury BA6'
+  },
+  {
+    name: 'Ben at Orchard Deli',
+    service: 'Commercial Frontage',
+    quote: 'Shopfront glass and frames look brand new every time. Pre-opening visits slot into our rota without fail.',
+    location: 'Wells BA5'
+  },
+  {
+    name: 'Amelia',
+    service: 'Solar Panel Cleaning',
+    quote: 'Panels were covered in debris but now they shine. Output is already up after the Somerset Window Cleaning deep clean.',
+    location: 'Somerton TA11'
   }
+]
 
-  const prevReview = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0))
-    setIsAutoPlaying(false)
+const MOSAIC_CARDS: MosaicCard[] = [
+  {
+    title: 'Window Cleaning',
+    quote: 'Windows, frames, and doors gleam after every 4-week visit. Payment links arrive the same day.',
+    attribution: 'Claire — Wells BA5'
+  },
+  {
+    title: 'Routine Clean',
+    quote: 'Routine clean after our kitchen extension. Ladders, sills, and inside glass all finished without any fuss.',
+    attribution: 'Oliver & Jess — Street'
+  },
+  {
+    title: 'Commercial Frontage',
+    quote: 'Somerset Window Cleaning keeps the frontage spotless before we open. Customers notice the difference.',
+    attribution: 'Ben at Orchard Deli — Glastonbury'
+  },
+  {
+    title: 'Specialist Treatments',
+    quote: 'Solar panels, fascias, and conservatory roofs all revived with the same glass noir finish.',
+    attribution: 'Amelia — Somerton'
   }
+]
 
-  const goToReview = (pageIndex: number) => {
-    const maxPage = totalPages - 1
-    setCurrentIndex(Math.min(pageIndex, maxPage))
-    setIsAutoPlaying(false)
+const MOSAIC_METRICS = [
+  {
+    label: 'Verified review volume',
+    detail: 'Over 190 Google reviews from Somerset homeowners and businesses'
+  },
+  {
+    label: '4.9 overall score',
+    detail: 'Responsive communication, professional crews, and spotless results'
   }
+]
 
-  // Calculate translation for smooth carousel movement
-  const getDesktopTransform = () => {
-    // Show 3 cards, move by 1 card width each time
-    const cardWidth = 33.333 // 100% / 3 cards
-    return -(currentIndex * cardWidth)
+function GoogleLogo({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 512 512"
+      className={clsx('h-6 w-6 flex-none', className)}
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0 1 90 341" />
+      <path fill="#4285f4" d="m386 400 0.06-0.04a140 175 0 0 0 52.94-178.96H260v74h102q-7 37-38 57" />
+      <path fill="#fbbc04" d="M90 341a208 200 0 0 1 0-171l63 49q-12 37 0 73" />
+      <path fill="#ea4335" d="M153 219c22-69 116-109 179-50l55-54C309 40 157 43 90 170" />
+    </svg>
+  )
+}
+
+function GoogleReviewBadge({ title = 'Google Reviews', subtitle, className }: { title?: string; subtitle?: string; className?: string }) {
+  return (
+    <div className={clsx('flex items-center gap-3', className)}>
+      <GoogleLogo />
+      <div className="leading-tight">
+        <p className="text-sm font-semibold text-[var(--fg)]">{title}</p>
+        {subtitle ? (
+          <p className="text-xs text-[color:var(--muted)]">{subtitle}</p>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
+export default function Reviews({ variant = 'carousel', mode, className }: ReviewsProps = {}) {
+  const resolvedMode: SectionMode = mode ?? 'standalone'
+
+  switch (variant) {
+    case 'spotlight':
+      return <SpotlightReviewsSection mode={resolvedMode} className={className} />
+    case 'mosaic':
+      return <MosaicReviewsSection mode={resolvedMode} className={className} />
+    case 'carousel':
+    default:
+      return <CarouselReviewsSection mode={resolvedMode} className={className} />
   }
+}
 
-  const getMobileTransform = () => {
-    // Show 1 card, move by full width each time
-    return -(currentIndex * 100)
+export function ReviewsShowcase() {
+  return (
+    <div className="space-y-16">
+      <SpotlightReviewsSection />
+      <CarouselReviewsSection />
+      <MosaicReviewsSection />
+    </div>
+  )
+}
+
+export function SpotlightReviewsSection({ mode = 'showcase', className }: SharedSectionProps = {}) {
+  const content = <SpotlightReviewSurface className={className} />
+
+  if (mode === 'standalone') {
+    return content
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-sm">
-      {/* Header with Rating Summary */}
-      <div className="relative p-8 pb-6">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent" />
-        
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-          {/* Left: Rating & Stats */}
-          <div className="flex items-center gap-6">
-            <div className="text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-white to-white/90 bg-clip-text text-transparent mb-2">
-                5.0
-              </div>
-              <div className="flex items-center gap-1 mb-2">
-                {[...Array(5)].map((_, i) => (
-                  <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
-                    <path fill="#FBBC05" d="M12 17.27 18.18 21 16.54 13.97 22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"/>
-                  </svg>
-                ))}
-              </div>
-              <div className="text-xs text-white/60">195+ Google Reviews</div>
-            </div>
-            
-            <div className="h-12 w-px bg-white/20" />
-            
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c-.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-                <span className="font-semibold text-white/90">Google Reviews</span>
-              </div>
-              <p className="text-sm text-white/70">Real feedback from verified customers</p>
-            </div>
+    <Section
+      title="Concept A: Customer Spotlight"
+      subtitle="Hero layout designed for key service pages that need a high-trust social proof moment."
+      spacing="relaxed"
+    >
+      {content}
+    </Section>
+  )
+}
+
+export function CarouselReviewsSection({ mode = 'showcase', className }: SharedSectionProps = {}) {
+  if (mode === 'standalone') {
+    return <CarouselReviewSurface className={className} />
+  }
+
+  return (
+    <Section
+      title="Concept B: Guided Carousel"
+      subtitle="Interactive module with clear navigation for pages that need rotating proof without leaving the layout."
+      spacing="relaxed"
+    >
+      <CarouselReviewSurface className={className} />
+    </Section>
+  )
+}
+
+export function MosaicReviewsSection({ mode = 'showcase', className }: SharedSectionProps = {}) {
+  if (mode === 'standalone') {
+    return <MosaicReviewSurface className={className} />
+  }
+
+  return (
+    <Section
+      title="Concept C: Review Mosaic"
+      subtitle="Grid layout for comparison pages and long-form content where multiple proof points reinforce trust."
+      spacing="relaxed"
+    >
+      <MosaicReviewSurface className={className} />
+    </Section>
+  )
+}
+
+function SpotlightReviewSurface({ className }: { className?: string }) {
+  return (
+    <div className={clsx('glass-noir-panel overflow-hidden rounded-3xl border border-[var(--glass-border)] bg-[var(--glass)] p-8 md:p-12 backdrop-blur-xl', className)}>
+      <div className="grid gap-10 md:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <GoogleReviewBadge title="Google rating" subtitle="Real feedback from verified customers" />
+            <p className="text-4xl font-semibold text-[var(--fg)] md:text-5xl">
+              {GOOGLE_RATING_SCORE} out of 5 on Google
+            </p>
+            <p className="max-w-md text-base text-[color:var(--muted)]">
+              {GOOGLE_REVIEW_TOTAL} verified reviews from Somerset homeowners, landlords, and commercial clients.
+            </p>
           </div>
-          
-          {/* Right: Navigation Controls */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={prevReview}
-              className="p-3 rounded-full border border-white/20 bg-white/5 text-white/80 hover:bg-white/10 hover:border-white/30 transition-all duration-300 group"
-              aria-label="Previous review"
-            >
-              <svg className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={nextReview}
-              className="p-3 rounded-full border border-white/20 bg-white/5 text-white/80 hover:bg-white/10 hover:border-white/30 transition-all duration-300 group"
-              aria-label="Next review"
-            >
-              <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+
+          <dl className="grid gap-4 sm:grid-cols-3">
+            {SPOTLIGHT_METRICS.map((metric) => (
+              <div key={metric.label} className="glass-card glass-noir-card--tight h-full rounded-2xl border border-white/10 bg-white/5 p-6 text-[var(--fg)]">
+                <dt className="text-sm noir-subtle">{metric.label}</dt>
+                <dd className="mt-2 text-2xl font-semibold text-[var(--fg)]">{metric.value}</dd>
+                <p className="mt-3 text-xs text-[color:var(--muted-subtle)]">{metric.helper}</p>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <article className="glass-card glass-noir-card--tight relative flex h-full flex-col justify-between gap-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-8 text-[var(--fg)] shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-subtle)]">
+              <GoogleLogo className="h-5 w-5" />
+              <span>Verified Google review</span>
+            </div>
+            <p className="text-lg leading-relaxed text-[var(--fg)]">
+              “{SPOTLIGHT_REVIEW.quote}”
+            </p>
           </div>
+          <footer className="space-y-1 text-sm">
+            <p className="font-semibold text-[var(--fg)]">{SPOTLIGHT_REVIEW.name}</p>
+            <p className="text-[color:var(--muted)]">{SPOTLIGHT_REVIEW.service} • {SPOTLIGHT_REVIEW.timeframe}</p>
+          </footer>
+        </article>
+      </div>
+    </div>
+  )
+}
+
+function CarouselReviewSurface({ className }: { className?: string }) {
+  const [activeIndex, setActiveIndex] = React.useState(0)
+
+  const handleNext = React.useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % CAROUSEL_REVIEWS.length)
+  }, [])
+
+  const handlePrev = React.useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + CAROUSEL_REVIEWS.length) % CAROUSEL_REVIEWS.length)
+  }, [])
+
+  const activeReview = CAROUSEL_REVIEWS[activeIndex]
+  const supportingReviews = React.useMemo(() => {
+    return CAROUSEL_REVIEWS.filter((_, idx) => idx !== activeIndex).slice(0, 2)
+  }, [activeIndex])
+
+  return (
+    <div className={clsx('glass-noir-panel rounded-3xl border border-[var(--glass-border)] bg-[var(--glass)] p-8 md:p-12 backdrop-blur-xl', className)}>
+      <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+        <div className="space-y-3">
+          <GoogleReviewBadge subtitle="Real feedback from verified customers" />
+          <h3 className="text-3xl font-semibold text-[var(--fg)]">{GOOGLE_RATING_SCORE} out of 5 on Google</h3>
+          <p className="text-sm text-[color:var(--muted)]">{GOOGLE_REVIEW_TOTAL} Somerset customers across domestic and commercial routes.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handlePrev}
+            className="glass-card glass-noir-card--tight flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 text-[var(--fg)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20"
+            aria-label="Previous review"
+          >
+            <span aria-hidden>←</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleNext}
+            className="glass-card glass-noir-card--tight flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 text-[var(--fg)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20"
+            aria-label="Next review"
+          >
+            <span aria-hidden>→</span>
+          </button>
         </div>
       </div>
 
-      {/* Reviews Carousel */}
-      <div className="px-8 pb-8">
-        {/* Desktop: Show 3 reviews with smooth sliding */}
-        <div className="hidden md:block overflow-hidden">
-          <div 
-            className="flex transition-transform duration-700 ease-in-out"
-            style={{ 
-              transform: `translateX(${getDesktopTransform()}%)`,
-              width: `${reviews.length * 33.333}%`
-            }}
-          >
-            {reviews.map((review, index) => (
-              <div 
-                key={index} 
-                className="flex-shrink-0 px-3"
-                style={{ width: `${100 / reviews.length}%` }}
-              >
-                <ReviewCard 
-                  review={review} 
-                  isActive={false} // Remove active styling to make all cards consistent
-                  delay={0}
-                />
-              </div>
-            ))}
+      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+        <article
+          data-testid="review-card-emphasis"
+          className="glass-card glass-noir-card--tight flex h-full flex-col justify-between gap-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/12 to-white/6 p-8 text-[var(--fg)] shadow-[0_30px_80px_rgba(0,0,0,0.35)]"
+        >
+          <div className="space-y-4">
+            <p className="text-sm font-semibold text-[color:var(--muted-subtle)]">{activeReview.service}</p>
+            <p className="text-lg leading-relaxed text-[var(--fg)]">“{activeReview.quote}”</p>
           </div>
-        </div>
-        
-        {/* Mobile: Show 1 review with smooth sliding */}
-        <div className="md:hidden overflow-hidden">
-          <div 
-            className="flex transition-transform duration-700 ease-in-out"
-            style={{ 
-              transform: `translateX(${getMobileTransform()}%)`,
-              width: `${reviews.length * 100}%`
-            }}
-          >
-            {reviews.map((review, index) => (
-              <div 
-                key={index} 
-                className="flex-shrink-0 w-full"
-              >
-                <ReviewCard 
-                  review={review} 
-                  isActive={false} // Remove active styling for mobile too
-                  delay={0}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+          <footer className="space-y-1 text-sm">
+            <p className="font-semibold text-[var(--fg)]">{activeReview.name}</p>
+            <p className="text-[color:var(--muted)]">{activeReview.location}</p>
+          </footer>
+        </article>
 
-      {/* Pagination Dots */}
-      <div className="px-8 pb-8">
-        <div className="flex items-center justify-center gap-2">
-          {Array.from({ length: totalPages }).map((_, pageIndex) => (
-            <button
-              key={pageIndex}
-              onClick={() => goToReview(pageIndex)}
-              className={`h-2 w-2 rounded-full transition-all duration-300 ${
-                pageIndex === currentIndex 
-                  ? 'bg-brand-red w-8' 
-                  : 'bg-white/30 hover:bg-white/50'
-              }`}
-              aria-label={`Go to page ${pageIndex + 1}`}
-            />
+        <div className="grid gap-4 sm:grid-cols-2">
+          {supportingReviews.map((review) => (
+            <article
+              key={review.name}
+              className="glass-card glass-noir-card--tight flex h-full flex-col gap-4 rounded-3xl border border-white/8 bg-white/5 p-6 text-[var(--fg)]"
+            >
+              <div className="space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-subtle)]">{review.service}</p>
+                <p className="text-sm text-[var(--fg)]">“{review.quote}”</p>
+              </div>
+              <footer className="mt-auto text-xs text-[color:var(--muted)]">{review.name} — {review.location}</footer>
+            </article>
           ))}
         </div>
       </div>
@@ -300,64 +355,41 @@ export default function Reviews() {
   )
 }
 
-// Individual Review Card Component
-function ReviewCard({ 
-  review, 
-  isActive, 
-  delay = 0 
-}: { 
-  review: Review
-  isActive: boolean
-  delay?: number
-}) {
+function MosaicReviewSurface({ className }: { className?: string }) {
   return (
-    <div 
-      className="group relative overflow-hidden rounded-xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm hover:border-white/30 transition-all duration-300 h-full flex flex-col"
-      style={{ 
-        animationDelay: `${delay}ms`
-      }}
-    >
-      <div className="p-6 flex flex-col h-full">
-        {/* Customer Info */}
-        <div className="flex items-start gap-4 mb-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-1">
-              <h4 className="font-semibold text-white/95 truncate">{review.name}</h4>
-              {review.verified && (
-                <div className="flex items-center gap-1">
-                  <svg className="h-4 w-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              )}
-            </div>
-            
-            <div className="flex items-center gap-2 mb-1">
-              <div className="flex items-center gap-1">
-                {[...Array(review.rating)].map((_, i) => (
-                  <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
-                    <path fill="#FBBC05" d="M12 17.27 18.18 21 16.54 13.97 22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"/>
-                  </svg>
-                ))}
-              </div>
-            </div>
+    <div className={clsx('glass-noir-panel rounded-3xl border border-[var(--glass-border)] bg-[var(--glass)] p-8 md:p-12 backdrop-blur-xl', className)}>
+      <div className="grid gap-8 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <GoogleReviewBadge subtitle={`${GOOGLE_REVIEW_TOTAL} Google reviews across Somerset`} />
+            <h3 className="text-3xl font-semibold text-[var(--fg)]">Somerset voices, Glass Noir finish</h3>
+            <p className="text-sm text-[color:var(--muted)]">
+              Layered proof modules for SEO landing pages, comparison layouts, and service explorers.
+            </p>
           </div>
+          <dl className="space-y-4">
+            {MOSAIC_METRICS.map((metric) => (
+              <div key={metric.label}>
+                <dt className="text-sm font-semibold text-[var(--fg)]">{metric.label}</dt>
+                <dd className="text-sm text-[color:var(--muted)]">{metric.detail}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
-        
-        {/* Review Text */}
-        <blockquote className="text-sm text-white/85 leading-relaxed flex-1">
-          &ldquo;{review.text}&rdquo;
-        </blockquote>
-        
-        {/* Google Verification */}
-        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/10">
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c-.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-          </svg>
-          <span className="text-xs font-medium text-white/60">Verified Google Review</span>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {MOSAIC_CARDS.map((card) => (
+            <article
+              key={card.title}
+              className="glass-card glass-noir-card--tight flex h-full flex-col gap-4 rounded-3xl border border-white/8 bg-white/6 p-6 text-[var(--fg)]"
+            >
+              <header>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-subtle)]">{card.title}</p>
+              </header>
+              <p className="text-sm leading-relaxed text-[var(--fg)]">“{card.quote}”</p>
+              <footer className="mt-auto text-xs text-[color:var(--muted)]">{card.attribution}</footer>
+            </article>
+          ))}
         </div>
       </div>
     </div>

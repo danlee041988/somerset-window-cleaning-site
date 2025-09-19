@@ -86,7 +86,7 @@ export default function StrategicCTA() {
 
             {/* Primary CTA Button */}
             <a
-              href="/get-in-touch"
+              href="/book-appointment?intent=book"
               className="group inline-flex items-center justify-center gap-3 w-full lg:w-auto px-8 py-4 bg-gradient-to-r from-brand-red to-brand-red/90 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-brand-red/25 transition-all duration-300 hover:scale-105 active:scale-95"
             >
               <span>Book Now</span>
