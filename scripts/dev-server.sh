@@ -1,49 +1,79 @@
 #!/bin/bash
 
-# Somerset Window Cleaning - Enhanced Development Server
-echo "🚀 Starting Somerset Window Cleaning Development Environment"
+set -euo pipefail
 
-# Check if port 3000 is available
-if lsof -Pi :3000 -sTCP:LISTEN -t >/dev/null ; then
-    echo "⚠️  Port 3000 is busy. Trying port 3001..."
-    npm run dev:fallback &
-    DEV_PID=$!
-    echo "✅ Server starting on http://localhost:3001"
-else
-    npm run dev &
-    DEV_PID=$!
-    echo "✅ Server starting on http://localhost:3000"
+PORT=${DEV_PORT:-3000}
+HOST="localhost"
+NEXT_BIN="./node_modules/.bin/next"
+
+if [ ! -x "$NEXT_BIN" ]; then
+  echo "❌ Could not find Next.js binary at $NEXT_BIN"
+  echo "   Run 'npm install' and try again."
+  exit 1
 fi
 
-# Wait for server to be ready
-sleep 3
+echo "\n🚀 Somerset Window Cleaning – Dev Server"
 
-# Open browser automatically
-if command -v open >/dev/null 2>&1; then
-    if lsof -Pi :3000 -sTCP:LISTEN -t >/dev/null ; then
-        echo "🌐 Opening http://localhost:3000"
-        open http://localhost:3000
-    else
-        echo "🌐 Opening http://localhost:3001" 
-        open http://localhost:3001
-    fi
+EXISTING_PIDS=$(lsof -ti tcp:${PORT} || true)
+if [ -n "$EXISTING_PIDS" ]; then
+  echo "⚠️  Port ${PORT} is in use. Terminating existing process(es): $EXISTING_PIDS"
+  kill $EXISTING_PIDS 2>/dev/null || true
+  sleep 1
+  STILL_RUNNING=$(lsof -ti tcp:${PORT} || true)
+  if [ -n "$STILL_RUNNING" ]; then
+    echo "⚠️  Processes still running on ${PORT}. Forcing termination."
+    kill -9 $STILL_RUNNING 2>/dev/null || true
+    sleep 1
+  fi
 else
-    echo "🌐 Manual: Open http://localhost:3000 in your browser"
+  echo "✅ Port ${PORT} is free."
 fi
 
-# Cleanup function
+DEV_CMD=("$NEXT_BIN" dev -H "$HOST" -p "$PORT")
+
+echo "▶️  Starting dev server: ${DEV_CMD[*]}"
+"${DEV_CMD[@]}" &
+DEV_PID=$!
+
 cleanup() {
-    echo "🛑 Stopping development server..."
-    kill $DEV_PID 2>/dev/null
-    exit 0
+  echo "\n🛑 Stopping dev server (pid $DEV_PID)..."
+  kill $DEV_PID 2>/dev/null || true
+  wait $DEV_PID 2>/dev/null || true
+  exit 0
 }
 
-# Handle Ctrl+C
-trap cleanup INT
+trap cleanup INT TERM
 
-echo "📡 Development server is running..."
-echo "🔥 Hot reloading enabled - changes will reflect instantly"
-echo "🛑 Press Ctrl+C to stop"
+echo "⏳ Waiting for http://${HOST}:${PORT} to respond..."
+READY=false
+for i in {1..30}; do
+  if nc -z "$HOST" "$PORT" 2>/dev/null; then
+    READY=true
+    break
+  fi
+  sleep 1
+  if ! kill -0 $DEV_PID 2>/dev/null; then
+    echo "\n❌ Dev server exited unexpectedly."
+    wait $DEV_PID
+    exit 1
+  fi
+  printf '.'
+  if [ $((i % 10)) -eq 0 ]; then
+    printf ' '
+  fi
+done
 
-# Keep script running
+echo
+
+if [ "$READY" = true ]; then
+  echo "✅ Dev server ready at http://${HOST}:${PORT}"
+  if command -v open >/dev/null 2>&1; then
+    open "http://${HOST}:${PORT}" >/dev/null 2>&1 || true
+  fi
+else
+  echo "⚠️  Server did not respond within 30 seconds, but process is running (pid $DEV_PID)."
+fi
+
+echo "📡 Hot reload active – press Ctrl+C to stop."
+
 wait $DEV_PID

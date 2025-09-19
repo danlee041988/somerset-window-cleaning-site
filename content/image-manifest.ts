@@ -11,10 +11,9 @@ export const GALLERY_IMAGES = [
   "/images/photos/DJI_0047.JPG",
   "/images/photos/DJI_0064.JPG",
   "/images/photos/DJI_0070.JPG",
+  "/images/photos/DJI_0092.JPG",
   "/images/photos/IMG_0880.jpeg",
-  "/images/photos/photo05.jpg",
-  "/images/photos/photo09.jpg",
-  "/images/photos/photo12.jpg"
+  "/images/photos/Vans.jpeg"
 ]
 
 export const TEAM_IMAGES = [
@@ -28,5 +27,6 @@ export const SERVICE_IMAGES = {
   "conservatory": "/images/photos/DJI_0052.JPG",
   "solar": "/images/photos/Solar Panel .jpeg",
   "fascias": "/images/photos/DJI_0045.JPG",
-  "commercial": "/images/photos/Commercial.jpg"
+  "commercial": "/images/photos/Commercial.jpg",
+  "pureWaterCleaning": "/images/photos/photo03.jpg"
 }

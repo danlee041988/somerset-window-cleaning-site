@@ -64,7 +64,7 @@ export default function DynamicLayout({ children }: DynamicLayoutProps) {
       className={`transition-all duration-300 ${
         isBusinessOpen 
           ? 'pt-36 md:pt-40 lg:pt-44' // Extra padding when banner is shown
-          : 'pt-24 md:pt-28 lg:pt-32'  // Normal padding when banner is hidden
+          : 'pt-28 md:pt-32 lg:pt-36'  // Normal padding when banner is hidden
       }`}
     >
       {children}

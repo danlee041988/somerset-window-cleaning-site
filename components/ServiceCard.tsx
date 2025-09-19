@@ -1,5 +1,5 @@
 import React from 'react'
-import ImageWithFallback from './ImageWithFallback'
+import ImageWithFallback from '@/components/ui/ImageWithFallback'
 
 type Props = {
   title: string

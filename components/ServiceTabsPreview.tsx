@@ -1,131 +1,198 @@
 "use client"
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Image from 'next/image'
-import Button from '@/components/Button'
+import Link from 'next/link'
+import Button from '@/components/ui/Button'
 import { SERVICE_IMAGES } from '@/content/image-manifest'
 
-const TAB_SERVICES = [
+type ServiceCategory = 'core' | 'add-on'
+
+type Service = {
+  id: string
+  name: string
+  description: string
+  bullets: string[]
+  price: string
+  image: string
+  href: string
+  ctaLabel: string
+  category: ServiceCategory
+  tagline?: string
+  supportingCopy?: string
+}
+
+const SERVICES: readonly Service[] = [
   {
     id: 'window-cleaning',
     name: 'Window Cleaning',
-    description: 'Pure water cleaning of glass, frames, and sills with interior options for show homes and offices.',
+    description: 'Pure water cleaning of glass, frames, and sills with optional interior work for show homes and offices.',
     bullets: [
       'Routine 4- or 8-week visits',
-      'Includes frames, sills, and doors',
-      'Reach up to 4 storeys safely'
+      'Frames, sills, and doors included',
+      'Reach up to 4 storeys safely',
     ],
-    price: 'from £18 per visit',
+    price: 'From £18 per visit',
     image: SERVICE_IMAGES.window || '/photos/photo02.jpg',
-    cta: {
-      label: 'Book window cleaning',
-      href: '/services/window-cleaning'
-    }
+    href: '/services/window-cleaning',
+    ctaLabel: 'Book window cleaning',
+    category: 'core',
+    tagline: 'Core service',
+    supportingCopy:
+      'Our most requested service keeps properties spotless using pole-fed pure water systems that protect frames and glass.',
   },
   {
     id: 'gutter-clearing',
     name: 'Gutter Clearing',
-    description: 'Ground-based vacuum system that removes moss and debris to prevent overflow issues.',
+    description: 'Ground-based vacuum system that removes moss and debris to prevent overflow issues and damp walls.',
     bullets: [
       'Camera inspection included',
       'Safe access over conservatories',
-      'Downpipes flushed where needed'
+      'Downpipes flushed where needed',
     ],
-    price: 'from £65 per property',
+    price: 'From £65 per property',
     image: SERVICE_IMAGES.gutter || '/photos/photo03.jpg',
-    cta: {
-      label: 'Schedule gutter clear',
-      href: '/services/gutter-cleaning'
-    }
+    href: '/services/gutter-clearing',
+    ctaLabel: 'Schedule gutter clear',
+    category: 'add-on',
+    tagline: 'Most popular add-on',
   },
   {
     id: 'conservatory',
-    name: 'Conservatory Roof',
-    description: 'Gentle clean of roofs, glazing bars, and finials to let natural light back into the room.',
+    name: 'Conservatory Roof Cleaning',
+    description: 'Gentle clean of roofs, glazing bars, and finials to let natural light back into the room without damaging seals.',
     bullets: [
       'Soft brush and purified rinse',
       'Safe on self-cleaning glass',
-      'Paired with interior valet on request'
+      'Interior valet available on request',
     ],
-    price: 'bespoke pricing',
+    price: 'Custom quote',
     image: SERVICE_IMAGES.conservatory || '/photos/photo04.jpg',
-    cta: {
-      label: 'Talk to us',
-      href: '/services/conservatory-roof-cleaning'
-    }
+    href: '/services/conservatory-roof-cleaning',
+    ctaLabel: 'Discuss conservatory clean',
+    category: 'add-on',
+    tagline: 'Bring back the light',
   },
   {
     id: 'fascias-soffits',
-    name: 'Fascias & Soffits',
-    description: 'Deep clean of uPVC fascias, soffits, and gutters to refresh curb appeal in a single visit.',
+    name: 'Fascias & Soffits Cleaning',
+    description: 'Deep clean of uPVC fascias, soffits, and gutter exteriors to refresh curb appeal in a single visit.',
     bullets: [
-      'Great add-on to gutter clearing',
-      'Restore brilliant white finish',
-      'Includes downpipe exteriors'
+      'Ideal after gutter clearing',
+      'Restores brilliant white finish',
+      'Includes fascia and gutter exteriors',
     ],
-    price: 'bundle rates available',
+    price: 'Bundle rates available',
     image: SERVICE_IMAGES.fascias || '/photos/photo06.jpg',
-    cta: {
-      label: 'See fascia bundles',
-      href: '/services/fascia-cleaning'
-    }
-  }
-] as const
+    href: '/services/fascias-soffits-cleaning',
+    ctaLabel: 'See fascia bundles',
+    category: 'add-on',
+    tagline: 'Exterior refresh',
+  },
+]
+
+type ServiceCombinationLayoutProps = {
+  services: readonly Service[]
+  activeService: Service
+  onSelect: (id: string) => void
+}
 
 export default function ServiceTabsPreview() {
-  const [activeId, setActiveId] = useState<string>(TAB_SERVICES[0]?.id ?? '')
-  const active = TAB_SERVICES.find(service => service.id === activeId) ?? TAB_SERVICES[0]
+  const [activeId, setActiveId] = useState<string>(SERVICES[1]?.id ?? SERVICES[0].id)
+
+  const activeService = useMemo(() => {
+    return SERVICES.find((service) => service.id === activeId) ?? SERVICES[0]
+  }, [activeId])
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-6 md:p-8">
-      <div className="flex flex-wrap gap-2 md:gap-3">
-        {TAB_SERVICES.map(service => (
-          <button
-            key={service.id}
-            onClick={() => setActiveId(service.id)}
-            className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${
-              service.id === active.id
-                ? 'border-brand-red bg-brand-red text-white shadow-[0_0_20px_rgba(225,29,42,0.35)]'
-                : 'border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:text-white'
-            }`}
-            type="button"
-          >
-            {service.name}
-          </button>
-        ))}
+    <div className="feature-card feature-card--minimal space-y-8 p-6 md:p-10" aria-live="polite">
+      <ServiceCombinationLayout services={SERVICES} activeService={activeService} onSelect={setActiveId} />
+    </div>
+  )
+}
+
+function ServiceCombinationLayout({ services, activeService, onSelect }: ServiceCombinationLayoutProps) {
+  const secondaryServices = services.filter((service) => service.id !== activeService.id)
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-2">
+        {services.map((service) => {
+          const isActive = service.id === activeService.id
+          return (
+            <button
+              key={service.id}
+              type="button"
+              onClick={() => onSelect(service.id)}
+              className={`rounded-full border px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/70 ${
+                isActive
+                  ? 'border-brand-red bg-brand-red text-white'
+                  : 'border-white/20 text-white/60 hover:border-white/40 hover:text-white'
+              }`}
+            >
+              {service.name}
+            </button>
+          )
+        })}
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1.3fr_1fr] lg:items-center">
-        <div>
-          <div className="text-sm uppercase tracking-wide text-white/60">Service snapshot</div>
-          <h3 className="mt-3 text-2xl font-semibold text-white">{active.name}</h3>
-          <p className="mt-3 text-white/70">{active.description}</p>
-          <ul className="mt-4 space-y-2 text-sm text-white/80">
-            {active.bullets.map(item => (
-              <li key={item} className="flex items-start gap-2">
-                <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--brand-red)' }} />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-6 flex flex-wrap items-center gap-4">
-            <span className="rounded-full border border-brand-red/40 bg-brand-red/10 px-4 py-2 text-sm font-semibold text-brand-red">
-              {active.price}
-            </span>
-            <Button href={active.cta.href}>{active.cta.label}</Button>
+      <div className="feature-card feature-card--minimal overflow-hidden">
+        <div className="grid gap-0 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-stretch">
+          <div className="relative h-full min-h-[260px]">
+            <Image
+              src={activeService.image}
+              alt={activeService.name}
+              width={960}
+              height={640}
+              className="h-full w-full object-cover"
+              sizes="(min-width: 768px) 600px, 100vw"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-black/35 via-black/55 to-black/20" />
+            <div className="absolute bottom-6 left-6 right-6 rounded-2xl border border-white/15 bg-black/55 p-4 text-sm text-white/75 backdrop-blur">
+              {activeService.supportingCopy ?? 'Add-on services use the same trusted team so visits stay efficient and familiar.'}
+            </div>
+          </div>
+
+          <div className="p-6 md:p-10">
+            <span className="feature-chip feature-chip--accent">{activeService.tagline ?? 'Service focus'}</span>
+            <h3 className="mt-4 text-3xl font-semibold text-white">{activeService.name}</h3>
+            <p className="mt-3 text-white/75">{activeService.description}</p>
+            <ul className="mt-5 space-y-3 text-sm text-white/70">
+              {activeService.bullets.map((item) => (
+                <li key={item} className="flex items-start gap-2">
+                  <span className="feature-dot mt-1" aria-hidden />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.35em] text-white/60">
+              <span>{activeService.price}</span>
+              <Button
+                href={activeService.href}
+                className="rounded-full px-6 py-2 text-xs font-semibold uppercase tracking-[0.35em]"
+              >
+                {activeService.ctaLabel}
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-          <Image
-            src={active.image}
-            alt={active.name}
-            width={640}
-            height={480}
-            className="h-full w-full object-cover"
-            sizes="(min-width: 1024px) 400px, 100vw"
-            priority
-          />
-        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {secondaryServices.map((service) => (
+          <Link
+            key={service.id}
+            href={service.href}
+            className="group rounded-2xl border border-white/15 bg-black/35 p-5 text-sm text-white/75 transition hover:border-white/40 hover:text-white"
+          >
+            <p className="text-xs uppercase tracking-[0.3em] text-white/55">Pair with</p>
+            <h4 className="mt-3 text-base font-semibold text-white">{service.name}</h4>
+            <p className="mt-2 text-xs text-white/60">{service.description}</p>
+            <span className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/50 transition group-hover:text-white">
+              View service →
+            </span>
+          </Link>
+        ))}
       </div>
     </div>
   )

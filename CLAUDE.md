@@ -1,7 +1,7 @@
 # Somerset Window Cleaning Website
 
 ## Overview
-Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, comprehensive service pages with individual route structures, service comparison tools, area-specific pages, Vercel DNS management, EmailJS contact form integration with reCAPTCHA v2 protection, **complete Notion API integration for automated customer management with photo uploads**, Google Analytics 4 integration with business intelligence, and robust error handling with advanced testing infrastructure.
+Modern Next.js website for Somerset Window Cleaning with dark theme and professional design. Features automated Claude Code Review workflow, comprehensive service pages with individual route structures, service comparison tools, area-specific pages, Vercel DNS management, EmailJS booking form integration with reCAPTCHA v2 protection, legacy Notion contact workflow for archival reference, Google Analytics 4 integration with business intelligence, and robust error handling with advanced testing infrastructure.
 
 ## Tech Stack
 - **Framework**: Next.js 14 with TypeScript
@@ -24,10 +24,11 @@ Modern Next.js website for Somerset Window Cleaning with dark theme and professi
 - **Section**: Wrapper with consistent spacing and optional title/subtitle
 - **Button**: Primary/secondary/ghost variants with active animations (scale-95, 300ms transitions)
 - **ImageWithFallback**: Robust image loading with error handling and loading states
-- **ContactForm**: EmailJS integration with reCAPTCHA v2 protection, form validation, Notion API integration, and customer photo uploads
+- **BookingForm**: Unified booking/enquiry form with EmailJS submission, reCAPTCHA v2 protection, frequency selector, and GoCardless hand-off CTA
+- **ContactForm (legacy)**: Archived EmailJS + Notion workflow with photo uploads for historical reference
 - **ReCaptcha**: Google reCAPTCHA v2 wrapper component with dark theme support
 - **GoogleAnalytics**: GA4 tracking component with business intelligence integration
-- **Reviews**: Google reviews with 5-star ratings (gold #FBBC05)
+- **Reviews**: Google reviews with 5-star ratings (accent red #FF2D55)
 - **CaseStudy**: Enhanced with gradients, animations, and spanning header design
 - **ProcessFlow**: Service workflow visualization (WhatsApp removed per user feedback)
 - **ServiceCard**: Traditional service preview cards with optimized images and uniform height
@@ -152,7 +153,7 @@ ADDRESS VALIDATION:
 - **Photo Upload Endpoint**: `/app/api/upload-photo/route.ts` - Notion file upload API with 3-step process
 - **Authentication**: Claude integration token configured in Notion workspace
 - **Database ID**: `2707c58a-5877-81af-9e26-ff0d9a5e0ae3`
-- **Form Mapping**: Complete mapping from ContactForm fields to Notion properties
+- **Form Mapping**: BookingForm field mapping to EmailJS template variables (legacy ContactForm → Notion mappings retained below for archival reference)
 - **File Processing**: Automatic photo upload to Notion with validation and error handling
 
 **Business Benefits**:
@@ -272,7 +273,7 @@ ADDRESS VALIDATION:
 **Configuration**:
 - **Service ID**: `service_yfnr1a9`
 - **Public Key**: `cbA_IhBfxEeDwbEx6`
-- **Template ID**: `template_contact_form`
+- **Template ID**: `template_booking_form`
 - **reCAPTCHA Site Key**: `6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC`
 
 **reCAPTCHA Integration** (Fixed 2025-09-16):
@@ -349,7 +350,8 @@ Message:
 
 ## File Structure
 - `/app` - Pages (route-based)
-  - `/get-in-touch` - Contact form page with EmailJS and Notion integration
+  - `/book-appointment` - Primary booking + enquiry form with EmailJS submission and scheduling context
+  - `/get-in-touch` - Legacy contact form retained for Notion/EmailJS compatibility checks
   - `/services` - Service overview page + individual service pages
     - `/window-cleaning` - Dedicated window cleaning service page
     - `/gutter-clearing` - Dedicated gutter clearing service page
@@ -362,7 +364,8 @@ Message:
     - `/notion-direct` - Notion API integration endpoint with authentication
     - `/upload-photo` - Photo upload endpoint with Notion file upload integration
 - `/components` - Reusable UI components with error boundaries
-  - `ContactForm.tsx` - EmailJS form with reCAPTCHA protection, Notion integration, and photo uploads
+  - `BookingForm.tsx` - EmailJS booking form with reCAPTCHA, frequency selection, and GoCardless CTA messaging
+  - `ContactForm.tsx` (legacy) - EmailJS + Notion submission flow with optional photo uploads
   - `ReCaptcha.tsx` - Google reCAPTCHA v2 wrapper
   - `GoogleAnalytics.tsx` - GA4 tracking component
   - `InteractiveServiceCard.tsx` - Redesigned service cards with professional styling
@@ -502,10 +505,10 @@ const variants = {
 
 ## Important Notes
 - **DNS Management**: Now handled entirely through Vercel DNS - use `npx vercel dns` commands
-- **Customer Management**: Complete Notion integration captures ALL contact form data and photos for business workflow
+- **Customer Management**: BookingForm submits to EmailJS; legacy ContactForm retains full Notion capture for archival workflows
 - **Analytics**: GA4 tracking implemented with business intelligence dashboard and API integrations
 - **Service Pages**: Each major service has dedicated route with comprehensive content
-- **Contact Forms**: ContactForm component integrates EmailJS, reCAPTCHA, Notion API, and photo uploads with robust error handling
+- **Contact Forms**: BookingForm handles the live single-form flow (EmailJS + reCAPTCHA); ContactForm (legacy) remains for Notion-enabled testing
 - **Service Cards**: Use InteractiveServiceCard for service pages, ServiceCard for homepage previews (uniform height)
 - **Image Loading**: ImageWithFallback handles all image loading with lazy loading support
 - **Brand Consistency**: Always use #E11D2A for brand-red elements

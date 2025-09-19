@@ -176,12 +176,10 @@ export async function POST(request: NextRequest) {
             // Map form values to database options
             const frequencyMap = {
               '4-weeks': 'Every 4 weeks',
-              '8-weeks': 'Every 8 weeks', 
-              '12-weeks': 'Every 12 weeks',
+              '8-weeks': 'Every 8 weeks',
               'ad-hoc': 'Ad hoc basis',
               'Every 4 weeks': 'Every 4 weeks',
               'Every 8 weeks': 'Every 8 weeks',
-              'Every 12 weeks': 'Every 12 weeks'
             }
             
             return frequencyMap[body.frequency as keyof typeof frequencyMap] || 'Not specified'

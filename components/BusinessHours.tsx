@@ -160,31 +160,29 @@ export default function BusinessHours({ variant = 'compact', className = '' }: B
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         <div className={`w-2 h-2 rounded-full ${businessStatus.isOpen ? 'bg-green-400' : 'bg-red-400'} animate-pulse`} />
-        <span className="text-sm text-white/70 font-medium">
+        <span className="text-sm noir-muted font-medium">
           {businessStatus.isOpen ? 'Open Now' : 'Closed Now'}
         </span>
         {businessStatus.isOpen ? (
-          <span className="text-xs text-white/60">Call us or message us</span>
-        ) : (
-          <span className="text-xs text-white/60">Message us</span>
-        )}
+          <span className="text-xs noir-subtle">Call us</span>
+        ) : null}
       </div>
     )
   }
   
   return (
     <div className={`${className}`}>
-      <div className="flex items-center gap-3 p-4 rounded-lg bg-white/5 border border-white/10">
+      <div className="glass-card glass-noir-card--tight flex items-center gap-3 p-4">
         <div className={`w-3 h-3 rounded-full ${businessStatus.isOpen ? 'bg-green-400' : 'bg-red-400'} animate-pulse`} />
         <div>
-          <div className={`font-medium ${businessStatus.isOpen ? 'text-green-400' : 'text-red-400'}`}>
+          <div className={`font-medium ${businessStatus.isOpen ? 'text-emerald-300' : 'text-red-400'}`}>
             {businessStatus.isOpen ? 'Currently Open' : 'Currently Closed'}
           </div>
-          <div className="text-sm text-white/70">
+          <div className="text-sm noir-muted">
             {businessStatus.status}
           </div>
           {businessStatus.nextOpen && (
-            <div className="text-xs text-white/60 mt-1">
+            <div className="text-xs noir-subtle mt-1">
               {businessStatus.nextOpen}
             </div>
           )}
@@ -192,19 +190,19 @@ export default function BusinessHours({ variant = 'compact', className = '' }: B
       </div>
       
       {/* Full business hours display */}
-      <div className="mt-4 p-4 rounded-lg bg-white/5 border border-white/10">
-        <h4 className="text-sm font-medium text-white mb-3">Business Hours</h4>
-        <div className="space-y-1 text-xs">
+      <div className="glass-card glass-noir-card--tight mt-4 p-4">
+        <h4 className="text-sm font-medium text-[#F5F7FA] mb-3">Business Hours</h4>
+        <div className="space-y-1 text-xs noir-muted">
           <div className="flex justify-between">
-            <span className="text-white/70">Monday - Friday:</span>
-            <span className="text-white/90">9:00 AM - 4:00 PM</span>
+            <span>Monday - Friday:</span>
+            <span className="text-[#F5F7FA]">9:00 AM - 4:00 PM</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-white/70">Saturday:</span>
+            <span>Saturday:</span>
             <span className="text-red-400">Closed</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-white/70">Sunday:</span>
+            <span>Sunday:</span>
             <span className="text-red-400">Closed</span>
           </div>
         </div>

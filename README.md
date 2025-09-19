@@ -1,6 +1,6 @@
 # Somerset Window Cleaning Website
 
-TypeScript Next.js site for Somerset Window Cleaning. Black-first theme with bright red accents, white text, and an EmailJS-powered contact form.
+TypeScript Next.js site for Somerset Window Cleaning. Black-first theme with bright red accents, white text, and a single EmailJS-powered booking form.
 
 ## Tech
 - Next.js 14 (App Router)
@@ -56,8 +56,23 @@ Map your template variables to the following keys:
 ## Pages
 - `/` Home (hero, services preview, CTA)
 - `/services` Services
-- `/get-in-touch` Contact form (EmailJS)
+- `/book-appointment` Booking + enquiry form (EmailJS)
 - Auto-generated: `/robots.txt`, `/sitemap.xml`
+
+## Structure
+
+- `app/(marketing)/` – public pages (home, services, booking, etc.)
+- `app/(internal)/` – admin dashboards and operational tooling
+- `app/(legacy)/` – archived routes retained for reference
+- `app/api/` – API routes for Notion, EmailJS helpers, GA, etc.
+- `components/ui/` – reusable UI primitives (buttons, layouts, logo, etc.)
+- `components/features/` – feature modules (contact/quote flow, etc.)
+- `content/` – structured content & data (images, services, etc.)
+- `lib/` – utilities (analytics, pricing, integrations, config helpers)
+- `public/` – static assets
+- `scripts/` – automation tasks
+- `tests/unit` – component/unit tests (Jest/Vitest-compatible)
+- `tests/e2e` – Playwright end-to-end specs
 
 ## Brand
 - Black: `#0B0B0B`

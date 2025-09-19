@@ -305,7 +305,7 @@ async function handleQuoteRequest(phoneNumber: string) {
     to: phoneNumber,
     type: 'text' as const,
     text: {
-      body: '💰 Happy to provide a quote! Please share:\n\n🏠 Property address\n📏 Property type (house/flat)\n🏠 Number of bedrooms\n🪟 Services needed\n\nOr visit: somersetwindowcleaning.co.uk/get-in-touch for instant online quotes!',
+      body: '💰 Happy to provide a quote! Please share:\n\n🏠 Property address\n📏 Property type (house/flat)\n🏠 Number of bedrooms\n🪟 Services needed\n\nOr visit: somersetwindowcleaning.co.uk/book-appointment?intent=quote for instant online prices.',
     },
   };
 
@@ -322,7 +322,7 @@ async function handleBookingRequest(phoneNumber: string) {
     to: phoneNumber,
     type: 'text' as const,
     text: {
-      body: '📝 Ready to book your service! Please visit our booking page for instant scheduling:\n\nsomersetwindowcleaning.co.uk/get-in-touch\n\nOr call us directly at 07415 526331. We have availability this week!',
+      body: '📝 Ready to book your service! Please visit our booking page for instant scheduling:\n\nsomersetwindowcleaning.co.uk/book-appointment?intent=book\n\nOr call us directly at 07415 526331. We have availability this week!',
     },
   };
 
