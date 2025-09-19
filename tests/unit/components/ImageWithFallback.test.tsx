@@ -3,7 +3,7 @@ import ImageWithFallback from '@/components/ui/ImageWithFallback'
 
 // Mock Next.js Image component
 jest.mock('next/image', () => {
-  const MockImage = ({ onError, onLoad, src, alt, ...props }: any) => {
+  const MockImage = ({ onError, onLoad, src, alt, priority, fill, ...props }: any) => {
     return (
       <img
         src={src}
@@ -11,6 +11,8 @@ jest.mock('next/image', () => {
         onError={onError}
         onLoad={onLoad}
         data-testid="mock-image"
+        {...(priority ? { 'data-priority': 'true' } : {})}
+        {...(fill ? { 'data-fill': 'true' } : {})}
         {...props}
       />
     )
@@ -91,14 +93,14 @@ describe('ImageWithFallback Component', () => {
     render(<ImageWithFallback {...defaultProps} fill={true} />)
     
     const image = screen.getByTestId('mock-image')
-    expect(image).toHaveAttribute('fill')
+    expect(image).toHaveAttribute('data-fill', 'true')
   })
 
   it('uses priority instead of loading when priority=true', () => {
     render(<ImageWithFallback {...defaultProps} priority={true} loading="lazy" />)
     
     const image = screen.getByTestId('mock-image')
-    expect(image).toHaveAttribute('priority')
+    expect(image).toHaveAttribute('data-priority', 'true')
     expect(image).not.toHaveAttribute('loading')
   })
 

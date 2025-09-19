@@ -43,7 +43,7 @@ export default function ImageWithFallback({
   }
 
   // Build props object conditionally
-  const imageProps: any = {
+  const imageProps: React.ComponentProps<typeof Image> = {
     src: error ? fallbackSrc : src,
     alt,
     width,
@@ -56,12 +56,12 @@ export default function ImageWithFallback({
   }
 
   if (fill) {
-    imageProps.fill = process.env.NODE_ENV === 'test' ? 'true' : true
+    imageProps.fill = true
   }
 
   // Only add priority OR loading, not both
   if (priority) {
-    imageProps.priority = process.env.NODE_ENV === 'test' ? 'true' : true
+    imageProps.priority = true
   } else if (loading) {
     imageProps.loading = loading
   }

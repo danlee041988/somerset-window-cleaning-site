@@ -3,13 +3,15 @@ import Logo from '@/components/ui/Logo'
 
 // Mock the ImageWithFallback component
 jest.mock('@/components/ui/ImageWithFallback', () => {
-  const MockImageWithFallback = ({ src, fallbackSrc, alt, className, ...props }: any) => (
+  const MockImageWithFallback = ({ src, fallbackSrc, alt, className, priority, fill, ...props }: any) => (
     <img
       src={src}
       alt={alt}
       className={className}
       data-testid="logo-image"
       data-fallback={fallbackSrc}
+      {...(priority ? { 'data-priority': 'true' } : {})}
+      {...(fill ? { 'data-fill': 'true' } : {})}
       {...props}
     />
   )
@@ -45,7 +47,7 @@ describe('Logo Component', () => {
     render(<Logo />)
     
     const logo = screen.getByTestId('logo-image')
-    expect(logo).toHaveAttribute('priority')
+    expect(logo).toHaveAttribute('data-priority', 'true')
   })
 
   it('applies correct dimensions when provided', () => {
