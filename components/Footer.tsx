@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Logo from '@/components/ui/Logo'
 import BusinessHours from './BusinessHours'
+import ImageWithFallback from '@/components/ui/ImageWithFallback'
 
 export default function Footer() {
   return (
@@ -8,8 +8,23 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="glass-card glass-noir-card--tight grid gap-12 rounded-3xl border border-white/12 p-8 md:p-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div className="flex flex-col gap-8">
-            <div className="flex items-center gap-3">
-              <Logo className="h-20 w-auto max-w-[300px] md:max-w-[360px]" />
+            <div className="glass-noir-card glass-noir-card--tight flex items-center gap-4 rounded-3xl border border-white/12 bg-white/[0.05] p-5">
+              <ImageWithFallback
+                src="/images/photos/SWC Logo.psd"
+                fallbackSrc="/images/logos/logo.png"
+                alt="Somerset Window Cleaning app icon"
+                width={64}
+                height={64}
+                className="h-14 w-14 rounded-2xl border border-white/12 object-cover shadow-[0_24px_40px_-32px_rgba(225,29,42,0.95)]"
+              />
+              <div className="space-y-1">
+                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/80">
+                  Somerset Window Cleaning
+                </p>
+                <p className="text-xs text-white/55">
+                  Glass Noir finish for homes and businesses across Somerset.
+                </p>
+              </div>
             </div>
             <p className="text-sm noir-muted max-w-prose">
               Crystal-clear windows for homes and businesses across Somerset. Friendly, reliable, fully insured.

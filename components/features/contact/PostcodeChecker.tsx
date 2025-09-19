@@ -115,9 +115,9 @@ export default function PostcodeChecker({
         setStatus('success')
         setAreaName(postcodeAreas[postcodeArea] || 'your area')
         
-        // Redirect to booking page after showing success message
+        // Redirect to booking page after showing success message without pre-filling form data
         setTimeout(() => {
-          router.push(`/book-appointment?intent=book&postcode=${normalizedPostcode}&area=${postcodeAreas[postcodeArea] || ''}`)
+          router.push('/book-appointment?intent=book')
         }, 1500)
       } else {
         setStatus('error')

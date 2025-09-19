@@ -203,18 +203,18 @@ export default function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div className="relative border-b border-white/10 bg-black/90 pb-8 backdrop-blur lg:pb-12">
+      <div className="relative border-b border-white/10 bg-black/90 pb-6 backdrop-blur lg:pb-8">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-brand-red via-brand-red/70 to-transparent"
           aria-hidden="true"
         />
-        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-6 px-4 py-4 md:px-6">
+        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-5 px-4 py-3 md:px-6">
           <Link
             href="/"
-            className="inline-flex shrink-0 items-center gap-3 rounded-md text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
+            className="inline-flex shrink-0 items-center rounded-md px-3 py-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
             aria-label="Somerset Window Cleaning home"
           >
-            <Logo className="h-20 w-auto max-w-[400px] md:h-24 md:max-w-[520px] lg:h-28 lg:max-w-[620px]" />
+            <Logo className="h-[5.5rem] w-auto max-w-[420px] md:h-[6.75rem] md:max-w-[540px] lg:h-[8rem] lg:max-w-[640px]" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -350,13 +350,9 @@ export default function Header() {
             </button>
           </div>
         </div>
-        {/* Desktop trust ticker, overlaps hero */}
-        <div
-          className={`pointer-events-none absolute inset-x-0 top-full hidden justify-center md:flex ${
-            isBusinessOpen ? '-translate-y-[2.5rem]' : '-translate-y-[2rem]'
-          }`}
-        >
-          <div className="pointer-events-auto mx-auto flex w-full max-w-[1280px] items-center justify-center gap-6 rounded-[2.5rem] border border-white/10 bg-black/65 px-8 py-3 text-[0.65rem] font-semibold uppercase tracking-[0.32em] text-white/60 shadow-[0_20px_40px_-28px_rgba(0,0,0,0.8)]">
+        {/* Desktop trust ticker */}
+        <div className="hidden justify-center px-4 pb-2 md:flex md:px-6">
+          <div className="pointer-events-auto mx-auto mt-3 flex w-full max-w-[1280px] items-center justify-center gap-5 rounded-[2.25rem] border border-white/10 bg-black/65 px-6 py-2.5 text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-white/60 shadow-[0_18px_36px_-28px_rgba(0,0,0,0.8)]">
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-2 text-white/70">
                 <span className={`relative inline-flex h-2 w-2 rounded-full ${isBusinessOpen ? 'bg-green-400' : 'bg-red-400'}`}>

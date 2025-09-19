@@ -9,6 +9,8 @@ type CaseStudyProps = {
   cta?: string
 }
 
+const CASE_STUDY_IMAGE = '/images/photos/0842B2D1-78F3-406F-86C5-A69D64AC0280_1_102_o.jpg'
+
 const defaultBullets = [
   'Grown from zero to 6 employees in under 3 years',
   'State-of-the-art cleaning technology and equipment',
@@ -180,19 +182,45 @@ export default function CaseStudy({
             <QuoteCard quote={quote} attribution={quoteAttribution} />
           </div>
           <div
-            className="grid gap-6 border-t border-white/5 bg-white/5 p-10 text-sm text-white/70 md:p-14"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
+            className="border-t border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent p-10 md:p-14"
           >
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-red/80">Snapshot</p>
-              <p className="mt-2 text-sm leading-relaxed">
-                4,000+ customers served | 195+ 4.9★ Google reviews | Fully insured across Somerset
+            <div className="rounded-3xl border border-white/12 bg-black/40 p-8 text-white/80 shadow-[0_30px_60px_-45px_rgba(0,0,0,0.85)]">
+              <div className="relative mb-6 overflow-hidden rounded-2xl border border-white/12 bg-black/50">
+                <Image
+                  src={CASE_STUDY_IMAGE}
+                  alt="Somerset Window Cleaning van outside a Somerset home"
+                  width={1024}
+                  height={768}
+                  className="h-48 w-full object-cover md:h-64"
+                  priority={false}
+                />
+                <span
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/0 to-black/40"
+                  aria-hidden
+                />
+              </div>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-red/80">
+                Case study highlights
               </p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-red/80">Services Spotlight</p>
-              <p className="mt-2 text-sm leading-relaxed">
-                Residential & commercial window cleaning, gutter clearing, conservatory detailing, solar panel cleaning.
+              <div className="mt-6 grid gap-6 sm:grid-cols-3">
+                {[{
+                  value: '4k+',
+                  label: 'Somerset properties cared for since launch'
+                }, {
+                  value: '195+',
+                  label: 'Google reviews at a 4.9★ rating'
+                }, {
+                  value: '100%',
+                  label: 'Fully insured window and exterior specialists'
+                }].map((item) => (
+                  <div key={item.label} className="space-y-2 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                    <span className="text-3xl font-semibold text-white">{item.value}</span>
+                    <p className="text-xs uppercase tracking-[0.2em] text-brand-red/70">{item.label}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-6 text-sm leading-relaxed text-white/70">
+                These results come from pairing military-grade discipline with neighbourly service—exactly what the council looked for when showcasing Somerset success stories.
               </p>
             </div>
           </div>

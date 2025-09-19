@@ -1,0 +1,8 @@
+Read AGENTS.md and STATE.md.
+Process each bullet I give you in order; for each: plan briefly → change (≤2 files) → run lint/types/tests/build.
+If green: commit and move to the next. If not: stop and report.
+
+Cross-repo reads allowed. To operate in another repo, prefer:
+  allow-run --cwd "$HOME/Projects/<repo>" rg "pattern"
+  allow-run --cwd "$HOME/Projects/<repo>" jest
+Writes outside this repo require an explicit absolute path from me, or WRITE_OUTSIDE=true.

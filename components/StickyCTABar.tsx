@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import Button from '@/components/ui/Button'
-import BusinessHours from './BusinessHours'
+import BusinessHours, { useBusinessStatus } from './BusinessHours'
 
 export default function StickyCTABar() {
   const [isVisible, setIsVisible] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
+  const businessStatus = useBusinessStatus()
   
   useEffect(() => {
     const handleScroll = () => {
@@ -46,16 +47,18 @@ export default function StickyCTABar() {
               
               {/* Right side - CTAs */}
               <div className="flex items-center gap-3">
-                <a
-                  href="tel:01458860339"
-                  className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-300 bg-transparent text-white hover:bg-white/10 active:scale-95 border border-white/20"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                  <span className="hidden sm:inline">Call Now</span>
-                  <span className="sm:hidden">Call</span>
-                </a>
+                {businessStatus.isOpen && (
+                  <a
+                    href="tel:01458860339"
+                    className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-300 bg-transparent text-white hover:bg-white/10 active:scale-95 border border-white/20"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <span className="hidden sm:inline">Call Now</span>
+                    <span className="sm:hidden">Call</span>
+                  </a>
+                )}
                 
                 <Button href="/book-appointment?intent=book" variant="primary" className="text-sm px-4 py-2">
                   Book Now
@@ -80,13 +83,17 @@ export default function StickyCTABar() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-white/80">Ready to book?</p>
               <div className="flex items-center gap-2">
-                <a
-                  href="tel:01458860339"
-                  className="text-sm text-brand-red hover:text-brand-red/80 font-medium"
-                >
-                  01458 860339
-                </a>
-                <span className="text-white/40">|</span>
+                {businessStatus.isOpen && (
+                  <>
+                    <a
+                      href="tel:01458860339"
+                      className="text-sm text-brand-red hover:text-brand-red/80 font-medium"
+                    >
+                      01458 860339
+                    </a>
+                    <span className="text-white/40">|</span>
+                  </>
+                )}
                 <a
                   href="/book-appointment?intent=book"
                   className="text-sm text-brand-red hover:text-brand-red/80 font-medium"

@@ -192,7 +192,7 @@ export default function AreasPage() {
 
   return (
     <div className="space-y-20 md:space-y-24 pb-20">
-      <Section spacing="relaxed" className="pt-24">
+      <Section spacing="relaxed" className="pt-32 md:pt-40">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-center">
           <div>
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-6">
