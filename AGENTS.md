@@ -2,6 +2,9 @@
 
 This document keeps AI agents and contributors aligned on the current production setup for `Projects/active/CODEX_SWC_WEBSITE`. Treat it as the source of truth before making code or configuration changes.
 
+## Additional References
+- `PROJECT_REFERENCE.md` – architecture + feature overview, module cheat sheet, and command quick reference
+
 ## Stack Overview
 - Node.js ≥ 18.17, Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS
 - React Hook Form for complex form state, EmailJS browser SDK for outbound email
