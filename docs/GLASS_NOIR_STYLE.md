@@ -12,10 +12,10 @@ Somerset Window Cleaning now uses a unified **Glass Noir** aesthetic across the 
 | `--fg`            | `#F5F7FA`                       | Primary text                                       |
 | `--muted`         | `rgba(245,247,250,0.72)`        | Secondary copy                                     |
 | `--muted-subtle`  | `rgba(245,247,250,0.55)`        | Captions / helper text                             |
-| `--accent`        | `#FF2D55`                       | Buttons, chips, tiny dividers                      |
+| `--accent`        | `#E11D2A`                       | Buttons, chips, tiny dividers                      |
 | `--glass`         | `rgba(255,255,255,0.06)`        | Base glass fill                                    |
 | `--glass-border`  | `rgba(255,255,255,0.14)`        | Hairline borders                                   |
-| `--ring`          | `rgba(255,45,85,0.45)`          | Focus ring                                         |
+| `--ring`          | `rgba(225,29,42,0.45)`          | Focus ring                                         |
 
 Radial background glow is defined in `tailwind.config.ts` (`backgroundImage.radial-glow`).
 

@@ -17,10 +17,10 @@ export default function AboutPage() {
             <p>Areas we cover include Taunton, Bridgwater, Yeovil, Weston‑super‑Mare, and surrounding towns.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Image src="/Codex SWC Photos/photo12.jpg" alt="On-site work" className="aspect-[4/3] w-full rounded-lg object-cover" width={400} height={300} />
-            <Image src="/Codex SWC Photos/photo05.jpg" alt="Clean windows close-up" className="aspect-[4/3] w-full rounded-lg object-cover" width={400} height={300} />
-            <Image src="/Codex SWC Photos/photo06.jpg" alt="Conservatory cleaning" className="aspect-[4/3] w-full rounded-lg object-cover" width={400} height={300} />
-            <Image src="/Codex SWC Photos/photo02.jpg" alt="Commercial property" className="aspect-[4/3] w-full rounded-lg object-cover" width={400} height={300} />
+            <Image src="/images/photos/DJI_0045.JPG" alt="Somerset Window Cleaning team working on site" className="aspect-[4/3] w-full rounded-lg object-cover" width={400} height={300} />
+            <Image src="/images/photos/DJI_0064.JPG" alt="Close-up of sparkling windows after cleaning" className="aspect-[4/3] w-full rounded-lg object-cover" width={400} height={300} />
+            <Image src="/images/photos/DJI_0052.JPG" alt="Conservatory roof cleaning in progress" className="aspect-[4/3] w-full rounded-lg object-cover" width={400} height={300} />
+            <Image src="/images/photos/DJI_0092.JPG" alt="Commercial property with freshly cleaned exterior" className="aspect-[4/3] w-full rounded-lg object-cover" width={400} height={300} />
           </div>
         </div>
       </Section>
