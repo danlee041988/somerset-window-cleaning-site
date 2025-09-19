@@ -34,29 +34,33 @@ fi
 tmux new-session -d -s "$SESSION" -n app "$AGENT_CMD"
 
 # Build a 2x3 grid (Codex + 5 watchers)
-tmux split-window  -h -t "$SESSION:app.0"
-tmux split-window  -v -t "$SESSION:app.1"
-tmux split-window  -v -t "$SESSION:app.0"
-tmux split-window  -h -t "$SESSION:app.2"
-tmux split-window  -h -t "$SESSION:app.3"
+for _ in 1 2 3 4 5; do
+  tmux split-window -t "$SESSION:app"
+done
 
 tmux select-layout -t "$SESSION:app" tiled
 
-mapfile -t panes < <(tmux list-panes -t "$SESSION:app" -F '#P')
+mapfile -t pane_ids < <(tmux list-panes -t "$SESSION:app" -F '#{pane_id}')
 
-COD_PANE=${panes[0]:-0}
-DEV_PANE=${panes[1]:-1}
-TEST_PANE=${panes[2]:-2}
-TSC_PANE=${panes[3]:-3}
-LINT_PANE=${panes[4]:-4}
-LOGS_PANE=${panes[5]:-5}
+if [ ${#pane_ids[@]} -lt 6 ]; then
+  tmux kill-session -t "$SESSION"
+  echo "tmux dev-session: expected 6 panes, got ${#pane_ids[@]}" >&2
+  exit 1
+fi
 
-tmux send-keys -t "$SESSION:app.$DEV_PANE" "$DEV_CMD"  C-m
-tmux send-keys -t "$SESSION:app.$TEST_PANE" "$TEST_CMD" C-m
-tmux send-keys -t "$SESSION:app.$TSC_PANE"  "$TSC_CMD"  C-m
-tmux send-keys -t "$SESSION:app.$LINT_PANE" "$LINT_CMD" C-m
-tmux send-keys -t "$SESSION:app.$LOGS_PANE" "$LOGS_CMD" C-m
+COD_PANE=${pane_ids[0]}
+DEV_PANE=${pane_ids[1]}
+TEST_PANE=${pane_ids[2]}
+TSC_PANE=${pane_ids[3]}
+LINT_PANE=${pane_ids[4]}
+LOGS_PANE=${pane_ids[5]}
 
-tmux select-pane   -t "$SESSION:app.$COD_PANE"
+tmux send-keys -t "$DEV_PANE"  "$DEV_CMD"  C-m
+tmux send-keys -t "$TEST_PANE" "$TEST_CMD" C-m
+tmux send-keys -t "$TSC_PANE"  "$TSC_CMD"  C-m
+tmux send-keys -t "$LINT_PANE" "$LINT_CMD" C-m
+tmux send-keys -t "$LOGS_PANE" "$LOGS_CMD" C-m
+
+tmux select-pane -t "$COD_PANE"
 tmux display-message "Panes: codex=$COD_PANE dev=$DEV_PANE test=$TEST_PANE types=$TSC_PANE lint=$LINT_PANE logs=$LOGS_PANE"
 exec tmux attach -t "$SESSION"
