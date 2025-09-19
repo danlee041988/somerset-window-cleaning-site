@@ -315,7 +315,7 @@ export default function Header() {
                   className="inline-flex min-h-[3.25rem] min-w-[16.5rem] items-center justify-center rounded-[1.75rem] bg-brand-red px-7 text-sm font-semibold uppercase tracking-[0.28em] text-white shadow-[0_28px_65px_-35px_rgba(225,29,42,0.9)] transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40"
                   aria-label="Book an appointment"
                 >
-                  Book appointment
+                  Book Now
                 </Link>
                 <span className="text-[0.6rem] uppercase tracking-[0.32em] text-white/45">
                   Free quotes • fast response
@@ -352,7 +352,11 @@ export default function Header() {
           </div>
         </div>
         {/* Desktop trust ticker, overlaps hero */}
-        <div className="pointer-events-none absolute inset-x-0 top-full hidden -translate-y-[3rem] justify-center md:flex">
+        <div
+          className={`pointer-events-none absolute inset-x-0 top-full hidden justify-center md:flex ${
+            isBusinessOpen ? '-translate-y-[3rem]' : '-translate-y-[2.25rem]'
+          }`}
+        >
           <div className="pointer-events-auto mx-auto flex w-full max-w-[1280px] items-center justify-center gap-6 rounded-[2.5rem] border border-white/10 bg-black/65 px-8 py-3 text-[0.65rem] font-semibold uppercase tracking-[0.32em] text-white/60 shadow-[0_20px_40px_-28px_rgba(0,0,0,0.8)]">
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-2 text-white/70">
@@ -458,7 +462,7 @@ export default function Header() {
                   href="/book-appointment?intent=book"
                   className="w-full justify-center rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em]"
                 >
-                  Book appointment
+                  Book Now
                 </Button>
                 <Button
                   href="/book-appointment?intent=quote"

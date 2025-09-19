@@ -58,7 +58,7 @@ export default function StickyCTABar() {
                 </a>
                 
                 <Button href="/book-appointment?intent=book" variant="primary" className="text-sm px-4 py-2">
-                  Get Free Quote
+                  Book Now
                 </Button>
                 
                 {/* Minimize button */}
@@ -78,7 +78,7 @@ export default function StickyCTABar() {
           // Minimized state
           <div className="px-4 py-2">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-white/80">Need a quote?</p>
+              <p className="text-sm text-white/80">Ready to book?</p>
               <div className="flex items-center gap-2">
                 <a
                   href="tel:01458860339"
@@ -88,10 +88,10 @@ export default function StickyCTABar() {
                 </a>
                 <span className="text-white/40">|</span>
                 <a
-                  href="/book-appointment?intent=quote"
+                  href="/book-appointment?intent=book"
                   className="text-sm text-brand-red hover:text-brand-red/80 font-medium"
                 >
-                  Get Quote
+                  Book Now
                 </a>
                 <button
                   onClick={() => setIsMinimized(false)}
