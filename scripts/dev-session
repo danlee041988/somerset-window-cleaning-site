@@ -34,22 +34,29 @@ fi
 tmux new-session -d -s "$SESSION" -n app "$AGENT_CMD"
 
 # Build a 2x3 grid (Codex + 5 watchers)
-tmux split-window  -h -t "$SESSION:app.1"        # 1 | 2
-tmux split-window  -v -t "$SESSION:app.2"        # 1 | 2 ; 3
-tmux split-window  -v -t "$SESSION:app.1"        # 1 ; 4 | 2 ; 3
-tmux select-pane   -t "$SESSION:app.3"
-tmux split-window  -h -t "$SESSION:app.3"        # 1 ; 4 | 5 ; 2 ; 3
-tmux select-pane   -t "$SESSION:app.4"
-tmux split-window  -h -t "$SESSION:app.4"        # 1 ; 4 | 5 ; 6 ; 2 ; 3
-
-# Kick off watchers (panes 2..6). Pane 1 stays interactive for Codex.
-tmux send-keys -t "$SESSION:app.2" "$DEV_CMD"  C-m  # Dev server
-tmux send-keys -t "$SESSION:app.3" "$TEST_CMD" C-m  # Tests (watch)
-tmux send-keys -t "$SESSION:app.4" "$TSC_CMD"  C-m  # Types (watch)
-tmux send-keys -t "$SESSION:app.5" "$LINT_CMD" C-m  # Lint (watch)
-tmux send-keys -t "$SESSION:app.6" "$LOGS_CMD" C-m  # Logs/DB
+tmux split-window  -h -t "$SESSION:app.0"
+tmux split-window  -v -t "$SESSION:app.1"
+tmux split-window  -v -t "$SESSION:app.0"
+tmux split-window  -h -t "$SESSION:app.2"
+tmux split-window  -h -t "$SESSION:app.3"
 
 tmux select-layout -t "$SESSION:app" tiled
-tmux select-pane   -t "$SESSION:app.1"           # focus Codex
-tmux display-message "Panes: 1=Codex, 2=Dev, 3=Tests, 4=Types, 5=Lint, 6=Logs"
+
+mapfile -t panes < <(tmux list-panes -t "$SESSION:app" -F '#P')
+
+COD_PANE=${panes[0]:-0}
+DEV_PANE=${panes[1]:-1}
+TEST_PANE=${panes[2]:-2}
+TSC_PANE=${panes[3]:-3}
+LINT_PANE=${panes[4]:-4}
+LOGS_PANE=${panes[5]:-5}
+
+tmux send-keys -t "$SESSION:app.$DEV_PANE" "$DEV_CMD"  C-m
+tmux send-keys -t "$SESSION:app.$TEST_PANE" "$TEST_CMD" C-m
+tmux send-keys -t "$SESSION:app.$TSC_PANE"  "$TSC_CMD"  C-m
+tmux send-keys -t "$SESSION:app.$LINT_PANE" "$LINT_CMD" C-m
+tmux send-keys -t "$SESSION:app.$LOGS_PANE" "$LOGS_CMD" C-m
+
+tmux select-pane   -t "$SESSION:app.$COD_PANE"
+tmux display-message "Panes: codex=$COD_PANE dev=$DEV_PANE test=$TEST_PANE types=$TSC_PANE lint=$LINT_PANE logs=$LOGS_PANE"
 exec tmux attach -t "$SESSION"
