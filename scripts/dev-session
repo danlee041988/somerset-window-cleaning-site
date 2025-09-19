@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# One-writer (Codex) + many-watchers tmux layout
+set -Eeuo pipefail
+
+# Always start in project root
+cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
+# ---- tweak via env vars when launching (see examples below) ----
+SESSION="${SESSION:-dev}"
+
+# Prefer 'codex'; fall back to 'cod' if that's what you installed
+if command -v codex >/dev/null 2>&1; then
+  AGENT_CMD_DEFAULT="codex"
+elif command -v cod >/dev/null 2>&1; then
+  AGENT_CMD_DEFAULT="cod"
+else
+  AGENT_CMD_DEFAULT="$SHELL"   # open a shell if Codex not found
+fi
+AGENT_CMD="${AGENT_CMD:-$AGENT_CMD_DEFAULT}"
+
+DEV_CMD="${DEV_CMD:-npm run dev}"
+TEST_CMD="${TEST_CMD:-npm test -- --watch}"                 # vitest/jest watch
+TSC_CMD="${TSC_CMD:-npx tsc -w --noEmit}"                   # or: next typecheck
+LINT_CMD="${LINT_CMD:-npx eslint . --ext .js,.jsx,.ts,.tsx --cache --watch}"
+LOGS_CMD="${LOGS_CMD:-(tail -f logs/*.log 2>/dev/null || printf 'no logs\n'; exec $SHELL)}"
+# ---------------------------------------------------------------
+
+# Reattach if already running
+if tmux has-session -t "$SESSION" 2>/dev/null; then
+  exec tmux attach -t "$SESSION"
+fi
+
+# Window 'app', Pane 1 = Codex (the ONLY writer)
+tmux new-session -d -s "$SESSION" -n app "$AGENT_CMD"
+
+# Build a 2x3 grid (Codex + 5 watchers)
+tmux split-window  -h -t "$SESSION:app.1"        # 1 | 2
+tmux split-window  -v -t "$SESSION:app.2"        # 1 | 2 ; 3
+tmux split-window  -v -t "$SESSION:app.1"        # 1 ; 4 | 2 ; 3
+tmux select-pane   -t "$SESSION:app.3"
+tmux split-window  -h -t "$SESSION:app.3"        # 1 ; 4 | 5 ; 2 ; 3
+tmux select-pane   -t "$SESSION:app.4"
+tmux split-window  -h -t "$SESSION:app.4"        # 1 ; 4 | 5 ; 6 ; 2 ; 3
+
+# Kick off watchers (panes 2..6). Pane 1 stays interactive for Codex.
+tmux send-keys -t "$SESSION:app.2" "$DEV_CMD"  C-m  # Dev server
+tmux send-keys -t "$SESSION:app.3" "$TEST_CMD" C-m  # Tests (watch)
+tmux send-keys -t "$SESSION:app.4" "$TSC_CMD"  C-m  # Types (watch)
+tmux send-keys -t "$SESSION:app.5" "$LINT_CMD" C-m  # Lint (watch)
+tmux send-keys -t "$SESSION:app.6" "$LOGS_CMD" C-m  # Logs/DB
+
+tmux select-layout -t "$SESSION:app" tiled
+tmux select-pane   -t "$SESSION:app.1"           # focus Codex
+tmux display-message "Panes: 1=Codex, 2=Dev, 3=Tests, 4=Types, 5=Lint, 6=Logs"
+exec tmux attach -t "$SESSION"
