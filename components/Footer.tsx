@@ -62,7 +62,7 @@ export default function Footer() {
               <div className="grid grid-cols-1 gap-2 text-sm noir-muted">
                 <Link href="/areas" className="transition hover:text-[var(--fg)]">Areas We Cover</Link>
                 <Link href="/pricing" className="transition hover:text-[var(--fg)]">Pricing &amp; Bundles</Link>
-                <Link href="/book-appointment" className="transition hover:text-[var(--fg)]">Book Appointment</Link>
+                <Link href="/book-appointment" className="transition hover:text-[var(--fg)]">Book Now</Link>
                 <Link href="/get-in-touch" className="transition hover:text-[var(--fg)]">Get in Touch</Link>
                 <Link href="/privacy" className="transition hover:text-[var(--fg)]">Privacy</Link>
               </div>
