@@ -838,13 +838,13 @@ export default function BookingForm({
     }
 
     const matchedFrequency = findFrequencyForPostcode(values.postcode)
+
     if (!matchedFrequency) {
-      setError('postcode', {
-        type: 'manual',
-        message: 'We couldn’t match that postcode to a current window cleaning frequency. Please double-check or contact us.',
-      })
-      return
+      // Allow manual scheduling submissions when a postcode is outside automated routes.
+      analytics.formError('postcode_manual_review', values.postcode)
     }
+
+    clearErrors('postcode')
 
     if (!values.preferred_date) {
       setError('preferred_date', {
