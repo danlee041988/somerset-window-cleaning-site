@@ -26,7 +26,7 @@ export default function Logo({ className = '', height, width }: Props) {
         alt="Somerset Window Cleaning"
         width={resolvedWidth}
         height={resolvedHeight}
-        priority={process.env.NODE_ENV === 'test' ? 'true' : true}
+        priority
         className={clsx('logo-blend block h-full w-full object-contain transition-all duration-300', className)}
       />
     </span>
