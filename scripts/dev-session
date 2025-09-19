@@ -1,66 +1,57 @@
 #!/usr/bin/env bash
-# One-writer (Codex) + many-watchers tmux layout
+# One-writer (Codex) + many-watchers tmux layout (robust v3)
 set -Eeuo pipefail
 
-# Always start in project root
-cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-
-# ---- tweak via env vars when launching (see examples below) ----
 SESSION="${SESSION:-dev}"
+WINDOW="app"
 
-# Prefer 'codex'; fall back to 'cod' if that's what you installed
+# Commands (override with env vars if you like)
 if command -v codex >/dev/null 2>&1; then
   AGENT_CMD_DEFAULT="codex"
 elif command -v cod >/dev/null 2>&1; then
   AGENT_CMD_DEFAULT="cod"
 else
-  AGENT_CMD_DEFAULT="$SHELL"   # open a shell if Codex not found
+  AGENT_CMD_DEFAULT="$SHELL"
 fi
 AGENT_CMD="${AGENT_CMD:-$AGENT_CMD_DEFAULT}"
-
 DEV_CMD="${DEV_CMD:-npm run dev}"
-TEST_CMD="${TEST_CMD:-npm test -- --watch}"                 # vitest/jest watch
-TSC_CMD="${TSC_CMD:-npx tsc -w --noEmit}"                   # or: next typecheck
+TEST_CMD="${TEST_CMD:-npm test -- --watch}"
+TSC_CMD="${TSC_CMD:-npx tsc -w --noEmit}"
 LINT_CMD="${LINT_CMD:-npx eslint . --ext .js,.jsx,.ts,.tsx --cache --watch}"
 LOGS_CMD="${LOGS_CMD:-(tail -f logs/*.log 2>/dev/null || printf 'no logs\n'; exec $SHELL)}"
-# ---------------------------------------------------------------
 
-# Reattach if already running
-if tmux has-session -t "$SESSION" 2>/dev/null; then
-  exec tmux attach -t "$SESSION"
+# 1) Create/reuse session + window
+if ! tmux has-session -t "$SESSION" 2>/dev/null; then
+  tmux new-session -d -s "$SESSION" -n "$WINDOW" "$AGENT_CMD"
+elif ! tmux list-windows -t "$SESSION" -F '#W' | grep -qx "$WINDOW"; then
+  tmux new-window -t "$SESSION" -n "$WINDOW" "$AGENT_CMD"
 fi
 
-# Window 'app', Pane 1 = Codex (the ONLY writer)
-tmux new-session -d -s "$SESSION" -n app "$AGENT_CMD"
+TARGET="$SESSION:$WINDOW"
 
-# Build a 2x3 grid (Codex + 5 watchers)
-for _ in 1 2 3 4 5; do
-  tmux split-window -t "$SESSION:app"
+# 2) Ensure window is not zoomed and split to 6 panes
+tmux resize-pane -Z -t "$TARGET" 2>/dev/null || true
+count() { tmux list-panes -t "$TARGET" | wc -l | tr -d ' '; }
+while [ "$(count)" -lt 6 ]; do tmux split-window -d -t "$TARGET"; done
+while [ "$(count)" -gt 6 ]; do tmux kill-pane -t "$TARGET"; done
+
+tmux select-layout -t "$TARGET" tiled
+
+# 3) Collect pane IDs
+PIDS="$(tmux list-panes -t "$TARGET" -F '#{pane_id}')"
+i=0or id in $PIDS; do
+  eval "P$i=$id"
+  i=$((i+1))
 done
 
-tmux select-layout -t "$SESSION:app" tiled
+# 4) Start watchers (Ctrl-C to stop previous)
+[ -n "${P1:-}" ] && tmux send-keys -t "${P1}" C-c "$DEV_CMD"  C-m
+[ -n "${P2:-}" ] && tmux send-keys -t "${P2}" C-c "$TEST_CMD" C-m
+[ -n "${P3:-}" ] && tmux send-keys -t "${P3}" C-c "$TSC_CMD"  C-m
+[ -n "${P4:-}" ] && tmux send-keys -t "${P4}" C-c "$LINT_CMD" C-m
+[ -n "${P5:-}" ] && tmux send-keys -t "${P5}" C-c "$LOGS_CMD" C-m
 
-mapfile -t pane_ids < <(tmux list-panes -t "$SESSION:app" -F '#{pane_id}')
-
-if [ ${#pane_ids[@]} -lt 6 ]; then
-  tmux kill-session -t "$SESSION"
-  echo "tmux dev-session: expected 6 panes, got ${#pane_ids[@]}" >&2
-  exit 1
-fi
-
-COD_PANE=${pane_ids[0]}
-DEV_PANE=${pane_ids[1]}
-TEST_PANE=${pane_ids[2]}
-TSC_PANE=${pane_ids[3]}
-LINT_PANE=${pane_ids[4]}
-LOGS_PANE=${pane_ids[5]}
-
-tmux send-keys -t "$DEV_PANE"  "$DEV_CMD"  C-m
-tmux send-keys -t "$TEST_PANE" "$TEST_CMD" C-m
-tmux send-keys -t "$TSC_PANE"  "$TSC_CMD"  C-m
-tmux send-keys -t "$LINT_PANE" "$LINT_CMD" C-m
-tmux send-keys -t "$LOGS_PANE" "$LOGS_CMD" C-m
-
-tmux select-pane -t "$COD_PANE"
-tmux display-message "Panes: codex=$COD_PANE dev=$DEV_PANE test=$TEST_PANE types=$TSC_PANE lint=$LINT_PANE logs=$LOGS_PANE"
-exec tmux attach -t "$SESSION"
+# Focus Codex pane and attach
+tmux select-pane -t "${P0:-}" 2>/dev/null || true
+tmux display-message "Panes: codex=${P0:-?} dev=${P1:-?} test=${P2:-?} types=${P3:-?} lint=${P4:-?} logs=${P5:-?}"
+exec tmux attach -t "$TARGET"
