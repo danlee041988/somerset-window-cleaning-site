@@ -5,7 +5,6 @@ set -Eeuo pipefail
 SESSION="${SESSION:-dev}"
 WINDOW="app"
 
-# Commands (override with env vars if you like)
 if command -v codex >/dev/null 2>&1; then
   AGENT_CMD_DEFAULT="codex"
 elif command -v cod >/dev/null 2>&1; then
@@ -20,38 +19,77 @@ TSC_CMD="${TSC_CMD:-npx tsc -w --noEmit}"
 LINT_CMD="${LINT_CMD:-npx eslint . --ext .js,.jsx,.ts,.tsx --cache --watch}"
 LOGS_CMD="${LOGS_CMD:-(tail -f logs/*.log 2>/dev/null || printf 'no logs\n'; exec $SHELL)}"
 
-# 1) Create/reuse session + window
 if ! tmux has-session -t "$SESSION" 2>/dev/null; then
   tmux new-session -d -s "$SESSION" -n "$WINDOW" "$AGENT_CMD"
-elif ! tmux list-windows -t "$SESSION" -F '#W' | grep -qx "$WINDOW"; then
+else
+  if tmux list-windows -t "$SESSION" -F '#W' | grep -qx "$WINDOW"; then
+    tmux kill-window -t "$SESSION:$WINDOW"
+  fi
   tmux new-window -t "$SESSION" -n "$WINDOW" "$AGENT_CMD"
 fi
 
 TARGET="$SESSION:$WINDOW"
 
-# 2) Ensure window is not zoomed and split to 6 panes
 tmux resize-pane -Z -t "$TARGET" 2>/dev/null || true
-count() { tmux list-panes -t "$TARGET" | wc -l | tr -d ' '; }
-while [ "$(count)" -lt 6 ]; do tmux split-window -d -t "$TARGET"; done
-while [ "$(count)" -gt 6 ]; do tmux kill-pane -t "$TARGET"; done
 
-tmux select-layout -t "$TARGET" tiled
+pane_ids() {
+  tmux list-panes -t "$TARGET" -F '#{pane_id}'
+}
 
-# 3) Collect pane IDs
-PIDS="$(tmux list-panes -t "$TARGET" -F '#{pane_id}')"
-i=0or id in $PIDS; do
-  eval "P$i=$id"
-  i=$((i+1))
-done
+P0=$(pane_ids | head -n1)
 
-# 4) Start watchers (Ctrl-C to stop previous)
-[ -n "${P1:-}" ] && tmux send-keys -t "${P1}" C-c "$DEV_CMD"  C-m
-[ -n "${P2:-}" ] && tmux send-keys -t "${P2}" C-c "$TEST_CMD" C-m
-[ -n "${P3:-}" ] && tmux send-keys -t "${P3}" C-c "$TSC_CMD"  C-m
-[ -n "${P4:-}" ] && tmux send-keys -t "${P4}" C-c "$LINT_CMD" C-m
-[ -n "${P5:-}" ] && tmux send-keys -t "${P5}" C-c "$LOGS_CMD" C-m
+# create two columns
+if tmux split-window -h -t "$P0" -d; then
+  tmux select-layout -t "$TARGET" even-horizontal
+fi
 
-# Focus Codex pane and attach
-tmux select-pane -t "${P0:-}" 2>/dev/null || true
-tmux display-message "Panes: codex=${P0:-?} dev=${P1:-?} test=${P2:-?} types=${P3:-?} lint=${P4:-?} logs=${P5:-?}"
+panes=($(pane_ids))
+P0=${panes[0]}
+P1=${panes[1]:-${panes[0]}}
+
+# split rows for each column
+if tmux split-window -v -t "$P0" -d; then
+  tmux select-layout -t "$TARGET" tiled
+fi
+if tmux split-window -v -t "$P1" -d; then
+  tmux select-layout -t "$TARGET" tiled
+fi
+
+panes=($(pane_ids))
+P0=${panes[0]}
+P1=${panes[1]}
+P2=${panes[2]:-${panes[1]}}
+P3=${panes[3]:-${panes[2]}}
+
+# split bottom panes horizontally to reach six
+if tmux split-window -h -t "$P2" -d; then
+  tmux select-layout -t "$TARGET" tiled
+fi
+if tmux split-window -h -t "$P3" -d; then
+  tmux select-layout -t "$TARGET" tiled
+fi
+
+panes=($(pane_ids))
+if [ ${#panes[@]} -ne 6 ]; then
+  echo "tmux dev-session: expected 6 panes, got ${#panes[@]}" >&2
+  tmux kill-window -t "$TARGET"
+  exit 1
+fi
+
+P0=${panes[0]}
+P1=${panes[1]}
+P2=${panes[2]}
+P3=${panes[3]}
+P4=${panes[4]}
+P5=${panes[5]}
+
+# start watchers
+tmux send-keys -t "$P1" C-c "$DEV_CMD"  C-m
+tmux send-keys -t "$P2" C-c "$TEST_CMD" C-m
+tmux send-keys -t "$P3" C-c "$TSC_CMD"  C-m
+tmux send-keys -t "$P4" C-c "$LINT_CMD" C-m
+tmux send-keys -t "$P5" C-c "$LOGS_CMD" C-m
+
+tmux select-pane -t "$P0"
+tmux display-message "Panes: codex=$P0 dev=$P1 test=$P2 types=$P3 lint=$P4 logs=$P5"
 exec tmux attach -t "$TARGET"
