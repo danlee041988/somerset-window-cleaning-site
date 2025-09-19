@@ -12,7 +12,7 @@ const base =
 
 const variants = {
   primary:
-    'bg-[var(--accent)] text-[var(--bg)] shadow-[0_18px_34px_-22px_rgba(255,45,85,0.45)] hover:brightness-95 active:scale-95 focus:ring-2 focus:ring-[color:var(--ring)] focus:ring-offset-2 focus:ring-offset-[color:var(--bg)]',
+    'bg-[var(--accent)] text-white shadow-[0_18px_34px_-22px_rgba(225,29,42,0.45)] hover:brightness-95 active:scale-95 focus:ring-2 focus:ring-[color:var(--ring)] focus:ring-offset-2 focus:ring-offset-[color:var(--bg)]',
   secondary:
     'glass-card hover:border-white/20 hover:bg-white/12 active:scale-95 focus:ring-2 focus:ring-[color:var(--ring)] focus:ring-offset-2 focus:ring-offset-[color:var(--bg)] text-[var(--fg)]',
   ghost:

@@ -9,11 +9,11 @@
     --fg: #F5F7FA;
     --muted: rgba(245, 247, 250, 0.72);
     --muted-subtle: rgba(245, 247, 250, 0.55);
-    --accent: #FF2D55;
+    --accent: #E11D2A;
     --glass: rgba(255, 255, 255, 0.06);
     --glass-border: rgba(255, 255, 255, 0.14);
-    --ring: rgba(255, 45, 85, 0.45);
-    --brand-red: #FF2D55;
+    --ring: rgba(225, 29, 42, 0.45);
+    --brand-red: #E11D2A;
     --brand-gold: #F4C542;
     --brand-black: #0A0B0D;
     --brand-white: #F5F7FA;
@@ -31,8 +31,8 @@
     font-family: -apple-system, "SF Pro Text", ui-sans-serif, Inter, "Segoe UI", Roboto, sans-serif;
     letter-spacing: -0.01em;
     background-image:
-      radial-gradient(60% 80% at 20% -10%, rgba(255, 45, 85, 0.18), transparent 65%),
-      radial-gradient(45% 60% at 110% 0%, rgba(255, 45, 85, 0.12), transparent 68%),
+      radial-gradient(60% 80% at 20% -10%, rgba(225, 29, 42, 0.18), transparent 65%),
+      radial-gradient(45% 60% at 110% 0%, rgba(225, 29, 42, 0.12), transparent 68%),
       linear-gradient(180deg, rgba(12, 13, 16, 0.95), rgba(6, 7, 9, 0.98));
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
@@ -43,14 +43,14 @@
     content: '';
     position: fixed;
     inset: -30% -40% -20% -40%;
-    background: radial-gradient(360px circle at 40% 0%, rgba(255, 45, 85, 0.24), transparent 55%);
+    background: radial-gradient(360px circle at 40% 0%, rgba(225, 29, 42, 0.24), transparent 55%);
     opacity: 0.55;
     pointer-events: none;
     z-index: -1;
   }
 
   ::selection {
-    background: rgba(255, 45, 85, 0.35);
+    background: rgba(225, 29, 42, 0.35);
     color: var(--fg);
   }
 
@@ -138,7 +138,7 @@
     border-color: transparent;
     background: var(--accent);
     color: var(--bg);
-    box-shadow: 0 20px 36px -28px rgba(255, 45, 85, 0.85);
+    box-shadow: 0 20px 36px -28px rgba(225, 29, 42, 0.85);
   }
 
   .glass-noir-tile {
@@ -154,9 +154,9 @@
   }
 
   .glass-noir-tile--active {
-    border-color: rgba(255, 45, 85, 0.55);
-    box-shadow: 0 22px 44px -30px rgba(255, 45, 85, 0.55);
-    background: rgba(255, 45, 85, 0.12);
+    border-color: rgba(225, 29, 42, 0.55);
+    box-shadow: 0 22px 44px -30px rgba(225, 29, 42, 0.55);
+    background: rgba(225, 29, 42, 0.12);
   }
 
   .glass-input {
@@ -171,8 +171,8 @@
 
   .glass-input:focus {
     outline: none;
-    border-color: rgba(255, 45, 85, 0.65);
-    box-shadow: 0 0 0 2px rgba(255, 45, 85, 0.35);
+    border-color: rgba(225, 29, 42, 0.65);
+    box-shadow: 0 0 0 2px rgba(225, 29, 42, 0.35);
     background: rgba(255, 255, 255, 0.08);
   }
 

@@ -77,7 +77,7 @@ export default function HomePage() {
               <div key={step.title} className="relative">
                 <div className="glass-card glass-noir-card--tight group flex h-full flex-col gap-4 p-6 text-[#F5F7FA] transition-transform duration-300 hover:-translate-y-1">
                   <div className="flex items-center gap-4">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[rgba(255,45,85,0.25)] text-xl font-semibold tracking-[0.2em] text-[var(--accent)] shadow-[0_0_25px_rgba(255,45,85,0.35)]">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[rgba(225,29,42,0.25)] text-xl font-semibold tracking-[0.2em] text-[var(--accent)] shadow-[0_0_25px_rgba(225,29,42,0.35)]">
                       {String(index + 1).padStart(2, '0')}
                     </span>
                     <h3 className="text-base font-semibold uppercase tracking-[0.25em] text-[var(--fg)]">

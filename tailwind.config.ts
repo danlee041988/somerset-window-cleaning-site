@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          red: '#FF2D55',
+          red: '#E11D2A',
           black: '#0A0B0D',
           white: '#F5F7FA',
           gold: '#F4C542',
@@ -21,13 +21,13 @@ const config: Config = {
         'noir-subtle': 'rgba(245,247,250,0.55)',
       },
       boxShadow: {
-        glow: '0 0 0 3px rgba(255, 45, 85, 0.3)',
+        glow: '0 0 0 3px rgba(225, 29, 42, 0.3)',
         'noir-panel': 'inset 0 1px 0 rgba(255,255,255,0.06), 0 36px 68px -40px rgba(0,0,0,0.65)',
         'noir-card': 'inset 0 1px 0 rgba(255,255,255,0.05), 0 24px 46px -32px rgba(0,0,0,0.6)',
       },
       backgroundImage: {
         'radial-glow':
-          'radial-gradient(800px circle at 20% -10%, rgba(255,45,85,0.18), transparent 45%), radial-gradient(1000px circle at 110% 0%, rgba(255,45,85,0.12), transparent 48%)',
+          'radial-gradient(800px circle at 20% -10%, rgba(225,29,42,0.18), transparent 45%), radial-gradient(1000px circle at 110% 0%, rgba(225,29,42,0.12), transparent 48%)',
       },
       animation: {
         'spin-slow': 'spin 8s linear infinite',

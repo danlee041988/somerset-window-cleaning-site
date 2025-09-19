@@ -28,7 +28,7 @@ Modern Next.js website for Somerset Window Cleaning with dark theme and professi
 - **ContactForm (legacy)**: Archived EmailJS + Notion workflow with photo uploads for historical reference
 - **ReCaptcha**: Google reCAPTCHA v2 wrapper component with dark theme support
 - **GoogleAnalytics**: GA4 tracking component with business intelligence integration
-- **Reviews**: Google reviews with 5-star ratings (accent red #FF2D55)
+- **Reviews**: Google reviews with 5-star ratings (accent red #E11D2A)
 - **CaseStudy**: Enhanced with gradients, animations, and spanning header design
 - **ProcessFlow**: Service workflow visualization (WhatsApp removed per user feedback)
 - **ServiceCard**: Traditional service preview cards with optimized images and uniform height

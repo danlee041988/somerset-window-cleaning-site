@@ -15,9 +15,9 @@ export default function Footer() {
               Crystal-clear windows for homes and businesses across Somerset. Friendly, reliable, fully insured.
             </p>
             <div className="glass-noir-card glass-noir-card--tight p-5 text-sm text-[#F5F7FA]">
-              <h4 className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] noir-subtle">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] noir-subtle">
                 Contact
-              </h4>
+              </h3>
               <ul className="space-y-3">
                 <li className="leading-relaxed noir-muted">
                   13 Rockhaven Business Centre
@@ -38,10 +38,10 @@ export default function Footer() {
 
           <div className="flex flex-col gap-8">
             <div>
-              <h4 className="relative mb-4 font-semibold text-[#F5F7FA]">
+              <h3 className="relative mb-4 font-semibold text-[#F5F7FA]">
                 Services
                 <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-[var(--accent)] to-transparent opacity-60" />
-              </h4>
+              </h3>
               <div className="grid grid-cols-1 gap-2 text-sm noir-muted md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                 <Link href="/services/window-cleaning" className="transition hover:text-[var(--fg)]">Window Cleaning</Link>
                 <Link href="/services/gutter-clearing" className="transition hover:text-[var(--fg)]">Gutter Clearing</Link>
@@ -55,10 +55,10 @@ export default function Footer() {
 
           <div className="flex flex-col gap-8">
             <div>
-              <h4 className="relative mb-4 font-semibold text-[#F5F7FA]">
+              <h3 className="relative mb-4 font-semibold text-[#F5F7FA]">
                 Quick links
                 <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-[var(--accent)] to-transparent opacity-60" />
-              </h4>
+              </h3>
               <div className="grid grid-cols-1 gap-2 text-sm noir-muted">
                 <Link href="/areas" className="transition hover:text-[var(--fg)]">Areas We Cover</Link>
                 <Link href="/pricing" className="transition hover:text-[var(--fg)]">Pricing &amp; Bundles</Link>
@@ -68,9 +68,9 @@ export default function Footer() {
               </div>
             </div>
             <div className="glass-noir-card glass-noir-card--tight p-5 text-sm text-[#F5F7FA]">
-              <h4 className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] noir-subtle">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] noir-subtle">
                 Business hours
-              </h4>
+              </h3>
               <BusinessHours variant="compact" className="mb-3" />
               <div className="flex flex-wrap gap-2 text-xs text-white/55">
                 <span className="rounded-full border border-white/15 px-3 py-1">Mon–Fri · 09:00–16:00</span>
