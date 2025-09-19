@@ -178,21 +178,25 @@ function ServiceCombinationLayout({ services, activeService, onSelect }: Service
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {secondaryServices.map((service) => (
-          <Link
-            key={service.id}
-            href={service.href}
-            className="group rounded-2xl border border-white/15 bg-black/35 p-5 text-sm text-white/75 transition hover:border-white/40 hover:text-white"
+      <div className="mt-8 grid gap-4 rounded-3xl border border-white/10 bg-black/30 p-6 text-white/70">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/55">Services coverage</p>
+            <p className="text-sm text-white/70">
+              Each booking includes water-fed pole reach, pure-water finish, and friendly reminders—no need to juggle multiple crews.
+            </p>
+          </div>
+          <Button
+            href="/services"
+            variant="secondary"
+            className="rounded-full px-6 py-2 text-xs font-semibold uppercase tracking-[0.35em]"
           >
-            <p className="text-xs uppercase tracking-[0.3em] text-white/55">Pair with</p>
-            <h4 className="mt-3 text-base font-semibold text-white">{service.name}</h4>
-            <p className="mt-2 text-xs text-white/60">{service.description}</p>
-            <span className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/50 transition group-hover:text-white">
-              View service →
-            </span>
-          </Link>
-        ))}
+            Explore all services
+          </Button>
+        </div>
+        <p className="text-xs uppercase tracking-[0.3em] text-white/45">
+          Need extras? Add conservatories, gutters, or solar panels inside the booking form.
+        </p>
       </div>
     </div>
   )

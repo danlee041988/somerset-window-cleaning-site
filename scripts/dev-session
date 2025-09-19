@@ -1,95 +1,112 @@
 #!/usr/bin/env bash
-# One-writer (Codex) + many-watchers tmux layout (robust v3)
+# Codex + watchers launcher (v5): no grid needed; watchers in separate window.
 set -Eeuo pipefail
 
 SESSION="${SESSION:-dev}"
-WINDOW="app"
+APP_WIN="${WINDOW:-app}"
+WATCH_WIN="watch"
+UI_MODE="${UI_MODE:-zoom}"   # zoom (default) | watch | grid
 
-if command -v codex >/dev/null 2>&1; then
-  AGENT_CMD_DEFAULT="codex"
-elif command -v cod >/dev/null 2>&1; then
-  AGENT_CMD_DEFAULT="cod"
-else
-  AGENT_CMD_DEFAULT="$SHELL"
-fi
+# Commands (override via env if needed)
+if command -v codex >/dev/null 2>&1; then AGENT_CMD_DEFAULT="codex";
+elif command -v cod   >/dev/null 2>&1; then AGENT_CMD_DEFAULT="cod";
+else AGENT_CMD_DEFAULT="$SHELL"; fi
 AGENT_CMD="${AGENT_CMD:-$AGENT_CMD_DEFAULT}"
 DEV_CMD="${DEV_CMD:-npm run dev}"
 TEST_CMD="${TEST_CMD:-npm test -- --watch}"
 TSC_CMD="${TSC_CMD:-npx tsc -w --noEmit}"
-LINT_CMD="${LINT_CMD:-npx eslint . --ext .js,.jsx,.ts,.tsx --cache --watch}"
-LOGS_CMD="${LOGS_CMD:-(tail -f logs/*.log 2>/dev/null || printf 'no logs\n'; exec $SHELL)}"
+LINT_CMD=${LINT_CMD:-'npx chokidar "**/*.{js,jsx,ts,tsx}" -i "**/{.git,node_modules,.next}/**" -c "npm run lint --silent || true" --initial'}
+LOGS_CMD="${LOGS_CMD:-(tail -f logs/*.log 2>/dev/null || printf "no logs\n"; exec $SHELL)}"
 
-if ! tmux has-session -t "$SESSION" 2>/dev/null; then
-  tmux new-session -d -s "$SESSION" -n "$WINDOW" "$AGENT_CMD"
-else
-  if tmux list-windows -t "$SESSION" -F '#W' | grep -qx "$WINDOW"; then
-    tmux kill-window -t "$SESSION:$WINDOW"
+ensure_session_window() {
+  if ! tmux has-session -t "$SESSION" 2>/dev/null; then
+    tmux new-session -d -s "$SESSION" -n "$APP_WIN" "$AGENT_CMD"
+  elif ! tmux list-windows -t "$SESSION" -F '#W' | grep -qx "$APP_WIN"; then
+    tmux new-window -t "$SESSION" -n "$APP_WIN" "$AGENT_CMD"
   fi
-  tmux new-window -t "$SESSION" -n "$WINDOW" "$AGENT_CMD"
-fi
-
-TARGET="$SESSION:$WINDOW"
-
-tmux resize-pane -Z -t "$TARGET" 2>/dev/null || true
-
-pane_ids() {
-  tmux list-panes -t "$TARGET" -F '#{pane_id}'
 }
 
-P0=$(pane_ids | head -n1)
+start_watchers_in_watch_window() {
+  if ! tmux list-windows -t "$SESSION" -F '#W' | grep -qx "$WATCH_WIN"; then
+    tmux new-window -t "$SESSION" -n "$WATCH_WIN" "$SHELL"
+  fi
 
-# create two columns
-if tmux split-window -h -t "$P0" -d; then
-  tmux select-layout -t "$TARGET" even-horizontal
-fi
+  # Try to make 5 panes; if splitting fails (tiny terminal), fall back to one pane per window.
+  splits_ok=1
+  count() { tmux list-panes -t "$SESSION:$WATCH_WIN" | wc -l | tr -d ' '; }
+  for _ in 1 2 3 4; do
+    if ! tmux split-window -t "$SESSION:$WATCH_WIN" -d 2>/dev/null; then
+      splits_ok=0; break
+    fi
+  done
+  if [ "$splits_ok" -eq 1 ]; then
+    tmux select-layout -t "$SESSION:$WATCH_WIN" tiled
+    mapfile -t WP < <(tmux list-panes -t "$SESSION:$WATCH_WIN" -F '#{pane_id}')
+    DEV_P=${WP[0]} ; TEST_P=${WP[1]} ; TSC_P=${WP[2]} ; LINT_P=${WP[3]} ; LOGS_P=${WP[4]}
 
-panes=($(pane_ids))
-P0=${panes[0]}
-P1=${panes[1]:-${panes[0]}}
+    tmux send-keys -t "$DEV_P"  C-c "$DEV_CMD"  C-m
+    tmux send-keys -t "$TEST_P" C-c "$TEST_CMD" C-m
+    tmux send-keys -t "$TSC_P"  C-c "$TSC_CMD"  C-m
+    tmux send-keys -t "$LINT_P" C-c "$LINT_CMD" C-m
+    tmux send-keys -t "$LOGS_P" C-c "$LOGS_CMD" C-m
+    tmux display-message "Watchers in '$WATCH_WIN' window (Ctrl-b w)."
+  else
+    # Fallback: five separate windows (never fails on small screens)
+    tmux setenv -g DEV_CMD  "$DEV_CMD"
+    tmux setenv -g TEST_CMD "$TEST_CMD"
+    tmux setenv -g TSC_CMD  "$TSC_CMD"
+    tmux setenv -g LINT_CMD "$LINT_CMD"
+    tmux setenv -g LOGS_CMD "$LOGS_CMD"
 
-# split rows for each column
-if tmux split-window -v -t "$P0" -d; then
-  tmux select-layout -t "$TARGET" tiled
-fi
-if tmux split-window -v -t "$P1" -d; then
-  tmux select-layout -t "$TARGET" tiled
-fi
+    for name in dev test types lint logs; do
+      # Close existing named watch windows if present
+      tmux list-windows -t "$SESSION" -F '#W' | grep -qx "watch:$name" && tmux kill-window -t "$SESSION:watch:$name"
+    done
 
-panes=($(pane_ids))
-P0=${panes[0]}
-P1=${panes[1]}
-P2=${panes[2]:-${panes[1]}}
-P3=${panes[3]:-${panes[2]}}
+    tmux new-window -t "$SESSION" -n "watch:dev"   'bash -lc "$DEV_CMD"'
+    tmux new-window -t "$SESSION" -n "watch:test"  'bash -lc "$TEST_CMD"'
+    tmux new-window -t "$SESSION" -n "watch:types" 'bash -lc "$TSC_CMD"'
+    tmux new-window -t "$SESSION" -n "watch:lint"  'bash -lc "$LINT_CMD"'
+    tmux new-window -t "$SESSION" -n "watch:logs"  'bash -lc "$LOGS_CMD"'
+    tmux display-message "Watchers in windows watch:* (Ctrl-b w)."
+  fi
+}
 
-# split bottom panes horizontally to reach six
-if tmux split-window -h -t "$P2" -d; then
-  tmux select-layout -t "$TARGET" tiled
-fi
-if tmux split-window -h -t "$P3" -d; then
-  tmux select-layout -t "$TARGET" tiled
-fi
+main() {
+  ensure_session_window
 
-panes=($(pane_ids))
-if [ ${#panes[@]} -ne 6 ]; then
-  echo "tmux dev-session: expected 6 panes, got ${#panes[@]}" >&2
-  tmux kill-window -t "$TARGET"
-  exit 1
-fi
+  case "$UI_MODE" in
+    grid)
+      # Try a 6-pane grid in the APP window; if it fails, fall back to watchers window.
+      ok=1
+      tmux resize-pane -Z -t "$SESSION:$APP_WIN" 2>/dev/null || true
+      count_app() { tmux list-panes -t "$SESSION:$APP_WIN" | wc -l | tr -d ' '; }
+      while [ "$(count_app)" -lt 6 ]; do
+        if ! tmux split-window -t "$SESSION:$APP_WIN" -d 2>/dev/null; then ok=0; break; fi
+      done
+      if [ "$ok" -eq 1 ]; then
+        tmux select-layout -t "$SESSION:$APP_WIN" tiled
+        mapfile -t P < <(tmux list-panes -t "$SESSION:$APP_WIN" -F '#{pane_id}')
+        COD=${P[0]} ; DEV=${P[1]} ; TEST=${P[2]} ; TSC=${P[3]} ; LINT=${P[4]} ; LOGS=${P[5]}
+        tmux send-keys -t "$DEV"  C-c "$DEV_CMD"  C-m
+        tmux send-keys -t "$TEST" C-c "$TEST_CMD" C-m
+        tmux send-keys -t "$TSC"  C-c "$TSC_CMD"  C-m
+        tmux send-keys -t "$LINT" C-c "$LINT_CMD" C-m
+        tmux send-keys -t "$LOGS" C-c "$LOGS_CMD" C-m
+        tmux select-pane -t "$COD"
+        tmux display-message "UI_MODE=grid — toggle zoom with Ctrl-b z."
+        exec tmux attach -t "$SESSION:$APP_WIN"
+      fi
+      # Fall through to watchers-in-window if grid failed
+      ;;
+  esac
 
-P0=${panes[0]}
-P1=${panes[1]}
-P2=${panes[2]}
-P3=${panes[3]}
-P4=${panes[4]}
-P5=${panes[5]}
+  # Default path: keep APP window as a single Codex pane; run watchers in separate window(s).
+  start_watchers_in_watch_window
+  tmux select-window -t "$SESSION:$APP_WIN"
+  tmux select-pane -t "$SESSION:$APP_WIN".0
+  [ "$UI_MODE" = "zoom" ] && tmux resize-pane -Z -t "$SESSION:$APP_WIN".0 2>/dev/null || true
+  exec tmux attach -t "$SESSION:$APP_WIN"
+}
 
-# start watchers
-tmux send-keys -t "$P1" C-c "$DEV_CMD"  C-m
-tmux send-keys -t "$P2" C-c "$TEST_CMD" C-m
-tmux send-keys -t "$P3" C-c "$TSC_CMD"  C-m
-tmux send-keys -t "$P4" C-c "$LINT_CMD" C-m
-tmux send-keys -t "$P5" C-c "$LOGS_CMD" C-m
-
-tmux select-pane -t "$P0"
-tmux display-message "Panes: codex=$P0 dev=$P1 test=$P2 types=$P3 lint=$P4 logs=$P5"
-exec tmux attach -t "$TARGET"
+main

@@ -144,17 +144,22 @@ const formatTime = (time: string): string => {
   return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`
 }
 
-export default function BusinessHours({ variant = 'compact', className = '' }: BusinessHoursProps) {
+export const useBusinessStatus = () => {
   const [businessStatus, setBusinessStatus] = React.useState(() => isBusinessOpen())
-  
-  // Update status every minute
+
   React.useEffect(() => {
     const interval = setInterval(() => {
       setBusinessStatus(isBusinessOpen())
-    }, 60000) // Update every minute
-    
+    }, 60000)
+
     return () => clearInterval(interval)
   }, [])
+
+  return businessStatus
+}
+
+export default function BusinessHours({ variant = 'compact', className = '' }: BusinessHoursProps) {
+  const businessStatus = useBusinessStatus()
   
   if (variant === 'compact') {
     return (

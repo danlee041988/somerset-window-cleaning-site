@@ -157,6 +157,28 @@ function GoogleReviewBadge({ title = 'Google Reviews', subtitle, className }: { 
   )
 }
 
+function ReviewStars({ className, label = 'Rated five out of five' }: { className?: string; label?: string }) {
+  return (
+    <div
+      className={clsx('flex items-center gap-1 text-[#FACC15]', className)}
+      role="img"
+      aria-label={label}
+    >
+      {Array.from({ length: 5 }).map((_, index) => (
+        <svg
+          key={index}
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="h-4 w-4"
+          aria-hidden="true"
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.071 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.802 2.036a1 1 0 00-.364 1.118l1.071 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.036a1 1 0 00-1.176 0l-2.8 2.036c-.785.57-1.84-.197-1.54-1.118l1.071-3.292a1 1 0 00-.364-1.118L2.978 8.72c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.071-3.292z" />
+        </svg>
+      ))}
+    </div>
+  )
+}
+
 export default function Reviews({ variant = 'carousel', mode, className }: ReviewsProps = {}) {
   const resolvedMode: SectionMode = mode ?? 'standalone'
 
@@ -263,6 +285,7 @@ function SpotlightReviewSurface({ className }: { className?: string }) {
               <GoogleLogo className="h-5 w-5" />
               <span>Verified Google review</span>
             </div>
+            <ReviewStars className="text-lg" />
             <p className="text-lg leading-relaxed text-[var(--fg)]">
               “{SPOTLIGHT_REVIEW.quote}”
             </p>
@@ -328,6 +351,7 @@ function CarouselReviewSurface({ className }: { className?: string }) {
         >
           <div className="space-y-4">
             <p className="text-sm font-semibold text-[color:var(--muted-subtle)]">{activeReview.service}</p>
+            <ReviewStars />
             <p className="text-lg leading-relaxed text-[var(--fg)]">“{activeReview.quote}”</p>
           </div>
           <footer className="space-y-1 text-sm">
@@ -344,6 +368,7 @@ function CarouselReviewSurface({ className }: { className?: string }) {
             >
               <div className="space-y-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-subtle)]">{review.service}</p>
+                <ReviewStars className="text-sm" />
                 <p className="text-sm text-[var(--fg)]">“{review.quote}”</p>
               </div>
               <footer className="mt-auto text-xs text-[color:var(--muted)]">{review.name} — {review.location}</footer>
@@ -386,6 +411,7 @@ function MosaicReviewSurface({ className }: { className?: string }) {
               <header>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-subtle)]">{card.title}</p>
               </header>
+              <ReviewStars className="text-sm" />
               <p className="text-sm leading-relaxed text-[var(--fg)]">“{card.quote}”</p>
               <footer className="mt-auto text-xs text-[color:var(--muted)]">{card.attribution}</footer>
             </article>

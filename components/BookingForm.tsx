@@ -55,6 +55,13 @@ type DateOption = {
   matchLabel: string
 }
 
+type ServiceDetail = {
+  priceLabel?: string
+  frequencyLabel?: string
+  secondary?: string
+  bonusNote?: string
+}
+
 type StepCardProps = {
   index: number
   title: string
@@ -272,6 +279,29 @@ const formatDateForDisplay = (iso: string): string => {
   })
 }
 
+const generateFallbackDateOptions = (count = 4): DateOption[] => {
+  const today = new Date(`${getTodayIso()}T00:00:00Z`)
+  const options: DateOption[] = []
+  let cursor = new Date(today.getTime())
+
+  while (options.length < count) {
+    cursor = new Date(cursor.getTime() + 24 * 60 * 60 * 1000)
+    const iso = adjustForBankHoliday(cursor.toISOString().split('T')[0])
+    if (options.some((option) => option.iso === iso)) {
+      continue
+    }
+    options.push({
+      id: `fallback-${options.length}`,
+      iso,
+      label: `${formatDateForDisplay(iso)} · Somerset route`,
+      matchLabel: 'Somerset route',
+    })
+    cursor = new Date(`${iso}T00:00:00Z`)
+  }
+
+  return options
+}
+
 const formatCurrency = (value: number): string =>
   new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(value)
 
@@ -449,64 +479,96 @@ export default function BookingForm({
   }
 
   const getServiceDetails = React.useCallback(
-    (service: ServiceName) => {
+    (service: ServiceName): ServiceDetail => {
       if (!propertyReady) {
         return {
           priceLabel: 'Complete property details to see personalised pricing.',
+          frequencyLabel: undefined,
           secondary: undefined,
+          bonusNote: undefined,
         }
       }
+
+      const includesGutter = selectedServices.includes('Gutter Clearing')
+      const includesFascia = selectedServices.includes('Fascias & Soffits Cleaning')
 
       switch (service) {
         case 'Window Cleaning': {
           const base = WINDOW_BASE_PRICE[bedroomBand]
           const adjustment = PROPERTY_TYPE_ADJUSTMENT[propertyType]
-          const estimate = base + adjustment
+          let estimate = base + adjustment
           const notes: string[] = []
-          if (serviceFrequencyValue) notes.push(serviceFrequencyValue)
-          if (hasExtension === 'yes') notes.push('Extension included')
-          if (hasConservatory === 'yes') notes.push('Conservatory noted')
+          if (adjustment) notes.push('+£5 for attached frontage')
+          if (hasExtension === 'yes') notes.push('Extension access included')
+          if (hasConservatory === 'yes') notes.push('Conservatory glass noted')
+
+          if (includesGutter && includesFascia) {
+            return {
+              priceLabel: 'Included with gutter & fascia bundle',
+              frequencyLabel: serviceFrequencyValue,
+              secondary: notes.length ? notes.join(' · ') : undefined,
+              bonusNote: 'Bundle automatically removes the window clean charge.',
+            }
+          }
+
           return {
             priceLabel: `${formatCurrency(estimate)} per visit`,
+            frequencyLabel: serviceFrequencyValue,
             secondary: notes.length ? notes.join(' · ') : undefined,
+            bonusNote: undefined,
           }
         }
         case 'Gutter Clearing': {
-          const notes: string[] = ['Photo evidence provided']
-          if (hasExtension === 'yes') notes.push('Extension gutters inspected')
+          const notes: string[] = ['Photo report provided']
+          if (hasExtension === 'yes') notes.push('Extension gutters covered')
           return {
-            priceLabel: formatCurrency(GUTTER_CLEAN_PRICE),
+            priceLabel: `${formatCurrency(GUTTER_CLEAN_PRICE)} per visit`,
+            frequencyLabel: 'Cleaned alongside your window appointment',
             secondary: notes.join(' · '),
+            bonusNote: includesFascia ? 'Pair with fascias for a complimentary window clean.' : undefined,
           }
         }
         case 'Fascias & Soffits Cleaning':
           return {
-            priceLabel: formatCurrency(FASCIA_SOFT_PRICE),
+            priceLabel: `${formatCurrency(FASCIA_SOFT_PRICE)} per visit`,
+            frequencyLabel: 'Scheduled with your booking',
             secondary: 'Full exterior PVC refresh',
+            bonusNote: includesGutter ? 'Pair with gutter clearing for a complimentary window clean.' : undefined,
           }
         case 'Conservatory Roof Cleaning':
           return {
-            priceLabel: hasConservatory === 'yes' ? 'Quote confirmed on inspection' : 'Optional add-on',
+            priceLabel: hasConservatory === 'yes' ? 'Tailored on-site pricing' : 'Optional add-on',
+            frequencyLabel: hasConservatory === 'yes' ? 'Completed during your booked visit' : undefined,
             secondary:
               hasConservatory === 'yes'
-                ? 'Seal-safe clean to restore clarity.'
-                : 'Let us know if you would like this included.',
+                ? 'Soft-wash approach keeps seals and glazing safe.'
+                : 'Select if you would like us to restore the roof during the visit.',
+            bonusNote: undefined,
           }
         case 'Solar Panel Cleaning':
           return {
             priceLabel: 'Performance-based quote',
+            frequencyLabel: 'Completed on the same visit',
             secondary: 'Deionised water, warranty-safe.',
+            bonusNote: undefined,
           }
         case 'External Commercial Cleaning':
           return {
             priceLabel: 'Tailored RAMS-backed proposal',
-            secondary: 'Perfect for storefronts & estates.',
+            frequencyLabel: undefined,
+            secondary: 'Ideal for storefronts and estates.',
+            bonusNote: undefined,
           }
         default:
-          return { priceLabel: 'Custom quote' }
+          return {
+            priceLabel: 'Custom quote',
+            frequencyLabel: undefined,
+            secondary: undefined,
+            bonusNote: undefined,
+          }
       }
     },
-    [propertyReady, bedroomBand, propertyType, serviceFrequencyValue, hasExtension, hasConservatory],
+    [propertyReady, bedroomBand, propertyType, serviceFrequencyValue, hasExtension, hasConservatory, selectedServices],
   )
 
   const trackFormStart = React.useCallback(
@@ -573,10 +635,18 @@ export default function BookingForm({
     if (!frequency) {
       setFrequencyMatch(null)
       setCoverageStatus('outside')
-      setDateOptions([])
-      setSelectedDateId('manual')
-      setSelectedDateLabel('Manual scheduling required')
-      setValue('preferred_date', 'Manual scheduling required', { shouldValidate: true })
+      const fallback = generateFallbackDateOptions()
+      setDateOptions(fallback)
+      if (fallback.length > 0) {
+        const first = fallback[0]
+        setSelectedDateId(first.id)
+        setSelectedDateLabel(first.label)
+        setValue('preferred_date', first.iso, { shouldValidate: true })
+      } else {
+        setSelectedDateId('manual')
+        setSelectedDateLabel('Manual scheduling required')
+        setValue('preferred_date', 'Manual scheduling required', { shouldValidate: true })
+      }
       clearErrors('preferred_date')
       return
     }
@@ -601,19 +671,31 @@ export default function BookingForm({
     })
 
     options.sort((a, b) => a.iso.localeCompare(b.iso))
+
+    if (options.length === 0) {
+      const fallback = generateFallbackDateOptions()
+      setDateOptions(fallback)
+      if (fallback.length > 0) {
+        const first = fallback[0]
+        setSelectedDateId(first.id)
+        setSelectedDateLabel(first.label)
+        setValue('preferred_date', first.iso, { shouldValidate: true })
+        clearErrors('preferred_date')
+      } else {
+        setSelectedDateId('')
+        setSelectedDateLabel('')
+        setValue('preferred_date', '', { shouldValidate: true })
+      }
+      return
+    }
+
     setDateOptions(options)
 
-    if (options.length > 0) {
-      const first = options[0]
-      setSelectedDateId(first.id)
-      setSelectedDateLabel(first.label)
-      setValue('preferred_date', first.iso, { shouldValidate: true })
-      clearErrors('preferred_date')
-    } else {
-      setSelectedDateId('')
-      setSelectedDateLabel('')
-      setValue('preferred_date', '', { shouldValidate: true })
-    }
+    const first = options[0]
+    setSelectedDateId(first.id)
+    setSelectedDateLabel(first.label)
+    setValue('preferred_date', first.iso, { shouldValidate: true })
+    clearErrors('preferred_date')
 
     clearErrors('postcode')
   }, [postcodeValue, setValue, clearErrors])
@@ -667,7 +749,7 @@ export default function BookingForm({
       }
 
       if (hasExtension === 'yes' || hasConservatory === 'yes') {
-        const extra = 'Extension / conservatory access noted; final quote confirmed on arrival.'
+        const extra = 'Extension / conservatory access noted for setup.'
         note = note ? `${note} ${extra}` : extra
       }
 
@@ -692,13 +774,13 @@ export default function BookingForm({
     const handled = new Set(['Window Cleaning', 'Gutter Clearing', 'Fascias & Soffits Cleaning'])
     selectedServices.forEach((service) => {
       if (!handled.has(service)) {
-        lines.push({ label: service, note: 'Quoted on inspection based on coverage.' })
+        lines.push({ label: service, note: 'Priced on arrival for bespoke coverage.' })
       }
     })
 
     const totalFormatted = formatCurrency(total)
     const breakdownText = lines
-      .map((line) => `${line.label}: ${line.amount !== undefined ? formatCurrency(line.amount) : 'To be confirmed'}${line.note ? ` (${line.note})` : ''}`)
+      .map((line) => `${line.label}: ${line.amount !== undefined ? formatCurrency(line.amount) : 'Priced on arrival'}${line.note ? ` (${line.note})` : ''}`)
       .join('\n')
 
     return {
@@ -806,7 +888,7 @@ export default function BookingForm({
 
     const pricingLines = pricingSummary?.lines ?? []
     const pricingBreakdown = pricingSummary?.breakdownText ?? 'No pricing calculated'
-    const pricingTotal = pricingSummary?.totalFormatted ?? 'Quote to be confirmed'
+    const pricingTotal = pricingSummary?.totalFormatted ?? 'Select services to see pricing'
     const pricingDiscount = pricingSummary?.discountNote ?? ''
 
     const summarySections = [
@@ -835,7 +917,7 @@ export default function BookingForm({
       `- Coverage: ${coverageLabel}`,
       `- Route Match: ${frequencyTitle}`,
       `- Service Days: ${frequencyServiceDays}`,
-      `- Selected Slot: ${preferredDateLabel || 'Manual confirmation required'}`,
+      `- Selected Slot: ${preferredDateLabel || 'Manual scheduling'}`,
       '',
       'Pricing Summary:',
       `- Total: ${pricingTotal}`,
@@ -1040,52 +1122,6 @@ export default function BookingForm({
               Contact information
             </h3>
 
-            <div className="rounded-2xl border border-white/15 bg-white/5 p-4">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Preferred contact method</p>
-              <div className="grid gap-2 sm:grid-cols-2">
-                <label
-                  className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
-                    preferredContactMethod === 'email'
-                      ? 'border-brand-red/60 bg-brand-red/15 text-white'
-                      : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="email"
-                      className="accent-brand-red"
-                      checked={preferredContactMethod === 'email'}
-                      onChange={() => setPreferredContactMethod('email')}
-                      name={preferredContactFieldName}
-                      ref={preferredContactRef}
-                    />
-                    Email updates
-                  </span>
-                </label>
-                <label
-                  className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
-                    preferredContactMethod === 'phone'
-                      ? 'border-brand-red/60 bg-brand-red/15 text-white'
-                      : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="phone"
-                      className="accent-brand-red"
-                      checked={preferredContactMethod === 'phone'}
-                      onChange={() => setPreferredContactMethod('phone')}
-                      name={preferredContactFieldName}
-                    />
-                    Mobile call or SMS
-                  </span>
-                </label>
-              </div>
-              <p className="mt-3 text-xs text-white/60">We’ll use this for booking confirmations and reminders.</p>
-            </div>
-
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-medium text-white/90">First name *</label>
@@ -1152,6 +1188,54 @@ export default function BookingForm({
                   })}
                 />
                 {errors.customer_phone && <p className="mt-1 text-xs text-red-400">{errors.customer_phone.message}</p>}
+              </div>
+
+              <div className="md:col-span-2">
+                <div className="rounded-2xl border border-white/15 bg-white/5 p-4">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Preferred contact method</p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <label
+                      className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
+                        preferredContactMethod === 'email'
+                          ? 'border-brand-red/60 bg-brand-red/15 text-white'
+                          : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="email"
+                          className="accent-brand-red"
+                          checked={preferredContactMethod === 'email'}
+                          onChange={() => setPreferredContactMethod('email')}
+                          name={preferredContactFieldName}
+                          ref={preferredContactRef}
+                        />
+                        Email updates
+                      </span>
+                    </label>
+                    <label
+                      className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
+                        preferredContactMethod === 'phone'
+                          ? 'border-brand-red/60 bg-brand-red/15 text-white'
+                          : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="phone"
+                          className="accent-brand-red"
+                          checked={preferredContactMethod === 'phone'}
+                          onChange={() => setPreferredContactMethod('phone')}
+                          name={preferredContactFieldName}
+                        />
+                        Mobile call or SMS
+                      </span>
+                    </label>
+                  </div>
+                  <p className="mt-3 text-xs text-white/60">We’ll use this for booking confirmations and reminders.</p>
+                </div>
               </div>
 
               <div>
@@ -1301,6 +1385,84 @@ export default function BookingForm({
                   ))}
                 </div>
               </div>
+
+              <div className="space-y-3 md:col-span-2">
+                <p className="text-sm font-medium text-white/90">Do you have an extension or conservatory?</p>
+                <p className="text-xs text-white/60">Let us know so we can factor in extra glass area and access requirements.</p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/60">Extension</p>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <label
+                        className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
+                          hasExtension === 'yes'
+                            ? 'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_0_18px_rgba(225,29,42,0.25)]'
+                            : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                        }`}
+                      >
+                        <span>Yes</span>
+                        <input
+                          type="radio"
+                          value="yes"
+                          className="accent-brand-red"
+                          {...register('has_extension', { required: true })}
+                        />
+                      </label>
+                      <label
+                        className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
+                          hasExtension === 'no'
+                            ? 'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_0_18px_rgba(225,29,42,0.25)]'
+                            : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                        }`}
+                      >
+                        <span>No</span>
+                        <input
+                          type="radio"
+                          value="no"
+                          className="accent-brand-red"
+                          {...register('has_extension', { required: true })}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/60">Conservatory</p>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <label
+                        className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
+                          hasConservatory === 'yes'
+                            ? 'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_0_18px_rgba(225,29,42,0.25)]'
+                            : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                        }`}
+                      >
+                        <span>Yes</span>
+                        <input
+                          type="radio"
+                          value="yes"
+                          className="accent-brand-red"
+                          {...register('has_conservatory', { required: true })}
+                        />
+                      </label>
+                      <label
+                        className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
+                          hasConservatory === 'no'
+                            ? 'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_0_18px_rgba(225,29,42,0.25)]'
+                            : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                        }`}
+                      >
+                        <span>No</span>
+                        <input
+                          type="radio"
+                          value="no"
+                          className="accent-brand-red"
+                          {...register('has_conservatory', { required: true })}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1327,10 +1489,11 @@ export default function BookingForm({
 
             <div className="space-y-3">
               <label className="block text-sm font-medium text-white/90">Services required *</label>
-              <p className="text-xs text-white/60">Tick every service you&apos;d like included in your visit. You can add extras when we confirm the booking.</p>
+              <p className="text-xs text-white/60">Tick every service you&apos;d like included in your visit. Extras can be added later if needed.</p>
               <div className="grid gap-3 sm:grid-cols-2">
                 {SERVICE_OPTIONS.map((service) => {
                   const selected = selectedServices.includes(service)
+                  const details = getServiceDetails(service)
                   return (
                     <label
                       key={service}
@@ -1344,6 +1507,18 @@ export default function BookingForm({
                       <div>
                         <p className="font-semibold text-white">{service}</p>
                         <p className="mt-1 text-xs text-white/70">{SERVICE_SUMMARY[service]}</p>
+                        {details.priceLabel && (
+                          <p className="mt-3 text-sm font-semibold text-brand-red">{details.priceLabel}</p>
+                        )}
+                        {details.frequencyLabel && (
+                          <p className="text-xs text-white/65">{details.frequencyLabel}</p>
+                        )}
+                        {details.secondary && (
+                          <p className="mt-2 text-xs text-white/60">{details.secondary}</p>
+                        )}
+                        {details.bonusNote && (
+                          <p className="mt-2 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-emerald-300">{details.bonusNote}</p>
+                        )}
                       </div>
                     </label>
                   )
@@ -1377,10 +1552,11 @@ export default function BookingForm({
 
             <div>
               <label className="mb-2 block text-sm font-medium text-white/90">Choose your first visit *</label>
-              {coverageStatus === 'covered' && dateOptions.length > 0 ? (
+              {dateOptions.length > 0 ? (
                 <div className="grid gap-3 sm:grid-cols-2">
                   {dateOptions.map((option) => {
                     const isSelected = selectedDateId === option.id
+                    const isFallback = option.id.startsWith('fallback')
                     return (
                       <label
                         key={option.id}
@@ -1404,7 +1580,7 @@ export default function BookingForm({
                         />
                         <div>
                           <p className="font-semibold text-white">{option.label}</p>
-                          <p className="text-xs text-white/70">{option.matchLabel}</p>
+                          <p className="text-xs text-white/70">{isFallback ? 'Priority booking slot' : option.matchLabel}</p>
                         </div>
                         {isSelected && (
                           <svg className="h-5 w-5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1417,7 +1593,7 @@ export default function BookingForm({
                 </div>
               ) : (
                 <div className="rounded-xl border border-white/15 bg-white/5 p-4 text-sm text-white/70">
-                  Enter your postcode above to display available weeks. We&apos;ll confirm the exact window cleaning frequency once we align your address.
+                  Enter your postcode above to display available weeks and choose the slot that works best for you.
                 </div>
               )}
               {errors.preferred_date && <p className="mt-1 text-xs text-red-400">{errors.preferred_date.message}</p>}
@@ -1507,7 +1683,7 @@ export default function BookingForm({
               </p>
             )}
             <p className="mt-4 text-center text-xs text-white/60">
-              We&apos;ll confirm your appointment within 4 hours (Mon-Sat, 9am-4pm).
+              You&apos;ll receive your booking pack within 4 hours (Mon-Sat, 9am-4pm).
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2 text-sm text-white/80">
               <a
@@ -1542,13 +1718,13 @@ export default function BookingForm({
                 href="https://wa.me/441458860339"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 transition hover:border-brand-red/60 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-full border border-transparent bg-[#25D366] px-4 py-2 font-semibold text-[#0a0f0a] transition hover:bg-[#1ebe5b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1ebe5b]/60"
               >
                 <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2a10 10 0 00-8.94 14.56L2 22l5.61-1.47A10 10 0 1012 2zm0 18a8 8 0 114.9-14.36l.6.46-.6.46A8 8 0 0112 20z" />
                   <path d="M8.59 9.53c0 .2.06.4.18.57.27.38.86.87 1.02.96.16.09.22.08.38.02.16-.06.64-.3.73-.34.09-.03.16-.05.23.05.07.11.26.34.53.56.26.23.46.37.63.47.16.1.31.08.43.05.13-.03.4-.15.62-.31.21-.16.37-.29.42-.45.05-.16.05-.29-.02-.41-.06-.12-.24-.37-.5-.63-.26-.26-.41-.27-.56-.23-.14.04-.3.18-.47.37-.11.12-.25.14-.38.07-.13-.06-.89-.41-1.7-1.16-.62-.58-1.05-1.31-1.17-1.53-.12-.22-.01-.34.05-.4.05-.05.12-.13.18-.2.06-.07.08-.12.11-.2.03-.08.02-.16-.01-.23-.03-.07-.29-.7-.4-.96-.1-.26-.21-.22-.36-.22-.09 0-.17 0-.25.01-.08.01-.2.03-.31.15-.11.12-.43.42-.43 1.02z" />
                 </svg>
-                WhatsApp
+                🟢 WhatsApp chat
               </a>
             </div>
             <p className="text-center text-xs text-white/55">

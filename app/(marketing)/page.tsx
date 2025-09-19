@@ -9,20 +9,20 @@ import ServiceTabsPreview from '@/components/ServiceTabsPreview'
 
 const HOME_BOOKING_STEPS = [
   {
-    title: 'Check your postcode',
-    description: 'Pop your Somerset postcode into the form so we can drop you into the right window-cleaning frequency.'
+    title: 'Book online',
+    description: 'Fill out our booking form, pick the services you need, and choose your preferred visit window.'
   },
   {
-    title: 'Choose services',
-    description: 'Pick the window, gutter, or specialist treatments you need and tell us about any extras.'
+    title: 'We handle the clean',
+    description: 'Our crew arrives on the agreed day, works through your checklist, and keeps everything spotless.'
   },
   {
-    title: 'Pick a day',
-    description: 'Let us know which visit window works best and we’ll align it with the live frequency schedule.'
+    title: 'Invoice your way',
+    description: 'We send your invoice via your preferred contact method with easy payment options attached.'
   },
   {
-    title: 'Confirm & relax',
-    description: 'We’ll send a confirmation with payment options and remind you before every visit.'
+    title: 'Stay in the loop',
+    description: 'You’ll get reminders ahead of every visit and can adjust services or schedules whenever you need.'
   }
 ]
 
@@ -77,8 +77,14 @@ export default function HomePage() {
               <div key={step.title} className="relative">
                 <div className="glass-card glass-noir-card--tight group flex h-full flex-col gap-4 p-6 text-[#F5F7FA] transition-transform duration-300 hover:-translate-y-1">
                   <div className="flex items-center gap-4">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[rgba(225,29,42,0.25)] text-xl font-semibold tracking-[0.2em] text-[var(--accent)] shadow-[0_0_25px_rgba(225,29,42,0.35)]">
-                      {String(index + 1).padStart(2, '0')}
+                    <span className="relative inline-flex h-12 w-12 items-center justify-center">
+                      <span
+                        className="absolute inset-0 rounded-full bg-brand-red/80 shadow-[0_0_22px_rgba(225,29,42,0.45)]"
+                        aria-hidden
+                      />
+                      <span className="relative flex h-full w-full items-center justify-center rounded-full text-xl font-semibold tracking-[0.2em] text-white">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
                     </span>
                     <h3 className="text-base font-semibold uppercase tracking-[0.25em] text-[var(--fg)]">
                       {step.title}
