@@ -203,7 +203,7 @@ export default function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div className="relative border-b border-white/10 bg-black/90 pb-16 backdrop-blur lg:pb-20">
+      <div className="relative border-b border-white/10 bg-black/90 pb-8 backdrop-blur lg:pb-12">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-brand-red via-brand-red/70 to-transparent"
           aria-hidden="true"
@@ -214,7 +214,7 @@ export default function Header() {
             className="inline-flex shrink-0 items-center gap-3 rounded-md text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
             aria-label="Somerset Window Cleaning home"
           >
-            <Logo className="h-28 w-auto max-w-[520px] md:h-32 md:max-w-[640px] lg:h-[10rem] lg:max-w-[760px]" />
+            <Logo className="h-20 w-auto max-w-[400px] md:h-24 md:max-w-[520px] lg:h-28 lg:max-w-[620px]" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -354,7 +354,7 @@ export default function Header() {
         {/* Desktop trust ticker, overlaps hero */}
         <div
           className={`pointer-events-none absolute inset-x-0 top-full hidden justify-center md:flex ${
-            isBusinessOpen ? '-translate-y-[3rem]' : '-translate-y-[2.25rem]'
+            isBusinessOpen ? '-translate-y-[2.5rem]' : '-translate-y-[2rem]'
           }`}
         >
           <div className="pointer-events-auto mx-auto flex w-full max-w-[1280px] items-center justify-center gap-6 rounded-[2.5rem] border border-white/10 bg-black/65 px-8 py-3 text-[0.65rem] font-semibold uppercase tracking-[0.32em] text-white/60 shadow-[0_20px_40px_-28px_rgba(0,0,0,0.8)]">
