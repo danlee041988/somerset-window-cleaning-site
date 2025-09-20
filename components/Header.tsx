@@ -203,18 +203,18 @@ export default function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div className="relative border-b border-white/10 bg-black/90 pb-6 backdrop-blur lg:pb-8">
+      <div className="relative border-b border-white/10 bg-black/90 pb-3 backdrop-blur sm:pb-4 lg:pb-8">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-brand-red via-brand-red/70 to-transparent"
           aria-hidden="true"
         />
-        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-5 px-4 py-3 md:px-6">
+        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-3 px-4 py-2 sm:gap-5 sm:py-3 md:px-6">
           <Link
             href="/"
             className="inline-flex shrink-0 items-center rounded-md px-3 py-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
             aria-label="Somerset Window Cleaning home"
           >
-            <Logo className="h-[5.5rem] w-auto max-w-[420px] md:h-[6.75rem] md:max-w-[540px] lg:h-[8rem] lg:max-w-[640px]" />
+            <Logo className="h-12 w-auto max-w-[200px] sm:h-14 sm:max-w-[240px] md:h-[5.5rem] md:max-w-[420px] lg:h-[6.75rem] lg:max-w-[540px]" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -325,6 +325,13 @@ export default function Header() {
 
           {/* Mobile Navigation */}
           <div className="flex items-center gap-2 lg:hidden">
+            <a
+              href="tel:01458860339"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:border-brand-red/50 hover:bg-brand-red/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red sm:hidden"
+              aria-label="Call Somerset Window Cleaning"
+            >
+              <PhoneIcon className="h-5 w-5" />
+            </a>
             <HeaderCallButton className="hidden sm:inline-flex" />
             <button
               aria-label="Toggle menu"
