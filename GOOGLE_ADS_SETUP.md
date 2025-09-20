@@ -10,13 +10,12 @@
 - 🚀 Ready for campaign management and optimization
 
 ## Overview
-Complete setup guide for integrating Google Ads API with Somerset Window Cleaning website, including automated optimization, performance monitoring, and integration with Notion customer data and GA4 analytics.
+Complete setup guide for integrating Google Ads API with Somerset Window Cleaning website, including automated optimization, performance monitoring, and GA4-driven analytics.
 
 ## Features Included
 - ✅ **Campaign Management**: View and manage all Google Ads campaigns
 - ✅ **Keyword Optimization**: Automated bid adjustments based on performance
 - ✅ **Performance Monitoring**: Real-time dashboard with key metrics
-- ✅ **Notion Integration**: Optimize ads based on customer data patterns
 - ✅ **GA4 Integration**: Use analytics data for ad optimization
 - ✅ **Automated Reporting**: Weekly performance reports
 - ✅ **Seasonal Optimization**: Automatic adjustments for cleaning seasons
@@ -98,8 +97,6 @@ curl "http://localhost:3000/api/google-ads?action=campaigns"
 # Test optimization features
 curl "http://localhost:3000/api/google-ads?action=recommendations"
 
-# Test integration features
-curl "http://localhost:3000/api/google-ads-integration?action=integration-status"
 ```
 
 ### Step 5: Configure Automation (Optional)
@@ -151,21 +148,6 @@ GET /api/google-ads?action=auto-optimize
 GET /api/google-ads?action=weekly-report
 ```
 
-### Integration Features
-```bash
-# Notion-based optimizations
-GET /api/google-ads-integration?action=notion-optimizations
-
-# GA4-based optimizations
-GET /api/google-ads-integration?action=ga4-optimizations
-
-# Combined optimization recommendations
-GET /api/google-ads-integration?action=combined-optimizations
-
-# Integration health check
-GET /api/google-ads-integration?action=integration-status
-```
-
 ## Dashboard Access
 
 Access the Google Ads dashboard at:
@@ -193,7 +175,7 @@ The system automatically detects and optimizes for:
   - Promotes preventative maintenance services
 
 ### Service-Based Optimization
-Based on your Notion customer data:
+Focus on high-value services within Google Ads and GA4 reports:
 
 - **Window Cleaning**: Most popular service, gets priority bidding
 - **Gutter Clearing**: Seasonal demand, automated bid adjustments
@@ -279,19 +261,14 @@ This will log all API requests and responses to help diagnose issues.
 
 ## Integration Benefits
 
-### Notion Customer Data
-- Optimize keywords based on actual customer service preferences
-- Adjust budgets based on service demand patterns
-- Target high-value customer segments
-
 ### GA4 Analytics Integration
 - Use website conversion data for bid optimization
 - Optimize landing page targeting
 - Improve ad relevance based on user behavior
 
 ### Combined Intelligence
-- Cross-reference customer data with ad performance
-- Identify high-converting customer profiles
+- Cross-reference GA4 conversion data with ad performance
+- Identify high-converting landing pages
 - Optimize entire funnel from ad click to customer conversion
 
 ## Cost Management

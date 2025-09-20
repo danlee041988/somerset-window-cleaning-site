@@ -53,8 +53,6 @@
 - `{{recaptcha_token}}` - reCAPTCHA verification token
 - `{{recaptcha_score}}` - reCAPTCHA score (if using v3)
 - `{{recaptcha_verified}}` - "Verified" or verification status
-- `{{notion_status}}` - "Synced" or Notion submission status
-- `{{notion_id}}` - Notion database record ID (if created)
 
 ### Calculated/Derived Fields
 - `{{address_validated}}` - "Yes"/"No" if address was validated
@@ -95,7 +93,7 @@
 2. **Data Formatting**: Format dates, prices, and booleans before sending to EmailJS
 3. **Array Handling**: Convert service arrays to both comma-separated strings and arrays for flexibility
 4. **Validation**: Always include reCAPTCHA token for security verification
-5. **Photos**: Photo count is sent, but actual photos are stored in Notion (not emailed)
+5. **Photos**: Photo count is sent so the team can follow up for attachments if needed
 
 ## Example Data Payload
 ```javascript
@@ -138,7 +136,6 @@ const templateParams = {
     
     // Security
     recaptcha_token: recaptchaToken,
-    recaptcha_verified: 'Verified',
-    notion_status: 'Synced'
+    recaptcha_verified: 'Verified'
 }
 ```

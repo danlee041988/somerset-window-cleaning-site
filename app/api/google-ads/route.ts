@@ -147,22 +147,6 @@ export async function POST(request: NextRequest) {
         })
       }
 
-      case 'optimize-with-notion-data': {
-        const { customerData } = body
-        if (!customerData || !Array.isArray(customerData)) {
-          return NextResponse.json(
-            { error: 'customerData array is required' },
-            { status: 400 }
-          )
-        }
-
-        const recommendations = await client.optimizeBasedOnNotionData(customerData)
-        return NextResponse.json({ 
-          recommendations,
-          message: `Generated ${recommendations.length} Notion-based recommendations`
-        })
-      }
-
       case 'execute-optimizations': {
         const { optimizations } = body
         if (!optimizations || !Array.isArray(optimizations)) {
@@ -227,7 +211,7 @@ export async function POST(request: NextRequest) {
 
       default:
         return NextResponse.json(
-          { error: 'Invalid action. Use: update-budget, update-keyword-bid, add-negative-keyword, optimize-with-notion-data, execute-optimizations' },
+          { error: 'Invalid action. Use: update-budget, update-keyword-bid, add-negative-keyword, execute-optimizations' },
           { status: 400 }
         )
     }

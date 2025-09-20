@@ -6,7 +6,7 @@
  * - Keyword management
  * - Performance tracking
  * - Automated bidding strategies
- * - Integration with GA4 and Notion data
+ * - Integration with GA4 performance data
  */
 
 import { GoogleAuth } from 'google-auth-library'
@@ -344,47 +344,6 @@ class GoogleAdsClient {
     return recommendations
   }
 
-  async optimizeBasedOnNotionData(customerData: any[]) {
-    const recommendations: OptimizationRecommendation[] = []
-    
-    // Analyze most valuable services from Notion data
-    const serviceDistribution = customerData.reduce((acc, customer) => {
-      customer.services?.forEach((service: string) => {
-        acc[service] = (acc[service] || 0) + 1
-      })
-      return acc
-    }, {} as Record<string, number>)
-
-    const topServices = Object.entries(serviceDistribution)
-      .sort(([,a], [,b]) => (b as number) - (a as number))
-      .slice(0, 3)
-
-    topServices.forEach(([service, count]) => {
-      recommendations.push({
-        type: 'KEYWORD_BID',
-        priority: 'HIGH',
-        description: `${service} is popular (${count} inquiries) - optimize keywords`,
-        expectedImpact: 'Increase relevant lead quality by 25%',
-        actionRequired: `Increase bids for "${service}" related keywords and create dedicated ad groups`
-      })
-    })
-
-    // Analyze property types for targeting
-    const propertyTypes = customerData.map(c => c.propertyType).filter(Boolean)
-    const commercialInquiries = propertyTypes.filter(type => type.includes('Commercial')).length
-    
-    if (commercialInquiries > propertyTypes.length * 0.3) {
-      recommendations.push({
-        type: 'AD_COPY',
-        priority: 'MEDIUM',
-        description: 'High commercial inquiry rate detected',
-        expectedImpact: 'Target commercial market more effectively',
-        actionRequired: 'Create dedicated commercial cleaning ad copy and landing pages'
-      })
-    }
-
-    return recommendations
-  }
 }
 
 // Automation Functions
