@@ -2,7 +2,7 @@
 const keys = [
   '6LcuV6ArAAAAAFBFdTX1k8uteQmXLwyNcnnMlgbJ',
   '6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H',
-  '6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC' // The one we found in config
+  '6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC' // Legacy key retained for validation checks
 ];
 
 async function testReCaptchaKey(siteKey) {

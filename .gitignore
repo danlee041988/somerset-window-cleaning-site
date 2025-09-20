@@ -4,6 +4,7 @@ out
 dist
 .turbo
 .vercel
+tsconfig.tsbuildinfo
 .env*
 !.env.example
 .DS_Store

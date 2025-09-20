@@ -45,7 +45,7 @@ test.describe('EmailJS Integration Tests', () => {
         publicKey: window.emailjs?.publicKey || 'Not found',
         serviceId: 'service_yfnr1a9', // Expected service ID
         templateId: 'template_booking_form', // Expected template ID
-        recaptchaSiteKey: '6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC' // Expected reCAPTCHA key
+        recaptchaSiteKey: '6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H' // Expected reCAPTCHA key
       }
     })
     
@@ -54,7 +54,7 @@ test.describe('EmailJS Integration Tests', () => {
     // Verify configuration matches expected values
     expect(emailjsConfig.serviceId).toBe('service_yfnr1a9')
     expect(emailjsConfig.templateId).toBe('template_booking_form')
-    expect(emailjsConfig.recaptchaSiteKey).toBe('6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC')
+    expect(emailjsConfig.recaptchaSiteKey).toBe('6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H')
   })
   
   test('form has all required fields', async ({ page }) => {

@@ -16,7 +16,7 @@ The error you're seeing is because the environment variables are not set in your
    | `NEXT_PUBLIC_EMAILJS_SERVICE_ID` | `service_yfnr1a9` |
    | `NEXT_PUBLIC_EMAILJS_PUBLIC_KEY` | `cbA_IhBfxEeDwbEx6` |
    | `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID` | `template_booking_form` |
-   | `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | `6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC` |
+  | `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | `6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H` |
 
 5. Click **Save** for each variable
 6. **Redeploy** your project (Deployments → ... → Redeploy)
@@ -45,7 +45,7 @@ The error you're seeing is because the environment variables are not set in your
    # Enter value: template_booking_form
 
    vercel env add NEXT_PUBLIC_RECAPTCHA_SITE_KEY production preview development
-   # Enter value: 6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC
+   # Enter value: 6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H
    ```
 
 4. Redeploy:
@@ -61,7 +61,7 @@ Create a `.env.production` file with the same variables:
 NEXT_PUBLIC_EMAILJS_SERVICE_ID=service_yfnr1a9
 NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=cbA_IhBfxEeDwbEx6
 NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=template_booking_form
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H
 ```
 
 Then commit and push:
