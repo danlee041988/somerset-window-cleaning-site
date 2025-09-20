@@ -384,6 +384,20 @@ export default function BookingForm({
   const firstNameInputRef = React.useRef<HTMLInputElement | null>(null)
   const lastNameInputRef = React.useRef<HTMLInputElement | null>(null)
 
+  React.useEffect(() => {
+    if (!PUBLIC_KEY) {
+      console.error('EmailJS public key missing: configure NEXT_PUBLIC_EMAILJS_PUBLIC_KEY to enable booking submissions')
+      return
+    }
+
+    try {
+      emailjs.init(PUBLIC_KEY)
+      console.info('EmailJS initialised for booking form')
+    } catch (error) {
+      console.error('Booking form failed to initialise EmailJS:', error)
+    }
+  }, [])
+
   const handleEnterToFocus = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>, nextRef: React.RefObject<HTMLInputElement>) => {
       if (event.key !== 'Enter') return
