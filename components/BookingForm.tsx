@@ -7,6 +7,7 @@ import ReCaptcha from './features/contact/ReCaptcha'
 import SimpleAddressInput from './features/contact/SimpleAddressInput'
 import { analytics } from '@/lib/analytics'
 import {
+  POSTCODE_PRIMARY_AREAS,
   findFrequencyForPostcode,
   type FrequencyLookupResult,
 } from '@/content/route-schedule'
@@ -719,12 +720,17 @@ export default function BookingForm({
     clearErrors('postcode')
   }, [postcodeValue, postcodeProgressLength, setValue, clearErrors])
 
+  const postcodeAreaName = React.useMemo(() => {
+    if (!frequencyMatch) return ''
+    const outwardCode = frequencyMatch.code.replace(/[^A-Z0-9]/g, '').toUpperCase()
+    return POSTCODE_PRIMARY_AREAS[outwardCode] ?? `${outwardCode} area`
+  }, [frequencyMatch])
+
   const coverageMatchLabel = React.useMemo(() => {
     if (!frequencyMatch || frequencyMatch.matches.length === 0) return ''
     const [primaryMatch] = frequencyMatch.matches
-    const outwardCode = frequencyMatch.code.replace(/[^A-Z0-9]/g, '').toUpperCase()
-    return `${primaryMatch.day} · ${outwardCode} area`
-  }, [frequencyMatch])
+    return `${primaryMatch.day} · ${postcodeAreaName}`
+  }, [frequencyMatch, postcodeAreaName])
 
   const serviceErrorMessage =
     errors.services && typeof errors.services === 'object' && 'message' in errors.services
@@ -1310,7 +1316,7 @@ export default function BookingForm({
                     </svg>
                     <div>
                       <p className="font-semibold">
-                        We clean {coverageMatchLabel || `${frequencyMatch.code.toUpperCase()} area`}
+                        We clean {coverageMatchLabel || postcodeAreaName}
                       </p>
                       {activeStep !== 'contact' && selectedDateLabel && (
                         <p className="text-emerald-100/80">Next available visit: {selectedDateLabel}</p>
