@@ -14,7 +14,7 @@ export const servicesData = [
     process: [
       "Initial assessment of property and access requirements",
       "Set up pure water system and safety equipment",
-      "Clean glass using advanced squeegee techniques",
+      "Clean glass with pure water systems for a streak-free finish",
       "Detail frames, sills, and door glass",
       "Final quality check and customer sign-off"
     ],
