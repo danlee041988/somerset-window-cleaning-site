@@ -991,6 +991,7 @@ export default function BookingForm({
       submission_date: values.submission_date || submittedDate,
       submission_time: values.submission_time || submittedTime,
       recaptcha_token: recaptchaToken,
+      'g-recaptcha-response': recaptchaToken,
       elapsed_ms: `${elapsed}`,
       summary_plaintext: summaryPlaintext,
       raw_payload_json: JSON.stringify(
