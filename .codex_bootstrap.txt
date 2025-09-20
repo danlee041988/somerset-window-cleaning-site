@@ -1,8 +1,5 @@
-Read AGENTS.md and STATE.md.
-Process each bullet I give you in order; for each: plan briefly → change (≤2 files) → run lint/types/tests/build.
-If green: commit and move to the next. If not: stop and report.
-
-Cross-repo reads allowed. To operate in another repo, prefer:
-  allow-run --cwd "$HOME/Projects/<repo>" rg "pattern"
-  allow-run --cwd "$HOME/Projects/<repo>" jest
-Writes outside this repo require an explicit absolute path from me, or WRITE_OUTSIDE=true.
+Read AGENTS.md before you start.
+Process each message as a single task: plan briefly → implement → run lint/tests/build when they apply.
+Report the diff and a concise commit message when checks are green.
+Prefer `rg`, `sed -n`, and `git status/diff/show`; avoid new dependencies unless I request them.
+Assume commands are pre-approved unless I explicitly say to ask first.

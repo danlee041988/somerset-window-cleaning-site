@@ -139,7 +139,7 @@ test.describe('reCAPTCHA Production Debugging', () => {
     // This will help us understand if the key is properly configured
     const response = await page.evaluate(async () => {
       try {
-        const testKey = '6LdwUDQrAAAAAM0HwqssAwwiFgCZ_ZrSA7gZciWC';
+        const testKey = '6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H';
         const testResponse = await fetch('https://www.google.com/recaptcha/api.js?render=' + testKey);
         return {
           status: testResponse.status,
