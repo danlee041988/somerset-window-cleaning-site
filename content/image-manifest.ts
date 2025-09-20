@@ -24,7 +24,7 @@ export const SERVICE_IMAGES = {
   "window": "/images/photos/Window Clean.jpeg",
   "gutter": "/images/photos/Gutter Clearing.jpg",
   "gutter_clearing": "/images/photos/Gutter Clearing.jpg",
-  "conservatory": "/images/photos/DJI_0052.JPG",
+  "conservatory": "/images/photos/conservatory-cleaning.jpg",
   "solar": "/images/photos/Solar Panel .jpeg",
   "fascias": "/images/photos/DJI_0045.JPG",
   "commercial": "/images/photos/Commercial.jpg",

@@ -228,14 +228,13 @@ export default function ServicesPage() {
                 </Button>
               </div>
             </div>
-            <div className="relative min-h-[320px]">
-              <Image
-                src={SERVICE_IMAGES.pureWaterCleaning || '/photos/photo03.jpg'}
-                alt="Technician rinsing windows with pure water"
-                fill
-                sizes="(min-width: 1024px) 580px, 100vw"
-                className="object-cover"
-              />
+            <div className="flex flex-col justify-center gap-4 rounded-3xl border border-white/12 bg-black/45 p-6 text-sm text-white/75">
+              <p className="text-xs uppercase tracking-[0.25em] text-white/50">What to expect</p>
+              <ul className="space-y-2 text-white/70">
+                <li>ETA tracking and arrival updates before every visit</li>
+                <li>Uniformed, fully insured crew on site</li>
+                <li>Contactless payment links and 48-hour revisit promise</li>
+              </ul>
             </div>
           </div>
         </div>
