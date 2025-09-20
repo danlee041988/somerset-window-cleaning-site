@@ -16,6 +16,7 @@ dev.log
 # Test results
 test-results/
 playwright-report/
+tmp/
 
 # IDE files
 .vscode/
