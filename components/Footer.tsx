@@ -27,7 +27,7 @@ export default function Footer() {
                     Somerset Window Cleaning
                   </p>
                   <p className="text-xs text-white/60">
-                    Glass Noir finish and spotless results for Somerset homes and businesses.
+                    Crystal-clear finishes and spotless results for Somerset homes and businesses.
                   </p>
                 </div>
               </div>
