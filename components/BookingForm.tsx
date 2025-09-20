@@ -142,7 +142,7 @@ function StepCard({
               className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition ${
                 continueDisabled
                   ? 'border-white/10 text-white/40'
-                  : 'border-brand-red/60 bg-brand-red/15 text-white hover:border-brand-red'
+                  : 'border-emerald-400/70 bg-emerald-500/15 text-white hover:border-emerald-400'
               }`}
             >
               Continue
@@ -192,7 +192,7 @@ const BEDROOM_OPTIONS: { id: BedroomBand; label: string; description: string }[]
 const PROPERTY_TYPES: { id: PropertyType; label: string; description: string; attached: boolean }[] = [
   { id: 'detached', label: 'Detached', description: 'No shared walls.', attached: false },
   { id: 'semi', label: 'Semi-detached', description: 'One shared wall.', attached: false },
-  { id: 'terraced', label: 'Terraced / End terrace', description: 'Attached property (add £5).', attached: true },
+  { id: 'terraced', label: 'Terraced / End terrace', description: 'Attached property.', attached: true },
   { id: 'bungalow', label: 'Bungalow / Flat', description: 'Single level with easy access.', attached: false },
 ]
 
@@ -415,6 +415,14 @@ export default function BookingForm({
     () => postcodeValue.replace(/[^A-Za-z0-9]/g, '').length,
     [postcodeValue],
   )
+
+  React.useEffect(() => {
+    if (!postcodeValue) return
+    const upper = postcodeValue.toUpperCase()
+    if (postcodeValue !== upper) {
+      setValue('postcode', upper, { shouldDirty: true, shouldTouch: true })
+    }
+  }, [postcodeValue, setValue])
   const bedroomBand = watch('bedroom_band')
   const propertyType = watch('property_type')
   const preferredDateValue = watch('preferred_date')
@@ -653,6 +661,15 @@ export default function BookingForm({
 
     const frequency = findFrequencyForPostcode(raw)
     if (!frequency) {
+      if (progressLength < 4) {
+        setCoverageStatus('unknown')
+        setFrequencyMatch(null)
+        setDateOptions([])
+        setSelectedDateId('')
+        setSelectedDateLabel('')
+        setValue('preferred_date', '', { shouldValidate: true })
+        return
+      }
       setFrequencyMatch(null)
       setCoverageStatus('outside')
       const fallback = generateFallbackDateOptions()
@@ -1224,15 +1241,15 @@ export default function BookingForm({
                     <label
                       className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
                         preferredContactMethod === 'email'
-                          ? 'border-brand-red/60 bg-brand-red/15 text-white'
-                          : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                          ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
+                          : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
                       }`}
                     >
                       <span className="flex items-center gap-2">
                         <input
                           type="radio"
                           value="email"
-                          className="accent-brand-red"
+                          className="accent-emerald-400"
                           checked={preferredContactMethod === 'email'}
                           onChange={() => setPreferredContactMethod('email')}
                           name={preferredContactFieldName}
@@ -1244,15 +1261,15 @@ export default function BookingForm({
                     <label
                       className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
                         preferredContactMethod === 'phone'
-                          ? 'border-brand-red/60 bg-brand-red/15 text-white'
-                          : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                          ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
+                          : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
                       }`}
                     >
                       <span className="flex items-center gap-2">
                         <input
                           type="radio"
                           value="phone"
-                          className="accent-brand-red"
+                          className="accent-emerald-400"
                           checked={preferredContactMethod === 'phone'}
                           onChange={() => setPreferredContactMethod('phone')}
                           name={preferredContactFieldName}
@@ -1320,7 +1337,7 @@ export default function BookingForm({
                   </div>
                 )}
 
-                {coverageStatus === 'outside' && postcodeProgressLength >= 3 && (
+                {coverageStatus === 'outside' && postcodeProgressLength >= 4 && (
                   <div className="mt-3 flex items-start gap-3 rounded-lg border border-brand-red/40 bg-brand-red/10 p-3 text-sm text-brand-red/85">
                     <svg className="mt-0.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
@@ -1366,14 +1383,14 @@ export default function BookingForm({
                       key={option.id}
                       className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition ${
                         bedroomBand === option.id
-                          ? 'border-brand-red/70 bg-brand-red/10 shadow-[0_0_20px_rgba(225,29,42,0.25)]'
-                          : 'border-white/15 bg-white/5 hover:border-white/30'
+                          ? 'border-emerald-400/70 bg-emerald-500/15 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
+                          : 'border-white/15 bg-white/5 hover:border-emerald-300/30'
                       }`}
                     >
                       <input
                         type="radio"
                         value={option.id}
-                        className="mt-1 accent-brand-red"
+                        className="mt-1 accent-emerald-400"
                         {...register('bedroom_band', { required: true })}
                       />
                       <div>
@@ -1393,14 +1410,14 @@ export default function BookingForm({
                       key={option.id}
                       className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition ${
                         propertyType === option.id
-                          ? 'border-brand-red/70 bg-brand-red/10 shadow-[0_0_20px_rgba(225,29,42,0.25)]'
-                          : 'border-white/15 bg-white/5 hover:border-white/30'
+                          ? 'border-emerald-400/70 bg-emerald-500/15 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
+                          : 'border-white/15 bg-white/5 hover-border-emerald-300/30'
                       }`}
                     >
                       <input
                         type="radio"
                         value={option.id}
-                        className="mt-1 accent-brand-red"
+                        className="mt-1 accent-emerald-400"
                         {...register('property_type', { required: true })}
                       />
                       <div>
@@ -1422,30 +1439,30 @@ export default function BookingForm({
                       <label
                         className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
                           hasExtension === 'yes'
-                            ? 'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_0_18px_rgba(225,29,42,0.25)]'
-                            : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                            ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
+                            : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
                         }`}
                       >
                         <span>Yes</span>
                         <input
                           type="radio"
                           value="yes"
-                          className="accent-brand-red"
+                          className="accent-emerald-400"
                           {...register('has_extension', { required: true })}
                         />
                       </label>
                       <label
                         className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
                           hasExtension === 'no'
-                            ? 'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_0_18px_rgba(225,29,42,0.25)]'
-                            : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                            ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
+                            : 'border-white/15 bg-black/30 text-white/70 hover-border-emerald-300/30 hover:text-white'
                         }`}
                       >
                         <span>No</span>
                         <input
                           type="radio"
                           value="no"
-                          className="accent-brand-red"
+                          className="accent-emerald-400"
                           {...register('has_extension', { required: true })}
                         />
                       </label>
@@ -1458,30 +1475,30 @@ export default function BookingForm({
                       <label
                         className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
                           hasConservatory === 'yes'
-                            ? 'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_0_18px_rgba(225,29,42,0.25)]'
-                            : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                            ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
+                            : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
                         }`}
                       >
                         <span>Yes</span>
                         <input
                           type="radio"
                           value="yes"
-                          className="accent-brand-red"
+                          className="accent-emerald-400"
                           {...register('has_conservatory', { required: true })}
                         />
                       </label>
                       <label
                         className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
                           hasConservatory === 'no'
-                            ? 'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_0_18px_rgba(225,29,42,0.25)]'
-                            : 'border-white/15 bg-black/30 text-white/70 hover:border-white/30 hover:text-white'
+                            ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
+                            : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
                         }`}
                       >
                         <span>No</span>
                         <input
                           type="radio"
                           value="no"
-                          className="accent-brand-red"
+                          className="accent-emerald-400"
                           {...register('has_conservatory', { required: true })}
                         />
                       </label>
@@ -1525,8 +1542,8 @@ export default function BookingForm({
                       key={service}
                       className={`flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition ${
                         selected
-                          ? 'border-brand-red/70 bg-brand-red/10 shadow-[0_0_20px_rgba(225,29,42,0.25)]'
-                          : 'border-white/15 bg-white/5 hover:border-white/30'
+                          ? 'border-emerald-400/70 bg-emerald-500/15 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
+                          : 'border-white/15 bg-white/5 hover-border-emerald-300/30'
                       }`}
                     >
                       <input type="checkbox" className="sr-only" checked={selected} onChange={() => handleServiceToggle(service)} />
