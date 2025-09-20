@@ -178,26 +178,6 @@ function ServiceCombinationLayout({ services, activeService, onSelect }: Service
         </div>
       </div>
 
-      <div className="mt-8 grid gap-4 rounded-3xl border border-white/10 bg-black/30 p-6 text-white/70">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/55">Services coverage</p>
-            <p className="text-sm text-white/70">
-              Each booking includes water-fed pole reach, pure-water finish, and friendly reminders—no need to juggle multiple crews.
-            </p>
-          </div>
-          <Button
-            href="/services"
-            variant="secondary"
-            className="rounded-full px-6 py-2 text-xs font-semibold uppercase tracking-[0.35em]"
-          >
-            Explore all services
-          </Button>
-        </div>
-        <p className="text-xs uppercase tracking-[0.3em] text-white/45">
-          Need extras? Add conservatories, gutters, or solar panels inside the booking form.
-        </p>
-      </div>
     </div>
   )
 }

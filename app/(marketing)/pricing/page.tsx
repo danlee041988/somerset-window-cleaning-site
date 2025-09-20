@@ -33,13 +33,23 @@ const WINDOW_PRICING = [
 
 const BUNDLE_DEALS = [
   {
-    title: 'Gutter care bundle',
-    price: 'From £80',
-    highlight: 'Pair gutter clearing with fascias & soffits',
+    title: 'Gutter clearing service',
+    price: 'From £65',
+    highlight: 'Vacuum & inspection included',
     bullets: [
-      'Vacuum clearing with on-the-day inspection photos on request',
-      'Add fascias & soffits cleaning to unlock a complimentary exterior window clean',
-      'Extensions or additional rooflines quoted at +£10 each',
+      'Hi-reach vacuum clearing covers conservatories, extensions, and garages',
+      'Downpipes flushed where accessible to keep rainwater moving',
+      'Optional before/after photos added to your visit confirmation email',
+    ],
+  },
+  {
+    title: 'Fascias & soffits refresh',
+    price: 'From £75',
+    highlight: 'Brighten your roofline',
+    bullets: [
+      'Pure-water detailing of fascias, soffits, and gutter exteriors',
+      'Pairs perfectly after gutter clearing for a complete roofline reset',
+      'Includes gentle cleaning around fixtures, lights, and bracket points',
     ],
   },
   {
@@ -144,13 +154,6 @@ export default function PricingPage() {
         <div className="mt-8 flex flex-wrap gap-4">
           <Button href="/book-appointment" className="rounded-full px-7 py-3 text-sm font-semibold uppercase tracking-[0.35em]">
             Book your clean
-          </Button>
-          <Button
-            href="/book-appointment?intent=quote"
-            variant="ghost"
-            className="rounded-full border border-white/20 px-7 py-3 text-sm font-semibold uppercase tracking-[0.35em]"
-          >
-            Request a quote first
           </Button>
         </div>
       </Section>
