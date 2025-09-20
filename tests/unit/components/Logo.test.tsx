@@ -39,8 +39,8 @@ describe('Logo Component', () => {
     render(<Logo />)
     
     const logo = screen.getByTestId('logo-image')
-    expect(logo).toHaveAttribute('src', '/images/logos/logo.png')
-    expect(logo).toHaveAttribute('data-fallback', '/images/logos/logo.svg')
+    expect(logo).toHaveAttribute('src', '/images/logos/swc-logo.png')
+    expect(logo).toHaveAttribute('data-fallback', '/images/logos/logo.png')
   })
 
   it('sets priority to true for logo images', () => {

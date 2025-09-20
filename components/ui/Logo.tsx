@@ -8,8 +8,8 @@ type Props = {
   width?: number
 }
 
-const PRIMARY_LOGO_SRC = '/images/logos/logo.png'
-const FALLBACK_LOGO_SRC = '/images/logos/logo.svg'
+const PRIMARY_LOGO_SRC = '/images/logos/swc-logo.png'
+const FALLBACK_LOGO_SRC = '/images/logos/logo.png'
 const DEFAULT_WIDTH = 300
 const DEFAULT_HEIGHT = 100
 const ASPECT_RATIO = DEFAULT_WIDTH / DEFAULT_HEIGHT
