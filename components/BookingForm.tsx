@@ -726,10 +726,10 @@ export default function BookingForm({
     return POSTCODE_PRIMARY_AREAS[outwardCode] ?? `${outwardCode} area`
   }, [frequencyMatch])
 
-  const coverageMatchLabel = React.useMemo(() => {
-    if (!frequencyMatch || frequencyMatch.matches.length === 0) return ''
-    const [primaryMatch] = frequencyMatch.matches
-    return `${primaryMatch.day} · ${postcodeAreaName}`
+  const coverageSuccessMessage = React.useMemo(() => {
+    if (!frequencyMatch) return ''
+    const outwardCode = frequencyMatch.code.replace(/[^A-Z0-9]/g, '').toUpperCase()
+    return `We cover ${postcodeAreaName}${postcodeAreaName.includes(outwardCode) ? '' : ` (${outwardCode})`}`
   }, [frequencyMatch, postcodeAreaName])
 
   const serviceErrorMessage =
@@ -1315,12 +1315,7 @@ export default function BookingForm({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                     </svg>
                     <div>
-                      <p className="font-semibold">
-                        We clean {coverageMatchLabel || postcodeAreaName}
-                      </p>
-                      {activeStep !== 'contact' && selectedDateLabel && (
-                        <p className="text-emerald-100/80">Next available visit: {selectedDateLabel}</p>
-                      )}
+                      <p className="font-semibold">{coverageSuccessMessage || `We cover ${postcodeAreaName}`}</p>
                     </div>
                   </div>
                 )}
