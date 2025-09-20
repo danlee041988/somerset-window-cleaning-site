@@ -15,6 +15,7 @@ TypeScript Next.js site for Somerset Window Cleaning. Black-first theme with bri
 2. Configure environment:
    - Copy `.env.example` to `.env.local`
    - Add `NEXT_PUBLIC_EMAILJS_PUBLIC_KEY`, `NEXT_PUBLIC_EMAILJS_SERVICE_ID`, `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID`
+   - Add `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` (production) and optionally `NEXT_PUBLIC_RECAPTCHA_SITE_KEY_LOCAL` for localhost runs
 
 3. Run dev server:
    npm run dev
@@ -30,6 +31,9 @@ TypeScript Next.js site for Somerset Window Cleaning. Black-first theme with bri
   - `npm run dev -- -p 3001` and open http://localhost:3001
 
 - Fonts: We removed remote Google Fonts to avoid network dependency locally. We can switch to self‑hosted fonts later.
+
+- reCAPTCHA disabled locally:
+  - Set `NEXT_PUBLIC_RECAPTCHA_SITE_KEY_LOCAL` in `.env.local` to the Booking Form key, or rely on the built-in Google test key for development only.
 
 ## Alternate Preview (No Dev Server)
 If localhost ports are blocked, build a static export and serve it on a different port:
