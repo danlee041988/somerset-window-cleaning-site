@@ -108,6 +108,10 @@
     opacity: 0.55;
   }
 
+  .feature-card--no-overlay::before {
+    display: none;
+  }
+
   .feature-card__content {
     position: relative;
     z-index: 1;
