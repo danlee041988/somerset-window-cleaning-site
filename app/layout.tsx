@@ -7,7 +7,8 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import DynamicLayout from '@/components/DynamicLayout'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 
-const siteUrlRaw = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+const defaultSiteUrl = 'https://somersetwindowcleaning.co.uk'
+const siteUrlRaw = process.env.NEXT_PUBLIC_SITE_URL || defaultSiteUrl
 let siteUrl: URL | undefined
 try {
   siteUrl = new URL(siteUrlRaw)
@@ -19,12 +20,14 @@ export const metadata: Metadata = {
     template: '%s | Somerset Window Cleaning',
   },
   description: 'Somerset Window Cleaning: Expert residential & commercial window, gutter, and fascia cleaning. Trusted service across Somerset and surrounding areas',
-  ...(siteUrl ? { metadataBase: siteUrl, alternates: { canonical: siteUrl.href } } : {}),
+  ...(siteUrl
+    ? { metadataBase: siteUrl, alternates: { canonical: siteUrl.href } }
+    : { metadataBase: new URL(defaultSiteUrl), alternates: { canonical: defaultSiteUrl } }),
   openGraph: {
     title: 'Somerset Window Cleaning',
     description: 'Somerset Window Cleaning: Expert residential & commercial window, gutter, and fascia cleaning. Trusted service across Somerset and surrounding areas',
     type: 'website',
-    url: siteUrl?.href || 'http://localhost:3000',
+    url: siteUrl?.href || defaultSiteUrl,
     images: [
       {
         url: '/images/logos/swc-logo.png',
