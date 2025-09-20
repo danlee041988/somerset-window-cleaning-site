@@ -16,7 +16,7 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   webServer: {
-    command: 'npm run dev',
+    command: 'DEV_PORT=3001 npm run dev',
     port: 3001,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
