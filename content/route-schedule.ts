@@ -15,6 +15,50 @@ const monthMap: Record<string, number> = {
 
 export type FrequencyId = 'north' | 'east' | 'south' | 'west'
 
+export const POSTCODE_PRIMARY_AREAS: Record<string, string> = {
+  BA3: 'Radstock & Paulton',
+  BA4: 'Shepton Mallet',
+  BA5: 'Wells',
+  BA6: 'Glastonbury',
+  BA7: 'Castle Cary',
+  BA8: 'Templecombe',
+  BA9: 'Wincanton',
+  BA10: 'Bruton',
+  BA11: 'Frome',
+  BA16: 'Street',
+  BA22: 'Yeovil & surrounding villages',
+  BS21: 'Clevedon',
+  BS22: 'Weston-super-Mare (north)',
+  BS23: 'Weston-super-Mare',
+  BS24: 'Bleadon & Lympsham',
+  BS25: 'Winscombe',
+  BS26: 'Axbridge',
+  BS27: 'Cheddar',
+  BS28: 'Wedmore',
+  BS29: 'Banwell',
+  BS39: 'Paulton & Peasedown',
+  BS40: 'Chew Valley & Winford',
+  BS48: 'Backwell',
+  BS49: 'Yatton',
+  DT9: 'Sherborne',
+  TA1: 'Taunton',
+  TA2: 'Taunton (north)',
+  TA3: 'Wellington & Blackdown Hills',
+  TA6: 'Bridgwater',
+  TA7: 'Mark & Highbridge villages',
+  TA8: 'Burnham-on-Sea',
+  TA9: 'Highbridge & Brean',
+  TA10: 'Langport',
+  TA11: 'Somerton',
+  TA12: 'Martock',
+  TA13: 'South Petherton',
+  TA14: 'Stoke-sub-Hamdon',
+  TA17: 'Merriott & Hinton St George',
+  TA18: 'Crewkerne',
+  TA19: 'Ilminster',
+  TA20: 'Chard',
+}
+
 export interface FrequencyDate {
   iso: string
   label: string
