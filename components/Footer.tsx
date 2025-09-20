@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="flex flex-col gap-8">
             <div className="glass-noir-card glass-noir-card--tight flex flex-col gap-5 rounded-3xl border border-white/12 bg-black/65 p-6 text-[#F5F7FA] shadow-[0_30px_70px_-45px_rgba(0,0,0,0.95)]">
               <div className="flex items-center gap-5">
-                <span className="relative flex h-[4.25rem] w-[4.25rem] min-h-[4.25rem] min-w-[4.25rem] items-center justify-center rounded-[1.6rem] border border-brand-red/55 bg-gradient-to-br from-brand-red/75 via-brand-red/45 to-transparent p-3 shadow-[0_20px_45px_-30px_rgba(225,29,42,0.85)]">
+                <span className="relative flex h-[5rem] w-[5rem] min-h-[5rem] min-w-[5rem] items-center justify-center rounded-[1.6rem] border border-brand-red/55 bg-black p-3 shadow-[0_20px_45px_-30px_rgba(225,29,42,0.85)]">
                   <ImageWithFallback
                     src="/images/logos/swc-logo.png"
                     fallbackSrc="/images/logos/logo.png"

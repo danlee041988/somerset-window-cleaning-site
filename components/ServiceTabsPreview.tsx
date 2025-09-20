@@ -50,7 +50,7 @@ const SERVICES: readonly Service[] = [
       'Safe access over conservatories',
       'Downpipes flushed where needed',
     ],
-    price: 'From £65 per property',
+    price: 'From £80 per property',
     image: SERVICE_IMAGES.gutter || '/photos/photo03.jpg',
     href: '/services/gutter-clearing',
     ctaLabel: 'Schedule gutter clear',
@@ -148,9 +148,6 @@ function ServiceCombinationLayout({ services, activeService, onSelect }: Service
               sizes="(min-width: 768px) 600px, 100vw"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-black/35 via-black/55 to-black/20" />
-            <div className="absolute bottom-6 left-6 right-6 rounded-2xl border border-white/15 bg-black/55 p-4 text-sm text-white/75 backdrop-blur">
-              {activeService.supportingCopy ?? 'Add-on services use the same trusted team so visits stay efficient and familiar.'}
-            </div>
           </div>
 
           <div className="p-6 md:p-10">

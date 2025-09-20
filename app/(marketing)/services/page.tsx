@@ -113,10 +113,6 @@ function PrimaryServiceFeature() {
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-transparent to-black/50" />
-            <div className="feature-card__content absolute bottom-6 left-6 right-6 rounded-2xl border border-white/12 bg-black/55 p-6 text-sm text-white/80 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.25em] text-white/50">Live frequency snapshot</p>
-              <p className="mt-2">“Dan signed off BA5 3DX · frames detailed · payment link sent.”</p>
-            </div>
           </div>
         </div>
       </article>
@@ -182,10 +178,6 @@ export default function ServicesPage() {
                 priority
               />
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-black/45 via-black/10 to-black/40" />
-              <div className="absolute bottom-6 left-6 right-6 rounded-2xl border border-white/15 bg-black/60 p-5 text-sm text-white/80 backdrop-blur">
-                <p className="font-semibold text-white/95">Live service feed</p>
-                <p className="mt-1">“BA6 window frequency visit · frames finished · gutter inspection scheduled for next visit.”</p>
-              </div>
             </div>
           </div>
         </div>
@@ -219,7 +211,7 @@ export default function ServicesPage() {
       )}
 
       <Section spacing="generous" className="pt-0">
-        <div className="feature-card overflow-hidden">
+        <div className="feature-card feature-card--no-overlay overflow-hidden">
           <div className="feature-card__content grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="space-y-6 p-8 md:p-12">
               <span className="feature-chip feature-chip--accent">Ready when you are</span>
@@ -244,11 +236,6 @@ export default function ServicesPage() {
                 sizes="(min-width: 1024px) 580px, 100vw"
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-transparent to-black/25" />
-              <div className="feature-card__content absolute bottom-6 left-6 right-6 rounded-2xl border border-white/10 bg-black/55 p-5 text-sm text-white/80 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.25em] text-white/50">What to expect</p>
-                <p className="mt-2">ETA tracking, uniformed crews, and a 48-hour revisit promise on every scheduled visit.</p>
-              </div>
             </div>
           </div>
         </div>

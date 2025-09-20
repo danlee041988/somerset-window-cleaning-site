@@ -410,6 +410,10 @@ export default function BookingForm({
   const selectedServices = watch('services') ?? EMPTY_SERVICES
   const customerType = watch('customer_type') || 'new'
   const postcodeValue = watch('postcode') || ''
+  const postcodeProgressLength = React.useMemo(
+    () => postcodeValue.replace(/[^A-Za-z0-9]/g, '').length,
+    [postcodeValue],
+  )
   const bedroomBand = watch('bedroom_band')
   const propertyType = watch('property_type')
   const preferredDateValue = watch('preferred_date')
@@ -634,8 +638,9 @@ export default function BookingForm({
 
   React.useEffect(() => {
     const raw = postcodeValue.trim()
+    const progressLength = postcodeProgressLength
 
-    if (!raw) {
+    if (!raw || progressLength < 3) {
       setFrequencyMatch(null)
       setCoverageStatus('unknown')
       setDateOptions([])
@@ -712,12 +717,13 @@ export default function BookingForm({
     clearErrors('preferred_date')
 
     clearErrors('postcode')
-  }, [postcodeValue, setValue, clearErrors])
+  }, [postcodeValue, postcodeProgressLength, setValue, clearErrors])
 
   const coverageMatchLabel = React.useMemo(() => {
     if (!frequencyMatch || frequencyMatch.matches.length === 0) return ''
     const [primaryMatch] = frequencyMatch.matches
-    return `${primaryMatch.day} · ${primaryMatch.areas}`
+    const outwardCode = frequencyMatch.code.replace(/[^A-Z0-9]/g, '').toUpperCase()
+    return `${primaryMatch.day} · ${outwardCode} area`
   }, [frequencyMatch])
 
   const serviceErrorMessage =
@@ -1253,6 +1259,27 @@ export default function BookingForm({
                 </div>
               </div>
 
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-medium text-white/90">Property address *</label>
+                <SimpleAddressInput
+                  value={watch('property_address') || ''}
+                  onChange={(address) => setValue('property_address', address, { shouldDirty: true, shouldValidate: true })}
+                  placeholder="Enter your full address including street and town"
+                  required
+                />
+                <input
+                  type="hidden"
+                  {...register('property_address', {
+                    required: 'Property address is required',
+                    minLength: {
+                      value: 10,
+                      message: 'Please enter a complete address including postcode',
+                    },
+                  })}
+                />
+                {errors.property_address && <p className="mt-1 text-xs text-red-400">{errors.property_address.message}</p>}
+              </div>
+
               <div>
                 <label className="mb-2 block text-sm font-medium text-white/90">Postcode *</label>
                 <input
@@ -1276,19 +1303,23 @@ export default function BookingForm({
                 />
                 {errors.postcode && <p className="mt-1 text-xs text-red-400">{errors.postcode.message}</p>}
 
-                {coverageStatus === 'covered' && frequencyMatch && selectedDateLabel && (
+                {coverageStatus === 'covered' && frequencyMatch && (
                   <div className="mt-3 flex items-start gap-3 rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-3 text-sm text-emerald-100">
                     <svg className="mt-0.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                     </svg>
                     <div>
-                      <p className="font-semibold">We clean {coverageMatchLabel || frequencyMatch.frequencyTitle}</p>
-                      <p className="text-emerald-100/80">Next available visit: {selectedDateLabel}</p>
+                      <p className="font-semibold">
+                        We clean {coverageMatchLabel || `${frequencyMatch.code.toUpperCase()} area`}
+                      </p>
+                      {activeStep !== 'contact' && selectedDateLabel && (
+                        <p className="text-emerald-100/80">Next available visit: {selectedDateLabel}</p>
+                      )}
                     </div>
                   </div>
                 )}
 
-                {coverageStatus === 'outside' && postcodeValue && (
+                {coverageStatus === 'outside' && postcodeProgressLength >= 3 && (
                   <div className="mt-3 flex items-start gap-3 rounded-lg border border-brand-red/40 bg-brand-red/10 p-3 text-sm text-brand-red/85">
                     <svg className="mt-0.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
@@ -1299,27 +1330,6 @@ export default function BookingForm({
                     </div>
                   </div>
                 )}
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-white/90">Property address *</label>
-                <SimpleAddressInput
-                  value={watch('property_address') || ''}
-                  onChange={(address) => setValue('property_address', address, { shouldDirty: true, shouldValidate: true })}
-                  placeholder="Enter your full address including street and town"
-                  required
-                />
-                <input
-                  type="hidden"
-                  {...register('property_address', {
-                    required: 'Property address is required',
-                    minLength: {
-                      value: 10,
-                      message: 'Please enter a complete address including postcode',
-                    },
-                  })}
-                />
-                {errors.property_address && <p className="mt-1 text-xs text-red-400">{errors.property_address.message}</p>}
               </div>
             </div>
           </div>
