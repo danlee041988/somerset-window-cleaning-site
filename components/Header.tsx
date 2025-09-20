@@ -312,7 +312,7 @@ export default function Header() {
               <div className="hidden lg:flex flex-col items-start gap-2">
                 <Link
                   href="/book-appointment?intent=book"
-                  className="inline-flex min-h-[3.25rem] min-w-[16.5rem] items-center justify-center rounded-[1.75rem] bg-brand-red px-7 text-sm font-semibold uppercase tracking-[0.28em] text-white shadow-[0_28px_65px_-35px_rgba(225,29,42,0.9)] transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40"
+                  className="inline-flex min-h-[3.1rem] min-w-[14rem] items-center justify-center rounded-[1.75rem] bg-brand-red px-6 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-white whitespace-nowrap shadow-[0_28px_65px_-35px_rgba(225,29,42,0.9)] transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40"
                 >
                   Book Now
                 </Link>
