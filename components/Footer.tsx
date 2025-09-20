@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="flex flex-col gap-8">
             <div className="glass-noir-card glass-noir-card--tight flex items-center gap-4 rounded-3xl border border-white/12 bg-white/[0.05] p-5">
               <ImageWithFallback
-                src="/images/photos/SWC Logo.psd"
+                src="/images/logos/logo-clean.png"
                 fallbackSrc="/images/logos/logo.png"
                 alt="Somerset Window Cleaning app icon"
                 width={64}
