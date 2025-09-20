@@ -9,7 +9,7 @@ type CaseStudyProps = {
   cta?: string
 }
 
-const CASE_STUDY_IMAGE = '/images/photos/0842B2D1-78F3-406F-86C5-A69D64AC0280_1_102_o.jpg'
+const CASE_STUDY_IMAGE = '/images/photos/0842B2D1-78F3-406F-86C5-A69D64AC0280_1_102_o.jpeg'
 
 const defaultBullets = [
   'Grown from zero to 6 employees in under 3 years',
