@@ -301,15 +301,7 @@ test.describe('Contact Form Validation', () => {
     await page.check('input[value="Window Cleaning"]')
     await page.check('input[value="8-weeks"]')
     
-    // Mock network error or API failure
-    await page.route('/api/notion-direct', route => {
-      route.fulfill({
-        status: 500,
-        contentType: 'application/json',
-        body: JSON.stringify({ error: 'Internal server error' })
-      })
-    })
-    
+    // Mock network error for EmailJS to assert error handling
     await page.route('https://api.emailjs.com/**', route => {
       route.fulfill({
         status: 500,

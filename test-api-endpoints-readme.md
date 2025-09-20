@@ -10,7 +10,6 @@ Before running the test script, you need to update it with your actual API crede
    - `YOUR_TEMPLATE_ID` → Your EmailJS template ID
    - `YOUR_PUBLIC_KEY` → Your EmailJS public key
    - `YOUR_PRIVATE_KEY` → Your EmailJS private key
-   - `YOUR_NOTION_API_KEY` → Your Notion API key
 
 3. Run the test:
    ```bash

@@ -32,15 +32,6 @@ const TESTS = [
         recaptcha_token: 'test-token'
       }
     })
-  },
-  {
-    name: 'Notion API Test',
-    url: 'https://api.notion.com/v1/databases/2707c58a-5877-81af-9e26-ff0d9a5e0ae3',
-    method: 'GET',
-    headers: {
-      'Authorization': 'Bearer YOUR_NOTION_API_KEY',
-      'Notion-Version': '2022-06-28'
-    }
   }
 ];
 
@@ -73,15 +64,6 @@ async function runTest(test) {
         
         if (res.statusCode >= 200 && res.statusCode < 300) {
           console.log('✅ Test PASSED');
-          if (test.name.includes('Notion')) {
-            try {
-              const parsed = JSON.parse(data);
-              console.log(`📊 Database Title: ${parsed.title?.[0]?.plain_text || 'N/A'}`);
-              console.log(`🔑 Database ID: ${parsed.id}`);
-            } catch (e) {
-              // Ignore parse errors
-            }
-          }
         } else {
           console.log('❌ Test FAILED');
           console.log('📋 Response:', data.substring(0, 200) + '...');
@@ -116,8 +98,7 @@ async function runAllTests() {
   
   console.log('\n📊 Summary:');
   console.log('• EmailJS: The test attempts to send a real email (check your inbox)');
-  console.log('• Notion: Tests database access permissions');
-  console.log('\n💡 Note: These are live API tests with your actual credentials');
+  console.log('\n💡 Note: This live test uses your EmailJS credentials and will send a real message');
 }
 
 runAllTests();

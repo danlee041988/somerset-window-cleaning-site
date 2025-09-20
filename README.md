@@ -64,7 +64,7 @@ Map your template variables to the following keys:
 - `app/(marketing)/` – public pages (home, services, booking, etc.)
 - `app/(internal)/` – admin dashboards and operational tooling
 - `app/(legacy)/` – archived routes retained for reference
-- `app/api/` – API routes for Notion, EmailJS helpers, GA, etc.
+- `app/api/` – API routes for EmailJS helpers, GA, Google Ads, etc.
 - `components/ui/` – reusable UI primitives (buttons, layouts, logo, etc.)
 - `components/features/` – feature modules (contact/quote flow, etc.)
 - `content/` – structured content & data (images, services, etc.)

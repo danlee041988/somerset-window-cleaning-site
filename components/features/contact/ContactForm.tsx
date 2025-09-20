@@ -604,92 +604,18 @@ export default function ContactForm({ defaultPostcode, defaultService }: Contact
     try {
       console.log('Starting form submission process...')
       setStatus('submitting') // Show loading state during submission
-      
-      // Upload photos to Notion first if any
-      let uploadedFileIds: string[] = []
+
       if (uploadedPhotos.length > 0) {
-        console.log(`📸 Uploading ${uploadedPhotos.length} photos to Notion...`)
-        
-        try {
-          const photoUploadPromises = uploadedPhotos.map(async (photo) => {
-            const formData = new FormData()
-            formData.append('file', photo)
-            formData.append('filename', photo.name)
-            
-            const response = await fetch('/api/upload-photo', {
-              method: 'POST',
-              body: formData
-            })
-            
-            if (!response.ok) {
-              throw new Error(`Failed to upload ${photo.name}`)
-            }
-            
-            const result = await response.json()
-            return result.fileUploadId
-          })
-          
-          uploadedFileIds = await Promise.all(photoUploadPromises)
-          console.log(`✅ Successfully uploaded ${uploadedFileIds.length} photos`)
-        } catch (photoError) {
-          console.warn('⚠️ Photo upload failed:', photoError)
-          // Continue with form submission even if photos fail
-        }
+        console.log(
+          `📸 Collected ${uploadedPhotos.length} photo${uploadedPhotos.length === 1 ? '' : 's'} for reference (attachments are retained client-side only).`
+        )
       }
-      
-      // Send to both EmailJS and Notion in parallel
-      console.log('Sending to EmailJS and Notion...')
+
+      console.log('Sending to EmailJS...')
       console.log('EmailJS config:', { SERVICE_ID, TEMPLATE_ID, PUBLIC_KEY: PUBLIC_KEY ? 'Set' : 'Missing' })
-      
-      const [emailResult, notionResult] = await Promise.allSettled([
-        // EmailJS submission
-        emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY),
-        
-        // Notion submission
-        fetch('/api/notion-direct-v2', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            firstName: values.first_name,
-            lastName: values.last_name,
-            email: values.email,
-            phone: values.mobile,
-            postcode: values.property_address,
-            propertyType: values.property_type,
-            propertySize: values.bedrooms,
-            services: values.services,
-            frequency: values.frequency,
-            customerType: customerType,
-            message: values.message,
-            preferredContact: values.preferred_contact,
-            hasExtension: values.has_extension,
-            hasConservatory: values.has_conservatory,
-            propertyNotes: values.property_notes,
-            calculatedPrice: hasWindowCleaning ? calculateWindowCleaningPrice() : null,
-            customerPhotos: uploadedFileIds
-          })
-        }).then(res => res.json())
-      ])
 
-      // Check EmailJS result (critical)
-      if (emailResult.status === 'rejected') {
-        throw new Error('Email submission failed')
-      }
+      await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY)
 
-      // Log Notion result (non-critical)
-      if (notionResult.status === 'fulfilled') {
-        const notionData = notionResult.value
-        if (notionData.success) {
-          console.log('✅ Customer created in Notion:', notionData.customerId)
-        } else if (!notionData.skipError) {
-          console.warn('⚠️ Notion submission failed:', notionData.error)
-        }
-      } else {
-        console.warn('⚠️ Notion request failed:', notionResult.reason)
-      }
-      
       // Track successful form submission
       analytics.formSubmit({
         serviceType: values.services?.[0],
