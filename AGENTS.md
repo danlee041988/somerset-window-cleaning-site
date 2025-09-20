@@ -1,32 +1,43 @@
-# Agent Rules — SWC Website (cross‑repo enabled)
+# Repository Guidelines
 
-## Role
-- You are the **only writer**. Make **one behavioural change per turn**.
-- Keep **dev / tests / types / lint** **green** before proposing a commit.
+## Project Structure & Module Organization
+- `app/`: Next.js App Router entrypoints, route segments, and server components that drive public pages.
+- `components/`: Reusable React UI blocks; colocated styles live alongside their TSX implementation.
+- `lib/`: Shared utilities (validation, API clients, analytics) used by both server and client modules.
+- `content/` and `public/`: Marketing copy, images, and data consumed at build time; update in tandem with design changes.
+- `tests/` and `test-results/`: Jest unit specs and captured regression artifacts; Playwright specs reside in the repo root.
+- `scripts/`: Shell and Node helpers for local workflows (`scripts/dev-server.sh`, `scripts/build-image-manifest.mjs`).
 
-## Tools (prefer these over raw shell)
-- Search: `allow-run rg "<pattern>" [path…]`
-- Read slice: `allow-run sed-read "A,Bp" path.tsx`
-- Git inspect: `allow-run git-status` · `allow-run git-diff -- <paths>` · `allow-run git-show <ref>`
-- Checks: `allow-run tsc` · `allow-run jest [path]` · `allow-run lint` · `allow-run build`
-- Cross‑repo: use flags when operating outside the current repo:
-  - `allow-run --cwd "$HOME/Projects/<repo>" rg "pattern"`
-  - `allow-run --cwd "$HOME/Projects/<repo>" jest`
-  - `allow-run --no-root rg "pattern" .`  (run from the current directory without auto‑cd)
+## Build, Test, and Development Commands
+- `npm run dev`: Starts the enhanced dev server proxying to Next on port 3000 with static previews.
+- `npm run dev:3000` / `npm run dev:fallback`: Raw Next.js dev servers for quick isolates.
+- `npm run build` then `npm run start`: Compile and serve the production bundle.
+- `npm run lint`: ESLint + Next.js rules; run before pushing UI changes.
+- `npm test`, `npm run test:watch`, `npm run test:coverage`: Jest suites for forms, validation, and utilities.
+- `npm run test:e2e` (or `:headed`): Playwright smoke tests around the contact and booking flows.
 
-## Scope & boundaries
-- **Reads** outside this repo are allowed under: `$HOME/Projects`, `$HOME/mcp-servers`, and `$HOME` (excluding `~/Library`).
-- **Writes** outside this repo are allowed *only if*:
-  - You use an **explicit absolute path** that I provided (e.g., `/Users/danlee/Projects/foo/file.tsx`), **or**
-  - I set `WRITE_OUTSIDE=true` for this session (you must still show a minimal plan + diff).
-- Never write to hidden/system areas (e.g., `~/Library`, `/System`, `/usr`).
-- Never run package/dependency changes unless I ask.
+## Coding Style & Naming Conventions
+- TypeScript with strict exports; prefer named exports from utilities (`lib/`) to aid tree-shaking.
+- Favor functional React components with hooks; keep server logic in `app/api` or `lib/server` helpers.
+- Tailwind CSS drives styling; compose classes via `clsx`. Keep class sequences logical (layout → spacing → typography).
+- Two-space indentation, Prettier-compatible formatting, and ESLint autofix (`npm run lint -- --fix`) encouraged.
+- Name test files `<feature>.spec.ts` and React components in PascalCase.
 
-## Approvals
-- Allowed without asking: the `allow-run` read/inspect/check commands listed above.
-- Ask before: `git add/commit/push` in **other repos**, or any write outside the active repo unless I gave the exact path or set `WRITE_OUTSIDE=true`.
-- Never push to `main/master` without explicit instruction.
+## Testing Guidelines
+- Co-locate unit specs under `tests/` mirroring source structure; mock external services via fixtures in `tests/mocks`.
+- Keep Playwright specs deterministic; record failures into `test-results/` for review before re-running.
+- Maintain meaningful coverage on form validation and API handlers; add regression tests for bug fixes.
 
-## Working rhythm
-1) Plan briefly. 2) Do exactly **one** change (≤2 files). 3) Make watchers green.
-4) Propose diff + commit message; then follow my push instructions (or I’ll set `PUSH=true`).
+## Commit & Pull Request Guidelines
+- Follow Conventional Commits (`fix:`, `refactor:`, `chore:`) as seen in recent history (e.g., `fix: tighten mobile header...`).
+- Limit commits to a focused change-set with accompanying tests or screenshots for UI updates.
+- PRs should summarize impact, list affected routes/components, link tracking issues, and note any follow-up tasks.
+- Verify `npm run lint` and relevant tests locally before requesting review.
+
+## Agent Rules — SWC (Lite)
+- You are the only writer. One behavioural change per turn (≤2 files, ≤80 LOC).
+- Keep dev/tests/types/lint green before proposing a commit.
+- Prefer: `rg`, `sed -n`, `git status/diff/show`, npm scripts. Minimal direct edits.
+- No renames/moves or dependency changes unless requested.
+- You may work outside this repo when asked (full filesystem allowed).
+- Show diff plus a concise commit message when green.
