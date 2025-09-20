@@ -302,14 +302,38 @@ function SpotlightReviewSurface({ className }: { className?: string }) {
 
 function CarouselReviewSurface({ className }: { className?: string }) {
   const [activeIndex, setActiveIndex] = React.useState(0)
+  const intervalRef = React.useRef<number | null>(null)
+
+  const clearAutoRotate = React.useCallback(() => {
+    if (intervalRef.current) {
+      window.clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+  }, [])
+
+  const startAutoRotate = React.useCallback(() => {
+    clearAutoRotate()
+    intervalRef.current = window.setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % CAROUSEL_REVIEWS.length)
+    }, 9000)
+  }, [clearAutoRotate])
+
+  React.useEffect(() => {
+    startAutoRotate()
+    return () => {
+      clearAutoRotate()
+    }
+  }, [startAutoRotate, clearAutoRotate])
 
   const handleNext = React.useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % CAROUSEL_REVIEWS.length)
-  }, [])
+    startAutoRotate()
+  }, [startAutoRotate])
 
   const handlePrev = React.useCallback(() => {
     setActiveIndex((prev) => (prev - 1 + CAROUSEL_REVIEWS.length) % CAROUSEL_REVIEWS.length)
-  }, [])
+    startAutoRotate()
+  }, [startAutoRotate])
 
   const activeReview = CAROUSEL_REVIEWS[activeIndex]
   const supportingReviews = React.useMemo(() => {

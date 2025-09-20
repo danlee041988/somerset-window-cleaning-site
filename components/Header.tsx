@@ -203,18 +203,18 @@ export default function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div className="relative border-b border-white/10 bg-black/90 pb-3 backdrop-blur sm:pb-4 lg:pb-8">
+      <div className="relative border-b border-white/10 bg-black/90 pb-2 backdrop-blur sm:pb-3 lg:pb-5">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-brand-red via-brand-red/70 to-transparent"
           aria-hidden="true"
         />
-        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-3 px-4 py-2 sm:gap-5 sm:py-3 md:px-6">
+        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-3 px-4 py-1.5 sm:gap-5 sm:py-2.5 md:px-6">
           <Link
             href="/"
             className="inline-flex shrink-0 items-center rounded-md px-3 py-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
             aria-label="Somerset Window Cleaning home"
           >
-            <Logo className="h-12 w-auto max-w-[200px] sm:h-14 sm:max-w-[240px] md:h-[5.5rem] md:max-w-[420px] lg:h-[6.75rem] lg:max-w-[540px]" />
+            <Logo className="h-10 w-auto max-w-[180px] sm:h-12 sm:max-w-[220px] md:h-[4.75rem] md:max-w-[360px] lg:h-[5.5rem] lg:max-w-[460px]" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -359,7 +359,7 @@ export default function Header() {
         </div>
         {/* Desktop trust ticker */}
         <div className="hidden justify-center px-4 pb-2 md:flex md:px-6">
-          <div className="pointer-events-auto mx-auto mt-3 flex w-full max-w-[1280px] items-center justify-center gap-5 rounded-[2.25rem] border border-white/10 bg-black/65 px-6 py-2.5 text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-white/60 shadow-[0_18px_36px_-28px_rgba(0,0,0,0.8)]">
+          <div className="pointer-events-auto mx-auto mt-2.5 flex w-full max-w-[1280px] items-center justify-center gap-4 rounded-[2.25rem] border border-white/10 bg-black/65 px-6 py-2 text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-white/60 shadow-[0_18px_36px_-28px_rgba(0,0,0,0.8)]">
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-2 text-white/70">
                 <span className={`relative inline-flex h-2 w-2 rounded-full ${isBusinessOpen ? 'bg-green-400' : 'bg-red-400'}`}>

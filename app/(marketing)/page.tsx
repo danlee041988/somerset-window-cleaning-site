@@ -71,58 +71,57 @@ export default function HomePage() {
         subtitle="Four quick steps and we’ll have your property locked into the correct Somerset frequency."
         spacing="relaxed"
       >
-        <div className="glass-noir-panel overflow-visible p-8 md:p-12">
-          <div className="feature-card__content grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {HOME_BOOKING_STEPS.map((step, index) => {
-              const stepNumber = String(index + 1).padStart(2, '0')
-              return (
-                <div key={step.title} className="relative">
-                  <div className="glass-card glass-noir-card--tight group flex h-full flex-col gap-4 p-6 text-[#F5F7FA] transition-transform duration-300 hover:-translate-y-1">
-                    <div className="flex items-center gap-4">
-                      <span className="relative inline-flex h-12 w-12 flex-shrink-0 items-center justify-center">
-                        <span
-                          className="absolute inset-0 rounded-full border-2 border-brand-red/70 bg-black/40 shadow-[0_0_22px_rgba(225,29,42,0.45)]"
-                          aria-hidden
-                        />
-                        <span className="relative flex h-full w-full items-center justify-center rounded-full text-lg font-semibold tracking-[0.2em] text-white">
-                          {stepNumber}
-                        </span>
-                      </span>
-                      <h3 className="text-base font-semibold uppercase tracking-[0.25em] text-[var(--fg)]">
-                        {step.title}
-                      </h3>
-                    </div>
-                    <p className="text-sm leading-relaxed noir-muted">
-                      {step.description}
-                    </p>
-                  </div>
-                  {index < HOME_BOOKING_STEPS.length - 1 && (
-                    <>
-                      <span className="pointer-events-none absolute top-full left-1/2 block h-10 -translate-x-1/2 -translate-y-2 xl:hidden" aria-hidden>
-                        <svg className="mx-auto h-full w-auto text-white/40" viewBox="0 0 24 40" fill="none" stroke="currentColor">
-                          <path d="M12 0v28M12 28l8-8M12 28l-8-8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </span>
-                      <span className="pointer-events-none absolute top-1/2 right-[-32px] hidden -translate-y-1/2 xl:block" aria-hidden>
-                        <svg className="h-8 w-8 text-white/45" viewBox="0 0 32 32" fill="none" stroke="currentColor">
-                          <path d="M4 16h20" strokeWidth="2" strokeLinecap="round" />
-                          <path d="M18 10l6 6-6 6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </span>
-                    </>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+        <div className="feature-card feature-card--minimal relative overflow-hidden">
+          <span className="pointer-events-none absolute -top-24 left-6 h-52 w-52 rounded-full bg-brand-red/35 blur-[140px]" aria-hidden />
+          <span className="pointer-events-none absolute bottom-[-100px] right-[-80px] h-72 w-72 rounded-full bg-white/12 blur-[160px]" aria-hidden />
 
-          <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-            <Button href="/book-appointment" className="px-8 py-3">
-              Start your booking
-            </Button>
-            <Button href="/book-appointment#faq" variant="secondary" className="px-8 py-3">
-              See what happens next
-            </Button>
+          <div className="feature-card__content space-y-10 p-8 md:p-12">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <span className="feature-chip feature-chip--accent">How it works</span>
+              <span className="hidden rounded-full border border-white/15 px-4 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-white/55 sm:inline-flex">
+                4 touchpoints from quote to sparkling glass
+              </span>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+              {HOME_BOOKING_STEPS.map((step, index) => {
+                const stepPosition = index + 1
+                const displayNumber = stepPosition.toString().padStart(2, '0')
+                return (
+                  <div key={step.title} className="group relative h-full">
+                    <span className="pointer-events-none absolute -top-10 right-6 hidden h-24 w-24 rounded-full bg-brand-red/30 blur-[90px] transition-opacity duration-300 group-hover:opacity-80 sm:block" aria-hidden />
+                    <div className="relative flex h-full flex-col gap-6 rounded-3xl border border-white/12 bg-black/65 p-6 text-[#F5F7FA] shadow-[0_26px_60px_-42px_rgba(0,0,0,0.9)] transition-transform duration-300 hover:-translate-y-1 hover:border-brand-red/45">
+                      <div className="flex items-center gap-4">
+                        <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-red/55 bg-brand-red/12 text-sm font-semibold uppercase tracking-[0.32em] text-brand-red">
+                          {displayNumber}
+                        </span>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[0.58rem] font-semibold uppercase tracking-[0.32em] text-white/45">
+                            Step {stepPosition}
+                          </span>
+                          <h3 className="text-base font-semibold uppercase tracking-[0.25em] text-[var(--fg)]">
+                            {step.title}
+                          </h3>
+                        </div>
+                      </div>
+                      <div className="h-px w-full bg-gradient-to-r from-white/15 via-white/8 to-transparent" aria-hidden />
+                      <p className="text-sm leading-relaxed text-white/70">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button href="/book-appointment" className="px-8 py-3 tracking-[0.28em]">
+                Start your booking
+              </Button>
+              <Button href="/book-appointment#faq" variant="secondary" className="px-8 py-3 tracking-[0.28em] text-white/80">
+                See what happens next
+              </Button>
+            </div>
           </div>
         </div>
       </Section>

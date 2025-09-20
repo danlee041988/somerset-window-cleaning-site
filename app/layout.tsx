@@ -5,7 +5,6 @@ import Footer from '@/components/Footer'
 import StructuredData from '@/components/StructuredData'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import DynamicLayout from '@/components/DynamicLayout'
-import StickyCTABar from '@/components/StickyCTABar'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 
 const siteUrlRaw = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
@@ -61,7 +60,6 @@ export default function RootLayout({
             {children}
           </DynamicLayout>
           <Footer />
-          <StickyCTABar />
           <StructuredData />
         </ErrorBoundary>
       </body>

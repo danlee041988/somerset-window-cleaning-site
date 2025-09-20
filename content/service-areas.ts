@@ -17,7 +17,7 @@ export const POSTCODE_AREAS: Record<string, PostcodeAreaGroup> = {
     name: 'Bath & East Somerset',
     color: 'from-white/10 to-white/5',
     borderColor: 'border-brand-red/20',
-    iconColor: 'text-brand-red',
+    iconColor: 'text-white',
     areas: [
       { code: 'BA3', town: 'Radstock', keywords: 'Midsomer Norton, Paulton' },
       { code: 'BA4', town: 'Shepton Mallet', keywords: 'Pilton, Croscombe' },
@@ -36,7 +36,7 @@ export const POSTCODE_AREAS: Record<string, PostcodeAreaGroup> = {
     name: 'Bristol & North Somerset',
     color: 'from-white/10 to-white/5',
     borderColor: 'border-white/20',
-    iconColor: 'text-white/90',
+    iconColor: 'text-white',
     areas: [
       { code: 'BS21', town: 'Clevedon', keywords: 'Walton Bay, Court House' },
       { code: 'BS22/23/24', town: 'Weston-super-Mare', keywords: 'All areas - Worle, Milton, Town Centre, Hillside' },
@@ -54,7 +54,7 @@ export const POSTCODE_AREAS: Record<string, PostcodeAreaGroup> = {
     name: 'Taunton & West Somerset',
     color: 'from-white/10 to-white/5',
     borderColor: 'border-brand-red/30',
-    iconColor: 'text-brand-red/80',
+    iconColor: 'text-white',
     areas: [
       { code: 'TA2', town: 'Taunton', keywords: 'County Town, Priorswood' },
       { code: 'TA6/7', town: 'Bridgwater', keywords: 'All areas - North, South, Hamp, Eastover, Wembdon' },
@@ -75,7 +75,7 @@ export const POSTCODE_AREAS: Record<string, PostcodeAreaGroup> = {
     name: 'Dorset Border',
     color: 'from-white/10 to-white/5',
     borderColor: 'border-white/15',
-    iconColor: 'text-white/70',
+    iconColor: 'text-white',
     areas: [
       { code: 'DT9', town: 'Sherborne', keywords: 'Milborne Port, Bishops Caundle' }
     ]

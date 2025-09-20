@@ -202,23 +202,6 @@ export default function CaseStudy({
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-red/80">
                 Case study highlights
               </p>
-              <div className="mt-6 grid gap-6 sm:grid-cols-3">
-                {[{
-                  value: '4k+',
-                  label: 'Somerset properties cared for since launch'
-                }, {
-                  value: '195+',
-                  label: 'Google reviews at a 4.9★ rating'
-                }, {
-                  value: '100%',
-                  label: 'Fully insured window and exterior specialists'
-                }].map((item) => (
-                  <div key={item.label} className="space-y-2 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                    <span className="text-3xl font-semibold text-white">{item.value}</span>
-                    <p className="text-xs uppercase tracking-[0.2em] text-brand-red/70">{item.label}</p>
-                  </div>
-                ))}
-              </div>
               <p className="mt-6 text-sm leading-relaxed text-white/70">
                 These results come from pairing military-grade discipline with neighbourly service—exactly what the council looked for when showcasing Somerset success stories.
               </p>

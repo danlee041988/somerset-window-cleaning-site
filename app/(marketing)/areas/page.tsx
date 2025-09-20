@@ -110,6 +110,9 @@ const areaHighlights: Array<{
   primaryPostcode: string
   area: string
   href?: string
+  ctaHref?: string
+  ctaLabel?: string
+  ctaVariant?: 'primary' | 'secondary'
 }> = [
   {
     title: 'Window Cleaning in Wells (BA5)',
@@ -117,7 +120,10 @@ const areaHighlights: Array<{
       'Our Wells window cleaners are trusted by homeowners, schools, and hospitality venues across the cathedral city. We navigate tight streets and period properties with specialist equipment for a spotless finish.',
     primaryPostcode: 'BA5',
     area: 'Wells',
-    href: '/areas/wells-ba5'
+    href: '/areas/wells-ba5',
+    ctaHref: '/book-appointment?intent=book&postcode=BA5&coverageArea=Wells',
+    ctaLabel: 'Book in Wells',
+    ctaVariant: 'primary'
   },
   {
     title: 'Glastonbury & Street Window Cleaning (BA6 & BA16)',
@@ -323,19 +329,17 @@ export default function AreasPage() {
         <div className="grid gap-6 md:grid-cols-2">
           {areaHighlights.map((highlight) => {
             const defaultHref = buildBookingHref(highlight.primaryPostcode, highlight.area)
-            const ctaHref = highlight.href ?? defaultHref
-            const isDetailPage = Boolean(highlight.href)
+            const ctaHref = highlight.ctaHref ?? highlight.href ?? defaultHref
+            const isDetailPage = Boolean(highlight.href) && !highlight.ctaHref
+            const ctaVariant = highlight.ctaVariant ?? (isDetailPage ? 'secondary' : 'primary')
+            const ctaLabel = highlight.ctaLabel ?? (isDetailPage ? 'Explore local guide' : `Book in ${highlight.area}`)
 
             return (
               <article key={highlight.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
                 <h3 className="text-xl font-semibold text-white mb-3">{highlight.title}</h3>
                 <p className="text-sm text-white/70 leading-relaxed mb-4">{highlight.description}</p>
-                <Button
-                  href={ctaHref}
-                  variant={isDetailPage ? 'secondary' : 'primary'}
-                  className="text-sm"
-                >
-                  {isDetailPage ? 'Explore local guide' : `Book in ${highlight.area}`}
+                <Button href={ctaHref} variant={ctaVariant} className="text-sm">
+                  {ctaLabel}
                 </Button>
               </article>
             )

@@ -10,22 +10,34 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="glass-card glass-noir-card--tight grid gap-12 rounded-3xl border border-white/12 p-8 md:p-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div className="flex flex-col gap-8">
-            <div className="glass-noir-card glass-noir-card--tight flex items-center gap-4 rounded-3xl border border-white/12 bg-white/[0.05] p-5">
-              <ImageWithFallback
-                src="/images/logos/swc-logo.png"
-                fallbackSrc="/images/logos/logo.png"
-                alt="Somerset Window Cleaning app icon"
-                width={64}
-                height={64}
-                className="h-14 w-14 rounded-2xl border border-white/12 object-contain shadow-[0_24px_40px_-32px_rgba(225,29,42,0.95)] bg-white/5"
-              />
-              <div className="space-y-1">
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/80">
-                  Somerset Window Cleaning
-                </p>
-                <p className="text-xs text-white/55">
-                  Glass Noir finish for homes and businesses across Somerset.
-                </p>
+            <div className="glass-noir-card glass-noir-card--tight flex flex-col gap-5 rounded-3xl border border-white/12 bg-black/65 p-6 text-[#F5F7FA] shadow-[0_30px_70px_-45px_rgba(0,0,0,0.95)]">
+              <div className="flex items-center gap-5">
+                <span className="relative flex h-[4.25rem] w-[4.25rem] min-h-[4.25rem] min-w-[4.25rem] items-center justify-center rounded-[1.6rem] border border-brand-red/55 bg-gradient-to-br from-brand-red/75 via-brand-red/45 to-transparent p-3 shadow-[0_20px_45px_-30px_rgba(225,29,42,0.85)]">
+                  <ImageWithFallback
+                    src="/images/logos/swc-logo.png"
+                    fallbackSrc="/images/logos/logo.png"
+                    alt="Somerset Window Cleaning app icon"
+                    width={80}
+                    height={80}
+                    className="h-full w-full object-contain"
+                  />
+                </span>
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white">
+                    Somerset Window Cleaning
+                  </p>
+                  <p className="text-xs text-white/60">
+                    Glass Noir finish and spotless results for Somerset homes and businesses.
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-2 text-xs text-white/55">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 px-3 py-1 uppercase tracking-[0.28em] text-white/65">
+                  Trusted by 4,000+ customers
+                </span>
+                <span>
+                  Book, schedule, and keep every visit on track with reminders and clear communication from our crew.
+                </span>
               </div>
             </div>
             <p className="text-sm noir-muted max-w-prose">
