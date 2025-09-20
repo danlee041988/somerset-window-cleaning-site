@@ -3,7 +3,7 @@ export const SWC_LOGO = "/images/logos/SWC narrow Logo.jpg"
 
 export const HERO_IMAGES = [
   "/images/photos/Main Hero.JPG",
-  "/images/logos/logo.png",
+  "/images/logos/swc-logo.png",
   "/images/photos/DJI_0024.JPG"
 ]
 
