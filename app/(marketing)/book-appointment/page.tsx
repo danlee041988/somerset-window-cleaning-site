@@ -85,6 +85,8 @@ const SERVICE_HIGHLIGHTS = [
   }
 ]
 
+const GO_CARDLESS_URL = process.env.NEXT_PUBLIC_GOCARDLESS_PAYMENT_URL
+
 const BOOKING_STEPS = [
   {
     title: 'Pick your service & extras',
@@ -146,8 +148,26 @@ export default function BookAppointmentPage({ searchParams }: BookAppointmentPag
 
           <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/70">
             <p>
-              Light rain doesn&rsquo;t affect pure water results. If you&rsquo;re ever unhappy, we&rsquo;ll revisit promptly. Payment can be made by card, bank transfer on completion, or set up once through GoCardless for automatic settlement.
+              Light rain doesn&rsquo;t affect pure water results. If you&rsquo;re ever unhappy, we&rsquo;ll revisit promptly. Payment can be made by card, bank transfer on completion, or set up once through{' '}
+              {GO_CARDLESS_URL ? (
+                <a
+                  href={GO_CARDLESS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-white underline decoration-brand-red/60 underline-offset-4 hover:text-brand-red"
+                >
+                  GoCardless
+                </a>
+              ) : (
+                'GoCardless'
+              )}{' '}
+              for automatic settlement.
             </p>
+            {GO_CARDLESS_URL && (
+              <p className="mt-3 text-xs text-white/65">
+                Paying for an existing account? Use our Direct Debit portal to settle any outstanding balance securely.
+              </p>
+            )}
           </div>
         </Section>
       </div>

@@ -2,6 +2,8 @@ import Link from 'next/link'
 import BusinessHours from './BusinessHours'
 import ImageWithFallback from '@/components/ui/ImageWithFallback'
 
+const GO_CARDLESS_URL = process.env.NEXT_PUBLIC_GOCARDLESS_PAYMENT_URL
+
 export default function Footer() {
   return (
     <footer className="mt-20 border-t border-white/10 bg-transparent">
@@ -78,6 +80,16 @@ export default function Footer() {
                 <Link href="/areas" className="transition hover:text-[var(--fg)]">Areas We Cover</Link>
                 <Link href="/pricing" className="transition hover:text-[var(--fg)]">Pricing &amp; Bundles</Link>
                 <Link href="/book-appointment" className="transition hover:text-[var(--fg)]">Book Now</Link>
+                {GO_CARDLESS_URL && (
+                  <a
+                    href={GO_CARDLESS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition hover:text-[var(--fg)]"
+                  >
+                    Pay by Direct Debit
+                  </a>
+                )}
                 <Link href="/get-in-touch" className="transition hover:text-[var(--fg)]">Get in Touch</Link>
                 <Link href="/privacy" className="transition hover:text-[var(--fg)]">Privacy</Link>
               </div>

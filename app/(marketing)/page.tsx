@@ -73,32 +73,47 @@ export default function HomePage() {
       >
         <div className="glass-noir-panel overflow-visible p-8 md:p-12">
           <div className="feature-card__content grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {HOME_BOOKING_STEPS.map((step, index) => (
-              <div key={step.title} className="relative">
-                <div className="glass-card glass-noir-card--tight group flex h-full flex-col gap-4 p-6 text-[#F5F7FA] transition-transform duration-300 hover:-translate-y-1">
-                  <div className="flex items-center gap-4">
-                    <span className="relative inline-flex h-12 w-12 items-center justify-center">
-                      <span
-                        className="absolute inset-0 rounded-full bg-brand-red/80 shadow-[0_0_22px_rgba(225,29,42,0.45)]"
-                        aria-hidden
-                      />
-                      <span className="relative flex h-full w-full items-center justify-center rounded-full text-xl font-semibold tracking-[0.2em] text-white">
-                        {String(index + 1).padStart(2, '0')}
+            {HOME_BOOKING_STEPS.map((step, index) => {
+              const stepNumber = String(index + 1).padStart(2, '0')
+              return (
+                <div key={step.title} className="relative">
+                  <div className="glass-card glass-noir-card--tight group flex h-full flex-col gap-4 p-6 text-[#F5F7FA] transition-transform duration-300 hover:-translate-y-1">
+                    <div className="flex items-center gap-4">
+                      <span className="relative inline-flex h-12 w-12 flex-shrink-0 items-center justify-center">
+                        <span
+                          className="absolute inset-0 rounded-full border-2 border-brand-red/70 bg-black/40 shadow-[0_0_22px_rgba(225,29,42,0.45)]"
+                          aria-hidden
+                        />
+                        <span className="relative flex h-full w-full items-center justify-center rounded-full text-lg font-semibold tracking-[0.2em] text-white">
+                          {stepNumber}
+                        </span>
                       </span>
-                    </span>
-                    <h3 className="text-base font-semibold uppercase tracking-[0.25em] text-[var(--fg)]">
-                      {step.title}
-                    </h3>
+                      <h3 className="text-base font-semibold uppercase tracking-[0.25em] text-[var(--fg)]">
+                        {step.title}
+                      </h3>
+                    </div>
+                    <p className="text-sm leading-relaxed noir-muted">
+                      {step.description}
+                    </p>
                   </div>
-                  <p className="text-sm leading-relaxed noir-muted">
-                    {step.description}
-                  </p>
+                  {index < HOME_BOOKING_STEPS.length - 1 && (
+                    <>
+                      <span className="pointer-events-none absolute top-full left-1/2 block h-10 -translate-x-1/2 -translate-y-2 xl:hidden" aria-hidden>
+                        <svg className="mx-auto h-full w-auto text-white/40" viewBox="0 0 24 40" fill="none" stroke="currentColor">
+                          <path d="M12 0v28M12 28l8-8M12 28l-8-8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                      <span className="pointer-events-none absolute top-1/2 right-[-32px] hidden -translate-y-1/2 xl:block" aria-hidden>
+                        <svg className="h-8 w-8 text-white/45" viewBox="0 0 32 32" fill="none" stroke="currentColor">
+                          <path d="M4 16h20" strokeWidth="2" strokeLinecap="round" />
+                          <path d="M18 10l6 6-6 6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                    </>
+                  )}
                 </div>
-                {index < HOME_BOOKING_STEPS.length - 1 && (
-                  <span className="pointer-events-none absolute top-1/2 right-[-18px] hidden h-px w-9 -translate-y-1/2 bg-gradient-to-r from-white/15 via-brand-red/50 to-transparent xl:block" aria-hidden />
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className="relative mt-8 flex flex-wrap justify-center gap-3">

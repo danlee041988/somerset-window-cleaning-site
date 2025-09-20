@@ -412,7 +412,7 @@ async function logGeneralInquiry(phoneNumber: string, message: string, timestamp
     to: phoneNumber,
     type: 'text' as const,
     text: {
-      body: '👋 Thanks for your message! We\'ve received your inquiry and will get back to you within 4 hours during business hours (Mon-Sat 8AM-5PM).\n\nFor urgent matters, please call 07415 526331.',
+      body: '👋 Thanks for your message! We\'ve received your inquiry and will get back to you as soon as possible during business hours (Mon-Sat 8AM-5PM).\n\nFor urgent matters, please call 07415 526331.',
     },
   };
 
