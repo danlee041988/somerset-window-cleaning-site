@@ -59,9 +59,9 @@ export default function GeneralEnquiryForm({ defaultService }: GeneralEnquiryFor
   const [status, setStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
 
-  const firstNameRef = React.useRef<HTMLInputElement>(null)
-  const lastNameRef = React.useRef<HTMLInputElement>(null)
-  const emailRef = React.useRef<HTMLInputElement>(null)
+  const firstNameRef = React.useRef<HTMLInputElement | null>(null)
+  const lastNameRef = React.useRef<HTMLInputElement | null>(null)
+  const emailRef = React.useRef<HTMLInputElement | null>(null)
 
   React.useEffect(() => {
     if (typeof window === 'undefined' || !PUBLIC_KEY) return
