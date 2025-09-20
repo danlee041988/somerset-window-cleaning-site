@@ -1540,28 +1540,42 @@ export default function BookingForm({
                   return (
                     <label
                       key={service}
-                      className={`flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition ${
+                      className={`group flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition ${
                         selected
-                          ? 'border-emerald-400/70 bg-emerald-500/15 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
-                          : 'border-white/15 bg-white/5 hover-border-emerald-300/30'
+                          ? 'border-emerald-400/70 bg-emerald-500/12 shadow-[0_0_24px_rgba(16,185,129,0.25)]'
+                          : 'border-white/12 bg-white/5 hover:border-emerald-300/30'
                       }`}
                     >
                       <input type="checkbox" className="sr-only" checked={selected} onChange={() => handleServiceToggle(service)} />
-                      <div>
-                        <p className="font-semibold text-white">{service}</p>
-                        <p className="mt-1 text-xs text-white/70">{SERVICE_SUMMARY[service]}</p>
-                        {details.priceLabel && (
-                          <p className="mt-3 text-sm font-semibold text-brand-red">{details.priceLabel}</p>
-                        )}
-                        {details.frequencyLabel && (
-                          <p className="text-xs text-white/65">{details.frequencyLabel}</p>
-                        )}
-                        {details.secondary && (
-                          <p className="mt-2 text-xs text-white/60">{details.secondary}</p>
-                        )}
-                        {details.bonusNote && (
-                          <p className="mt-2 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-emerald-300">{details.bonusNote}</p>
-                        )}
+                      <div className="flex w-full flex-col gap-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-semibold text-white">{service}</p>
+                            <p className="mt-1 text-xs text-white/70">{SERVICE_SUMMARY[service]}</p>
+                          </div>
+                          {details.priceLabel && (
+                            <span
+                              className={`whitespace-nowrap rounded-full border px-3 py-1 text-[0.7rem] font-medium uppercase tracking-[0.25em] ${
+                                selected ? 'border-emerald-300/80 text-emerald-100' : 'border-white/15 text-white/60'
+                              }`}
+                            >
+                              {details.priceLabel}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[0.7rem] text-white/60">
+                          {details.frequencyLabel && (
+                            <span className="rounded-full border border-white/15 px-3 py-1">{details.frequencyLabel}</span>
+                          )}
+                          {details.secondary && (
+                            <span className="rounded-full border border-white/12 px-3 py-1">{details.secondary}</span>
+                          )}
+                          {details.bonusNote && (
+                            <span className="rounded-full border border-emerald-300/60 px-3 py-1 text-emerald-200">
+                              {details.bonusNote}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </label>
                   )
