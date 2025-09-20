@@ -1065,7 +1065,7 @@ export default function BookingForm({
             <svg className="h-4 w-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            Response within 4 hours
+            Response within one working day
           </div>
           <div className="flex items-center justify-center gap-2 text-white/70">
             <svg className="h-4 w-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -1295,7 +1295,7 @@ export default function BookingForm({
                     </svg>
                     <div>
                       <p className="font-semibold">We’ll double-check this postcode manually.</p>
-                      <p className="text-brand-red/70">We’ll confirm availability within 4 working hours.</p>
+                      <p className="text-brand-red/70">We’ll confirm availability by the next working day.</p>
                     </div>
                   </div>
                 )}
@@ -1698,8 +1698,27 @@ export default function BookingForm({
               </p>
             )}
             <p className="mt-4 text-center text-xs text-white/60">
-              You&apos;ll receive your booking pack within 4 hours (Mon-Sat, 9am-4pm).
+              You&apos;ll receive your booking pack within one working day (Mon-Sat, 9am-4pm).
             </p>
+            {GO_CARDLESS_URL && (
+              <div className="mt-4 space-y-3 rounded-xl border border-white/12 bg-white/5 p-4 text-center">
+                <p className="text-sm font-semibold text-white">Paying an existing balance?</p>
+                <p className="text-xs text-white/70">
+                  Use our secure GoCardless portal to set up Direct Debit for existing accounts and settle invoices automatically.
+                </p>
+                <a
+                  href={GO_CARDLESS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-brand-red/70 bg-brand-red/15 px-4 py-2 text-sm font-semibold text-white transition hover:border-brand-red hover:bg-brand-red/20"
+                >
+                  Pay by Direct Debit
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+            )}
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2 text-sm text-white/80">
               <a
                 href="tel:01458860339"

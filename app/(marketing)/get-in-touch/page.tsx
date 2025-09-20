@@ -3,13 +3,12 @@
 import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Section from '@/components/ui/Section'
-import ContactForm from '@/components/features/contact/ContactForm'
 import BusinessHours from '@/components/BusinessHours'
+import Button from '@/components/ui/Button'
+import GeneralEnquiryForm from '@/components/features/contact/GeneralEnquiryForm'
 
 function GetInTouchContent() {
   const searchParams = useSearchParams()
-  const postcode = searchParams.get('postcode')
-  const area = searchParams.get('area')
   const service = searchParams.get('service')
 
   return (
@@ -17,65 +16,42 @@ function GetInTouchContent() {
       {/* Hero Section */}
       <Section 
         title="Get in touch" 
-        subtitle="Tell us about your property and we'll provide transparent pricing with no hidden fees. We'll get back to you within the first working day."
+        subtitle="Send us a quick message and we’ll respond within one working day. Ready to confirm a visit? Head over to our booking page."
         spacing="relaxed"
       >
-        {/* Success Message from Postcode Checker */}
-        {postcode && area && (
-          <div className="mb-8 rounded-lg bg-green-500/20 border border-green-500/30 px-6 py-4 text-center">
-            <p className="text-white">
-              <span className="font-semibold">Great news!</span> We cover {area}. 
-              Your postcode <span className="font-mono bg-white/10 px-2 py-1 rounded">{postcode}</span> has been added to the form below.
-            </p>
-          </div>
-        )}
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <GeneralEnquiryForm defaultService={service || undefined} />
 
-        {/* Contact Form */}
-        <ContactForm 
-          defaultPostcode={postcode || undefined}
-          defaultService={service || undefined}
-        />
+          <div className="space-y-6">
+            <div className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-sm">
+              <h3 className="text-lg font-semibold text-white">Prefer to book straight away?</h3>
+              <p className="mt-2 text-sm text-white/70">
+                If you already know the services you need and want to lock in a slot, head to our booking page to choose your frequency and request a visit date.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Button href="/book-appointment" variant="primary">
+                  Go to booking form
+                </Button>
+                <Button href="/pricing" variant="secondary">
+                  View pricing guide
+                </Button>
+              </div>
+            </div>
 
-        {/* Business Hours and Service Features */}
-        <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Business Hours */}
-          <BusinessHours variant="full" />
-          
-          {/* Professional Service Features */}
-          <div className="p-6 rounded-xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm">
-            <h3 className="text-lg font-semibold text-white mb-4 text-center">What to Expect After Booking</h3>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                  </svg>
-                </div>
-                <span className="text-sm text-white/90">Text reminders before each visit</span>
+            <div className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-sm">
+              <h3 className="text-lg font-semibold text-white">Talk to us</h3>
+              <div className="mt-4 space-y-3 text-sm text-white/80">
+                <p>Phone: <a className="font-semibold text-white underline decoration-brand-red/60 underline-offset-4" href="tel:01458860339">01458 860 339</a></p>
+                <p>Email: <a className="font-semibold text-white underline decoration-brand-red/60 underline-offset-4" href="mailto:info@somersetwindowcleaning.co.uk">info@somersetwindowcleaning.co.uk</a></p>
+                <p>WhatsApp: <a className="font-semibold text-white underline decoration-brand-red/60 underline-offset-4" href="https://wa.me/441458860339" target="_blank" rel="noopener noreferrer">Message us on WhatsApp</a></p>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <span className="text-sm text-white/90">Uniformed, professional staff</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                  </svg>
-                </div>
-                <span className="text-sm text-white/90">Convenient online payments</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-                  </svg>
-                </div>
-                <span className="text-sm text-white/90">Sign-written, identifiable vans</span>
+            </div>
+
+            <div className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-sm">
+              <h3 className="text-lg font-semibold text-white">Business hours</h3>
+              <p className="mt-2 text-sm text-white/70">We operate Monday to Friday, 9am–4pm. Messages sent outside these hours are picked up first thing next day.</p>
+              <div className="mt-4">
+                <BusinessHours variant="full" />
               </div>
             </div>
           </div>
@@ -92,7 +68,7 @@ export default function GetInTouchPage() {
       <div className="py-16 md:py-20">
         <Section 
           title="Get in touch" 
-          subtitle="Tell us about your property and we'll provide transparent pricing with no hidden fees. We'll get back to you within the first working day."
+          subtitle="Send us a quick message and we’ll respond within one working day. Ready to confirm a visit? Head over to our booking page."
           spacing="relaxed"
         >
           <div className="text-white text-center">

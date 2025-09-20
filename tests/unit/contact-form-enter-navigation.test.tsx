@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import ContactForm from '@/components/features/contact/ContactForm'
+import GeneralEnquiryForm from '@/components/features/contact/GeneralEnquiryForm'
 
-describe('ContactForm keyboard navigation', () => {
+describe('GeneralEnquiryForm keyboard navigation', () => {
   it('moves focus to the next field instead of submitting when Enter is pressed', async () => {
     const user = userEvent.setup()
-    render(<ContactForm />)
+    render(<GeneralEnquiryForm />)
 
     const firstNameInput = screen.getByPlaceholderText('Your first name') as HTMLInputElement
     const lastNameInput = screen.getByPlaceholderText('Your last name') as HTMLInputElement
