@@ -301,39 +301,62 @@ function SpotlightReviewSurface({ className }: { className?: string }) {
 }
 
 function CarouselReviewSurface({ className }: { className?: string }) {
-  const [activeIndex, setActiveIndex] = React.useState(0)
-  const intervalRef = React.useRef<number | null>(null)
+  const FADE_DURATION = 450
+  const ROTATE_INTERVAL = 16000
 
-  const clearAutoRotate = React.useCallback(() => {
-    if (intervalRef.current) {
-      window.clearInterval(intervalRef.current)
-      intervalRef.current = null
+  const [activeIndex, setActiveIndex] = React.useState(0)
+  const [isFading, setIsFading] = React.useState(false)
+  const rotationTimeoutRef = React.useRef<number | null>(null)
+  const fadeTimeoutRef = React.useRef<number | null>(null)
+
+  const clearRotationTimeout = React.useCallback(() => {
+    if (rotationTimeoutRef.current) {
+      window.clearTimeout(rotationTimeoutRef.current)
+      rotationTimeoutRef.current = null
     }
   }, [])
 
-  const startAutoRotate = React.useCallback(() => {
-    clearAutoRotate()
-    intervalRef.current = window.setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % CAROUSEL_REVIEWS.length)
-    }, 9000)
-  }, [clearAutoRotate])
+  const clearFadeTimeout = React.useCallback(() => {
+    if (fadeTimeoutRef.current) {
+      window.clearTimeout(fadeTimeoutRef.current)
+      fadeTimeoutRef.current = null
+    }
+  }, [])
+
+  const triggerChange = React.useCallback((updater: (prev: number) => number) => {
+    clearFadeTimeout()
+    setIsFading(true)
+    fadeTimeoutRef.current = window.setTimeout(() => {
+      setActiveIndex((prev) => updater(prev))
+      setIsFading(false)
+    }, FADE_DURATION)
+  }, [clearFadeTimeout, FADE_DURATION])
+
+  const scheduleAutoRotate = React.useCallback(() => {
+    clearRotationTimeout()
+    rotationTimeoutRef.current = window.setTimeout(() => {
+      triggerChange((prev) => (prev + 1) % CAROUSEL_REVIEWS.length)
+      scheduleAutoRotate()
+    }, ROTATE_INTERVAL)
+  }, [clearRotationTimeout, triggerChange, ROTATE_INTERVAL])
 
   React.useEffect(() => {
-    startAutoRotate()
+    scheduleAutoRotate()
     return () => {
-      clearAutoRotate()
+      clearRotationTimeout()
+      clearFadeTimeout()
     }
-  }, [startAutoRotate, clearAutoRotate])
+  }, [scheduleAutoRotate, clearRotationTimeout, clearFadeTimeout])
 
   const handleNext = React.useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % CAROUSEL_REVIEWS.length)
-    startAutoRotate()
-  }, [startAutoRotate])
+    triggerChange((prev) => (prev + 1) % CAROUSEL_REVIEWS.length)
+    scheduleAutoRotate()
+  }, [triggerChange, scheduleAutoRotate])
 
   const handlePrev = React.useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + CAROUSEL_REVIEWS.length) % CAROUSEL_REVIEWS.length)
-    startAutoRotate()
-  }, [startAutoRotate])
+    triggerChange((prev) => (prev - 1 + CAROUSEL_REVIEWS.length) % CAROUSEL_REVIEWS.length)
+    scheduleAutoRotate()
+  }, [triggerChange, scheduleAutoRotate])
 
   const activeReview = CAROUSEL_REVIEWS[activeIndex]
   const supportingReviews = React.useMemo(() => {
@@ -341,7 +364,13 @@ function CarouselReviewSurface({ className }: { className?: string }) {
   }, [activeIndex])
 
   return (
-    <div className={clsx('glass-noir-panel rounded-3xl border border-[var(--glass-border)] bg-[var(--glass)] p-8 md:p-12 backdrop-blur-xl', className)}>
+    <div
+      className={clsx(
+        'glass-noir-panel rounded-3xl border border-[var(--glass-border)] bg-[var(--glass)] p-8 md:p-12 backdrop-blur-xl transition-opacity duration-700 ease-in-out',
+        isFading ? 'opacity-0' : 'opacity-100',
+        className,
+      )}
+    >
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div className="space-y-3">
           <GoogleReviewBadge subtitle="Real feedback from verified customers" />

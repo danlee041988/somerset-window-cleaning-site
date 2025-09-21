@@ -1,40 +1,16 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import securityHeadersConfig from '@/config/security-headers.json'
 
 const isLocalhost = (hostname: string | null) => !hostname || hostname.endsWith('.local') || hostname === 'localhost'
-
-const securityHeaders: [string, string][] = [
-  [
-    'Content-Security-Policy',
-    [
-      "default-src 'self'",
-      "img-src 'self' data: https://*",
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com data:",
-      "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com",
-      "frame-ancestors 'self'",
-      "form-action 'self'"
-    ].join('; '),
-  ],
-  ['X-Frame-Options', 'SAMEORIGIN'],
-  ['X-Content-Type-Options', 'nosniff'],
-  ['Referrer-Policy', 'strict-origin-when-cross-origin'],
-  ['Permissions-Policy', 'camera=(), microphone=(), geolocation=()'],
-  ['Cross-Origin-Opener-Policy', 'same-origin'],
-  ['Cross-Origin-Resource-Policy', 'same-origin'],
-]
+const STRICT_TRANSPORT_SECURITY = securityHeadersConfig.strictTransportSecurity
 
 export function middleware(request: NextRequest) {
   const response = NextResponse.next()
   const hostname = request.nextUrl.hostname
 
-  for (const [header, value] of securityHeaders) {
-    response.headers.set(header, value)
-  }
-
   if (!isLocalhost(hostname)) {
-    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
+    response.headers.set('Strict-Transport-Security', STRICT_TRANSPORT_SECURITY)
   }
 
   return response

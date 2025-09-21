@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Button from '@/components/ui/Button'
 import Section from '@/components/ui/Section'
 import LightboxGallery from '@/components/LightboxGallery'
@@ -6,6 +7,12 @@ import { HERO_IMAGES, GALLERY_IMAGES } from '@/content/image-manifest'
 import Image from 'next/image'
 import CaseStudy from '@/components/CaseStudy'
 import ServiceTabsPreview from '@/components/ServiceTabsPreview'
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+}
 
 const HOME_BOOKING_STEPS = [
   {
@@ -43,7 +50,7 @@ export default function HomePage() {
           priority
           className="absolute inset-0 object-cover opacity-70"
           style={{ filter: 'brightness(2.1)' }}
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1280px"
         />
         {/* Softer gradient overlay for improved brightness */}
         <div className="pointer-events-none absolute inset-0 bg-radial-glow" aria-hidden />
@@ -72,7 +79,6 @@ export default function HomePage() {
         spacing="relaxed"
       >
         <div className="feature-card feature-card--minimal relative overflow-hidden">
-          <span className="pointer-events-none absolute -top-24 left-6 h-52 w-52 rounded-full bg-brand-red/35 blur-[140px]" aria-hidden />
           <span className="pointer-events-none absolute bottom-[-100px] right-[-80px] h-72 w-72 rounded-full bg-white/12 blur-[160px]" aria-hidden />
 
           <div className="feature-card__content space-y-10 p-8 md:p-12">
@@ -89,7 +95,6 @@ export default function HomePage() {
                 const displayNumber = stepPosition.toString().padStart(2, '0')
                 return (
                   <div key={step.title} className="group relative h-full">
-                    <span className="pointer-events-none absolute -top-10 right-6 hidden h-24 w-24 rounded-full bg-brand-red/30 blur-[90px] transition-opacity duration-300 group-hover:opacity-80 sm:block" aria-hidden />
                     <div className="relative flex h-full flex-col gap-6 rounded-3xl border border-white/12 bg-black/65 p-6 text-[#F5F7FA] shadow-[0_26px_60px_-42px_rgba(0,0,0,0.9)] transition-transform duration-300 hover:-translate-y-1 hover:border-brand-red/45">
                       <div className="flex items-center gap-4">
                         <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-red/55 bg-brand-red/12 text-sm font-semibold uppercase tracking-[0.32em] text-brand-red">

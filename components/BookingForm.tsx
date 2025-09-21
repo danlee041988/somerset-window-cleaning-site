@@ -1,1815 +1,1855 @@
 "use client"
 
 import React from 'react'
-import { useForm, useController } from 'react-hook-form'
 import emailjs from '@emailjs/browser'
-import ReCaptcha from './features/contact/ReCaptcha'
-import SimpleAddressInput from './features/contact/SimpleAddressInput'
+import Button from '@/components/ui/Button'
+import ReCaptcha from '@/components/features/contact/ReCaptcha'
+import SimpleAddressInput from '@/components/features/contact/SimpleAddressInput'
 import { analytics } from '@/lib/analytics'
-import {
-  POSTCODE_PRIMARY_AREAS,
-  findFrequencyForPostcode,
-  type FrequencyLookupResult,
-} from '@/content/route-schedule'
 
-interface BookingFormData {
-  first_name: string
-  last_name: string
-  customer_email: string
-  customer_phone: string
-  postcode: string
-  property_address: string
-  services: string[]
-  service_frequency: string
-  preferred_contact_method: ContactMethod
-  bedroom_band: BedroomBand
-  property_type: PropertyType
-  has_extension: BooleanChoice
-  has_conservatory: BooleanChoice
-  preferred_date: string
-  intent: IntentOption
-  special_requirements?: string
-  customer_type: 'new' | 'existing'
-  submission_date?: string
-  submission_time?: string
-  website?: string
-  recaptcha?: string
-}
-
-type BedroomBand = '2-3' | '4' | '5'
-type PropertyType = 'detached' | 'semi' | 'terraced' | 'bungalow'
-type IntentOption = 'book' | 'quote'
-type ContactMethod = 'email' | 'phone'
-type BooleanChoice = 'yes' | 'no'
-type StepKey = 'contact' | 'property' | 'services'
-
-type PriceLine = {
-  label: string
-  amount?: number
-  note?: string
-}
-
-type DateOption = {
-  id: string
-  iso: string
-  label: string
-  matchLabel: string
-}
-
-type ServiceDetail = {
-  priceLabel?: string
-  frequencyLabel?: string
-  secondary?: string
-  bonusNote?: string
-}
-
-type StepCardProps = {
-  index: number
-  title: string
-  description: string
-  isActive: boolean
-  isComplete: boolean
-  locked?: boolean
-  onOpen: () => void
-  onContinue?: () => void
-  onBack?: () => void
-  continueDisabled?: boolean
-  children: React.ReactNode
-}
-
-function StepCard({
-  index,
-  title,
-  description,
-  isActive,
-  isComplete,
-  locked = false,
-  onOpen,
-  onContinue,
-  onBack,
-  continueDisabled,
-  children,
-}: StepCardProps) {
-  const statusLabel = locked ? 'Locked' : isComplete ? 'Completed' : isActive ? 'In progress' : 'Ready'
-
-  return (
-    <div className={`overflow-hidden rounded-3xl border ${isActive ? 'border-brand-red/60 bg-white/10' : 'border-white/10 bg-white/5'}`}>
-      <button
-        type="button"
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
-        onClick={() => {
-          if (!locked) onOpen()
-        }}
-        disabled={locked}
-      >
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">Step {index + 1}</span>
-          <h3 className="mt-1 text-lg font-semibold text-white">{title}</h3>
-          <p className="text-sm text-white/60">{description}</p>
-        </div>
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] ${
-            isComplete
-              ? 'bg-emerald-500/20 text-emerald-300'
-              : locked
-              ? 'bg-white/5 text-white/40'
-              : 'bg-white/10 text-white/70'
-          }`}
-        >
-          {statusLabel}
-        </span>
-      </button>
-      <div className={`border-t border-white/10 px-5 pb-6 pt-6 ${isActive ? 'space-y-6' : 'hidden'}`}>
-        {children}
-        <div className="flex items-center justify-between">
-          {onBack ? (
-            <button
-              type="button"
-              onClick={onBack}
-              className="rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/70 transition hover:border-white/40 hover:text-white"
-            >
-              Back
-            </button>
-          ) : (
-            <span />
-          )}
-
-          {onContinue ? (
-            <button
-              type="button"
-              onClick={onContinue}
-              disabled={continueDisabled}
-              className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition ${
-                continueDisabled
-                  ? 'border-white/10 text-white/40'
-                  : 'border-emerald-400/70 bg-emerald-500/15 text-white hover:border-emerald-400'
-              }`}
-            >
-              Continue
-            </button>
-          ) : (
-            <span />
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const SERVICE_OPTIONS = [
-  'Window Cleaning',
-  'Gutter Clearing',
-  'Conservatory Roof Cleaning',
-  'Solar Panel Cleaning',
-  'Fascias & Soffits Cleaning',
-  'External Commercial Cleaning',
-] as const
-
-type ServiceName = (typeof SERVICE_OPTIONS)[number]
-
-const SERVICE_SUMMARY: Record<(typeof SERVICE_OPTIONS)[number], string> = {
-  'Window Cleaning': 'Pure water finish with frames, sills, and doors every visit.',
-  'Gutter Clearing': 'High-reach vacuum clearing with camera inspection.',
-  'Conservatory Roof Cleaning': 'Gentle treatment to restore clarity and seals.',
-  'Solar Panel Cleaning': 'Deionised water to keep arrays at peak efficiency.',
-  'Fascias & Soffits Cleaning': 'Detail clean to brighten exterior PVC.',
-  'External Commercial Cleaning': 'RAMS-ready exterior cleaning for businesses.',
-}
-
-const SERVICE_FREQUENCIES = [
-  'Every 4 weeks (core window frequency)',
-  'Every 8 weeks',
-  'One-off clean',
-  'Unsure - please advise',
-] as const
-
-const BEDROOM_OPTIONS: { id: BedroomBand; label: string; description: string }[] = [
-  { id: '2-3', label: '2-3 bedrooms', description: 'Standard semis, terraces, and bungalows.' },
-  { id: '4', label: '4 bedrooms', description: 'Larger semis or detached homes.' },
-  { id: '5', label: '5+ bedrooms', description: 'Large detached or extended properties.' },
-]
-
-const PROPERTY_TYPES: { id: PropertyType; label: string; description: string; attached: boolean }[] = [
-  { id: 'detached', label: 'Detached', description: 'No shared walls.', attached: false },
-  { id: 'semi', label: 'Semi-detached', description: 'One shared wall.', attached: false },
-  { id: 'terraced', label: 'Terraced / End terrace', description: 'Attached property.', attached: true },
-  { id: 'bungalow', label: 'Bungalow / Flat', description: 'Single level with easy access.', attached: false },
-]
-
-const CONTACT_METHOD_OPTIONS: { id: ContactMethod; label: string; description: string }[] = [
-  {
-    id: 'email',
-    label: 'Email updates',
-    description: 'We will confirm details and send reminders to your email address.',
-  },
-  {
-    id: 'phone',
-    label: 'Phone call',
-    description: 'Prefer a call back? We will ring the number you provide.',
-  },
-]
-
-const YES_NO_OPTIONS: { id: BooleanChoice; label: string; description: string }[] = [
-  { id: 'no', label: 'No', description: 'Not applicable or none on the property.' },
-  { id: 'yes', label: 'Yes', description: 'Please allow for additional access/cleaning.' },
-]
-
-const WINDOW_BASE_PRICE: Record<BedroomBand, number> = {
-  '2-3': 25,
-  '4': 30,
-  '5': 35,
-}
-
-const PROPERTY_TYPE_ADJUSTMENT: Record<PropertyType, number> = {
-  detached: 0,
-  semi: 0,
-  terraced: 5,
-  bungalow: 0,
-}
-
-const GUTTER_CLEAN_PRICE = 80
-const FASCIA_SOFT_PRICE = 100
-
-const GO_CARDLESS_URL = process.env.NEXT_PUBLIC_GOCARDLESS_PAYMENT_URL || ''
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
 const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || ''
 const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_booking_form'
+const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
 
-const EMPTY_SERVICES: string[] = []
-const MAX_DATES_PER_MATCH = 4
+const DETACHED_SURCHARGE = 5
+const EXTENSION_SURCHARGE = 5
+const CONSERVATORY_SURCHARGE = 5
+const TOWNHOUSE_WINDOW_SURCHARGE = 5
+const TOWNHOUSE_GUTTER_SURCHARGE = 20
+const TOWNHOUSE_FASCIA_SURCHARGE = 20
 
-const BANK_HOLIDAYS = new Set([
-  '2025-05-05',
-  '2025-05-26',
-  '2025-08-25',
-  '2025-12-25',
-  '2025-12-26',
-  '2026-01-01',
-  '2026-04-03',
-  '2026-04-06',
-  '2026-05-04',
-  '2026-05-25',
-  '2026-08-31',
-  '2026-12-25',
-  '2026-12-28',
-])
+const formatCurrency = (value: number) => `£${value.toFixed(0)}`
 
-const adjustForBankHoliday = (iso: string): string => {
-  let date = new Date(`${iso}T00:00:00Z`)
-  while (date.getUTCDay() === 0 || date.getUTCDay() === 6 || BANK_HOLIDAYS.has(date.toISOString().split('T')[0])) {
-    date = new Date(date.getTime() + 24 * 60 * 60 * 1000)
+type PropertyCategory = 'residential' | 'commercial'
+type BedroomBand = '1-2' | '3' | '4' | '5' | '6+'
+type PropertyType =
+  | 'terraced'
+  | 'semi'
+  | 'detached'
+  | 'bungalow'
+  | 'townhouse'
+  | 'flat'
+type CommercialType = 'shopfront' | 'office' | 'industrial' | 'hospitality' | 'education' | 'other'
+type FrequencyId =
+  | '4'
+  | '8'
+  | 'one-off'
+  | 'fortnightly'
+  | 'monthly'
+  | 'quarterly'
+  | '26'
+  | 'ad-hoc'
+type IntentOption = 'book' | 'quote'
+type CustomerType = 'new' | 'existing'
+
+type Step = 1 | 2 | 3
+
+const TOTAL_STEPS: Step = 3
+
+const CONFIDENCE_COPY: Record<Step, { heading: string; points: string[]; helper: string }> = {
+  1: {
+    heading: 'Why people book with us',
+    points: [
+      'Reply within one working day with available slots',
+      'No payment due until the clean is complete',
+      'Reminder text before every visit with easy rescheduling',
+    ],
+    helper: 'Prefer a quick chat? Call 01458 860339 or send us a WhatsApp message.',
+  },
+  2: {
+    heading: 'Your plan so far',
+    points: [
+      'Live pricing updates as you toggle services on or off',
+      'Bundle gutter & fascia care to unlock complimentary window cleaning',
+      'We double-check access and timings before confirming the round',
+    ],
+    helper: 'Need help choosing services? Call 01458 860339 and we’ll talk it through.',
+  },
+  3: {
+    heading: 'Before you send',
+    points: [
+      'We use your details purely to coordinate the visit',
+      'Update your preferences or frequency at any time',
+      'A member of the team will confirm by phone or email',
+    ],
+    helper: 'Something complicated to explain? Call 01458 860339 or add it to the notes field.',
+  },
+}
+
+const GUTTER_BASE_PRICING: Record<BedroomBand, Record<'semi' | 'detached', number>> = {
+  '1-2': { semi: 70, detached: 90 },
+  '3': { semi: 80, detached: 100 },
+  '4': { semi: 100, detached: 120 },
+  '5': { semi: 120, detached: 140 },
+  '6+': { semi: 140, detached: 160 },
+}
+
+const FASCIA_BASE_PRICING: Record<BedroomBand, Record<'semi' | 'detached', number>> = {
+  '1-2': { semi: 90, detached: 110 },
+  '3': { semi: 100, detached: 120 },
+  '4': { semi: 120, detached: 140 },
+  '5': { semi: 140, detached: 160 },
+  '6+': { semi: 160, detached: 180 },
+}
+
+const STEP_LABELS: Array<{ id: Step; label: string; helper: string }> = [
+  { id: 1, label: 'Property', helper: 'Share your property basics' },
+  { id: 2, label: 'Services', helper: 'Pick the services you need' },
+  { id: 3, label: 'Your details', helper: 'Add your contact information' },
+]
+
+const SERVICE_PRESET_MAP: Record<string, (state: PricingState) => PricingState> = {
+  'gutter-clearing': (state) => ({
+    ...state,
+    propertyCategory: 'residential',
+    includeGutter: true,
+    includeFascia: false,
+    frequency: 'one-off',
+  }),
+  'fascias-soffits': (state) => ({
+    ...state,
+    propertyCategory: 'residential',
+    includeGutter: false,
+    includeFascia: true,
+    frequency: 'one-off',
+  }),
+  'conservatory-cleaning': (state) => ({
+    ...state,
+    propertyCategory: 'residential',
+    hasConservatory: true,
+    isBespoke: true,
+    frequency: 'one-off',
+  }),
+  'solar-cleaning': (state) => ({
+    ...state,
+    propertyCategory: 'residential',
+    isBespoke: true,
+    frequency: 'one-off',
+  }),
+  'commercial-cleaning': (state) => ({
+    ...state,
+    propertyCategory: 'commercial',
+    includeGutter: false,
+    includeFascia: false,
+    hasExtension: false,
+    isBespoke: false,
+    frequency: 'monthly',
+    commercialServices: state.commercialServices.length
+      ? state.commercialServices
+      : ['external_windows'],
+  }),
+}
+
+const normalisePropertyTypeForPricing = (propertyType: PropertyType): 'semi' | 'detached' => {
+  switch (propertyType) {
+    case 'detached':
+    case 'bungalow':
+      return 'detached'
+    default:
+      return 'semi'
   }
-  return date.toISOString().split('T')[0]
 }
 
-const getTodayIso = (): string => {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+const getGutterPrice = (bedrooms: BedroomBand, propertyType: PropertyType): number => {
+  const bedroomPrices = GUTTER_BASE_PRICING[bedrooms] ?? GUTTER_BASE_PRICING['3']
+  const normalisedType = normalisePropertyTypeForPricing(propertyType)
+  return bedroomPrices?.[normalisedType] ?? bedroomPrices?.semi ?? 80
 }
 
-const formatDateForDisplay = (iso: string): string => {
-  const date = new Date(`${iso}T00:00:00Z`)
-  return date.toLocaleDateString('en-GB', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })
+const getFasciaPrice = (bedrooms: BedroomBand, propertyType: PropertyType): number => {
+  const bedroomPrices = FASCIA_BASE_PRICING[bedrooms] ?? FASCIA_BASE_PRICING['3']
+  const normalisedType = normalisePropertyTypeForPricing(propertyType)
+  return bedroomPrices?.[normalisedType] ?? bedroomPrices?.semi ?? 100
 }
 
-const generateFallbackDateOptions = (count = 4): DateOption[] => {
-  const today = new Date(`${getTodayIso()}T00:00:00Z`)
-  const options: DateOption[] = []
-  let cursor = new Date(today.getTime())
-
-  while (options.length < count) {
-    cursor = new Date(cursor.getTime() + 24 * 60 * 60 * 1000)
-    const iso = adjustForBankHoliday(cursor.toISOString().split('T')[0])
-    if (options.some((option) => option.iso === iso)) {
-      continue
-    }
-    options.push({
-      id: `fallback-${options.length}`,
-      iso,
-      label: `${formatDateForDisplay(iso)} · Somerset route`,
-      matchLabel: 'Somerset route',
-    })
-    cursor = new Date(`${iso}T00:00:00Z`)
-  }
-
-  return options
+type PricingState = {
+  propertyCategory: PropertyCategory
+  bedrooms: BedroomBand
+  propertyType: PropertyType
+  frequency: FrequencyId
+  includeGutter: boolean
+  includeFascia: boolean
+  hasExtension: boolean
+  hasConservatory: boolean
+  isBespoke: boolean
+  commercialType: CommercialType | ''
+  commercialNotes: string
+  commercialServices: string[]
 }
 
-const formatCurrency = (value: number): string =>
-  new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(value)
-
-interface PricingSummary {
-  lines: PriceLine[]
-  total: number
-  totalFormatted: string
-  breakdownText: string
-  discountNote?: string
+type CustomerState = {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  postcode: string
+  address: string
+  notes: string
+  intent: IntentOption
+  customerType: CustomerType
+  website: string
 }
 
-export default function BookingForm({
-  defaultService = '',
-  defaultAddress = '',
-  defaultIntent = 'book',
-  defaultPostcode = '',
-  className = '',
-}: {
+const BEDROOM_OPTIONS: Array<{
+  id: BedroomBand
+  label: string
+  description: string
+  price: number
+}> = [
+  {
+    id: '1-2',
+    label: '1-2 bedrooms',
+    description: 'Compact terraces, semis, or flats.',
+    price: 22,
+  },
+  {
+    id: '3',
+    label: '3 bedrooms',
+    description: 'Typical family homes across Somerset.',
+    price: 25,
+  },
+  {
+    id: '4',
+    label: '4 bedrooms',
+    description: 'Roomier homes up to two storeys.',
+    price: 30,
+  },
+  {
+    id: '5',
+    label: '5 bedrooms',
+    description: 'Large detached or extended properties.',
+    price: 35,
+  },
+  {
+    id: '6+',
+    label: '6+ bedrooms',
+    description: 'Estates, annexes, or multi-dwelling homes (manual quote).',
+    price: 40,
+  },
+]
+
+const PROPERTY_STYLE_OPTIONS: Array<{
+  id: PropertyType
+  label: string
+  description: string
+}> = [
+  {
+    id: 'terraced',
+    label: 'Terraced',
+    description: 'Joined both sides with shared frontage access.',
+  },
+  {
+    id: 'semi',
+    label: 'Semi-detached',
+    description: 'One shared wall with side or rear access.',
+  },
+  {
+    id: 'detached',
+    label: 'Detached',
+    description: 'Fully detached with access all round.',
+  },
+  {
+    id: 'bungalow',
+    label: 'Bungalow',
+    description: 'Single storey, full perimeter access.',
+  },
+  {
+    id: 'townhouse',
+    label: 'Townhouse / 3 storey',
+    description: 'Vertical layout across three floors.',
+  },
+  {
+    id: 'flat',
+    label: 'Apartment',
+    description: 'Upper level or shared entrance access.',
+  },
+]
+
+const PROPERTY_CATEGORY_OPTIONS: Array<{
+  id: PropertyCategory
+  title: string
+  description?: string
+}> = [
+  {
+    id: 'residential',
+    title: 'Residential home',
+  },
+  {
+    id: 'commercial',
+    title: 'Commercial premises',
+  },
+]
+
+const COMMERCIAL_TYPE_OPTIONS: Array<{ id: CommercialType; label: string }> = [
+  { id: 'shopfront', label: 'Shopfront / retail' },
+  { id: 'office', label: 'Office or co-working space' },
+  { id: 'industrial', label: 'Industrial / warehouse' },
+  { id: 'hospitality', label: 'Hospitality (pub, restaurant, hotel)' },
+  { id: 'education', label: 'School / educational' },
+  { id: 'other', label: 'Other / bespoke premises' },
+]
+
+const COMMERCIAL_SERVICE_OPTIONS: Array<{ id: string; label: string; description?: string }> = [
+  {
+    id: 'external_windows',
+    label: 'Exterior window cleaning',
+    description: 'Pure-water pole or cradle work for frontage and elevation glass.',
+  },
+  {
+    id: 'internal_windows',
+    label: 'Internal window cleaning',
+    description: 'Lobby, partition, and internal glazing wiped and detailed.',
+  },
+  {
+    id: 'signage',
+    label: 'Signage & cladding washing',
+    description: 'Keep fascia signage, suits, and canopy panels presentable.',
+  },
+  {
+    id: 'gutter_clearing',
+    label: 'Roofline & gutter maintenance',
+    description: 'Vacuum clearing for commercial rooflines and gutter runs.',
+  },
+  {
+    id: 'solar',
+    label: 'Solar / PV panel cleaning',
+    description: 'Pure-water clean for roof arrays to maintain efficiency.',
+  },
+  {
+    id: 'bespoke_additional',
+    label: 'Other specialist cleaning',
+    description: 'Let us know in notes—cladding, atriums, rope access, etc.',
+  },
+]
+
+const RESIDENTIAL_FREQUENCY_OPTIONS: Array<{
+  id: FrequencyId
+  label: string
+  helper: string
+}> = [
+  {
+    id: '4',
+    label: 'Every 4 weeks',
+    helper: 'Our core round – keeps frames spotless',
+  },
+  {
+    id: '8',
+    label: 'Every 8 weeks',
+    helper: 'Bi-monthly for lower traffic homes',
+  },
+  {
+    id: 'one-off',
+    label: 'One-off clean',
+    helper: 'Perfect before events or listings',
+  },
+]
+
+const COMMERCIAL_FREQUENCY_OPTIONS: Array<{
+  id: FrequencyId
+  label: string
+  helper: string
+}> = [
+  {
+    id: '8',
+    label: 'Every 8 weeks',
+    helper: 'Bi-monthly cadence for regular frontage upkeep.',
+  },
+  {
+    id: 'fortnightly',
+    label: 'Every 2 weeks',
+    helper: 'Keeps glazing presentable for steady customer traffic.',
+  },
+  {
+    id: 'monthly',
+    label: 'Every month',
+    helper: 'Popular for offices and shared workspace.',
+  },
+  {
+    id: 'quarterly',
+    label: 'Quarterly maintenance',
+    helper: 'Ideal for signage, high-level glazing or larger sites.',
+  },
+  {
+    id: '26',
+    label: 'Every 26 weeks',
+    helper: 'Twice-yearly deep maintenance for seasonal refreshes.',
+  },
+  {
+    id: 'ad-hoc',
+    label: 'One-off / ad-hoc',
+    helper: 'Let us know when you need a visit and we’ll align availability.',
+  },
+]
+
+const INITIAL_PRICING_STATE: PricingState = {
+  propertyCategory: 'residential',
+  bedrooms: '3',
+  propertyType: 'semi',
+  frequency: '4',
+  includeGutter: false,
+  includeFascia: false,
+  hasExtension: false,
+  hasConservatory: false,
+  isBespoke: false,
+  commercialType: '',
+  commercialNotes: '',
+  commercialServices: [],
+}
+
+const initialCustomerState = (
+  defaultIntent: IntentOption,
+  defaultPostcode: string,
+  defaultAddress: string,
+): CustomerState => ({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  postcode: defaultPostcode.toUpperCase(),
+  address: defaultAddress,
+  notes: '',
+  intent: defaultIntent,
+  customerType: 'new',
+  website: '',
+})
+
+const bedroomLabel = (id: BedroomBand) => BEDROOM_OPTIONS.find((option) => option.id === id)?.label ?? id
+const propertyTypeLabel = (id: PropertyType) =>
+  PROPERTY_STYLE_OPTIONS.find((option) => option.id === id)?.label ?? id
+const commercialTypeLabel = (id: CommercialType | '') =>
+  COMMERCIAL_TYPE_OPTIONS.find((option) => option.id === id)?.label ?? 'General commercial'
+const commercialServiceLabel = (id: string) =>
+  COMMERCIAL_SERVICE_OPTIONS.find((option) => option.id === id)?.label ?? id
+const frequencyLabel = (id: FrequencyId) =>
+  RESIDENTIAL_FREQUENCY_OPTIONS.find((option) => option.id === id)?.label ??
+  COMMERCIAL_FREQUENCY_OPTIONS.find((option) => option.id === id)?.label ??
+  id
+
+interface BookingFormProps {
   defaultService?: string
   defaultAddress?: string
   defaultIntent?: IntentOption
   defaultPostcode?: string
   className?: string
-}) {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    setError,
-    clearErrors,
-    setValue,
-    unregister,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<BookingFormData>({
-    defaultValues: {
-      first_name: '',
-      last_name: '',
-      customer_email: '',
-      customer_phone: '',
-      postcode: defaultPostcode ? defaultPostcode.toUpperCase() : '',
-      property_address: defaultAddress || '',
-      services: defaultService ? [defaultService] : [],
-      service_frequency: 'Every 4 weeks (core window frequency)',
-      bedroom_band: '2-3',
-      property_type: 'semi',
-      preferred_contact_method: 'email',
-      has_extension: 'no',
-      has_conservatory: 'no',
-      preferred_date: '',
-      intent: defaultIntent,
-      customer_type: 'new',
-    },
-  })
+}
 
-  const { field: contactMethodField } = useController({
-    name: 'preferred_contact_method',
-    control,
-    defaultValue: 'email',
-  })
-
-  const {
-    name: preferredContactFieldName,
-    value: preferredContactValue,
-    onChange: setPreferredContactMethod,
-    ref: preferredContactRef,
-  } = contactMethodField
-
-  const [status, setStatus] = React.useState<'idle' | 'success' | 'error'>('idle')
+export default function BookingForm({
+  defaultAddress = '',
+  defaultIntent = 'book',
+  defaultPostcode = '',
+  className = '',
+  defaultService = '',
+}: BookingFormProps) {
+  const [step, setStep] = React.useState<Step>(1)
+  const [pricing, setPricing] = React.useState<PricingState>(INITIAL_PRICING_STATE)
+  const [customer, setCustomer] = React.useState<CustomerState>(
+    initialCustomerState(defaultIntent, defaultPostcode, defaultAddress),
+  )
+  const [status, setStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
-  const [formStarted, setFormStarted] = React.useState(false)
-  const [frequencyMatch, setFrequencyMatch] = React.useState<FrequencyLookupResult | null>(null)
-  const [coverageStatus, setCoverageStatus] = React.useState<'unknown' | 'covered' | 'outside'>('unknown')
-  const [dateOptions, setDateOptions] = React.useState<DateOption[]>([])
-  const [selectedDateId, setSelectedDateId] = React.useState<string>('')
-  const [selectedDateLabel, setSelectedDateLabel] = React.useState<string>('')
-  const [lastIntent, setLastIntent] = React.useState<IntentOption>(defaultIntent)
-  const start = React.useRef<number>(Date.now())
-  const firstNameInputRef = React.useRef<HTMLInputElement | null>(null)
-  const lastNameInputRef = React.useRef<HTMLInputElement | null>(null)
-
-  React.useEffect(() => {
-    if (!PUBLIC_KEY) {
-      console.error('EmailJS public key missing: configure NEXT_PUBLIC_EMAILJS_PUBLIC_KEY to enable booking submissions')
-      return
-    }
-
-    try {
-      emailjs.init(PUBLIC_KEY)
-      console.info('EmailJS initialised for booking form')
-    } catch (error) {
-      console.error('Booking form failed to initialise EmailJS:', error)
-    }
-  }, [])
-
-  const handleEnterToFocus = React.useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>, nextRef: React.RefObject<HTMLInputElement>) => {
-      if (event.key !== 'Enter') return
-      event.preventDefault()
-      nextRef.current?.focus()
-    },
-    [],
-  )
-
-  const selectedServices = watch('services') ?? EMPTY_SERVICES
-  const customerType = watch('customer_type') || 'new'
-  const postcodeValue = watch('postcode') || ''
-  const postcodeProgressLength = React.useMemo(
-    () => postcodeValue.replace(/[^A-Za-z0-9]/g, '').length,
-    [postcodeValue],
-  )
-
-  React.useEffect(() => {
-    if (!postcodeValue) return
-    const upper = postcodeValue.toUpperCase()
-    if (postcodeValue !== upper) {
-      setValue('postcode', upper, { shouldDirty: true, shouldTouch: true })
-    }
-  }, [postcodeValue, setValue])
-  const bedroomBand = watch('bedroom_band')
-  const propertyType = watch('property_type')
-  const preferredDateValue = watch('preferred_date')
-  const intent = watch('intent') as IntentOption | undefined
-  const currentIntent: IntentOption = intent || 'book'
-  const firstNameValue = watch('first_name') || ''
-  const lastNameValue = watch('last_name') || ''
-  const customerEmailValue = watch('customer_email') || ''
-  const customerPhoneValue = watch('customer_phone') || ''
-  const preferredContactMethod = (preferredContactValue as ContactMethod) || 'email'
-  const propertyAddressValue = watch('property_address') || ''
-  const hasExtension = watch('has_extension') || 'no'
-  const hasConservatory = watch('has_conservatory') || 'no'
-  const serviceFrequencyValue = watch('service_frequency') || SERVICE_FREQUENCIES[0]
-  const firstNameField = register('first_name', {
-    required: 'First name is required',
-    minLength: { value: 2, message: 'Please enter at least 2 characters' },
-  })
-  const lastNameField = register('last_name', {
-    required: 'Last name is required',
-    minLength: { value: 2, message: 'Please enter at least 2 characters' },
+  const [successSummary, setSuccessSummary] = React.useState<{ total: string; services: string }>({
+    total: '',
+    services: '',
   })
 
-  const stepOrder = React.useMemo<StepKey[]>(() => ['contact', 'property', 'services'], [])
-  const [activeStep, setActiveStep] = React.useState<StepKey>('contact')
+  const startTime = React.useRef<number>(Date.now())
 
-  const contactComplete = Boolean(
-    firstNameValue &&
-    lastNameValue &&
-    customerEmailValue &&
-    customerPhoneValue &&
-    postcodeValue &&
-    preferredContactMethod,
-  )
-
-  const propertyComplete = Boolean(
-    propertyAddressValue &&
-    bedroomBand &&
-    propertyType &&
-    hasExtension &&
-    hasConservatory,
-  )
-
-  const propertyReady = propertyComplete
-
-  const openStep = React.useCallback(
-    (step: StepKey) => {
-      if (step === 'property' && !contactComplete) return
-      if (step === 'services' && !propertyComplete) return
-      setActiveStep(step)
-    },
-    [contactComplete, propertyComplete],
-  )
-
-  const goToNextStep = React.useCallback(() => {
-    const index = stepOrder.indexOf(activeStep)
-    const next = stepOrder[index + 1]
-    if (!next) return
-    openStep(next)
-  }, [activeStep, openStep, stepOrder])
-
-  const goToPreviousStep = React.useCallback(() => {
-    const index = stepOrder.indexOf(activeStep)
-    const prev = stepOrder[index - 1]
-    if (!prev) return
-    setActiveStep(prev)
-  }, [activeStep, stepOrder])
-
-  type StepCardProps = {
-    index: number
-    title: string
-    description: string
-    isActive: boolean
-    isComplete: boolean
-    locked?: boolean
-    onOpen: () => void
-    onContinue?: () => void
-    onBack?: () => void
-    continueDisabled?: boolean
-    children: React.ReactNode
+  const goToStep = (next: Step) => {
+    setErrorMessage(null)
+    setStep(next)
+    if (typeof window !== 'undefined') {
+      const prefersReducedMotion =
+        typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+    }
   }
 
-  const getServiceDetails = React.useCallback(
-    (service: ServiceName): ServiceDetail => {
-      if (!propertyReady) {
+  React.useEffect(() => {
+    setCustomer((prev) => ({
+      ...prev,
+      postcode: defaultPostcode ? defaultPostcode.toUpperCase() : prev.postcode,
+      address: defaultAddress || prev.address,
+      intent: defaultIntent,
+    }))
+  }, [defaultPostcode, defaultAddress, defaultIntent])
+
+  React.useEffect(() => {
+    if (!defaultService) return
+    const presetKey = defaultService.toLowerCase()
+    setPricing((prev) => {
+      const preset = SERVICE_PRESET_MAP[presetKey]
+      if (!preset) return prev
+      return preset(prev)
+    })
+  }, [defaultService])
+
+  const windowBase = BEDROOM_OPTIONS.find((option) => option.id === pricing.bedrooms)?.price ?? 0
+  const normalisedPropertyType = normalisePropertyTypeForPricing(pricing.propertyType)
+  const detachedFee = normalisedPropertyType === 'detached' ? DETACHED_SURCHARGE : 0
+  const conservatoryFee = pricing.hasConservatory ? CONSERVATORY_SURCHARGE : 0
+  const townhouseWindowFee = pricing.propertyType === 'townhouse' ? TOWNHOUSE_WINDOW_SURCHARGE : 0
+  const baseWindowPrice = windowBase + detachedFee + townhouseWindowFee
+  const oneOffWindowPrice = baseWindowPrice > 0 ? Math.ceil((baseWindowPrice * 1.3) / 5) * 5 : 0
+  const baseGutterPrice = getGutterPrice(pricing.bedrooms, pricing.propertyType)
+  const baseFasciaPrice = getFasciaPrice(pricing.bedrooms, pricing.propertyType)
+  const requiresManualQuote =
+    pricing.isBespoke || pricing.propertyCategory === 'commercial' || pricing.bedrooms === '6+'
+  const windowBundleUnlocked =
+    !requiresManualQuote &&
+    pricing.propertyCategory === 'residential' &&
+    pricing.includeGutter &&
+    pricing.includeFascia
+  const extensionFee = pricing.hasExtension ? (windowBundleUnlocked ? 0 : EXTENSION_SURCHARGE) : 0
+  const windowPrice = windowBundleUnlocked
+    ? 0
+    : pricing.frequency === 'one-off'
+    ? oneOffWindowPrice
+    : baseWindowPrice
+  const gutterPrice = pricing.includeGutter
+    ? baseGutterPrice + (pricing.propertyType === 'townhouse' ? TOWNHOUSE_GUTTER_SURCHARGE : 0)
+    : 0
+  const fasciaPrice = pricing.includeFascia
+    ? baseFasciaPrice + (pricing.propertyType === 'townhouse' ? TOWNHOUSE_FASCIA_SURCHARGE : 0)
+    : 0
+  const visitTotal = windowPrice + gutterPrice + fasciaPrice + extensionFee + conservatoryFee
+  const discountNote = windowBundleUnlocked
+    ? 'Window cleaning included with gutter & fascia bundle.'
+    : ''
+  const residentialWindowNote =
+    pricing.propertyCategory === 'residential' && pricing.hasConservatory
+      ? 'Conservatory windows are included with your exterior clean when selected.'
+      : ''
+
+  const getFrequencyMeta = (frequencyId: FrequencyId) => {
+    if (pricing.propertyCategory !== 'residential') return undefined
+
+    const bundledLabel = 'Included with gutter & fascia bundle'
+    const basePriceLabel = baseWindowPrice > 0 ? formatCurrency(baseWindowPrice) : undefined
+
+    switch (frequencyId) {
+      case '4':
+      case '8':
+        return windowBundleUnlocked ? bundledLabel : basePriceLabel
+      case 'one-off':
+        if (windowBundleUnlocked) return bundledLabel
+        return oneOffWindowPrice > 0 ? formatCurrency(oneOffWindowPrice) : undefined
+      default:
+        return undefined
+    }
+  }
+
+  const servicesSelected = React.useMemo(() => {
+    const services: string[] = []
+
+    if (pricing.propertyCategory === 'commercial') {
+      if (pricing.commercialServices.length) {
+        services.push(
+          ...pricing.commercialServices.map((serviceId) => commercialServiceLabel(serviceId)),
+        )
+      } else {
+        services.push('Commercial enquiry – services to be confirmed')
+      }
+    } else {
+      services.push('Window Cleaning')
+      if (pricing.includeGutter) services.push('Gutter Clearing (one-off add-on)')
+      if (pricing.includeFascia) services.push('Fascia & Soffit Cleaning (one-off add-on)')
+      if (pricing.hasExtension) {
+        services.push(
+          windowBundleUnlocked
+            ? 'Extension allowance (included with gutter & fascia bundle)'
+            : 'Extension allowance (one-off add-on)',
+        )
+      }
+      if (pricing.hasConservatory) services.push('Conservatory windows included')
+    }
+
+    if (requiresManualQuote) services.push('Manual quote required')
+    return services
+  }, [
+    pricing.includeGutter,
+    pricing.includeFascia,
+    pricing.hasExtension,
+    pricing.hasConservatory,
+    pricing.propertyCategory,
+    pricing.commercialServices,
+    requiresManualQuote,
+    windowBundleUnlocked,
+  ])
+
+  const propertySummary =
+    pricing.propertyCategory === 'commercial'
+      ? `Commercial property${pricing.commercialType ? ` · ${commercialTypeLabel(pricing.commercialType)}` : ''}`
+      : `${bedroomLabel(pricing.bedrooms)} · ${propertyTypeLabel(pricing.propertyType)}`
+  const propertyExtras = [
+    pricing.hasExtension ? 'Extension or porch' : null,
+    pricing.hasConservatory ? 'Conservatory windows included' : null,
+  ].filter(Boolean) as string[]
+
+  const handlePricingChange = <K extends keyof PricingState>(key: K, value: PricingState[K]) => {
+    setPricing((prev) => {
+      if (key === 'propertyCategory') {
+        const category = value as PropertyCategory
+        const commercialFrequencyIds = COMMERCIAL_FREQUENCY_OPTIONS.map((option) => option.id)
         return {
-          priceLabel: 'Complete property details to see personalised pricing.',
-          frequencyLabel: undefined,
-          secondary: undefined,
-          bonusNote: undefined,
+          ...prev,
+          propertyCategory: category,
+          commercialType: '',
+          commercialNotes: '',
+          commercialServices: [],
+          isBespoke: category === 'commercial' ? false : prev.isBespoke,
+          frequency:
+            category === 'commercial'
+              ? (COMMERCIAL_FREQUENCY_OPTIONS[0]?.id ?? 'monthly')
+              : commercialFrequencyIds.includes(prev.frequency)
+              ? '4'
+              : prev.frequency,
+          ...(category === 'commercial'
+            ? {
+                includeGutter: false,
+                includeFascia: false,
+                hasExtension: false,
+                hasConservatory: false,
+              }
+            : {}),
         }
       }
 
-      const includesGutter = selectedServices.includes('Gutter Clearing')
-      const includesFascia = selectedServices.includes('Fascias & Soffits Cleaning')
-
-      switch (service) {
-        case 'Window Cleaning': {
-          const base = WINDOW_BASE_PRICE[bedroomBand]
-          const adjustment = PROPERTY_TYPE_ADJUSTMENT[propertyType]
-          let estimate = base + adjustment
-          const notes: string[] = []
-          if (adjustment) notes.push('+£5 for attached frontage')
-          if (hasExtension === 'yes') notes.push('Extension access included')
-          if (hasConservatory === 'yes') notes.push('Conservatory glass noted')
-
-          if (includesGutter && includesFascia) {
-            return {
-              priceLabel: 'Included with gutter & fascia bundle',
-              frequencyLabel: serviceFrequencyValue,
-              secondary: notes.length ? notes.join(' · ') : undefined,
-              bonusNote: 'Bundle automatically removes the window clean charge.',
-            }
-          }
-
-          return {
-            priceLabel: `${formatCurrency(estimate)} per visit`,
-            frequencyLabel: serviceFrequencyValue,
-            secondary: notes.length ? notes.join(' · ') : undefined,
-            bonusNote: undefined,
-          }
-        }
-        case 'Gutter Clearing': {
-          const notes: string[] = ['Photo report provided']
-          if (hasExtension === 'yes') notes.push('Extension gutters covered')
-          return {
-            priceLabel: `${formatCurrency(GUTTER_CLEAN_PRICE)} per visit`,
-            frequencyLabel: 'Cleaned alongside your window appointment',
-            secondary: notes.join(' · '),
-            bonusNote: includesFascia ? 'Pair with fascias for a complimentary window clean.' : undefined,
-          }
-        }
-        case 'Fascias & Soffits Cleaning':
-          return {
-            priceLabel: `${formatCurrency(FASCIA_SOFT_PRICE)} per visit`,
-            frequencyLabel: 'Scheduled with your booking',
-            secondary: 'Full exterior PVC refresh',
-            bonusNote: includesGutter ? 'Pair with gutter clearing for a complimentary window clean.' : undefined,
-          }
-        case 'Conservatory Roof Cleaning':
-          return {
-            priceLabel: hasConservatory === 'yes' ? 'Tailored on-site pricing' : 'Optional add-on',
-            frequencyLabel: hasConservatory === 'yes' ? 'Completed during your booked visit' : undefined,
-            secondary:
-              hasConservatory === 'yes'
-                ? 'Soft-wash approach keeps seals and glazing safe.'
-                : 'Select if you would like us to restore the roof during the visit.',
-            bonusNote: undefined,
-          }
-        case 'Solar Panel Cleaning':
-          return {
-            priceLabel: 'Performance-based quote',
-            frequencyLabel: 'Completed on the same visit',
-            secondary: 'Deionised water, warranty-safe.',
-            bonusNote: undefined,
-          }
-        case 'External Commercial Cleaning':
-          return {
-            priceLabel: 'Tailored RAMS-backed proposal',
-            frequencyLabel: undefined,
-            secondary: 'Ideal for storefronts and estates.',
-            bonusNote: undefined,
-          }
-        default:
-          return {
-            priceLabel: 'Custom quote',
-            frequencyLabel: undefined,
-            secondary: undefined,
-            bonusNote: undefined,
-          }
+      if (key === 'commercialType') {
+        return { ...prev, commercialType: value as CommercialType | '' }
       }
-    },
-    [propertyReady, bedroomBand, propertyType, serviceFrequencyValue, hasExtension, hasConservatory, selectedServices],
-  )
 
-  const trackFormStart = React.useCallback(
-    (context?: string) => {
-      if (process.env.NODE_ENV === 'test') return
-      if (!formStarted) {
-        setFormStarted(true)
-        const label = context || (selectedServices.length ? selectedServices.join(', ') : 'not_selected')
-        analytics.formStart(label)
+      if (key === 'commercialNotes') {
+        return { ...prev, commercialNotes: value as string }
       }
-    },
-    [formStarted, selectedServices],
-  )
 
-  const handleServiceToggle = React.useCallback(
-    (service: string) => {
-      if (!propertyReady) {
-        return
+      if (key === 'bedrooms') {
+        return { ...prev, bedrooms: value as BedroomBand }
       }
-      const current = new Set(selectedServices)
-      if (current.has(service)) {
-        current.delete(service)
-      } else {
-        current.add(service)
-      }
-      const updated = Array.from(current)
-      setValue('services', updated, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
-      if (updated.length > 0) {
-        clearErrors('services')
-      }
-      trackFormStart(service)
-    },
-    [selectedServices, setValue, clearErrors, trackFormStart, propertyReady],
-  )
 
-  React.useEffect(() => {
-    register('services', {
-      validate: (value) => (value && value.length > 0) || 'Please choose at least one service',
+      if (key === 'propertyType') {
+        return { ...prev, propertyType: value as PropertyType }
+      }
+
+      if (key === 'isBespoke') {
+        return { ...prev, isBespoke: Boolean(value) }
+      }
+
+      return { ...prev, [key]: value }
     })
-    register('preferred_date', {
-      required: 'Select the date you would like us to visit',
-    })
+  }
 
-    return () => {
-      unregister('services')
-      unregister('preferred_date')
-    }
-  }, [register, unregister])
-
-  React.useEffect(() => {
-    const raw = postcodeValue.trim()
-    const progressLength = postcodeProgressLength
-
-    if (!raw || progressLength < 3) {
-      setFrequencyMatch(null)
-      setCoverageStatus('unknown')
-      setDateOptions([])
-      setSelectedDateId('')
-      setSelectedDateLabel('')
-      setValue('preferred_date', '', { shouldValidate: true })
-      return
-    }
-
-    const frequency = findFrequencyForPostcode(raw)
-    if (!frequency) {
-      if (progressLength < 4) {
-        setCoverageStatus('unknown')
-        setFrequencyMatch(null)
-        setDateOptions([])
-        setSelectedDateId('')
-        setSelectedDateLabel('')
-        setValue('preferred_date', '', { shouldValidate: true })
-        return
-      }
-      setFrequencyMatch(null)
-      setCoverageStatus('outside')
-      const fallback = generateFallbackDateOptions()
-      setDateOptions(fallback)
-      if (fallback.length > 0) {
-        const first = fallback[0]
-        setSelectedDateId(first.id)
-        setSelectedDateLabel(first.label)
-        setValue('preferred_date', first.iso, { shouldValidate: true })
-      } else {
-        setSelectedDateId('manual')
-        setSelectedDateLabel('Manual scheduling required')
-        setValue('preferred_date', 'Manual scheduling required', { shouldValidate: true })
-      }
-      clearErrors('preferred_date')
-      return
-    }
-
-    setFrequencyMatch(frequency)
-    setCoverageStatus('covered')
-
-    const todayIso = getTodayIso()
-    const options: DateOption[] = []
-    frequency.matches.forEach((match, matchIndex) => {
-      match.dates.slice(0, MAX_DATES_PER_MATCH).forEach((entry) => {
-        const adjustedIso = adjustForBankHoliday(entry.iso)
-        if (adjustedIso >= todayIso) {
-          options.push({
-            id: `${matchIndex}-${entry.iso}`,
-            iso: adjustedIso,
-            label: `${formatDateForDisplay(adjustedIso)} · ${match.areas}`,
-            matchLabel: `${match.day} · ${match.areas}`,
-          })
-        }
-      })
-    })
-
-    options.sort((a, b) => a.iso.localeCompare(b.iso))
-
-    if (options.length === 0) {
-      const fallback = generateFallbackDateOptions()
-      setDateOptions(fallback)
-      if (fallback.length > 0) {
-        const first = fallback[0]
-        setSelectedDateId(first.id)
-        setSelectedDateLabel(first.label)
-        setValue('preferred_date', first.iso, { shouldValidate: true })
-        clearErrors('preferred_date')
-      } else {
-        setSelectedDateId('')
-        setSelectedDateLabel('')
-        setValue('preferred_date', '', { shouldValidate: true })
-      }
-      return
-    }
-
-    setDateOptions(options)
-
-    const first = options[0]
-    setSelectedDateId(first.id)
-    setSelectedDateLabel(first.label)
-    setValue('preferred_date', first.iso, { shouldValidate: true })
-    clearErrors('preferred_date')
-
-    clearErrors('postcode')
-  }, [postcodeValue, postcodeProgressLength, setValue, clearErrors])
-
-  const postcodeAreaName = React.useMemo(() => {
-    if (!frequencyMatch) return ''
-    const outwardCode = frequencyMatch.code.replace(/[^A-Z0-9]/g, '').toUpperCase()
-    return POSTCODE_PRIMARY_AREAS[outwardCode] ?? `${outwardCode} area`
-  }, [frequencyMatch])
-
-  const coverageSuccessMessage = React.useMemo(() => {
-    if (!frequencyMatch) return ''
-    const outwardCode = frequencyMatch.code.replace(/[^A-Z0-9]/g, '').toUpperCase()
-    return `We cover ${postcodeAreaName}${postcodeAreaName.includes(outwardCode) ? '' : ` (${outwardCode})`}`
-  }, [frequencyMatch, postcodeAreaName])
-
-  const serviceErrorMessage =
-    errors.services && typeof errors.services === 'object' && 'message' in errors.services
-      ? (errors.services as { message?: string }).message
-      : undefined
-
-  const hasDateSelection = !!selectedDateLabel && dateOptions.length > 0
-
-  const buttonText = isSubmitting
-    ? currentIntent === 'quote'
-      ? 'Sending quote request…'
-      : 'Booking appointment…'
-    : currentIntent === 'quote'
-    ? 'Request my quote'
-    : hasDateSelection
-    ? `Book ${selectedDateLabel}`
-    : 'Book my appointment'
-
-  const pricingSummary: PricingSummary | null = React.useMemo(() => {
-    if (!selectedServices.length) return null
-
-    const includesWindow = selectedServices.includes('Window Cleaning')
-    const includesGutter = selectedServices.includes('Gutter Clearing')
-    const includesFascia = selectedServices.includes('Fascias & Soffits Cleaning')
-
-    const lines: PriceLine[] = []
-    let total = 0
-    let discountNote: string | undefined
-
-    if (includesWindow) {
-      const base = WINDOW_BASE_PRICE[bedroomBand]
-      const adjustment = PROPERTY_TYPE_ADJUSTMENT[propertyType]
-      let amount = base + adjustment
-      let note: string | undefined
-
-      if (includesGutter && includesFascia) {
-        amount = 0
-        note = 'Complimentary when gutter & fascia cleaning booked together.'
-        discountNote = 'Window cleaning included free with gutter & fascia cleaning.'
-      } else if (adjustment) {
-        note = '+£5 for attached frontage.'
-      }
-
-      if (hasExtension === 'yes' || hasConservatory === 'yes') {
-        const extra = 'Extension / conservatory access noted for setup.'
-        note = note ? `${note} ${extra}` : extra
-      }
-
-      if (serviceFrequencyValue) {
-        note = note ? `${note} · ${serviceFrequencyValue}` : serviceFrequencyValue
-      }
-
-      lines.push({ label: 'Window Cleaning', amount, note })
-      total += amount
-    }
-
-    if (includesGutter) {
-      lines.push({ label: 'Gutter Clearing', amount: GUTTER_CLEAN_PRICE })
-      total += GUTTER_CLEAN_PRICE
-    }
-
-    if (includesFascia) {
-      lines.push({ label: 'Fascia & Soffit Cleaning', amount: FASCIA_SOFT_PRICE })
-      total += FASCIA_SOFT_PRICE
-    }
-
-    const handled = new Set(['Window Cleaning', 'Gutter Clearing', 'Fascias & Soffits Cleaning'])
-    selectedServices.forEach((service) => {
-      if (!handled.has(service)) {
-        lines.push({ label: service, note: 'Priced on arrival for bespoke coverage.' })
+  const toggleCommercialService = (serviceId: string) => {
+    setPricing((prev) => {
+      const exists = prev.commercialServices.includes(serviceId)
+      return {
+        ...prev,
+        commercialServices: exists
+          ? prev.commercialServices.filter((id) => id !== serviceId)
+          : [...prev.commercialServices, serviceId],
       }
     })
+  }
 
-    const totalFormatted = formatCurrency(total)
-    const breakdownText = lines
-      .map((line) => `${line.label}: ${line.amount !== undefined ? formatCurrency(line.amount) : 'Priced on arrival'}${line.note ? ` (${line.note})` : ''}`)
-      .join('\n')
+  const handleCustomerChange = <K extends keyof CustomerState>(key: K, value: CustomerState[K]) => {
+    setCustomer((prev) => ({ ...prev, [key]: value }))
+  }
 
-    return {
-      lines,
-      total,
-      totalFormatted,
-      breakdownText,
-      discountNote,
-    }
-  }, [bedroomBand, propertyType, selectedServices, hasExtension, hasConservatory, serviceFrequencyValue])
-
-  const handleRecaptchaChange = (token: string | null) => {
+  const handleRecaptcha = (token: string | null) => {
     setRecaptchaToken(token)
-    if (token) {
-      clearErrors('recaptcha')
-      analytics.recaptchaComplete()
-    }
+    if (token) analytics.recaptchaComplete()
   }
 
-  const handleRecaptchaExpired = () => {
-    setRecaptchaToken(null)
-    setError('recaptcha', { type: 'manual', message: 'reCAPTCHA expired, please try again' })
-    analytics.recaptchaError('expired')
-  }
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setErrorMessage(null)
 
-  React.useEffect(() => {
-    const now = new Date()
-    setValue('submission_date', now.toISOString().split('T')[0])
-    setValue('submission_time', now.toTimeString().split(' ')[0])
-  }, [setValue])
+    if (status === 'submitting') return
 
-  React.useEffect(() => {
-    if (defaultPostcode) {
-      setValue('postcode', defaultPostcode.toUpperCase(), { shouldValidate: true, shouldDirty: true })
-    }
-  }, [defaultPostcode, setValue])
-
-  const onSubmit = async (values: BookingFormData) => {
-    if (values.website) return
-
-    const elapsed = Date.now() - start.current
-    if (elapsed < 2000) {
-      setStatus('error')
+    if (customer.website.trim().length > 0) {
       return
     }
 
-    if (!values.services || values.services.length === 0) {
-      setError('services', { type: 'manual', message: 'Please choose at least one service' })
+    const elapsed = Date.now() - startTime.current
+    if (elapsed < 1500) {
+      setErrorMessage('Please take a moment to review your request before sending.')
+      analytics.formError('submission_ratelimit')
       return
     }
 
-    if (!values.postcode) {
-      setError('postcode', { type: 'manual', message: 'Enter your postcode so we can align a window cleaning frequency' })
-      return
-    }
+    const requiredFields: Array<[keyof CustomerState, string]> = [
+      ['firstName', 'Enter your first name'],
+      ['lastName', 'Enter your last name'],
+      ['email', 'Enter a valid email'],
+      ['phone', 'Enter your phone number'],
+      ['postcode', 'Postcode is required'],
+      ['address', 'Add your address so we can align the right round'],
+    ]
 
-    const matchedFrequency = findFrequencyForPostcode(values.postcode)
-
-    if (!matchedFrequency) {
-      // Allow manual scheduling submissions when a postcode is outside automated routes.
-      analytics.formError('postcode_manual_review', values.postcode)
-    }
-
-    clearErrors('postcode')
-
-    if (!values.preferred_date) {
-      setError('preferred_date', {
-        type: 'manual',
-        message: 'Select the date you would like us to visit',
-      })
-      return
+    for (const [field, message] of requiredFields) {
+      if (!customer[field].trim()) {
+        setErrorMessage(message)
+        analytics.formError(`missing_field_${field}`)
+        return
+      }
     }
 
     if (!recaptchaToken) {
-      setError('recaptcha', { type: 'manual', message: 'Please complete the reCAPTCHA verification' })
+      setErrorMessage('Please complete the reCAPTCHA before submitting.')
+      analytics.recaptchaError('token_missing')
       return
     }
 
-    const now = new Date()
-    const customerName = `${values.first_name} ${values.last_name}`.trim()
-    const preferredDateLabel = selectedDateLabel || (values.preferred_date ? formatDateForDisplay(values.preferred_date) : '')
-    const bedroomLabel = BEDROOM_OPTIONS.find((option) => option.id === values.bedroom_band)?.label ?? values.bedroom_band
-    const propertyTypeLabel =
-      PROPERTY_TYPES.find((type) => type.id === values.property_type)?.label ?? values.property_type
-    const frequencyTitle = matchedFrequency
-      ? matchedFrequency.frequencyTitle
-      : 'Manual scheduling required'
-    const frequencyServiceDays = matchedFrequency
-      ? matchedFrequency.matches.map((match) => `${match.day} · ${match.areas}`).join(' | ')
-      : 'Outside automated route coverage'
-    const serviceList = values.services.join(', ')
-    const coverageLabel =
-      coverageStatus === 'covered'
-        ? 'Covered - automated scheduling available'
-        : coverageStatus === 'outside'
-        ? 'Outside - manual scheduling required'
-        : 'Unknown'
-    const extensionLabel = values.has_extension === 'yes' ? 'Yes' : 'No'
-    const conservatoryLabel = values.has_conservatory === 'yes' ? 'Yes' : 'No'
-    const customerTypeLabel = customerType === 'new' ? 'New Customer' : 'Existing Customer'
+    const bedroomText =
+      pricing.propertyCategory === 'commercial' ? 'Not applicable' : bedroomLabel(pricing.bedrooms)
+    const propertyText =
+      pricing.propertyCategory === 'commercial' ? 'Not applicable' : propertyTypeLabel(pricing.propertyType)
+    const frequencyText = frequencyLabel(pricing.frequency)
+    const pricingLines: string[] = []
 
-    const submittedAt = now.toLocaleString('en-GB')
-    const submittedDate = now.toLocaleDateString('en-GB')
-    const submittedTime = now.toLocaleTimeString('en-GB')
+    if (pricing.propertyCategory === 'commercial') {
+      if (pricing.commercialServices.length) {
+        pricingLines.push(
+          ...pricing.commercialServices.map(
+            (serviceId) => `Commercial service: ${commercialServiceLabel(serviceId)}`,
+          ),
+        )
+      } else {
+        pricingLines.push('Commercial services to be confirmed with our team')
+      }
+    } else {
+      if (requiresManualQuote) {
+        pricingLines.push('Window cleaning – To be confirmed (manual quote required)')
+      } else if (windowBundleUnlocked) {
+      pricingLines.push('Window cleaning – Included with gutter & fascia bundle')
+      } else {
+        pricingLines.push(`Window cleaning – ${formatCurrency(windowPrice)}`)
+      }
 
-    const pricingLines = pricingSummary?.lines ?? []
-    const pricingBreakdown = pricingSummary?.breakdownText ?? 'No pricing calculated'
-    const pricingTotal = pricingSummary?.totalFormatted ?? 'Select services to see pricing'
-    const pricingDiscount = pricingSummary?.discountNote ?? ''
+      if (pricing.includeGutter) {
+        pricingLines.push(
+          requiresManualQuote
+            ? 'Gutter clearing (one-off) – To be confirmed'
+            : `Gutter clearing (one-off) – ${formatCurrency(gutterPrice)}`,
+        )
+      }
+      if (pricing.includeFascia) {
+        pricingLines.push(
+          requiresManualQuote
+            ? 'Fascia & soffit cleaning (one-off) – To be confirmed'
+            : `Fascia & soffit cleaning (one-off) – ${formatCurrency(fasciaPrice)}`,
+        )
+      }
+      if (pricing.hasExtension) {
+        pricingLines.push(
+          requiresManualQuote
+            ? 'Extension allowance (one-off) – To be confirmed'
+            : `Extension allowance (one-off) – +£${EXTENSION_SURCHARGE}`,
+        )
+      }
+      if (pricing.hasConservatory) {
+        pricingLines.push(
+          requiresManualQuote
+            ? 'Conservatory windows – To be confirmed'
+            : 'Conservatory windows – Included in visit total',
+        )
+      }
+    }
+
+    if (pricing.propertyCategory !== 'commercial') {
+      pricingLines.push(
+        requiresManualQuote
+          ? 'Per visit total – To be confirmed after team review'
+          : `Per visit total – ${formatCurrency(visitTotal)}`
+      )
+    }
 
     const summarySections = [
-      'Customer Information:',
-      `- Name: ${customerName}`,
-      `- Email: ${values.customer_email}`,
-      `- Phone: ${values.customer_phone}`,
-      `- Customer Type: ${customerTypeLabel}`,
+      'Customer',
+      `- Name: ${customer.firstName} ${customer.lastName}`,
+      `- Email: ${customer.email}`,
+      `- Phone: ${customer.phone}`,
       '',
-      'Property Details:',
-      `- Address: ${values.property_address}`,
-      `- Postcode: ${values.postcode.toUpperCase()}`,
-      `- Bedrooms: ${bedroomLabel}`,
-      `- Property Type: ${propertyTypeLabel}`,
-      `- Extension: ${extensionLabel}`,
-      `- Conservatory: ${conservatoryLabel}`,
+      'Property & Services',
+      pricing.propertyCategory === 'residential' ? `- Bedrooms: ${bedroomText}` : null,
+      pricing.propertyCategory === 'residential' ? `- Property type: ${propertyText}` : null,
+      pricing.propertyCategory === 'commercial'
+        ? `- Premises type: ${pricing.commercialType ? commercialTypeLabel(pricing.commercialType) : 'Not specified'}`
+        : null,
+      `- Layout: ${requiresManualQuote ? 'Manual quote required' : 'Standard'}`,
+      `- Property category: ${pricing.propertyCategory === 'commercial' ? 'Commercial' : 'Residential'}`,
+      `- Extras: ${propertyExtras.length ? propertyExtras.join(', ') : 'None noted'}`,
+      `- Postcode: ${customer.postcode.toUpperCase()}`,
+      `- Address: ${customer.address}`,
+      `- Frequency: ${frequencyText}`,
+      `- Services: ${servicesSelected.join(', ')}`,
+      discountNote ? `- Offer: ${discountNote}` : null,
       '',
-      'Service Selection:',
-      `- Services: ${serviceList}`,
-      `- Frequency: ${values.service_frequency}`,
-      `- Preferred Date: ${preferredDateLabel}`,
-      `- Preferred Contact: ${values.preferred_contact_method}`,
-      `- Intent: ${values.intent === 'quote' ? 'Quote request' : 'Booking request'}`,
+      'Pricing',
+      ...pricingLines.map((line) => `- ${line}`),
       '',
-      'Coverage & Scheduling:',
-      `- Coverage: ${coverageLabel}`,
-      `- Route Match: ${frequencyTitle}`,
-      `- Service Days: ${frequencyServiceDays}`,
-      `- Selected Slot: ${preferredDateLabel || 'Manual scheduling'}`,
-      '',
-      'Pricing Summary:',
-      `- Total: ${pricingTotal}`,
-      `- Notes: ${pricingDiscount || '—'}`,
-      '',
-      'Additional Requirements:',
-      `${values.special_requirements?.trim() || 'None provided.'}`,
-      '',
-      'System Metadata:',
-      `- Submission Time: ${submittedAt}`,
-      `- reCAPTCHA Token: ${recaptchaToken}`,
-    ]
+      'Notes',
+      `${customer.notes || 'No additional notes supplied.'}`,
+    ].filter(Boolean) as string[]
 
     const summaryPlaintext = summarySections.join('\n')
+    const now = new Date()
+    const submittedAt = now.toLocaleString('en-GB')
 
     const templateParams = {
-      to_email: 'info@somersetwindowcleaning.co.uk',
-      name: customerName,
-      first_name: values.first_name,
-      last_name: values.last_name,
-      email: values.customer_email,
-      phone: values.customer_phone,
-      postcode: values.postcode.toUpperCase(),
-      address: values.property_address,
-      preferred_contact_method: values.preferred_contact_method,
-      customer_type: values.customer_type,
-      customer_type_field: customerTypeLabel,
-      services: serviceList,
-      services_json: JSON.stringify(values.services),
-      service_frequency: values.service_frequency,
-      bedroom_band: values.bedroom_band,
-      bedroom_label: bedroomLabel,
-      property_type: values.property_type,
-      property_type_label: propertyTypeLabel,
-      has_extension: values.has_extension,
-      has_extension_label: extensionLabel,
-      has_conservatory: values.has_conservatory,
-      has_conservatory_label: conservatoryLabel,
-      preferred_date: values.preferred_date,
-      preferred_date_label: preferredDateLabel,
-      intent: values.intent,
-      intent_label: values.intent === 'quote' ? 'Quote request' : 'Booking request',
-      special_requirements: values.special_requirements || 'None provided',
-      frequency_match: frequencyTitle,
-      frequency_service_days: frequencyServiceDays,
-      coverage_status: coverageStatus,
-      coverage_label: coverageLabel,
-      selected_date_option_id: selectedDateId,
-      selected_date_match_label: selectedDateLabel,
-      pricing_total: pricingTotal,
-      pricing_breakdown: pricingBreakdown,
-      pricing_discount_note: pricingDiscount,
+      name: `${customer.firstName} ${customer.lastName}`.trim(),
+      first_name: customer.firstName,
+      last_name: customer.lastName,
+      customer_email: customer.email,
+      customer_phone: customer.phone,
+      postcode: customer.postcode.toUpperCase(),
+      property_address: customer.address,
+      property_size: bedroomText,
+      property_type: propertyText,
+      property_category: pricing.propertyCategory,
+      commercial_type:
+        pricing.propertyCategory === 'commercial'
+          ? commercialTypeLabel(pricing.commercialType)
+          : 'Not applicable',
+      commercial_notes:
+        pricing.propertyCategory === 'commercial'
+          ? pricing.commercialNotes || 'No additional commercial notes provided.'
+          : 'Not applicable',
+      commercial_services:
+        pricing.propertyCategory === 'commercial'
+          ? pricing.commercialServices.length
+            ? pricing.commercialServices
+                .map((serviceId) => commercialServiceLabel(serviceId))
+                .join(', ')
+            : 'Services not specified'
+          : 'Not applicable',
+      service_frequency: frequencyText,
+      services_list: servicesSelected.join(', '),
+      services_json: JSON.stringify(servicesSelected),
+      pricing_total: requiresManualQuote ? 'To be confirmed' : formatCurrency(visitTotal),
+      pricing_breakdown: pricingLines.join('\n'),
+      pricing_discount_note: discountNote,
+      window_price: requiresManualQuote
+        ? 'To be confirmed'
+        : windowPrice
+        ? formatCurrency(windowPrice)
+        : 'Included',
+      gutter_price: pricing.includeGutter
+        ? requiresManualQuote
+          ? 'To be confirmed'
+          : formatCurrency(gutterPrice)
+        : 'Not selected',
+      fascia_price: pricing.includeFascia
+        ? requiresManualQuote
+          ? 'To be confirmed'
+          : formatCurrency(fasciaPrice)
+        : 'Not selected',
+      extension_price: pricing.hasExtension
+        ? requiresManualQuote
+          ? 'To be confirmed'
+          : `+${formatCurrency(EXTENSION_SURCHARGE)}`
+        : 'Not selected',
+      conservatory_price: pricing.hasConservatory
+        ? requiresManualQuote
+          ? 'To be confirmed'
+          : 'Included in visit total'
+        : 'Not selected',
+      property_is_bespoke: pricing.isBespoke ? 'Yes' : 'No',
+      manual_quote_required: requiresManualQuote ? 'Yes' : 'No',
+      property_extras: propertyExtras.length ? propertyExtras.join(', ') : 'None',
+      frequency_match: 'Manual follow-up required',
+      frequency_service_days: 'To be aligned',
+      coverage_status: 'pending',
+      coverage_label: 'Pending round confirmation',
+      selected_date_option_id: 'pricing-first-flow',
+      selected_date_match_label: frequencyText,
       pricing_lines_json: JSON.stringify(pricingLines),
       submitted_at: submittedAt,
-      submitted_date: submittedDate,
-      submitted_time: submittedTime,
-      submission_date: values.submission_date || submittedDate,
-      submission_time: values.submission_time || submittedTime,
       recaptcha_token: recaptchaToken,
       'g-recaptcha-response': recaptchaToken,
-      elapsed_ms: `${elapsed}`,
       summary_plaintext: summaryPlaintext,
       raw_payload_json: JSON.stringify(
         {
-          ...values,
-          postcode: values.postcode.toUpperCase(),
-          services: values.services,
-          pricingSummary,
-          coverageStatus,
-          frequencyMatch,
-          selectedDateLabel,
+          pricing,
+          customer: { ...customer, website: undefined },
+          totals: {
+            windowPrice,
+            gutterPrice,
+            fasciaPrice,
+            visitTotal,
+          },
+          discountNote,
         },
         null,
         2,
       ),
+      intent: customer.intent,
+      intent_label: customer.intent === 'quote' ? 'Quote request' : 'Booking request',
+      notes: customer.notes,
     }
 
     if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
-      console.error('Missing EmailJS configuration. Please set NEXT_PUBLIC_EMAILJS_* env vars.')
-      setStatus('error')
+      console.error('Missing EmailJS configuration. Set NEXT_PUBLIC_EMAILJS_SERVICE_ID / TEMPLATE_ID / PUBLIC_KEY.')
+      setErrorMessage('We could not submit your request. Please try again shortly.')
+      analytics.formError('missing_emailjs_config')
       return
     }
 
     try {
+      setStatus('submitting')
+
       await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, {
         publicKey: PUBLIC_KEY,
       })
 
       analytics.formSubmit({
-        serviceType: values.services.join(', '),
-        customerType: customerType,
-        email: values.customer_email,
+        serviceType: servicesSelected.join(', '),
+        propertySize: bedroomText,
+        customerType: customer.customerType,
+        email: customer.email,
       })
 
-      setLastIntent(values.intent)
+      setSuccessSummary({
+        total: requiresManualQuote ? 'To be confirmed' : formatCurrency(visitTotal),
+        services: servicesSelected.join(', '),
+      })
       setStatus('success')
+      setStep(1)
+      setPricing(INITIAL_PRICING_STATE)
+      setCustomer(initialCustomerState(defaultIntent, defaultPostcode, defaultAddress))
       setRecaptchaToken(null)
-      reset()
-      setFrequencyMatch(null)
-      setCoverageStatus('unknown')
-      setDateOptions([])
-      setSelectedDateId('')
-      setSelectedDateLabel('')
-      clearErrors(['services', 'postcode', 'preferred_date'])
+      startTime.current = Date.now()
     } catch (error) {
       console.error('Booking form submission error:', error)
-      analytics.formError('submission_failed', error instanceof Error ? error.message : 'Unknown error')
+      analytics.formError('submission_failure', error instanceof Error ? error.message : 'Unknown error')
       setStatus('error')
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      setErrorMessage('Something went wrong sending your request. Please try again or call 01458 860339.')
+    } finally {
+      setStatus((prev) => (prev === 'submitting' ? 'idle' : prev))
     }
   }
 
   if (status === 'success') {
-    const successTitle = lastIntent === 'quote' ? 'Quote request sent!' : 'Booking request sent!'
-    const successBody =
-      lastIntent === 'quote'
-        ? 'Thank you for your request. We will align your postcode with the right window cleaning frequency, share the pricing summary, and get back to you within one working day to agree the best visit date.'
-        : 'Thank you for your booking request. We will align your postcode with the right window cleaning frequency, double-check the schedule, and get back to you within one working day to confirm your visit.'
-
     return (
-      <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm p-8 text-center">
+      <div className={`rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 p-8 text-center shadow-[0_30px_70px_-45px_rgba(225,29,42,0.45)] ${className}`} role="status" aria-live="polite">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
           <svg className="h-8 w-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 className="mb-4 text-2xl font-bold text-white">{successTitle}</h3>
-        <p className="mb-6 text-white/80">{successBody}</p>
-        <div className="grid gap-4 text-sm md:grid-cols-3">
-          <div className="flex items-center justify-center gap-2 text-white/70">
-            <svg className="h-4 w-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            Response within one working day
-          </div>
-          <div className="flex items-center justify-center gap-2 text-white/70">
-            <svg className="h-4 w-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            Professional service
-          </div>
-          <div className="flex items-center justify-center gap-2 text-white/70">
-            <svg className="h-4 w-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            Fully insured team
-          </div>
+        <h2 className="text-2xl font-semibold text-white">Request received!</h2>
+        <p className="mt-3 text-white/70">
+          Thank you – we’ll align your postcode with the right round and confirm within one working day.
+        </p>
+        <div className="mt-6 rounded-2xl border border-white/15 bg-white/5 p-5 text-left text-sm text-white/70">
+          <p className="text-white font-semibold">Summary</p>
+          <p className="mt-2">Services: {successSummary.services}</p>
+          <p>
+            Total per visit:{' '}
+            {successSummary.total}
+          </p>
+          <p className="mt-2 text-xs text-white/50">
+            We reach most Velux windows with our poles and clean every window we can safely access.
+          </p>
         </div>
-        <div className="mt-6 space-y-4 text-sm text-white/80">
-          <p>Prefer to pay automatically? Set up your Direct Debit once and every visit will settle through GoCardless.</p>
-          {GO_CARDLESS_URL ? (
-            <a
-              href={GO_CARDLESS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-red to-brand-red/90 px-5 py-3 font-semibold text-white shadow-lg shadow-brand-red/30 transition hover:shadow-xl hover:shadow-brand-red/40"
-            >
-              Complete GoCardless setup
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </a>
-          ) : (
-            <p className="text-xs text-white/50">Add your GoCardless link via NEXT_PUBLIC_GOCARDLESS_PAYMENT_URL to offer automatic payments.</p>
-          )}
+        <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-white/60">
+          <span>Need urgent help? Call 01458 860339.</span>
+          <Button onClick={() => setStatus('idle')} className="px-6 py-2 text-sm font-semibold tracking-[0.08em]">
+            Send another request
+          </Button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm ${className}`}>
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-red via-brand-red to-transparent" />
-
-      <div className="p-8">
-        <div className="mb-8 text-center">
-          <h2 className="mb-3 bg-gradient-to-r from-white to-white/90 bg-clip-text text-2xl font-bold text-transparent">
-            Book an appointment
-          </h2>
-          <p className="text-white/80">
-            Tell us the services, extras, and window cleaning frequency you prefer. We&apos;ll confirm the exact visit day and keep you updated every step.
-          </p>
+    <div className={`rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 ${className}`}>
+      <header className="space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold text-white/60">Step {step} of {TOTAL_STEPS}</p>
+            <h1 className="text-2xl font-semibold text-white">Book your clean</h1>
+            <p className="text-sm text-white/60">
+              Share your property details, choose the services you need, then confirm your visit in minutes.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-brand-black/40 px-3 py-2 text-sm text-white/65">
+            <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+            Pricing updates live as you choose options
+          </div>
         </div>
+        <StepIndicator
+          currentStep={step}
+          onStepChange={(target) => {
+            if (target < step) {
+              goToStep(target)
+            }
+          }}
+        />
+      </header>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <StepCard
-            index={0}
-            title="Your details"
-            description="Tell us who to contact and how you'd like us to respond."
-            isActive={activeStep === 'contact'}
-            isComplete={contactComplete}
-            onOpen={() => openStep('contact')}
-            onContinue={contactComplete ? () => openStep('property') : undefined}
-            continueDisabled={!contactComplete}
-          >
-            {/* Customer type */}
-          {/* Contact info */}
-          <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
-              <svg className="h-5 w-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              Contact information
-            </h3>
+      {errorMessage ? (
+        <div
+          className="mt-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200"
+          role="alert"
+          aria-live="assertive"
+        >
+          {errorMessage}
+        </div>
+      ) : null}
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-white/90">First name *</label>
-                <input
-                  type="text"
-                  className="w-full rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-white placeholder-white/40 transition focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
-                  placeholder="Alex"
-                  onFocus={() => trackFormStart()}
-                  {...firstNameField}
-                  ref={(element) => {
-                    firstNameInputRef.current = element
-                    firstNameField.ref(element)
-                  }}
-                  onKeyDown={(event) => handleEnterToFocus(event, lastNameInputRef)}
+      {status === 'error' && !errorMessage ? (
+        <div
+          className="mt-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200"
+          role="alert"
+          aria-live="assertive"
+        >
+          Something went wrong sending your request. Please try again or call 01458 860339.
+        </div>
+      ) : null}
+
+      {step === 1 && (
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.45fr)]">
+          <div className="space-y-6">
+            <OptionSection
+              title="What type of property are we quoting?"
+              subtitle="Pick the option that best matches your building."
+              options={PROPERTY_CATEGORY_OPTIONS.map((option) => ({
+                id: option.id,
+                title: option.title,
+              }))}
+              name="property-category"
+              value={pricing.propertyCategory}
+              onChange={(value) => handlePricingChange('propertyCategory', value as PropertyCategory)}
+              optionsClassName="sm:grid-cols-2"
+            />
+
+            {pricing.propertyCategory === 'residential' && (
+              <>
+              <OptionSection
+                title="How many bedrooms do you have?"
+                subtitle="A quick guide helps us estimate glazing coverage and visit time."
+                options={BEDROOM_OPTIONS.map((option) => ({
+                  id: option.id,
+                  title: option.label,
+                  description: option.description,
+                }))}
+                name="property-bedrooms"
+                value={pricing.bedrooms}
+                onChange={(value) => handlePricingChange('bedrooms', value as BedroomBand)}
+                optionsClassName="md:grid-cols-2 xl:grid-cols-4"
+              />
+
+                <OptionSection
+                  title="What best describes your property style?"
+                  subtitle="Different layouts change the reach and access we plan for."
+                  options={PROPERTY_STYLE_OPTIONS.map((option) => ({
+                    id: option.id,
+                    title: option.label,
+                    description: option.description,
+                  }))}
+                  name="property-style"
+                  value={pricing.propertyType}
+                  onChange={(value) => handlePricingChange('propertyType', value as PropertyType)}
+                  optionsClassName="md:grid-cols-2 xl:grid-cols-3"
                 />
-                {errors.first_name && <p className="mt-1 text-xs text-red-400">{errors.first_name.message}</p>}
-              </div>
 
-              <div>
-                <label className="mb-2 block text-sm font-medium text-white/90">Last name *</label>
-                <input
-                  type="text"
-                  className="w-full rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-white placeholder-white/40 transition focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
-                  placeholder="Morgan"
-                  onFocus={() => trackFormStart()}
-                  {...lastNameField}
-                  ref={(element) => {
-                    lastNameInputRef.current = element
-                    lastNameField.ref(element)
-                  }}
-                />
-                {errors.last_name && <p className="mt-1 text-xs text-red-400">{errors.last_name.message}</p>}
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-white/90">Email address *</label>
-                <input
-                  type="email"
-                  className="w-full rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-white placeholder-white/40 transition focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
-                  placeholder="your.email@example.com"
-                  {...register('customer_email', {
-                    required: 'Email address is required',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Please enter a valid email address',
+                <OptionSection
+                  title="Is the layout standard or bespoke?"
+                  subtitle="Select bespoke for unusually large glazing, annexes, or non-standard architecture."
+                  options={[
+                    {
+                      id: 'standard',
+                      title: 'Standard layout',
+                      description:
+                        'Typical residential glazing and access. Includes most homes we clean routinely.',
                     },
-                  })}
-                />
-                {errors.customer_email && <p className="mt-1 text-xs text-red-400">{errors.customer_email.message}</p>}
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-white/90">Phone number *</label>
-                <input
-                  type="tel"
-                  className="w-full rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-white placeholder-white/40 transition focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
-                  placeholder="07123 456789"
-                  {...register('customer_phone', {
-                    required: 'Phone number is required',
-                    pattern: {
-                      value: /^(\+44|0)[0-9\s-()]{10,}$/,
-                      message: 'Please enter a valid UK phone number',
+                    {
+                      id: 'bespoke',
+                      title: 'Bespoke / unusually large',
+                      description: 'We’ll confirm timings and pricing after reviewing your notes or photos.',
                     },
-                  })}
+                  ]}
+                  name="property-bespoke"
+                  value={pricing.isBespoke ? 'bespoke' : 'standard'}
+                  onChange={(value) => handlePricingChange('isBespoke', value === 'bespoke')}
+                  optionsClassName="md:grid-cols-2"
                 />
-                {errors.customer_phone && <p className="mt-1 text-xs text-red-400">{errors.customer_phone.message}</p>}
-              </div>
 
-              <div className="md:col-span-2">
-                <div className="rounded-2xl border border-white/15 bg-white/5 p-4">
-                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Preferred contact method</p>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <label
-                      className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
-                        preferredContactMethod === 'email'
-                          ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
-                          : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="email"
-                          className="accent-emerald-400"
-                          checked={preferredContactMethod === 'email'}
-                          onChange={() => setPreferredContactMethod('email')}
-                          name={preferredContactFieldName}
-                          ref={preferredContactRef}
-                        />
-                        Email updates
-                      </span>
-                    </label>
-                    <label
-                      className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
-                        preferredContactMethod === 'phone'
-                          ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
-                          : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="phone"
-                          className="accent-emerald-400"
-                          checked={preferredContactMethod === 'phone'}
-                          onChange={() => setPreferredContactMethod('phone')}
-                          name={preferredContactFieldName}
-                        />
-                        Mobile call or SMS
-                      </span>
-                    </label>
-                  </div>
-                  <p className="mt-3 text-xs text-white/60">We’ll use this for booking confirmations and reminders.</p>
+                <OptionSection
+                  title="Do you have an extension or porch?"
+                  options={[
+                    { id: 'yes', title: 'Yes' },
+                    { id: 'no', title: 'No' },
+                  ]}
+                  name="property-extension"
+                  value={pricing.hasExtension ? 'yes' : 'no'}
+                  onChange={(value) => handlePricingChange('hasExtension', value === 'yes')}
+                  optionsClassName="sm:grid-cols-2"
+                />
+
+                <OptionSection
+                  title="Do you have a conservatory?"
+                  options={[
+                    { id: 'yes', title: 'Yes' },
+                    { id: 'no', title: 'No' },
+                  ]}
+                  name="property-conservatory"
+                  value={pricing.hasConservatory ? 'yes' : 'no'}
+                  onChange={(value) => handlePricingChange('hasConservatory', value === 'yes')}
+                  optionsClassName="sm:grid-cols-2"
+                />
+                <p className="text-xs text-white/60">
+                  We include conservatory windows when selected and reflect the additional time in your visit total. Conservatory roof cleaning is quoted separately—add a note if you&rsquo;d like that too.
+                </p>
+
+                <div className="rounded-2xl border border-white/15 bg-white/5 p-6 text-sm text-white/70">
+                  <p>
+                    These details help us align the right crew, reach poles, and time allowance for your visit. If anything feels unusual, pop a note below or select the bespoke option and we’ll follow up for photos before we confirm pricing.
+                  </p>
+                </div>
+              </>
+            )}
+
+            {pricing.propertyCategory === 'commercial' && (
+              <div className="space-y-6">
+                <SelectField
+                  label="What type of premises is it?"
+                  value={pricing.commercialType}
+                  onChange={(value) => handlePricingChange('commercialType', value as CommercialType)}
+                  options={COMMERCIAL_TYPE_OPTIONS}
+                />
+                <TextArea
+                  label="Anything we should know about access or glazing?"
+                  placeholder="Opening hours, sections to include/exclude, preferred visit times..."
+                  value={pricing.commercialNotes}
+                  onChange={(value) => handlePricingChange('commercialNotes', value)}
+                />
+                <div className="rounded-2xl border border-white/15 bg-white/5 p-6 text-sm text-white/70">
+                  <p>
+                    Commercial properties are priced individually. Share as much detail as you can here and we&apos;ll confirm availability, H&amp;S requirements, and a tailored quote once we review your request. You&apos;ll pick the specific services on the next step.
+                  </p>
                 </div>
               </div>
+            )}
 
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-white/90">Property address *</label>
-                <SimpleAddressInput
-                  value={watch('property_address') || ''}
-                  onChange={(address) => setValue('property_address', address, { shouldDirty: true, shouldValidate: true })}
-                  placeholder="Enter your full address including street and town"
-                  required
-                />
-                <input
-                  type="hidden"
-                  {...register('property_address', {
-                    required: 'Property address is required',
-                    minLength: {
-                      value: 10,
-                      message: 'Please enter a complete address including postcode',
-                    },
-                  })}
-                />
-                {errors.property_address && <p className="mt-1 text-xs text-red-400">{errors.property_address.message}</p>}
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-white/90">Postcode *</label>
-                <input
-                  type="text"
-                  className={`w-full rounded-lg px-4 py-3 text-white placeholder-white/40 transition focus:outline-none focus:ring-2 ${
-                    coverageStatus === 'covered'
-                      ? 'border-emerald-400/60 bg-emerald-500/10 focus:border-emerald-400 focus:ring-emerald-400/20'
-                      : coverageStatus === 'outside'
-                      ? 'border-brand-red/60 bg-brand-red/10 focus:border-brand-red focus:ring-brand-red/25'
-                      : 'border-white/20 bg-white/5 focus:border-brand-red focus:ring-brand-red/20'
-                  }`}
-                  placeholder="BA5 1AA"
-                  {...register('postcode', {
-                    required: 'Postcode is required',
-                    pattern: {
-                      value: /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i,
-                      message: 'Please enter a valid UK postcode',
-                    },
-                    setValueAs: (value) => value.toUpperCase(),
-                  })}
-                />
-                {errors.postcode && <p className="mt-1 text-xs text-red-400">{errors.postcode.message}</p>}
-
-                {coverageStatus === 'covered' && frequencyMatch && (
-                  <div className="mt-3 flex items-start gap-3 rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-3 text-sm text-emerald-100">
-                    <svg className="mt-0.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <p className="font-semibold">{coverageSuccessMessage || `We cover ${postcodeAreaName}`}</p>
-                    </div>
-                  </div>
-                )}
-
-                {coverageStatus === 'outside' && postcodeProgressLength >= 4 && (
-                  <div className="mt-3 flex items-start gap-3 rounded-lg border border-brand-red/40 bg-brand-red/10 p-3 text-sm text-brand-red/85">
-                    <svg className="mt-0.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
-                    </svg>
-                    <div>
-                      <p className="font-semibold">We’ll double-check this postcode manually.</p>
-                      <p className="text-brand-red/70">We’ll confirm availability by the next working day.</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          </StepCard>
-
-          <StepCard
-            index={1}
-            title="Property details"
-            description="Share the address and property layout so we can tailor pricing."
-            isActive={activeStep === 'property'}
-            isComplete={propertyComplete}
-            locked={!contactComplete}
-            onOpen={() => openStep('property')}
-            onBack={() => goToPreviousStep()}
-            onContinue={propertyComplete ? () => openStep('services') : undefined}
-            continueDisabled={!propertyComplete}
-          >
-          {/* Property details */}
-          <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
-              <svg className="h-5 w-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              Tell us about the property
-            </h3>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-white/90">Bedrooms *</p>
-                <div className="grid gap-2">
-                  {BEDROOM_OPTIONS.map((option) => (
-                    <label
-                      key={option.id}
-                      className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition ${
-                        bedroomBand === option.id
-                          ? 'border-emerald-400/70 bg-emerald-500/15 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
-                          : 'border-white/15 bg-white/5 hover:border-emerald-300/30'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        value={option.id}
-                        className="mt-1 accent-emerald-400"
-                        {...register('bedroom_band', { required: true })}
-                      />
-                      <div>
-                        <p className="font-semibold text-white">{option.label}</p>
-                        <p className="text-xs text-white/70">{option.description}</p>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-white/90">Property type *</p>
-                <div className="grid gap-2">
-                  {PROPERTY_TYPES.map((option) => (
-                    <label
-                      key={option.id}
-                      className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition ${
-                        propertyType === option.id
-                          ? 'border-emerald-400/70 bg-emerald-500/15 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
-                          : 'border-white/15 bg-white/5 hover-border-emerald-300/30'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        value={option.id}
-                        className="mt-1 accent-emerald-400"
-                        {...register('property_type', { required: true })}
-                      />
-                      <div>
-                        <p className="font-semibold text-white">{option.label}</p>
-                        <p className="text-xs text-white/70">{option.description}</p>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-3 md:col-span-2">
-                <p className="text-sm font-medium text-white/90">Do you have an extension or conservatory?</p>
-                <p className="text-xs text-white/60">Let us know so we can factor in extra glass area and access requirements.</p>
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/60">Extension</p>
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      <label
-                        className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
-                          hasExtension === 'yes'
-                            ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
-                            : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
-                        }`}
-                      >
-                        <span>Yes</span>
-                        <input
-                          type="radio"
-                          value="yes"
-                          className="accent-emerald-400"
-                          {...register('has_extension', { required: true })}
-                        />
-                      </label>
-                      <label
-                        className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
-                          hasExtension === 'no'
-                            ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
-                            : 'border-white/15 bg-black/30 text-white/70 hover-border-emerald-300/30 hover:text-white'
-                        }`}
-                      >
-                        <span>No</span>
-                        <input
-                          type="radio"
-                          value="no"
-                          className="accent-emerald-400"
-                          {...register('has_extension', { required: true })}
-                        />
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/60">Conservatory</p>
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      <label
-                        className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
-                          hasConservatory === 'yes'
-                            ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
-                            : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
-                        }`}
-                      >
-                        <span>Yes</span>
-                        <input
-                          type="radio"
-                          value="yes"
-                          className="accent-emerald-400"
-                          {...register('has_conservatory', { required: true })}
-                        />
-                      </label>
-                      <label
-                        className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 text-sm transition ${
-                          hasConservatory === 'no'
-                            ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_0_18px_rgba(16,185,129,0.25)]'
-                            : 'border-white/15 bg-black/30 text-white/70 hover:border-emerald-300/30 hover:text-white'
-                        }`}
-                      >
-                        <span>No</span>
-                        <input
-                          type="radio"
-                          value="no"
-                          className="accent-emerald-400"
-                          {...register('has_conservatory', { required: true })}
-                        />
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          </StepCard>
-
-          <StepCard
-            index={2}
-            title="Services & schedule"
-            description="Select the services you need and your preferred visit."
-            isActive={activeStep === 'services'}
-            isComplete={selectedServices.length > 0 && (currentIntent === 'quote' || Boolean(preferredDateValue))}
-            locked={!propertyComplete}
-            onOpen={() => openStep('services')}
-            onBack={() => goToPreviousStep()}
-          >
-          {/* Services & scheduling */}
-          <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
-              <svg className="h-5 w-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h3a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1V8a1 1 0 011-1h3z" />
-              </svg>
-              Services & appointment
-            </h3>
-
-            <div className="space-y-3">
-              <label className="block text-sm font-medium text-white/90">Services required *</label>
-              <p className="text-xs text-white/60">Tick every service you&apos;d like included in your visit. Extras can be added later if needed.</p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {SERVICE_OPTIONS.map((service) => {
-                  const selected = selectedServices.includes(service)
-                  const details = getServiceDetails(service)
-                  return (
-                    <label
-                      key={service}
-                      className={`group flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition ${
-                        selected
-                          ? 'border-emerald-400/70 bg-emerald-500/12 shadow-[0_0_24px_rgba(16,185,129,0.25)]'
-                          : 'border-white/12 bg-white/5 hover:border-emerald-300/30'
-                      }`}
-                    >
-                      <input type="checkbox" className="sr-only" checked={selected} onChange={() => handleServiceToggle(service)} />
-                      <div className="flex w-full flex-col gap-3">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-sm font-semibold text-white">{service}</p>
-                            <p className="mt-1 text-xs text-white/70">{SERVICE_SUMMARY[service]}</p>
-                          </div>
-                          {details.priceLabel && (
-                            <span
-                              className={`whitespace-nowrap rounded-full border px-3 py-1 text-[0.7rem] font-medium uppercase tracking-[0.25em] ${
-                                selected ? 'border-emerald-300/80 text-emerald-100' : 'border-white/15 text-white/60'
-                              }`}
-                            >
-                              {details.priceLabel}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex flex-wrap gap-2 text-[0.7rem] text-white/60">
-                          {details.frequencyLabel && (
-                            <span className="rounded-full border border-white/15 px-3 py-1">{details.frequencyLabel}</span>
-                          )}
-                          {details.secondary && (
-                            <span className="rounded-full border border-white/12 px-3 py-1">{details.secondary}</span>
-                          )}
-                          {details.bonusNote && (
-                            <span className="rounded-full border border-emerald-300/60 px-3 py-1 text-emerald-200">
-                              {details.bonusNote}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </label>
-                  )
-                })}
-              </div>
-              {errors.services && (
-                <p className="mt-1 text-xs text-red-400">{serviceErrorMessage || 'Please choose at least one service'}</p>
-              )}
-              <p className="text-xs text-emerald-200">
-                Book gutter clearing <span className="font-semibold">and</span> fascia &amp; soffit cleaning on the same visit to receive your window clean free of charge.
-              </p>
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-white/90">How often would you like visits? *</label>
-              <select
-                className="w-full rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-white transition focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
-                {...register('service_frequency', { required: 'Please choose how often you would like us to visit' })}
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                onClick={() => goToStep(2)}
+                className="px-7 py-3 text-sm font-semibold tracking-[0.08em]"
               >
-                {SERVICE_FREQUENCIES.map((frequency) => (
-                  <option key={frequency} value={frequency} className="bg-gray-800 text-white">
-                    {frequency}
-                  </option>
-                ))}
-              </select>
-              <p className="mt-1 text-xs text-white/60">
-                Our core window cleaning cadence is every four weeks, with an every-eight-week option available on request.
-              </p>
-              {errors.service_frequency && <p className="mt-1 text-xs text-red-400">{errors.service_frequency.message}</p>}
+                Continue to services
+              </Button>
             </div>
+          </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-white/90">Choose your first visit *</label>
-              {dateOptions.length > 0 ? (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {dateOptions.map((option) => {
-                    const isSelected = selectedDateId === option.id
-                    const isFallback = option.id.startsWith('fallback')
-                    return (
-                      <label
-                        key={option.id}
-                        className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-4 transition ${
-                          isSelected
-                            ? 'border-emerald-400/70 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
-                            : 'border-white/15 bg-white/5 hover:border-white/30'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          value={option.iso}
-                          className="sr-only"
-                          checked={isSelected}
-                          onChange={() => {
-                            setValue('preferred_date', option.iso, { shouldValidate: true })
-                            setSelectedDateId(option.id)
-                            setSelectedDateLabel(option.label)
-                            clearErrors('preferred_date')
-                          }}
-                        />
-                        <div>
-                          <p className="font-semibold text-white">{option.label}</p>
-                          <p className="text-xs text-white/70">{isFallback ? 'Priority booking slot' : option.matchLabel}</p>
-                        </div>
-                        {isSelected && (
-                          <svg className="h-5 w-5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </label>
-                    )
-                  })}
-                </div>
+          <FormConfidencePanel
+            step={1}
+            servicesSelected={servicesSelected}
+            visitTotal={visitTotal}
+            requiresManualQuote={requiresManualQuote}
+          />
+        </div>
+      )}
+
+
+      {step === 2 && (
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.45fr)]">
+          <div className="space-y-6">
+            <div className="rounded-2xl border border-white/15 bg-brand-black/30 p-6 text-sm text-white/70">
+              <p className="text-sm font-semibold text-white/65">Property summary</p>
+              <p className="mt-2 text-lg font-semibold text-white">{propertySummary}</p>
+              {propertyExtras.length ? (
+                <p className="mt-1 text-xs text-white/55">Extras: {propertyExtras.join(' · ')}</p>
               ) : (
-                <div className="rounded-xl border border-white/15 bg-white/5 p-4 text-sm text-white/70">
-                  Enter your postcode above to display available weeks and choose the slot that works best for you.
-                </div>
+                <p className="mt-1 text-xs text-white/55">No extras selected</p>
               )}
-              {errors.preferred_date && <p className="mt-1 text-xs text-red-400">{errors.preferred_date.message}</p>}
+              <p className="mt-1 text-xs text-white/55">
+                Layout: {requiresManualQuote ? 'Manual quote required' : 'Standard'}
+              </p>
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-white/90">Special requirements</label>
-              <textarea
-                rows={3}
-                className="w-full resize-none rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-white placeholder-white/40 transition focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
-                placeholder="Access notes, locked gates, conservatory details, pets, or anything else we should know."
-                {...register('special_requirements')}
+          <OptionSection
+            title="How often would you like us to visit?"
+            subtitle="Frequency helps us align you with the right round and reminder schedule."
+            options={(pricing.propertyCategory === 'commercial'
+              ? COMMERCIAL_FREQUENCY_OPTIONS
+              : RESIDENTIAL_FREQUENCY_OPTIONS
+            ).map((option) => ({
+              id: option.id,
+              title: option.label,
+              description: option.helper,
+              meta: getFrequencyMeta(option.id as FrequencyId),
+            }))}
+            name="visit-frequency"
+            value={pricing.frequency}
+            onChange={(value) => handlePricingChange('frequency', value as FrequencyId)}
+          />
+
+            {pricing.propertyCategory === 'commercial' ? (
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-white">Select the services you require</p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {COMMERCIAL_SERVICE_OPTIONS.map((service) => (
+                    <ServiceToggle
+                      key={service.id}
+                      label={service.label}
+                      description={service.description ?? ''}
+                      checked={pricing.commercialServices.includes(service.id)}
+                      onChange={(_checked) => toggleCommercialService(service.id)}
+                    />
+                  ))}
+                </div>
+                <p className="text-xs text-white/55">
+                  Need something bespoke? Tick the closest options and add detail in the notes above—our team will align the rest on the follow-up call.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2">
+                <ServiceToggle
+                  label="Gutter clearing"
+                  description="Vacuum clearing with camera inspection on the day. One-off add-on."
+                  price={requiresManualQuote ? 'To be confirmed' : formatCurrency(getGutterPrice(pricing.bedrooms, pricing.propertyType))}
+                  checked={pricing.includeGutter}
+                  onChange={(checked) => handlePricingChange('includeGutter', checked)}
+                />
+                <ServiceToggle
+                  label="Fascia & soffit cleaning"
+                  description="Restore uPVC and finish the roofline with a bright, even glow. One-off add-on."
+                  price={requiresManualQuote ? 'To be confirmed' : formatCurrency(getFasciaPrice(pricing.bedrooms, pricing.propertyType))}
+                  checked={pricing.includeFascia}
+                  onChange={(checked) => handlePricingChange('includeFascia', checked)}
+                  helper={
+                    requiresManualQuote
+                      ? undefined
+                      : 'Select this with gutter clearing and your window clean is complimentary.'
+                  }
+                />
+                <p className="md:col-span-2 text-xs text-white/55">
+                  Gutter and fascia cleans are one-off visits—add them when you need a refresh.
+                </p>
+              </div>
+            )}
+
+            <div className="rounded-2xl border border-white/15 bg-brand-black/40 p-5 text-sm text-white/70">
+              <div
+                className={`flex flex-wrap items-start gap-3 ${
+                  pricing.propertyCategory !== 'commercial' ? 'justify-between' : ''
+                }`}
+              >
+                <div>
+                  <p className="text-sm font-semibold text-white/70">You’re building</p>
+                  <p className="text-white font-semibold">{servicesSelected.join(', ')}</p>
+                  <p className="text-xs text-white/55">{frequencyLabel(pricing.frequency)}</p>
+                </div>
+                {pricing.propertyCategory !== 'commercial' ? (
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-white/70">Per visit total</p>
+                    <span className="text-2xl font-semibold text-white" data-testid="visit-total">
+                      {requiresManualQuote ? 'To be confirmed' : formatCurrency(visitTotal)}
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="mt-4 grid gap-3 text-xs text-white/60 md:grid-cols-2">
+                {pricing.propertyCategory === 'commercial' ? (
+                pricing.commercialServices.length ? (
+                  pricing.commercialServices.map((serviceId) => (
+                    <p
+                      key={serviceId}
+                      data-testid={serviceId === 'external_windows' ? 'window-line' : undefined}
+                    >
+                      {commercialServiceLabel(serviceId)}
+                    </p>
+                  ))
+                ) : (
+                  <p>Services to be confirmed with our commercial team</p>
+                )
+                ) : (
+                  <>
+                  <div>
+                    <p className="text-white/80">Window cleaning</p>
+                    <p data-testid="window-line">
+                      {requiresManualQuote
+                        ? 'Manual quote required'
+                        : windowBundleUnlocked
+                        ? 'Included with gutter & fascia bundle'
+                        : formatCurrency(windowPrice)}
+                    </p>
+                  </div>
+                  {pricing.includeGutter ? (
+                    <div>
+                      <p className="text-white/80">Gutter clearing</p>
+                      <p data-testid="gutter-line">
+                        {requiresManualQuote ? 'Manual quote required' : formatCurrency(gutterPrice)}
+                      </p>
+                    </div>
+                  ) : null}
+                  {pricing.includeFascia ? (
+                    <div>
+                      <p className="text-white/80">Fascia & soffit cleaning</p>
+                      <p data-testid="fascia-line">
+                        {requiresManualQuote ? 'Manual quote required' : formatCurrency(fasciaPrice)}
+                      </p>
+                    </div>
+                  ) : null}
+                  {pricing.hasExtension ? (
+                    <div>
+                      <p className="text-white/80">Extension allowance</p>
+                      <p data-testid="extension-line">
+                        {requiresManualQuote
+                          ? 'Manual quote required'
+                          : windowBundleUnlocked
+                          ? 'Included with gutter & fascia bundle'
+                          : `+${formatCurrency(EXTENSION_SURCHARGE)} per visit`}
+                      </p>
+                    </div>
+                  ) : null}
+                  {pricing.hasConservatory ? (
+                    <div>
+                      <p className="text-white/80">Conservatory windows</p>
+                      <p data-testid="conservatory-line">
+                        {requiresManualQuote
+                          ? 'Manual quote required'
+                          : 'Included in visit total'}
+                      </p>
+                    </div>
+                  ) : null}
+                  </>
+                )}
+              </div>
+
+              <p className="mt-3 text-xs text-white/50">
+                We reach most Velux windows with our poles and will clean those we can safely access, but some roof windows may remain out of reach.
+              </p>
+              {pricing.propertyCategory === 'commercial' ? (
+                <p className="mt-2 text-xs text-white/55">
+                  We’ll confirm your bespoke schedule and pricing once we review these details.
+                </p>
+              ) : null}
+              <p className="mt-2 text-xs text-emerald-400">
+                {requiresManualQuote
+                  ? 'We’ll confirm your tailored quote after reviewing these details.'
+                  : windowBundleUnlocked
+                  ? 'Bundle locked – window cleaning is complimentary with gutter and fascia selected.'
+                  : 'Add gutter clearing and fascia cleaning together to unlock a complimentary window clean.'}
+              </p>
+              {residentialWindowNote ? (
+                <p className="mt-2 text-xs text-white/55">{residentialWindowNote}</p>
+              ) : null}
+            </div>
+
+            <div className="flex flex-wrap justify-between gap-3">
+              <Button type="button" variant="ghost" onClick={() => goToStep(1)} className="px-6 py-3 text-sm font-semibold tracking-[0.08em]">
+                Back to property
+              </Button>
+              <Button
+                type="button"
+                onClick={() => goToStep(3)}
+                disabled={
+                  pricing.propertyCategory === 'commercial' && pricing.commercialServices.length === 0
+                }
+                className="px-7 py-3 text-sm font-semibold tracking-[0.08em] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Continue to your details
+              </Button>
+            </div>
+          </div>
+
+          <FormConfidencePanel
+            step={2}
+            servicesSelected={servicesSelected}
+            visitTotal={visitTotal}
+            requiresManualQuote={requiresManualQuote}
+          />
+        </div>
+      )}
+
+
+      {step === 3 && (
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.45fr)]">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="rounded-2xl border border-white/15 bg-brand-black/40 p-5 text-sm text-white/70">
+              <p className="text-base font-semibold text-white">You’re booking</p>
+              <p className="mt-2 text-xs text-white/60">{propertySummary}</p>
+              {propertyExtras.length ? (
+                <p className="text-xs text-white/55">Extras: {propertyExtras.join(' · ')}</p>
+              ) : null}
+              {pricing.propertyCategory === 'commercial' && pricing.commercialNotes ? (
+                <p className="mt-2 text-xs text-white/55">
+                  Premises notes: {pricing.commercialNotes}
+                </p>
+              ) : null}
+              <p className="mt-3">{servicesSelected.join(', ')}</p>
+              <p>
+                {pricing.propertyCategory === 'commercial'
+                  ? `${frequencyLabel(pricing.frequency)} · Pricing confirmed after review`
+                  : `${frequencyLabel(pricing.frequency)} · ${requiresManualQuote ? 'To be confirmed after review' : `${formatCurrency(visitTotal)} per visit`}`}
+              </p>
+              {discountNote ? (
+                <p className="mt-2 text-xs text-emerald-400">{discountNote}</p>
+              ) : null}
+              {residentialWindowNote ? (
+                <p className="mt-2 text-xs text-white/55">{residentialWindowNote}</p>
+              ) : null}
+              {requiresManualQuote ? (
+                <p className="mt-2 text-xs text-white/55">
+                  We’ve flagged this request for manual quoting so the team can confirm pricing before scheduling.
+                </p>
+              ) : null}
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <TextInput
+                label="First name"
+                placeholder="Alex"
+                value={customer.firstName}
+                onChange={(value) => handleCustomerChange('firstName', value)}
+                required
+              />
+              <TextInput
+                label="Last name"
+                placeholder="Morgan"
+                value={customer.lastName}
+                onChange={(value) => handleCustomerChange('lastName', value)}
+                required
+              />
+              <TextInput
+                label="Email"
+                type="email"
+                placeholder="you@example.com"
+                value={customer.email}
+                onChange={(value) => handleCustomerChange('email', value)}
+                required
+              />
+              <TextInput
+                label="Phone"
+                placeholder="07123 456789"
+                value={customer.phone}
+                onChange={(value) => handleCustomerChange('phone', value)}
+                required
               />
             </div>
-          </div>
 
-          {pricingSummary && (
-            <div className="space-y-3 rounded-2xl border border-white/15 bg-white/5 p-6">
-              <div className="flex items-center justify-between">
-                <h4 className="text-lg font-semibold text-white">Estimated investment</h4>
-                <span className="text-xl font-semibold text-brand-red">{pricingSummary.totalFormatted}</span>
-              </div>
-              <ul className="space-y-2 text-sm text-white/80">
-                {pricingSummary.lines.map((line) => (
-                  <li key={line.label} className="flex items-start justify-between gap-3">
-                    <span>{line.label}</span>
-                    <span className="text-white/90">
-                      {line.amount !== undefined ? formatCurrency(line.amount) : 'To be confirmed'}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              {pricingSummary.discountNote && (
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-300">
-                  {pricingSummary.discountNote}
-                </p>
-              )}
-              <p className="text-xs text-white/60">
-                All prices shown assume standard property sizes. If we feel an uplift is needed on the day, we&apos;ll always let you know before we start any work.
-              </p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="md:col-span-2 block text-sm text-white/70">
+                <span className="block text-xs font-semibold text-white/65 tracking-[0.12em]">Property address</span>
+                <SimpleAddressInput
+                  value={customer.address}
+                  onChange={(value) => handleCustomerChange('address', value)}
+                  placeholder="Full address including house number"
+                  required
+                  className="mt-2"
+                />
+              </label>
+              <TextInput
+                label="Postcode"
+                placeholder="BA5 1PF"
+                value={customer.postcode}
+                onChange={(value) => handleCustomerChange('postcode', value.toUpperCase())}
+                required
+              />
             </div>
-          )}
 
-          {/* Hidden fields for EmailJS */}
-          <input type="hidden" {...register('customer_type')} />
-          <input type="hidden" {...register('submission_date')} />
-          <input type="hidden" {...register('submission_time')} />
-          <input type="hidden" {...register('intent')} />
+            <TextArea
+              label="Anything else we should know?"
+              placeholder="Parking, access notes, pets, key safe..."
+              value={customer.notes}
+              onChange={(value) => handleCustomerChange('notes', value)}
+            />
 
-          <input type="hidden" name="frequency_match" />
-          <input type="hidden" name="frequency_service_days" />
-          <input type="hidden" name="frequency_date_label" />
-          <input type="hidden" name="pricing_total" />
-          <input type="hidden" name="pricing_breakdown" />
-          <input type="hidden" name="pricing_notes" />
+            <input
+              type="text"
+              name="website"
+              autoComplete="off"
+              value={customer.website}
+              onChange={(event) => handleCustomerChange('website', event.target.value)}
+              className="hidden"
+              tabIndex={-1}
+            />
 
-          <input type="text" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" {...register('website')} />
+            <ReCaptcha onChange={handleRecaptcha} className="mt-2" />
 
-          <div className="space-y-2">
-            <ReCaptcha onChange={handleRecaptchaChange} onExpired={handleRecaptchaExpired} className="pt-4" />
-            {errors.recaptcha && <p className="text-center text-xs text-red-400">{errors.recaptcha.message}</p>}
-          </div>
+            <div className="flex flex-wrap justify-between gap-3">
+              <Button type="button" variant="ghost" onClick={() => goToStep(2)} className="px-6 py-3 text-sm font-semibold tracking-[0.08em]">
+                Back to services
+              </Button>
+              <Button
+                type="submit"
+                disabled={status === 'submitting'}
+                className="px-7 py-3 text-sm font-semibold tracking-[0.08em] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {status === 'submitting' ? 'Sending...' : customer.intent === 'quote' ? 'Request a quote' : 'Send booking request'}
+              </Button>
+            </div>
+          </form>
 
-          <div className="pt-4 space-y-4">
-            <button
-              type="submit"
-              disabled={isSubmitting || !recaptchaToken}
-              className={`w-full rounded-xl px-8 py-4 font-semibold transition ${
-                isSubmitting || !recaptchaToken
-                  ? 'cursor-not-allowed bg-gray-600 text-gray-300 opacity-60'
-                  : 'bg-gradient-to-r from-brand-red to-brand-red/90 text-white shadow-lg shadow-brand-red/25 hover:shadow-xl hover:shadow-brand-red/35'
+          <FormConfidencePanel
+            step={3}
+            servicesSelected={servicesSelected}
+            visitTotal={visitTotal}
+            requiresManualQuote={requiresManualQuote}
+          />
+        </div>
+      )}
+
+    </div>
+  )
+}
+
+function OptionSection({
+  title,
+  subtitle,
+  options,
+  value,
+  onChange,
+  optionsClassName,
+  name,
+}: {
+  title: string
+  subtitle?: string
+  options: Array<{ id: string; title: string; meta?: string; description?: string }>
+  value: string
+  onChange: (value: string) => void
+  optionsClassName?: string
+  name?: string
+}) {
+  const sectionId = React.useId()
+  const radioGroupName = name || sectionId
+  const descriptionId = subtitle ? `${sectionId}-description` : undefined
+  return (
+    <section aria-labelledby={sectionId}>
+      <div className="mb-3" id={sectionId}>
+        <p className="text-sm font-semibold text-white">{title}</p>
+        {subtitle ? (
+          <p id={descriptionId} className="text-xs text-white/50">
+            {subtitle}
+          </p>
+        ) : null}
+      </div>
+      <div
+        className={`grid gap-3 ${optionsClassName ?? 'md:grid-cols-2'}`}
+        role="radiogroup"
+        aria-labelledby={sectionId}
+        aria-describedby={descriptionId}
+      >
+        {options.map((option) => {
+          const active = option.id === value
+          return (
+            <label
+              key={option.id}
+              className={`cursor-pointer rounded-2xl border px-4 py-4 text-left transition ${
+                active
+                  ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_12px_30px_-20px_rgba(16,185,129,0.65)]'
+                  : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
               }`}
             >
-              {buttonText}
-            </button>
-            {!recaptchaToken && (
-              <p className="mt-2 flex items-center justify-center gap-1 text-center text-sm text-brand-red/80">
-                <svg className="h-4 w-4 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                Please complete the reCAPTCHA verification above to book your appointment.
-              </p>
-            )}
-            {status === 'error' && (
-              <p className="mt-4 text-center text-sm text-red-400">
-                Sorry, something went wrong. Please try again or contact us directly at 01458 860339.
-              </p>
-            )}
-            <p className="mt-4 text-center text-xs text-white/60">
-              You&apos;ll receive your booking pack within one working day (Mon-Sat, 9am-4pm).
-            </p>
-            {GO_CARDLESS_URL && (
-              <div className="mt-4 space-y-3 rounded-xl border border-white/12 bg-white/5 p-4 text-center">
-                <p className="text-sm font-semibold text-white">Paying an existing balance?</p>
-                <p className="text-xs text-white/70">
-                  Use our secure GoCardless portal to set up Direct Debit for existing accounts and settle invoices automatically.
-                </p>
-                <a
-                  href={GO_CARDLESS_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-brand-red/70 bg-brand-red/15 px-4 py-2 text-sm font-semibold text-white transition hover:border-brand-red hover:bg-brand-red/20"
-                >
-                  Pay by Direct Debit
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </a>
+              <input
+                type="radio"
+                name={radioGroupName}
+                value={option.id}
+                checked={active}
+                onChange={() => onChange(option.id)}
+                className="sr-only"
+              />
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm font-semibold">{option.title}</span>
+                <div className="flex items-center gap-2 text-xs text-white/60">
+                  {option.meta ? <span>{option.meta}</span> : null}
+                  {active ? <CheckMark /> : null}
+                </div>
               </div>
-            )}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2 text-sm text-white/80">
-              <a
-                href="tel:01458860339"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 transition hover:border-brand-red/60 hover:text-white"
-              >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                Call 01458 860 339
-              </a>
-              <a
-                href="mailto:info@somersetwindowcleaning.co.uk"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 transition hover:border-brand-red/60 hover:text-white"
-              >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M16 12l-4 4-4-4m8-5a4 4 0 11-8 0 4 4 0 018 0z"
-                  />
-                </svg>
-                Email us
-              </a>
-              <a
-                href="https://wa.me/441458860339"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-transparent bg-[#25D366] px-4 py-2 font-semibold text-[#0a0f0a] transition hover:bg-[#1ebe5b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1ebe5b]/60"
-              >
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2a10 10 0 00-8.94 14.56L2 22l5.61-1.47A10 10 0 1012 2zm0 18a8 8 0 114.9-14.36l.6.46-.6.46A8 8 0 0112 20z" />
-                  <path d="M8.59 9.53c0 .2.06.4.18.57.27.38.86.87 1.02.96.16.09.22.08.38.02.16-.06.64-.3.73-.34.09-.03.16-.05.23.05.07.11.26.34.53.56.26.23.46.37.63.47.16.1.31.08.43.05.13-.03.4-.15.62-.31.21-.16.37-.29.42-.45.05-.16.05-.29-.02-.41-.06-.12-.24-.37-.5-.63-.26-.26-.41-.27-.56-.23-.14.04-.3.18-.47.37-.11.12-.25.14-.38.07-.13-.06-.89-.41-1.7-1.16-.62-.58-1.05-1.31-1.17-1.53-.12-.22-.01-.34.05-.4.05-.05.12-.13.18-.2.06-.07.08-.12.11-.2.03-.08.02-.16-.01-.23-.03-.07-.29-.7-.4-.96-.1-.26-.21-.22-.36-.22-.09 0-.17 0-.25.01-.08.01-.2.03-.31.15-.11.12-.43.42-.43 1.02z" />
-                </svg>
-                🟢 WhatsApp chat
-              </a>
-            </div>
-            <p className="text-center text-xs text-white/55">
-              Prefer to chat first? Call, email, or message us—your pricing summary stays on record so we can pick up right away.
-            </p>
-          </div>
-          </StepCard>
-        </form>
+              {option.description ? <p className="mt-2 text-xs text-white/50">{option.description}</p> : null}
+            </label>
+          )
+        })}
       </div>
-    </div>
+    </section>
+  )
+}
+
+function ServiceToggle({
+  label,
+  description,
+  price,
+  checked,
+  onChange,
+  helper,
+}: {
+  label: string
+  description: string
+  price?: string
+  checked: boolean
+  onChange: (checked: boolean) => void
+  helper?: string
+}) {
+  return (
+    <label
+      className={`flex w-full cursor-pointer items-start justify-between gap-4 rounded-2xl border px-5 py-5 text-left transition ${
+        checked
+          ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_12px_30px_-20px_rgba(16,185,129,0.65)]'
+          : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
+      }`}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        className="sr-only"
+        aria-label={label}
+      />
+      <div className="flex flex-1 items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold text-white">{label}</p>
+          <p className="mt-2 text-xs text-white/60">{description}</p>
+          {helper ? <p className="mt-3 text-xs text-emerald-400">{helper}</p> : null}
+        </div>
+        <div className="flex flex-col items-end gap-2 text-right">
+          {price ? <p className="text-sm font-semibold text-white">{price}</p> : null}
+          <div className="flex items-center justify-center">
+            {checked ? (
+              <CheckMark />
+            ) : (
+              <span
+                className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/25 text-white/40"
+                aria-hidden="true"
+              >
+                <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+                </svg>
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </label>
+  )
+}
+
+function TextInput({
+  label,
+  placeholder,
+  value,
+  onChange,
+  type = 'text',
+  required = false,
+}: {
+  label: string
+  placeholder?: string
+  value: string
+  onChange: (value: string) => void
+  type?: string
+  required?: boolean
+}) {
+  return (
+    <label className="block text-sm text-white/70">
+      <span className="block text-xs font-semibold text-white/65 tracking-[0.12em]">{label}</span>
+      <input
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        type={type}
+        required={required}
+        className="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 focus:border-emerald-400 focus:outline-none"
+      />
+    </label>
+  )
+}
+
+function TextArea({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+}) {
+  return (
+    <label className="block text-sm text-white/70">
+      <span className="block text-xs font-semibold text-white/65 tracking-[0.12em]">{label}</span>
+      <textarea
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        rows={4}
+        className="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 focus:border-emerald-400 focus:outline-none"
+      />
+    </label>
+  )
+}
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  options: Array<{ id: string; label: string }>
+}) {
+  return (
+    <label className="block text-sm text-white/70">
+      <span className="block text-xs font-semibold text-white/65 tracking-[0.12em]">{label}</span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-white focus:border-emerald-400 focus:outline-none"
+      >
+        {options.map((option) => (
+          <option key={option.id} value={option.id} className="bg-brand-black">
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
+function CheckMark({ className = '' }: { className?: string }) {
+  return (
+    <span
+      className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 ${className}`}
+      aria-hidden="true"
+    >
+      <svg
+        className="h-3 w-3 text-emerald-300"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M5 13l4 4L19 7" />
+      </svg>
+    </span>
+  )
+}
+
+function StepIndicator({
+  currentStep,
+  onStepChange,
+}: {
+  currentStep: Step
+  onStepChange: (step: Step) => void
+}) {
+  return (
+    <ol className="flex flex-col gap-4 text-sm sm:flex-row sm:flex-nowrap sm:items-center sm:gap-3">
+      {STEP_LABELS.map((item, index) => {
+        const status = item.id < currentStep ? 'complete' : item.id === currentStep ? 'current' : 'upcoming'
+        const interactive = item.id < currentStep
+
+        const buttonClasses = {
+          complete:
+            'border-emerald-400/50 bg-emerald-500/15 text-white shadow-[0_10px_28px_-24px_rgba(16,185,129,0.65)]',
+          current: 'border-white/30 bg-white/10 text-white',
+          upcoming: 'border-white/15 bg-white/5 text-white/55',
+        }[status]
+
+        return (
+          <li key={item.id} className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={() => interactive && onStepChange(item.id)}
+              disabled={!interactive}
+              aria-current={status === 'current' ? 'step' : undefined}
+              className={`flex w-full items-center gap-3 rounded-full border px-4 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 sm:flex-1 ${
+                buttonClasses
+              } ${interactive ? 'hover:border-white/40 hover:text-white' : ''}`}
+            >
+              <span
+                className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
+                  status === 'complete'
+                    ? 'bg-emerald-400 text-brand-black'
+                    : status === 'current'
+                    ? 'bg-white text-brand-black'
+                    : 'bg-white/10 text-white'
+                }`}
+              >
+                {item.id}
+              </span>
+              <span className="flex flex-1 flex-col text-left">
+                <span className="text-sm font-semibold text-white tracking-[0.08em] sm:text-base">
+                  {item.label}
+                </span>
+                <span className="text-xs text-white/60">{item.helper}</span>
+              </span>
+              {status === 'current' ? <CheckMark className="hidden sm:inline-flex" /> : null}
+            </button>
+            {index < STEP_LABELS.length - 1 ? (
+              <span className="hidden h-px w-8 bg-white/15 sm:block" aria-hidden />
+            ) : null}
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
+function FormConfidencePanel({
+  step,
+  servicesSelected,
+  visitTotal,
+  requiresManualQuote,
+}: {
+  step: Step
+  servicesSelected: string[]
+  visitTotal: number
+  requiresManualQuote: boolean
+}) {
+  const copy = CONFIDENCE_COPY[step]
+  const showCurrentSelection = step !== 1 && servicesSelected.length > 0
+  const visitLabel = requiresManualQuote ? 'To be confirmed' : formatCurrency(visitTotal)
+
+  return (
+    <aside className="flex flex-col gap-5 rounded-2xl border border-white/12 bg-brand-black/40 p-5 text-sm text-white/70 lg:sticky lg:top-6">
+      <div>
+        <p className="text-base font-semibold text-white">{copy.heading}</p>
+        <ul className="mt-3 space-y-2">
+          {copy.points.map((point) => (
+            <li key={point} className="flex items-start gap-2">
+              <span className="mt-1 inline-flex h-2 w-2 flex-none rounded-full bg-emerald-400" aria-hidden="true" />
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {showCurrentSelection ? (
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/70">
+          <p className="text-sm font-semibold text-white">Current selection</p>
+          <p className="mt-2 text-xs text-white/60">Services: {servicesSelected.join(', ')}</p>
+          <p className="mt-1 text-xs text-white/60">
+            Next visit total: <span className="font-semibold text-white">{visitLabel}</span>
+          </p>
+        </div>
+      ) : null}
+
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-white/60">
+        <p className="text-sm font-semibold text-white">Talk to a person</p>
+        <p className="mt-2 leading-relaxed">{copy.helper}</p>
+        <div className="mt-3 flex flex-wrap gap-2 text-sm font-semibold text-white">
+          <a
+            href="tel:01458860339"
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 transition hover:border-white/40 hover:text-white"
+          >
+            Call 01458 860339
+          </a>
+          <a
+            href="mailto:info@somersetwindowcleaning.co.uk"
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 transition hover:border-white/40 hover:text-white"
+          >
+            Email the team
+          </a>
+        </div>
+      </div>
+    </aside>
   )
 }

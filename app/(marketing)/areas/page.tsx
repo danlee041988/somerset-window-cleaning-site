@@ -126,13 +126,6 @@ const areaHighlights: Array<{
     ctaVariant: 'primary'
   },
   {
-    title: 'Glastonbury & Street Window Cleaning (BA6 & BA16)',
-    description:
-      'Festival traffic, tourist footfall, and local businesses rely on us to keep glazing shining. We cover the Tor, Meare, Ashcott, Street, and the Clarks Village retail outlets.',
-    primaryPostcode: 'BA6',
-    area: 'Glastonbury'
-  },
-  {
     title: 'Cheddar Gorge & Mendip Villages (BS26–BS28)',
     description:
       'From Cheddar and Axbridge to Wedmore and the Somerset Levels, our pure-water systems remove limestone residue and farm dust without leaving streaks.',
@@ -154,11 +147,13 @@ const areaHighlights: Array<{
     area: 'Bridgwater'
   },
   {
-    title: 'Sherborne & Dorset Border (DT9)',
+    title: 'Glastonbury & Street Window Cleaning (BA6 & BA16)',
     description:
-      'We make cross-county visits to Sherborne, Milborne Port, and nearby villages—ideal if you live on the Somerset/Dorset border and want a consistent window cleaning team.',
-    primaryPostcode: 'DT9',
-    area: 'Sherborne'
+      'Festival traffic, tourist footfall, and local businesses rely on us to keep glazing shining. We cover the Tor, Meare, Ashcott, Street, and the Clarks Village retail outlets.',
+    primaryPostcode: 'BA6',
+    area: 'Glastonbury & Street',
+    ctaHref: '/book-appointment?intent=book&postcode=BA6&coverageArea=Glastonbury%20%26%20Street',
+    ctaLabel: 'Book in Glastonbury'
   }
 ]
 

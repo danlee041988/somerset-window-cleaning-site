@@ -8,25 +8,33 @@ export const metadata: Metadata = {
   description:
     'Secure your Somerset Window Cleaning slot in minutes. Choose your frequency, confirm add-ons, and we will align you with the right 4-weekly window cleaning frequency covering Somerset postcodes.',
   keywords:
-    'Somerset window cleaning booking, book window cleaner, recurring window cleaning Somerset, gutter cleaning schedule, Somerset cleaning frequency'
+    'Somerset window cleaning booking, book window cleaner, recurring window cleaning Somerset, gutter cleaning schedule, Somerset cleaning frequency',
+  alternates: {
+    canonical: '/book-appointment',
+  }
 }
 
 
 const WINDOW_BASE_PRICES = [
   {
-    label: '2-3 bedrooms',
+    label: '1-2 bedrooms',
+    price: '£22',
+    description: 'Compact terraces, semis, or flats with standard frontage.'
+  },
+  {
+    label: '3 bedrooms',
     price: '£25',
-    description: 'Typical semis and terraces, up to 2 storeys, standard glass coverage.'
+    description: 'Somerset family homes with access front and back.'
   },
   {
     label: '4 bedrooms',
     price: '£30',
-    description: 'Generous semis and detached homes, up to 2 storeys.'
+    description: 'Roomier semis and detached homes up to two storeys.'
   },
   {
-    label: '5 bedrooms',
+    label: '5+ bedrooms',
     price: '£35',
-    description: 'Larger detached homes with standard glazing footprint.'
+    description: 'Large detached properties; detached access +£5 per visit.'
   }
 ]
 
@@ -36,12 +44,12 @@ const WINDOW_ADD_ONS = [
     detail: 'Add £5 to cover extra glass or garden rooms.'
   },
   {
-    label: 'Conservatory windows (sides only)',
-    detail: 'Add £5 for the side panels alongside your standard clean.'
+    label: 'Conservatory windows (sides)',
+    detail: 'Tick this when you’d like us to include the conservatory side panels during your exterior clean.'
   },
   {
     label: 'Velux & roof windows',
-    detail: 'First two are included. Extras £3 each when safely reachable.'
+    detail: 'We clean every Velux we can safely reach, though some roof windows may remain out of reach.'
   },
   {
     label: 'Townhouse / 3 storeys',
@@ -89,16 +97,16 @@ const GO_CARDLESS_URL = process.env.NEXT_PUBLIC_GOCARDLESS_PAYMENT_URL
 
 const BOOKING_STEPS = [
   {
-    title: 'Pick your service & extras',
-    copy: 'Bedrooms give us the base price. Tick any add-ons you need and let us know how regular you\'d like visits.'
+    title: 'Share property basics',
+    copy: 'Bedrooms, layout, and extras so pricing updates in real time.'
   },
   {
-    title: 'We align your window frequency',
-    copy: 'We match your address to the correct frequency week and confirm your next visit window by email and SMS.'
+    title: 'Add your details',
+    copy: 'Contact info and notes help us match the right round and crew.'
   },
   {
-    title: 'Settle up simply',
-    copy: 'Pay on completion (card or bank). Prefer Direct Debit? Set up once through GoCardless and you\'re done.'
+    title: 'We confirm & schedule',
+    copy: 'We follow up with timings, access checks, and billing preferences.'
   }
 ]
 
@@ -137,18 +145,23 @@ export default function BookAppointmentPage({ searchParams }: BookAppointmentPag
           subtitle="Share the essentials, choose a frequency, and we&rsquo;ll look after the rest."
           spacing="relaxed"
         >
-          <div className="grid gap-6 md:grid-cols-3">
-            {BOOKING_STEPS.map((step) => (
-              <div key={step.title} className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h3 className="text-lg font-semibold text-white">{step.title}</h3>
-                <p className="mt-3 text-sm text-white/70">{step.copy}</p>
-              </div>
+          <ol className="flex flex-col gap-6 text-white/70 md:flex-row md:items-start md:gap-8">
+            {BOOKING_STEPS.map((step, index) => (
+              <li key={step.title} className="flex flex-1 items-start gap-4">
+                <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full border border-emerald-400/50 bg-emerald-500/10 text-sm font-semibold text-white">
+                  {index + 1}
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-white">{step.title}</p>
+                  <p className="mt-1 text-xs text-white/60">{step.copy}</p>
+                </div>
+              </li>
             ))}
-          </div>
+          </ol>
 
-          <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/70">
+          <div className="mt-10 rounded-xl border border-white/10 bg-white/5 p-5 text-sm text-white/70">
             <p>
-              Light rain doesn&rsquo;t affect pure water results. If you&rsquo;re ever unhappy, we&rsquo;ll revisit promptly. Payment can be made by card, bank transfer on completion, or set up once through{' '}
+              Light rain doesn&rsquo;t affect pure water results, and we&rsquo;ll always revisit promptly if anything needs attention. Settle by card or transfer after the visit, or set up automatic payments once through{' '}
               {GO_CARDLESS_URL ? (
                 <a
                   href={GO_CARDLESS_URL}
@@ -160,12 +173,12 @@ export default function BookAppointmentPage({ searchParams }: BookAppointmentPag
                 </a>
               ) : (
                 'GoCardless'
-              )}{' '}
-              for automatic settlement.
+              )}
+              .
             </p>
             {GO_CARDLESS_URL && (
-              <p className="mt-3 text-xs text-white/65">
-                Paying for an existing account? Use our Direct Debit portal to settle any outstanding balance securely.
+              <p className="mt-2 text-xs text-white/60">
+                Already a customer? Use the Direct Debit portal any time to review or settle outstanding balances.
               </p>
             )}
           </div>

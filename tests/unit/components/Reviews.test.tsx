@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import Reviews, { ReviewsShowcase } from '@/components/Reviews'
 
 describe('Reviews component variants', () => {
@@ -11,7 +11,7 @@ describe('Reviews component variants', () => {
     expect(screen.getByText('Jodie Cater')).toBeInTheDocument()
   })
 
-  it('renders the carousel variant with navigation controls', () => {
+  it('renders the carousel variant with navigation controls', async () => {
     render(<Reviews variant="carousel" />)
 
     const nextButton = screen.getByRole('button', { name: /Next review/i })
@@ -24,8 +24,9 @@ describe('Reviews component variants', () => {
 
     fireEvent.click(nextButton)
 
-    const updatedCard = screen.getByTestId('review-card-emphasis')
-    expect(updatedCard).toHaveTextContent('Sandra')
+    await waitFor(() => {
+      expect(screen.getByTestId('review-card-emphasis')).toHaveTextContent('Sandra')
+    })
   })
 
   it('renders the mosaic variant with multiple review cards', () => {

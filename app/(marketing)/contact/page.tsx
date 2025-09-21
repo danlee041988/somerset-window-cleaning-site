@@ -1,5 +1,2 @@
-import { redirect } from 'next/navigation'
-
-export default function ContactRedirect() {
-  redirect('/get-in-touch')
-}
+export { metadata } from '../get-in-touch/page'
+export { default } from '../get-in-touch/page'

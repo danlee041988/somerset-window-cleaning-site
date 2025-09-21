@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom'
+import React from 'react'
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
@@ -25,3 +26,13 @@ jest.mock('next/navigation', () => ({
 
 // Mock environment variables
 process.env.NEXT_PUBLIC_SITE_URL = 'http://localhost:3000'
+
+jest.mock('react-google-recaptcha', () => ({
+  __esModule: true,
+  default: ({ onChange }: { onChange: (token: string | null) => void }) => {
+    React.useEffect(() => {
+      onChange('test-token')
+    }, [onChange])
+    return React.createElement('div', { 'data-testid': 'mock-recaptcha' })
+  },
+}))
