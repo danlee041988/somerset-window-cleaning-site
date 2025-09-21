@@ -1,17 +1,19 @@
 import type { MetadataRoute } from 'next'
-
-const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+import { buildAbsoluteUrl, getSiteUrl } from '@/lib/site-url'
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const base = getSiteUrl()
   const lastModified = new Date()
+  const toEntry = (path: string) => ({ url: buildAbsoluteUrl(path, base), lastModified })
+
   return [
-    { url: `${base}/`, lastModified },
-    { url: `${base}/services`, lastModified },
-    { url: `${base}/areas`, lastModified },
-    { url: `${base}/book-appointment`, lastModified },
-    { url: `${base}/gallery`, lastModified },
-    { url: `${base}/about`, lastModified },
-    { url: `${base}/team`, lastModified },
-    { url: `${base}/privacy`, lastModified },
+    toEntry('/'),
+    toEntry('/services'),
+    toEntry('/areas'),
+    toEntry('/book-appointment'),
+    toEntry('/gallery'),
+    toEntry('/about'),
+    toEntry('/team'),
+    toEntry('/privacy'),
   ]
 }

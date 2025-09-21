@@ -1,0 +1,23 @@
+{
+  "name": "codex-site-review",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "audit": "node scripts/run-all.mjs",
+    "audit:lighthouse": "node scripts/run-lighthouse.mjs",
+    "audit:a11y": "node scripts/a11y.mjs",
+    "audit:links": "node scripts/links.mjs",
+    "audit:security": "node scripts/security-headers.mjs",
+    "audit:seo": "node scripts/seo.mjs",
+    "audit:screens": "node scripts/screens.mjs"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "chrome-launcher": "^1.0.0",
+    "jsdom": "^24.0.0",
+    "linkinator": "^6.0.0",
+    "lighthouse": "^12.0.0",
+    "playwright": "^1.47.0"
+  }
+}

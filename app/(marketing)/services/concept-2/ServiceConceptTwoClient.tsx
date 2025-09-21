@@ -18,7 +18,7 @@ const PROCESS_STEPS = [
     id: 'clear',
     title: 'Vacuum clearance',
     blurb:
-      'Ground-based carbon fibre poles remove moss and leaf build-up up to 40ft. We check every downpipe inlet for flow and flag anything that needs a specialist (we don’t clear inside the downpipes).',
+      'Ground-based carbon fibre poles remove moss and leaf build-up up to 40ft. We safely reach over conservatories and extensions without ladders.',
     tip: 'We safely reach over conservatories, garages, and extensions without ladders.',
   },
   {
@@ -127,7 +127,7 @@ export default function ServiceConceptTwoClient() {
               <div className="feature-card__content absolute bottom-6 left-6 right-6 rounded-2xl border border-white/10 bg-black/60 p-6 text-sm text-white/75">
                 <p className="font-semibold text-white">Live drone feed</p>
                 <p className="mt-2">
-                  &ldquo;Gutter run 3 now clear · downpipe inlet inspected · fascia rinse queued&rdquo;
+                  &ldquo;Gutter run 3 now clear · fascia rinse queued · photos uploaded to client hub&rdquo;
                 </p>
               </div>
             </div>

@@ -30,9 +30,8 @@
     position: relative;
     font-family: -apple-system, "SF Pro Text", ui-sans-serif, Inter, "Segoe UI", Roboto, sans-serif;
     letter-spacing: -0.01em;
+    /* Remove red glows entirely */
     background-image:
-      radial-gradient(60% 80% at 20% -10%, rgba(225, 29, 42, 0.18), transparent 65%),
-      radial-gradient(45% 60% at 110% 0%, rgba(225, 29, 42, 0.12), transparent 68%),
       linear-gradient(180deg, rgba(12, 13, 16, 0.95), rgba(6, 7, 9, 0.98));
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
@@ -43,7 +42,8 @@
     content: '';
     position: fixed;
     inset: -30% -40% -20% -40%;
-    background: radial-gradient(360px circle at 40% 0%, rgba(225, 29, 42, 0.24), transparent 55%);
+    /* Remove residual top glow */
+    background: radial-gradient(360px circle at 40% 0%, rgba(225, 29, 42, 0), transparent 55%);
     opacity: 0.55;
     pointer-events: none;
     z-index: -1;

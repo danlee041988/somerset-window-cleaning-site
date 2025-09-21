@@ -33,10 +33,10 @@ export const servicesData = [
   {
     slug: "gutter-clearing",
     title: "Gutter Clearing",
-    description: "Protect your property from water damage with safe ground-level gutter clearing. We vacuum debris from gutter runs (downpipes excluded) and document the visit on request.",
-    longDescription: "Blocked gutters can cause serious damage to your property. Our high-reach vacuum systems safely clear leaves, moss, and debris from every gutter run, preventing costly overflows and damp issues. Downpipes remain untouched, but we flag any issues we see and can provide before/after photos or video on request.",
+    description: "Protect your property from water damage with safe ground-level gutter clearing. We vacuum debris from gutter runs and document the visit on request.",
+    longDescription: "Blocked gutters can cause serious damage to your property. Our high-reach vacuum systems safely clear leaves, moss, and debris from every gutter run, preventing costly overflows and damp issues. Ask for before/after photos or a short inspection video so you can see the difference immediately.",
     benefits: [
-      { icon: "•", text: "Complete gutter run clearing (downpipes excluded)" },
+      { icon: "•", text: "Complete gutter run clearing" },
       { icon: "•", text: "Ground-level vacuum system" },
       { icon: "•", text: "Photo/video evidence available on request" },
       { icon: "•", text: "Prevents water damage" }
@@ -46,7 +46,7 @@ export const servicesData = [
       "Comprehensive gutter inspection and assessment",
       "Position high-reach vacuum equipment safely",
       "Remove all debris, leaves, and blockages",
-      "Check gutter joints and outlets, noting any downpipe issues for follow-up",
+      "Check gutter joints and outlets for free-flowing drainage",
       "Provide photo/video evidence when requested"
     ],
     equipment: [
@@ -54,7 +54,7 @@ export const servicesData = [
       "Inspection camera to review inlets",
       "Optional photo/video evidence on request"
     ],
-    guarantee: "Complete gutter run debris removal guarantee (downpipes excluded). We highlight any issues we find and supply documentation on request.",
+    guarantee: "Complete gutter run debris removal guarantee. We highlight any issues we find and supply documentation on request.",
     price: "From £80",
     specialty: "Essential",
     ctaText: "Book Gutter Clearing",

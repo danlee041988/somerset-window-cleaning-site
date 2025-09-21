@@ -11,7 +11,7 @@ const COVERED_POSTCODES = new Set([
   'BA3', 'BA4', 'BA5', 'BA6', 'BA7', 'BA8', 'BA9', 'BA10', 'BA11', 'BA16', 'BA20', 'BA21', 'BA22',
   // TA postcodes
   'TA2', 'TA6', 'TA7', 'TA8', 'TA9', 'TA10', 'TA11', 'TA12', 'TA13', 'TA14', 'TA18', 'TA19', 'TA20',
-  // DT postcodes (Sherborne)
+  // DT postcode (Sherborne)
   'DT9'
 ])
 
@@ -109,15 +109,25 @@ export default function PostcodeChecker({
       // If 4 characters don't match, try 3 characters (like BA5, TA6)
       postcodeArea = normalizedPostcode.substring(0, 3)
     }
-    
+    const matchedAreaName = postcodeAreas[postcodeArea]
+
     setTimeout(() => {
       if (COVERED_POSTCODES.has(postcodeArea)) {
         setStatus('success')
-        setAreaName(postcodeAreas[postcodeArea] || 'your area')
-        
-        // Redirect to booking page after showing success message without pre-filling form data
+        setAreaName(matchedAreaName || 'your area')
+        const redirectParams = new URLSearchParams({ intent: 'book' })
+        const formattedPostcode = formatPostcode(normalizedPostcode)
+
+        if (formattedPostcode) {
+          redirectParams.set('postcode', formattedPostcode)
+        }
+        if (matchedAreaName) {
+          redirectParams.set('coverageArea', matchedAreaName)
+        }
+
+        // Redirect to the booking form with postcode context once the success state is visible
         setTimeout(() => {
-          router.push('/book-appointment?intent=book')
+          router.push(`/book-appointment?${redirectParams.toString()}`)
         }, 1500)
       } else {
         setStatus('error')

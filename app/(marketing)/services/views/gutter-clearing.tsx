@@ -5,7 +5,7 @@ import { ServicePageLayout } from './components/service-page-layout'
 export const metadata = {
   title: 'Gutter Clearing Somerset | Safe Ground-Level Vacuum Cleaning',
   description:
-    'Protect your property with professional gutter clearing across Somerset. High-reach vacuum systems, optional photo/video documentation on request, and clear guidance on any downpipe issues (we clear gutter runs only).',
+    'Protect your property with professional gutter clearing across Somerset. High-reach vacuum systems and optional photo/video documentation keep rainwater moving without ladders.',
 }
 
 const FAQS = [
@@ -23,11 +23,6 @@ const FAQS = [
     question: 'Can you show what has been removed?',
     answer:
       'Yes. On request we capture before/after photos or a short inspection video so you can see the gutter runs are clear.',
-  },
-  {
-    question: 'Do you clear downpipes too?',
-    answer:
-      'We clear gutter runs only. We check the inlets and highlight any downpipe issues so you can arrange a drainage specialist if needed.',
   },
   {
     question: 'Will the service affect my fascias or paintwork?',
@@ -49,10 +44,10 @@ export default function GutterClearingPage() {
         kicker: 'Prevent water damage',
         heading: 'Professional gutter clearing across Somerset',
         intro:
-          'Camera-checked gutter clearing that keeps rainwater moving. We remove gutter debris (downpipes excluded) and can document each visit with photos or video on request.',
+          'Camera-checked gutter clearing that keeps rainwater moving. We remove debris from every gutter run and can document each visit with photos or video on request.',
         highlights: [
           'Ground-level vacuum technology',
-          'Downpipes inspected and flagged (not cleared)',
+          'Reach over conservatories and extensions',
           'Photo/video evidence on request',
         ],
         imageSrc: SERVICE_IMAGES.gutter || '/images/photos/Gutter Clearing.jpg',

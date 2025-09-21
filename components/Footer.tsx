@@ -10,32 +10,32 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="glass-card glass-noir-card--tight grid gap-12 rounded-3xl border border-white/12 p-8 md:p-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div className="flex flex-col gap-8">
-            <div className="glass-noir-card glass-noir-card--tight flex flex-col gap-5 rounded-3xl border border-white/12 bg-black/65 p-6 text-[#F5F7FA] shadow-[0_30px_70px_-45px_rgba(0,0,0,0.95)]">
-              <div className="flex items-center gap-5">
-                <span className="relative flex h-[5rem] w-[5rem] min-h-[5rem] min-w-[5rem] items-center justify-center rounded-[1.6rem] border border-brand-red/55 bg-black p-3 shadow-[0_20px_45px_-30px_rgba(225,29,42,0.85)]">
+            <div className="glass-noir-card glass-noir-card--tight flex flex-col gap-6 rounded-3xl border border-white/12 bg-black/65 p-6 text-[#F5F7FA] shadow-[0_30px_70px_-45px_rgba(0,0,0,0.95)]">
+              <div className="flex flex-wrap items-center gap-5 md:gap-6">
+                <span className="relative flex h-[5.5rem] w-[5.5rem] min-h-[5.5rem] min-w-[5.5rem] flex-shrink-0 items-center justify-center rounded-[1.8rem] border border-brand-red/55 bg-black p-3 shadow-[0_22px_52px_-32px_rgba(225,29,42,0.85)] lg:h-[6rem] lg:w-[6rem] lg:min-h-[6rem] lg:min-w-[6rem] lg:rounded-[2rem]">
                   <ImageWithFallback
                     src="/images/logos/swc-logo.png"
                     fallbackSrc="/images/logos/logo.png"
                     alt="Somerset Window Cleaning app icon"
-                    width={80}
-                    height={80}
+                    width={112}
+                    height={112}
                     className="h-full w-full object-contain"
                   />
                 </span>
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white">
+                <div className="flex min-w-[14rem] flex-1 flex-col gap-2 md:min-w-[18rem]">
+                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white md:text-base">
                     Somerset Window Cleaning
                   </p>
-                  <p className="text-xs text-white/60">
+                  <p className="text-xs text-white/65 md:text-sm">
                     Crystal-clear finishes and spotless results for Somerset homes and businesses.
                   </p>
                 </div>
               </div>
-              <div className="grid gap-2 text-xs text-white/55">
-                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 px-3 py-1 uppercase tracking-[0.28em] text-white/65">
+              <div className="grid gap-2 text-xs text-white/55 md:text-sm md:text-white/60">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 px-4 py-1 uppercase tracking-[0.28em] text-white/65">
                   Trusted by 4,000+ customers
                 </span>
-                <span>
+                <span className="max-w-prose">
                   Book, schedule, and keep every visit on track with reminders and clear communication from our crew.
                 </span>
               </div>
@@ -90,8 +90,8 @@ export default function Footer() {
               </h3>
               <div className="grid grid-cols-1 gap-2 text-sm noir-muted">
                 <Link href="/areas" className="transition hover:text-[var(--fg)]">Areas We Cover</Link>
-                <Link href="/pricing" className="transition hover:text-[var(--fg)]">Pricing &amp; Bundles</Link>
-                <Link href="/book-appointment" className="transition hover:text-[var(--fg)]">Book Now</Link>
+                <Link href="/book-appointment" className="transition hover:text-[var(--fg)]">View pricing &amp; book</Link>
+                <Link href="/book-appointment?intent=book" className="transition hover:text-[var(--fg)]">Book Now</Link>
                 {GO_CARDLESS_URL && (
                   <a
                     href={GO_CARDLESS_URL}

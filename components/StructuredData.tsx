@@ -1,13 +1,15 @@
 import React from 'react'
+import { buildAbsoluteUrl, getSiteOrigin } from '@/lib/site-url'
 
 export default function StructuredData() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const siteOrigin = getSiteOrigin()
+  const logoUrl = buildAbsoluteUrl('/images/logos/swc-logo.png')
   const data = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'Somerset Window Cleaning',
-    url: siteUrl,
-    image: `${siteUrl}/logo.png`,
+    url: siteOrigin,
+    image: logoUrl,
     telephone: '+44 1458 860 339',
     email: 'info@somersetwindowcleaning.co.uk',
     address: {

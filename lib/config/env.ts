@@ -1,3 +1,5 @@
+import { getSiteOrigin } from '@/lib/site-url'
+
 export const emailJsConfig = {
   publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? '',
   serviceId: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? '',
@@ -10,6 +12,6 @@ export const recaptchaConfig = {
 }
 
 export const siteConfig = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? '',
+  siteUrl: getSiteOrigin(),
   caseStudyUrl: process.env.NEXT_PUBLIC_CASE_STUDY_URL ?? ''
 }

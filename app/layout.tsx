@@ -6,13 +6,11 @@ import StructuredData from '@/components/StructuredData'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import DynamicLayout from '@/components/DynamicLayout'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
+import { buildAbsoluteUrl, getSiteUrl } from '@/lib/site-url'
 
-const defaultSiteUrl = 'https://somersetwindowcleaning.co.uk'
-const siteUrlRaw = process.env.NEXT_PUBLIC_SITE_URL || defaultSiteUrl
-let siteUrl: URL | undefined
-try {
-  siteUrl = new URL(siteUrlRaw)
-} catch {}
+const siteUrl = getSiteUrl()
+const logoUrl = buildAbsoluteUrl('/images/logos/swc-logo.png', siteUrl)
+const siteUrlHref = buildAbsoluteUrl('/', siteUrl)
 
 export const metadata: Metadata = {
   title: {
@@ -20,17 +18,15 @@ export const metadata: Metadata = {
     template: '%s | Somerset Window Cleaning',
   },
   description: 'Somerset Window Cleaning: Expert residential & commercial window, gutter, and fascia cleaning. Trusted service across Somerset and surrounding areas',
-  ...(siteUrl
-    ? { metadataBase: siteUrl, alternates: { canonical: siteUrl.href } }
-    : { metadataBase: new URL(defaultSiteUrl), alternates: { canonical: defaultSiteUrl } }),
+  metadataBase: siteUrl,
   openGraph: {
     title: 'Somerset Window Cleaning',
     description: 'Somerset Window Cleaning: Expert residential & commercial window, gutter, and fascia cleaning. Trusted service across Somerset and surrounding areas',
     type: 'website',
-    url: siteUrl?.href || defaultSiteUrl,
+    url: siteUrlHref,
     images: [
       {
-        url: '/images/logos/swc-logo.png',
+        url: logoUrl,
         alt: 'Somerset Window Cleaning logo',
       },
     ],
@@ -39,9 +35,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Somerset Window Cleaning',
     description: 'Somerset Window Cleaning: Expert residential & commercial window, gutter, and fascia cleaning. Trusted service across Somerset and surrounding areas',
+    images: [logoUrl],
   },
   icons: {
-    icon: '/images/logos/swc-logo.png',
+    icon: logoUrl,
   },
 }
 

@@ -23,7 +23,7 @@ const SERVICE_LINKS: ServiceLink[] = [
 
 const AUX_NAV_LINKS = [
   { href: '/areas', label: 'Areas' },
-  { href: '/pricing', label: 'Pricing' },
+  { href: '/book-appointment', label: 'Book' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/book-appointment?intent=quote', label: 'Contact' },
 ] as const
@@ -114,6 +114,8 @@ export default function Header() {
   const [open, setOpen] = React.useState(false)
   const [isBusinessOpen, setIsBusinessOpen] = React.useState(false)
   const [servicesOpen, setServicesOpen] = React.useState(false)
+  const [supportsHover, setSupportsHover] = React.useState(false)
+  const [menuStyle, setMenuStyle] = React.useState<React.CSSProperties>({})
   const servicesButtonRef = React.useRef<HTMLButtonElement | null>(null)
   const servicesMenuRef = React.useRef<HTMLDivElement | null>(null)
   const servicesCloseTimeout = React.useRef<number | null>(null)
@@ -166,6 +168,21 @@ export default function Header() {
     }
   }, [])
 
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+
+    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
+    const updateHoverSupport = (event: MediaQueryListEvent | MediaQueryList) => {
+      setSupportsHover(event.matches)
+    }
+
+    updateHoverSupport(mediaQuery)
+
+    const handler = (event: MediaQueryListEvent) => updateHoverSupport(event)
+    mediaQuery.addEventListener('change', handler)
+    return () => mediaQuery.removeEventListener('change', handler)
+  }, [])
+
   const clearServicesCloseTimer = React.useCallback(() => {
     if (servicesCloseTimeout.current) {
       window.clearTimeout(servicesCloseTimeout.current)
@@ -180,10 +197,13 @@ export default function Header() {
 
   const scheduleServicesClose = React.useCallback(() => {
     clearServicesCloseTimer()
+    if (!supportsHover) {
+      return
+    }
     servicesCloseTimeout.current = window.setTimeout(() => {
       setServicesOpen(false)
     }, 120)
-  }, [clearServicesCloseTimer])
+  }, [clearServicesCloseTimer, supportsHover])
 
   const handleServicesKeyDown = React.useCallback((event: React.KeyboardEvent<HTMLButtonElement>) => {
     if (event.key === 'Escape') {
@@ -201,20 +221,63 @@ export default function Header() {
     }
   }, [openServicesMenu])
 
+  const updateMenuPosition = React.useCallback(() => {
+    if (!servicesButtonRef.current || !servicesMenuRef.current) return
+    const triggerRect = servicesButtonRef.current.getBoundingClientRect()
+    const menuRect = servicesMenuRef.current.getBoundingClientRect()
+    const parentRect = servicesButtonRef.current.parentElement?.getBoundingClientRect()
+    if (!parentRect) return
+
+    const viewportWidth = window.innerWidth
+    const gutter = 16
+    const desiredLeft = triggerRect.left + triggerRect.width / 2 - menuRect.width / 2
+    const clampedViewportLeft = Math.max(gutter, Math.min(desiredLeft, viewportWidth - menuRect.width - gutter))
+    const relativeLeft = clampedViewportLeft - parentRect.left
+
+    setMenuStyle({ left: `${relativeLeft}px`, right: 'auto' })
+  }, [])
+
+  React.useEffect(() => {
+    if (!servicesOpen) return
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null
+      if (!target) return
+      if (
+        servicesMenuRef.current?.contains(target) ||
+        servicesButtonRef.current?.contains(target)
+      ) {
+        return
+      }
+      setServicesOpen(false)
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    return () => document.removeEventListener('pointerdown', handlePointerDown)
+  }, [servicesOpen])
+
+  React.useEffect(() => {
+    if (!servicesOpen) return
+
+    const raf = window.requestAnimationFrame(updateMenuPosition)
+    window.addEventListener('resize', updateMenuPosition)
+
+    return () => {
+      window.cancelAnimationFrame(raf)
+      window.removeEventListener('resize', updateMenuPosition)
+    }
+  }, [servicesOpen, updateMenuPosition])
+
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div className="relative border-b border-white/10 bg-black/90 pb-2 backdrop-blur sm:pb-3 lg:pb-5">
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-brand-red via-brand-red/70 to-transparent"
-          aria-hidden="true"
-        />
-        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-3 px-4 py-1.5 sm:gap-5 sm:py-2.5 md:px-6">
+      <div className="relative bg-black/95">
+        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-3 px-4 py-1 sm:gap-5 sm:py-2 md:px-6 lg:py-2.5">
           <Link
             href="/"
             className="inline-flex shrink-0 items-center rounded-md px-3 py-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
             aria-label="Somerset Window Cleaning home"
           >
-            <Logo className="h-10 w-auto max-w-[180px] sm:h-12 sm:max-w-[220px] md:h-[4.75rem] md:max-w-[360px] lg:h-[5.5rem] lg:max-w-[460px]" />
+            <Logo className="h-9 w-auto max-w-[160px] sm:h-11 sm:max-w-[210px] md:h-12 md:max-w-[300px] lg:h-[3.5rem] lg:max-w-[320px]" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -222,8 +285,8 @@ export default function Header() {
             <nav className="flex items-center gap-6">
               <div
                 className="relative hidden lg:block"
-                onMouseEnter={openServicesMenu}
-                onMouseLeave={scheduleServicesClose}
+                onMouseEnter={supportsHover ? openServicesMenu : undefined}
+                onMouseLeave={supportsHover ? scheduleServicesClose : undefined}
                 onFocusCapture={openServicesMenu}
                 onBlurCapture={scheduleServicesClose}
               >
@@ -259,7 +322,8 @@ export default function Header() {
                 <div
                   ref={servicesMenuRef}
                   id="services-mega-menu"
-                  className={`absolute left-1/2 top-full z-50 hidden w-[min(640px,calc(100vw-3.5rem))] -translate-x-1/2 pt-5 transition-all duration-300 lg:block ${
+                  style={menuStyle}
+                  className={`absolute top-full z-50 hidden w-[min(640px,calc(100vw-2rem))] pt-5 transition-all duration-300 lg:block ${
                     servicesOpen ? 'pointer-events-auto opacity-100 translate-y-0' : 'pointer-events-none opacity-0 -translate-y-4'
                   }`}
                   role="region"
@@ -308,15 +372,15 @@ export default function Header() {
               ))}
             </nav>
             <div className="flex flex-wrap items-center justify-end gap-4">
-              <HeaderCallButton className="min-w-[16.5rem]" />
-              <div className="hidden lg:flex flex-col items-start gap-2">
+              <HeaderCallButton className="hidden lg:inline-flex lg:min-w-[12.5rem] xl:min-w-[16.5rem]" />
+              <div className="hidden lg:flex flex-col items-end gap-1.5 text-right">
                 <Link
                   href="/book-appointment?intent=book"
-                  className="inline-flex min-h-[3.1rem] min-w-[14rem] items-center justify-center rounded-[1.75rem] bg-brand-red px-6 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-white whitespace-nowrap shadow-[0_28px_65px_-35px_rgba(225,29,42,0.9)] transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40"
+                  className="inline-flex min-h-[2.8rem] min-w-[11rem] items-center justify-center rounded-[1.5rem] bg-brand-red px-5 text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-white whitespace-nowrap shadow-[0_24px_55px_-32px_rgba(225,29,42,0.8)] transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40 xl:min-h-[3.1rem] xl:min-w-[14rem] xl:rounded-[1.75rem] xl:px-6 xl:text-[0.65rem] xl:shadow-[0_28px_65px_-35px_rgba(225,29,42,0.9)]"
                 >
                   Book Now
                 </Link>
-                <span className="text-[0.6rem] uppercase tracking-[0.32em] text-white/45">
+                <span className="text-[0.52rem] uppercase tracking-[0.32em] text-white/50 xl:text-[0.6rem]">
                   Free quotes • fast response
                 </span>
               </div>
@@ -358,18 +422,16 @@ export default function Header() {
           </div>
         </div>
         {/* Desktop trust ticker */}
-        <div className="hidden justify-center px-4 pb-2 md:flex md:px-6">
-          <div className="pointer-events-auto mx-auto mt-2.5 flex w-full max-w-[1280px] items-center justify-center gap-4 rounded-[2.25rem] border border-white/10 bg-black/65 px-6 py-2 text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-white/60 shadow-[0_18px_36px_-28px_rgba(0,0,0,0.8)]">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-2 text-white/70">
-                <span className={`relative inline-flex h-2 w-2 rounded-full ${isBusinessOpen ? 'bg-green-400' : 'bg-red-400'}`}>
-                  <span className="absolute inset-0 animate-ping rounded-full opacity-60" style={{ backgroundColor: isBusinessOpen ? '#4ade80' : '#f87171' }} />
-                </span>
-                {isBusinessOpen ? 'Open now • Call us' : 'Closed now • Message us'}
+        <div className="hidden justify-center px-4 pb-1 md:flex md:px-6">
+          <div className="pointer-events-auto mx-auto mt-2 flex w-full max-w-[1280px] items-center justify-center gap-4 rounded-[1.9rem] border border-white/8 bg-black/70 px-5 py-1.5 text-[0.58rem] font-semibold uppercase tracking-[0.28em] text-white/55 shadow-[0_12px_28px_-24px_rgba(0,0,0,0.75)]">
+            <div className="flex items-center gap-2 text-white/65">
+              <span className={`relative inline-flex h-2 w-2 shrink-0 rounded-full ${isBusinessOpen ? 'bg-green-400' : 'bg-red-400'}`}>
+                <span className="absolute inset-0 animate-ping rounded-full opacity-60" style={{ backgroundColor: isBusinessOpen ? '#4ade80' : '#f87171' }} />
               </span>
+              {isBusinessOpen ? 'Open now • Call us' : 'Closed now • Message us'}
             </div>
-            <div className="flex items-center gap-2 text-white/70">
-              <svg className="h-3.5 w-3.5 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center gap-2 text-white/65">
+              <svg className="h-3 w-3 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -378,12 +440,12 @@ export default function Header() {
               </svg>
               4,000+ customers
             </div>
-            <div className="flex items-center gap-2 px-3 text-white/70">
+            <div className="flex items-center gap-2 px-2.5 text-white/65">
               <span className="font-bold text-brand-gold">4.9★</span>
               195+ Google reviews
             </div>
-            <div className="flex items-center gap-2 text-white/70">
-              <svg className="h-3.5 w-3.5 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center gap-2 text-white/65">
+              <svg className="h-3 w-3 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"

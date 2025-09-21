@@ -8,7 +8,6 @@ test.describe('Comprehensive Site Check', () => {
     { name: 'Homepage', url: '/', title: 'Somerset Window Cleaning' },
     { name: 'Services', url: '/services', title: 'Our Exterior Cleaning Services' },
     { name: 'Areas', url: '/areas', title: 'Areas We Cover' },
-    { name: 'Pricing', url: '/pricing', title: 'Pricing Guide' },
     { name: 'Gallery', url: '/gallery', title: 'Gallery' },
     { name: 'Get in Touch', url: '/get-in-touch', title: 'Get in Touch' },
   ]
@@ -39,7 +38,7 @@ test.describe('Comprehensive Site Check', () => {
     const navLinks = [
       { text: 'Services', expectedUrl: '/services' },
       { text: 'Areas', expectedUrl: '/areas' },
-      { text: 'Pricing', expectedUrl: '/pricing' },
+      { text: 'Book', expectedUrl: '/book-appointment' },
       { text: 'Gallery', expectedUrl: '/gallery' },
     ]
 
@@ -62,7 +61,7 @@ test.describe('Comprehensive Site Check', () => {
     const footerLinks = [
       'Services',
       'Areas We Cover',
-      'Pricing Guide',
+      'View pricing & book',
       'Gallery',
     ]
 
