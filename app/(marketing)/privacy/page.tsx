@@ -16,7 +16,7 @@ export default function PrivacyPage() {
 
           <h2>1) Who we are</h2>
           <p>
-            Somerset Window Cleaning ("SWC", "we", "us", "our") provides window and exterior cleaning services
+            Somerset Window Cleaning (&quot;SWC&quot;, &quot;we&quot;, &quot;us&quot;, &quot;our&quot;) provides window and exterior cleaning services
             across Somerset. We are the data controller for the personal data we process about our customers,
             prospective customers, and website visitors.
           </p>
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
           <p>
             We process personal data under the UK data protection framework, including the UK GDPR as amended, the Data
             Protection Act 2018, and the Privacy and Electronic Communications Regulations (PECR). Guidance on these laws
-            is issued by the UK Information Commissioner's Office (ICO). Recent amendments are being implemented via the
+            is issued by the UK Information Commissioner&apos;s Office (ICO). Recent amendments are being implemented via the
             Data (Use and Access) Act 2025.
           </p>
 
@@ -223,13 +223,13 @@ export default function PrivacyPage() {
             using the details in section 1.
           </p>
           <p>
-            If we cannot verify your identity or if an exemption applies (for example, protecting others' data or
+            If we cannot verify your identity or if an exemption applies (for example, protecting others&apos; data or
             fulfilling legal obligations), we will explain this to you.
           </p>
 
           <h2>11) Marketing preferences</h2>
           <p>
-            For email or SMS marketing to existing customers, we follow PECR's soft opt-in rules and always include an
+            For email or SMS marketing to existing customers, we follow PECR&apos;s soft opt-in rules and always include an
             unsubscribe link. You can opt out at any time, and we will continue to send essential service messages
             (appointments, invoices) regardless of marketing preferences.
           </p>
@@ -244,16 +244,16 @@ export default function PrivacyPage() {
           <h2>13) Complaints</h2>
           <p>
             If you have concerns, please contact us first so we can help. You also have the right to complain to the
-            Information Commissioner's Office (ICO) on 0303 123 1113 or via the ICO website.
+            Information Commissioner&apos;s Office (ICO) on 0303 123 1113 or via the ICO website.
           </p>
 
           <h2>14) Children</h2>
-          <p>Our services and website are not aimed at children. We do not knowingly collect children's personal data.</p>
+          <p>Our services and website are not aimed at children. We do not knowingly collect children&apos;s personal data.</p>
 
           <h2>15) Changes to this policy</h2>
           <p>
             We may update this notice to reflect changes in our services or the law (including ongoing ICO updates related
-            to the Data (Use and Access) Act 2025). We will post the new version with a new "Last updated" date.
+            to the Data (Use and Access) Act 2025). We will post the new version with a new &quot;Last updated&quot; date.
           </p>
         </div>
       </Section>

@@ -66,7 +66,7 @@ export default function GeneralEnquiryForm({ defaultService }: GeneralEnquiryFor
   React.useEffect(() => {
     if (typeof window === 'undefined' || !PUBLIC_KEY) return
     try {
-      emailjs.init(PUBLIC_KEY)
+      emailjs.init({ publicKey: PUBLIC_KEY })
     } catch (error) {
       console.error('EmailJS init failed:', error)
     }
