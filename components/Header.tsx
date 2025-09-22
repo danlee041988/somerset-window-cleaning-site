@@ -22,10 +22,11 @@ const SERVICE_LINKS: ServiceLink[] = [
 ]
 
 const AUX_NAV_LINKS = [
+  { href: '/', label: 'Home' },
   { href: '/areas', label: 'Areas' },
   { href: '/book-appointment', label: 'Book' },
   { href: '/gallery', label: 'Gallery' },
-  { href: '/book-appointment?intent=quote', label: 'Contact' },
+  { href: '/contact', label: 'Contact' },
 ] as const
 
 // UK Bank Holidays
@@ -86,7 +87,7 @@ const HeaderCallButton = ({ className = '' }: { className?: string }) => {
 
   if (!isOpen) return null
 
-  const baseClasses = `group relative inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-black/80 px-4 py-2 text-left text-white/80 shadow-[0_20px_40px_-30px_rgba(0,0,0,0.9)] transition-all duration-300 hover:border-white/25 hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40 ${className}`
+  const baseClasses = `group relative inline-flex shrink-0 items-center gap-2.5 rounded-full border border-white/15 bg-black/80 px-4 py-2 text-left text-white/80 shadow-[0_20px_40px_-30px_rgba(0,0,0,0.9)] transition-all duration-300 hover:border-white/25 hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40 ${className}`
 
   return (
     <a href="tel:01458860339" className={baseClasses} aria-label="Call our team (we are open)">
@@ -371,12 +372,12 @@ export default function Header() {
                 </Link>
               ))}
             </nav>
-            <div className="flex flex-wrap items-center justify-end gap-4">
+            <div className="flex flex-wrap items-center justify-end gap-4 lg:flex-nowrap">
               <HeaderCallButton className="hidden lg:inline-flex lg:min-w-[12.5rem] xl:min-w-[16.5rem]" />
-              <div className="hidden lg:flex flex-col items-end gap-1.5 text-right">
+              <div className="hidden shrink-0 lg:flex lg:flex-col lg:items-end lg:gap-1.5 lg:text-right">
                 <Link
                   href="/book-appointment?intent=book"
-                  className="inline-flex min-h-[2.8rem] min-w-[11rem] items-center justify-center rounded-[1.5rem] bg-brand-red px-5 text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-white whitespace-nowrap shadow-[0_24px_55px_-32px_rgba(225,29,42,0.8)] transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40 xl:min-h-[3.1rem] xl:min-w-[14rem] xl:rounded-[1.75rem] xl:px-6 xl:text-[0.65rem] xl:shadow-[0_28px_65px_-35px_rgba(225,29,42,0.9)]"
+                  className="inline-flex min-h-[2.8rem] min-w-[11rem] shrink-0 items-center justify-center rounded-[1.5rem] bg-brand-red px-5 text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-white whitespace-nowrap shadow-[0_24px_55px_-32px_rgba(225,29,42,0.8)] transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40 xl:min-h-[3.1rem] xl:min-w-[14rem] xl:rounded-[1.75rem] xl:px-6 xl:text-[0.65rem] xl:shadow-[0_28px_65px_-35px_rgba(225,29,42,0.9)]"
                 >
                   Book Now
                 </Link>
@@ -529,7 +530,7 @@ export default function Header() {
                   Book Now
                 </Button>
                 <Button
-                  href="/book-appointment?intent=quote"
+                  href="/contact"
                   variant="ghost"
                   className="w-full justify-center rounded-full border border-white/15 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em]"
                 >
