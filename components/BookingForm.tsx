@@ -885,6 +885,7 @@ export default function BookingForm({
       ),
       intent: customer.intent,
       intent_label: customer.intent === 'quote' ? 'Quote request' : 'Booking request',
+      email_subject: `${customer.intent === 'quote' ? 'Quote request' : 'Booking request'} – ${customer.firstName} ${customer.lastName} (${customer.postcode.toUpperCase()})`,
       notes: customer.notes,
     }
 
