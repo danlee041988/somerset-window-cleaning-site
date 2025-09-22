@@ -10,6 +10,7 @@ import { analytics } from '@/lib/analytics'
 const SERVICE_ID = (process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '').trim()
 const TEMPLATE_ID = (process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_booking_form').trim()
 const PUBLIC_KEY = (process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '').trim()
+const GO_CARDLESS_URL = process.env.NEXT_PUBLIC_GOCARDLESS_PAYMENT_URL
 
 const DETACHED_SURCHARGE = 5
 const EXTENSION_SURCHARGE = 5
@@ -45,6 +46,15 @@ type CustomerType = 'new' | 'existing'
 type Step = 1 | 2 | 3
 
 const TOTAL_STEPS: Step = 3
+
+type SuccessSummaryState = {
+  total: string
+  services: string
+  frequency: string
+  breakdown: Array<{ label: string; value: string }>
+  discountNote: string
+  manualQuote: boolean
+}
 
 const CONFIDENCE_COPY: Record<Step, { heading: string; points: string[]; helper: string }> = {
   1: {
@@ -448,9 +458,13 @@ export default function BookingForm({
   const [status, setStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
-  const [successSummary, setSuccessSummary] = React.useState<{ total: string; services: string }>({
+  const [successSummary, setSuccessSummary] = React.useState<SuccessSummaryState>({
     total: '',
     services: '',
+    frequency: '',
+    breakdown: [],
+    discountNote: '',
+    manualQuote: false,
   })
 
   const startTime = React.useRef<number>(Date.now())
@@ -561,7 +575,8 @@ export default function BookingForm({
             : 'Extension allowance (one-off add-on)',
         )
       }
-      if (pricing.hasConservatory) services.push('Conservatory windows included')
+      if (pricing.hasConservatory)
+        services.push(`Conservatory windows (+£${CONSERVATORY_SURCHARGE} per visit)`)
     }
 
     if (requiresManualQuote) services.push('Manual quote required')
@@ -706,6 +721,7 @@ export default function BookingForm({
       pricing.propertyCategory === 'commercial' ? 'Not applicable' : propertyTypeLabel(pricing.propertyType)
     const frequencyText = frequencyLabel(pricing.frequency)
     const pricingLines: string[] = []
+    const confirmationBreakdown: Array<{ label: string; value: string }> = []
 
     if (pricing.propertyCategory === 'commercial') {
       if (pricing.commercialServices.length) {
@@ -714,10 +730,26 @@ export default function BookingForm({
             (serviceId) => `Commercial service: ${commercialServiceLabel(serviceId)}`,
           ),
         )
+        confirmationBreakdown.push({
+          label: 'Commercial services',
+          value: pricing.commercialServices
+            .map((serviceId) => commercialServiceLabel(serviceId))
+            .join(', '),
+        })
       } else {
         pricingLines.push('Commercial services to be confirmed with our team')
+        confirmationBreakdown.push({
+          label: 'Commercial services',
+          value: 'To be confirmed with our commercial team',
+        })
       }
     } else {
+      const windowValue = requiresManualQuote
+        ? 'To be confirmed'
+        : windowBundleUnlocked
+        ? 'Included with gutter & fascia bundle'
+        : formatCurrency(windowPrice)
+      confirmationBreakdown.push({ label: 'Window cleaning', value: windowValue })
       if (requiresManualQuote) {
         pricingLines.push('Window cleaning – To be confirmed (manual quote required)')
       } else if (windowBundleUnlocked) {
@@ -727,6 +759,10 @@ export default function BookingForm({
       }
 
       if (pricing.includeGutter) {
+        confirmationBreakdown.push({
+          label: 'Gutter clearing',
+          value: requiresManualQuote ? 'To be confirmed' : formatCurrency(gutterPrice),
+        })
         pricingLines.push(
           requiresManualQuote
             ? 'Gutter clearing (one-off) – To be confirmed'
@@ -734,6 +770,10 @@ export default function BookingForm({
         )
       }
       if (pricing.includeFascia) {
+        confirmationBreakdown.push({
+          label: 'Fascia & soffit cleaning',
+          value: requiresManualQuote ? 'To be confirmed' : formatCurrency(fasciaPrice),
+        })
         pricingLines.push(
           requiresManualQuote
             ? 'Fascia & soffit cleaning (one-off) – To be confirmed'
@@ -741,6 +781,14 @@ export default function BookingForm({
         )
       }
       if (pricing.hasExtension) {
+        confirmationBreakdown.push({
+          label: 'Extension allowance',
+          value: requiresManualQuote
+            ? 'To be confirmed'
+            : windowBundleUnlocked
+            ? 'Included with gutter & fascia bundle'
+            : `+${formatCurrency(EXTENSION_SURCHARGE)} per visit`,
+        })
         pricingLines.push(
           requiresManualQuote
             ? 'Extension allowance (one-off) – To be confirmed'
@@ -750,10 +798,14 @@ export default function BookingForm({
         )
       }
       if (pricing.hasConservatory) {
+        confirmationBreakdown.push({
+          label: 'Conservatory windows',
+          value: requiresManualQuote ? 'To be confirmed' : `+${formatCurrency(CONSERVATORY_SURCHARGE)} per visit`,
+        })
         pricingLines.push(
           requiresManualQuote
             ? 'Conservatory windows – To be confirmed'
-            : 'Conservatory windows – Included in visit total',
+            : `Conservatory windows – +£${CONSERVATORY_SURCHARGE} per visit`,
         )
       }
     }
@@ -854,7 +906,7 @@ export default function BookingForm({
       conservatory_price: pricing.hasConservatory
         ? requiresManualQuote
           ? 'To be confirmed'
-          : 'Included in visit total'
+          : `+${formatCurrency(CONSERVATORY_SURCHARGE)} per visit`
         : 'Not selected',
       property_is_bespoke: pricing.isBespoke ? 'Yes' : 'No',
       manual_quote_required: requiresManualQuote ? 'Yes' : 'No',
@@ -915,6 +967,10 @@ export default function BookingForm({
       setSuccessSummary({
         total: requiresManualQuote ? 'To be confirmed' : formatCurrency(visitTotal),
         services: servicesSelected.join(', '),
+        frequency: frequencyText,
+        breakdown: confirmationBreakdown,
+        discountNote,
+        manualQuote: requiresManualQuote,
       })
       setStatus('success')
       setStep(1)
@@ -955,17 +1011,74 @@ export default function BookingForm({
         <p className="mt-3 text-white/70">
           Thank you – we’ll align your postcode with the right round and confirm within one working day.
         </p>
-        <div className="mt-6 rounded-2xl border border-white/15 bg-white/5 p-5 text-left text-sm text-white/70">
-          <p className="text-white font-semibold">Summary</p>
-          <p className="mt-2">Services: {successSummary.services}</p>
-          <p>
-            Total per visit:{' '}
-            {successSummary.total}
+        <div className="mt-6 rounded-2xl border border-white/15 bg-white/5 p-6 text-left text-sm text-white/70">
+          <p className="text-base font-semibold text-white">Visit summary</p>
+          <dl className="mt-4 space-y-3">
+            <div className="flex items-start justify-between gap-4">
+              <dt className="text-xs uppercase tracking-[0.12em] text-white/50">Services</dt>
+              <dd className="flex-1 text-right text-sm text-white">{successSummary.services || 'We’ll confirm on the follow-up call'}</dd>
+            </div>
+            <div className="flex items-start justify-between gap-4">
+              <dt className="text-xs uppercase tracking-[0.12em] text-white/50">Frequency</dt>
+              <dd className="text-sm text-white">{successSummary.frequency || 'To be confirmed'}</dd>
+            </div>
+            <div className="flex items-start justify-between gap-4">
+              <dt className="text-xs uppercase tracking-[0.12em] text-white/50">Per visit total</dt>
+              <dd className="text-lg font-semibold text-white">{successSummary.total}</dd>
+            </div>
+          </dl>
+
+          {successSummary.breakdown.length ? (
+            <div className="mt-4 space-y-2">
+              {successSummary.breakdown.map((item) => (
+                <div key={`${item.label}-${item.value}`} className="flex items-start justify-between gap-3 text-xs">
+                  <span className="text-white/55">{item.label}</span>
+                  <span className="text-white/80 text-right">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {successSummary.discountNote ? (
+            <p className="mt-3 text-xs text-emerald-400">{successSummary.discountNote}</p>
+          ) : null}
+
+          {successSummary.manualQuote ? (
+            <p className="mt-3 text-xs text-white/55">
+              We&rsquo;ve flagged this request for manual pricing. Our team will double-check glazing and confirm costs before the visit is scheduled.
+            </p>
+          ) : null}
+
+          <p className="mt-3 text-xs text-white/55">
+            Prices are based on standard property sizes. If we think extra time is needed we&rsquo;ll let you know before we start any work.
           </p>
           <p className="mt-2 text-xs text-white/50">
             We reach most Velux windows with our poles and clean every window we can safely access.
           </p>
         </div>
+
+        {GO_CARDLESS_URL ? (
+          <div className="mt-6 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-6 text-left text-sm text-white/75">
+            <p className="text-base font-semibold text-white">Make payments easier with Direct Debit</p>
+            <p className="mt-2 text-xs text-white/60">
+              Set up GoCardless once and we&rsquo;ll only bill you after each visit. No need to be home or remember transfers.
+            </p>
+            <ul className="mt-4 space-y-2 text-xs text-white/70 list-disc list-inside">
+              <li>Charged only after the clean is complete</li>
+              <li>Email receipts after every visit</li>
+              <li>Pause or cancel any time in a couple of taps</li>
+              <li>Protected by the Direct Debit Guarantee</li>
+            </ul>
+            <a
+              href={GO_CARDLESS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-sm font-semibold tracking-[0.08em] text-brand-black transition hover:bg-white/80"
+            >
+              Set up Direct Debit
+            </a>
+          </div>
+        ) : null}
         <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-white/60">
           <span>Need urgent help? Call 01458 860339.</span>
           <Button onClick={() => setStatus('idle')} className="px-6 py-2 text-sm font-semibold tracking-[0.08em]">
@@ -1327,7 +1440,7 @@ export default function BookingForm({
                       <p data-testid="conservatory-line">
                         {requiresManualQuote
                           ? 'Manual quote required'
-                          : 'Included in visit total'}
+                          : `+${formatCurrency(CONSERVATORY_SURCHARGE)} per visit`}
                       </p>
                     </div>
                   ) : null}
