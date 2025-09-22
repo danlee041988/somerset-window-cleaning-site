@@ -744,6 +744,8 @@ export default function BookingForm({
         pricingLines.push(
           requiresManualQuote
             ? 'Extension allowance (one-off) – To be confirmed'
+            : windowBundleUnlocked
+            ? 'Extension allowance – Included with gutter & fascia bundle'
             : `Extension allowance (one-off) – +£${EXTENSION_SURCHARGE}`,
         )
       }
