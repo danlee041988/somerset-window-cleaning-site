@@ -7,9 +7,9 @@ import ReCaptcha from '@/components/features/contact/ReCaptcha'
 import SimpleAddressInput from '@/components/features/contact/SimpleAddressInput'
 import { analytics } from '@/lib/analytics'
 
-const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || ''
-const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_booking_form'
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
+const SERVICE_ID = (process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '').trim()
+const TEMPLATE_ID = (process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_booking_form').trim()
+const PUBLIC_KEY = (process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '').trim()
 
 const DETACHED_SURCHARGE = 5
 const EXTENSION_SURCHARGE = 5
@@ -923,10 +923,21 @@ export default function BookingForm({
       setRecaptchaToken(null)
       startTime.current = Date.now()
     } catch (error) {
-      console.error('Booking form submission error:', error)
-      analytics.formError('submission_failure', error instanceof Error ? error.message : 'Unknown error')
+      const serviceError = error as { status?: number; text?: string } | undefined
+      console.error('Booking form submission error:', serviceError ?? error)
+      const errorMessage =
+        serviceError?.text?.trim()
+          ? `Email service error: ${serviceError.text}`
+          : error instanceof Error
+          ? error.message
+          : 'Unknown error'
+      analytics.formError('submission_failure', errorMessage)
       setStatus('error')
-      setErrorMessage('Something went wrong sending your request. Please try again or call 01458 860339.')
+      if (serviceError?.status === 400 && serviceError?.text) {
+        setErrorMessage(`Email service error: ${serviceError.text}`)
+      } else {
+        setErrorMessage('Something went wrong sending your request. Please try again or call 01458 860339.')
+      }
     } finally {
       setStatus((prev) => (prev === 'submitting' ? 'idle' : prev))
     }
