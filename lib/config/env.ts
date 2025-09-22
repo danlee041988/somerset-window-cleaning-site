@@ -1,10 +1,12 @@
 import { getSiteOrigin } from '@/lib/site-url'
 
+const normalise = (value?: string | null) => (value ? value.trim() : '')
+
 export const emailJsConfig = {
-  publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? '',
-  serviceId: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? '',
-  templateId: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? '',
-  contactTemplateId: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID_CONTACT ?? ''
+  publicKey: normalise(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY),
+  serviceId: normalise(process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID),
+  templateId: normalise(process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID),
+  contactTemplateId: normalise(process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID_CONTACT),
 }
 
 export const recaptchaConfig = {
