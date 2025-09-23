@@ -54,8 +54,8 @@ export default function SolarPanelCleaningPage() {
         imageAlt: 'Technician cleaning roof-mounted solar panels',
       }}
       faqs={FAQS}
-      bookingHref="/book-appointment?service=solar-panel-cleaning"
-      bookingLabel="Book solar cleaning"
+      bookingHref="/book-appointment?service=solar-panel-cleaning&intent=quote"
+      bookingLabel="Request solar quote"
     />
   )
 }

@@ -1,0 +1,230 @@
+{
+  "exportFormatVersion": 2,
+  "containerVersion": {
+    "path": "accounts/0/containers/0/versions/0",
+    "container": {
+      "publicId": "GTM-WX8SLXJV",
+      "name": "Somerset Window Cleaning"
+    },
+    "tag": [
+      {
+        "tagId": "300",
+        "name": "GAW - Lead - Quote Form",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "html",
+            "value": "\n<script>\n(function() {\n  var gtag = window.gtag || function(){ (window.dataLayer = window.dataLayer || []).push(arguments); };\n  window.gtag = gtag;\n  var userData = {\n    email: \"{{dlv - email}}\",\n    phone_number: \"{{dlv - phone}}\",\n    first_name: \"{{dlv - first_name}}\",\n    last_name: \"{{dlv - last_name}}\",\n    address: { postal_code: \"{{dlv - postcode}}\" }\n  };\n  gtag('set', 'user_data', userData);\n  gtag('event', 'conversion', {\n    'send_to': 'AW-17575023245/IjwaCPiIuKAbEI2ltrxB',\n    'value': 0,\n    'currency': 'GBP'\n  });\n})();\n</script>\n"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "firingTriggerId": [
+          "200"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT"
+      },
+      {
+        "tagId": "301",
+        "name": "GAW - Lead - Contact Form",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "html",
+            "value": "\n<script>\n(function() {\n  var gtag = window.gtag || function(){ (window.dataLayer = window.dataLayer || []).push(arguments); };\n  window.gtag = gtag;\n  var userData = {\n    email: \"{{dlv - email}}\",\n    phone_number: \"{{dlv - phone}}\",\n    first_name: \"{{dlv - first_name}}\",\n    last_name: \"{{dlv - last_name}}\",\n    address: { postal_code: \"{{dlv - postcode}}\" }\n  };\n  gtag('set', 'user_data', userData);\n  gtag('event', 'conversion', {\n    'send_to': 'AW-17575023245/o4X4CM2dyqAbEI2ltrxB',\n    'value': 0,\n    'currency': 'GBP'\n  });\n})();\n</script>\n"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "firingTriggerId": [
+          "201"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT"
+      },
+      {
+        "tagId": "302",
+        "name": "GAW - Lead - Phone Click (Website)",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "html",
+            "value": "\n<script>\n(function() {\n  var gtag = window.gtag || function(){ (window.dataLayer = window.dataLayer || []).push(arguments); };\n  window.gtag = gtag;\n  var userData = {\n    email: \"{{dlv - email}}\",\n    phone_number: \"{{dlv - phone}}\",\n    first_name: \"{{dlv - first_name}}\",\n    last_name: \"{{dlv - last_name}}\",\n    address: { postal_code: \"{{dlv - postcode}}\" }\n  };\n  gtag('set', 'user_data', userData);\n  gtag('event', 'conversion', {\n    'send_to': 'AW-17575023245/wur5CNCdyqAbEI2ltrxB',\n    'value': 0,\n    'currency': 'GBP'\n  });\n})();\n</script>\n"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "firingTriggerId": [
+          "202"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT"
+      }
+    ],
+    "trigger": [
+      {
+        "triggerId": "200",
+        "name": "CE - Quote Form Submit",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "booking_form_submit"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "triggerId": "201",
+        "name": "CE - Contact Form Submit",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "contact_form_submit"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "triggerId": "202",
+        "name": "CE - Phone Click",
+        "type": "CUSTOM_EVENT",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "phone_click"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "variable": [
+      {
+        "variableId": "101",
+        "name": "dlv - email",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "email"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "variableId": "102",
+        "name": "dlv - phone",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "phone"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "variableId": "103",
+        "name": "dlv - first_name",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "first_name"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "variableId": "104",
+        "name": "dlv - last_name",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "last_name"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "variableId": "105",
+        "name": "dlv - postcode",
+        "type": "v",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "postcode"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": ""
+          }
+        ]
+      }
+    ]
+  }
+}

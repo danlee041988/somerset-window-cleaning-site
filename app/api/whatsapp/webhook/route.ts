@@ -197,8 +197,11 @@ async function handleButtonMessage(message: any) {
     case 'All Ready':
       await acknowledgeReadiness(from);
       break;
-    case 'Book Now':
+    case 'Arrange Visit':
       await handleBookingRequest(from);
+      break;
+    case 'Update Details':
+      await handleQuoteRequest(from);
       break;
     case 'Excellent Service':
       await handlePositiveFeedback(from);
@@ -305,7 +308,7 @@ async function handleQuoteRequest(phoneNumber: string) {
     to: phoneNumber,
     type: 'text' as const,
     text: {
-      body: '💰 Happy to provide a quote! Please share:\n\n🏠 Property address\n📏 Property type (house/flat)\n🏠 Number of bedrooms\n🪟 Services needed\n\nOr visit: somersetwindowcleaning.co.uk/book-appointment?intent=quote for instant online prices.',
+      body: '💰 Happy to provide a quote! Please share:\n\n🏠 Property address\n📏 Property type (house/flat)\n🏠 Number of bedrooms\n🪟 Services needed\n\nPrefer online? Send the form at somersetwindowcleaning.co.uk/book-appointment?intent=quote and we\'ll reply within one working day.',
     },
   };
 
@@ -322,7 +325,7 @@ async function handleBookingRequest(phoneNumber: string) {
     to: phoneNumber,
     type: 'text' as const,
     text: {
-      body: '📝 Ready to book your service! Please visit our booking page for instant scheduling:\n\nsomersetwindowcleaning.co.uk/book-appointment?intent=book\n\nOr call us directly at 07415 526331. We have availability this week!',
+      body: '🗓️ Ready to arrange your visit! Share your quote details at somersetwindowcleaning.co.uk/book-appointment?intent=quote so we can confirm pricing and visit times, or call us directly at 07415 526331.',
     },
   };
 

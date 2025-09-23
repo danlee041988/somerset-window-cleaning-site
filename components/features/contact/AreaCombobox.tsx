@@ -148,7 +148,7 @@ export default function AreaCombobox({ areas, containerClassName, placeholder = 
     if (area.town) params.set('area', area.town)
 
     redirectTimeoutRef.current = window.setTimeout(() => {
-      router.push(`/book-appointment?intent=book&${params.toString()}`)
+      router.push(`/book-appointment?intent=quote&${params.toString()}`)
       redirectTimeoutRef.current = null
       setSelectedArea(null)
     }, 1200)
@@ -226,7 +226,7 @@ export default function AreaCombobox({ areas, containerClassName, placeholder = 
 
       {selectedArea && (
         <div className="mt-3 rounded-lg border border-green-500/30 bg-green-500/15 px-4 py-3 text-sm text-green-200 animate-fadeIn">
-          <span className="font-semibold text-green-100">Yes!</span> We cover {selectedArea.town}. Redirecting to booking...
+          <span className="font-semibold text-green-100">Yes!</span> We cover {selectedArea.town}. Redirecting to the quote form...
         </div>
       )}
     </div>

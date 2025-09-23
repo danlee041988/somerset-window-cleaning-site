@@ -54,8 +54,8 @@ export default function CommercialCleaningPage() {
         imageAlt: 'Commercial property exterior cleaning crew',
       }}
       faqs={FAQS}
-      bookingHref="/book-appointment?service=commercial-cleaning"
-      bookingLabel="Book commercial clean"
+      bookingHref="/book-appointment?service=commercial-cleaning&intent=quote"
+      bookingLabel="Request commercial quote"
     />
   )
 }

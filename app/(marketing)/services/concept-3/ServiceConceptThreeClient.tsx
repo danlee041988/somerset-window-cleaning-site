@@ -124,7 +124,7 @@ export default function ServiceConceptThreeClient() {
               </div>
               <div className="flex flex-wrap gap-4">
                 <Button href="/get-in-touch" className="rounded-full px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
-                  Book planning call
+                  Arrange planning call
                 </Button>
                 <Button href="/compare-services" variant="ghost" className="rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
                   Compare plans
@@ -170,8 +170,8 @@ export default function ServiceConceptThreeClient() {
                     </li>
                   ))}
                 </ul>
-                <Button href="/book-appointment" variant="ghost" className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em]">
-                  Add to programme
+                <Button href="/book-appointment?intent=quote" variant="ghost" className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em]">
+                  Discuss programme
                 </Button>
               </div>
             </div>

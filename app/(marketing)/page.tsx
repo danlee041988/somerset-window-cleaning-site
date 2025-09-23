@@ -14,18 +14,18 @@ export const metadata: Metadata = {
   },
 }
 
-const HOME_BOOKING_STEPS = [
+const HOME_QUOTE_STEPS = [
   {
-    title: 'Book online',
-    description: 'Fill out our booking form, pick the services you need, and choose your preferred visit window.'
+    title: 'Share your details',
+    description: 'Tell us about the property, access, and the services you’re considering. It only takes a couple of minutes.'
   },
   {
-    title: 'We handle the clean',
-    description: 'Our crew arrives on the agreed day, works through your checklist, and keeps everything spotless.'
+    title: 'We confirm your quote',
+    description: 'A specialist reviews the request, checks coverage, and comes back within one working day with tailored pricing.'
   },
   {
-    title: 'Invoice your way',
-    description: 'We send your invoice via your preferred contact method with easy payment options attached.'
+    title: 'Schedule your visit',
+    description: 'Choose a visit window that suits you. We lock in the crew, confirm access, and send reminders before arrival.'
   },
   {
     title: 'Stay in the loop',
@@ -62,20 +62,20 @@ export default function HomePage() {
             Somerset Window Cleaning
           </h1>
           <p className="max-w-2xl text-lg noir-muted">
-            Streak‑free, sparkling windows for homes and businesses across Somerset. Professional service, transparent pricing, flexible scheduling.
+            Streak‑free, sparkling windows for homes and businesses across Somerset. Professional service, transparent quoting, and flexible scheduling.
           </p>
           
           <div className="flex flex-wrap gap-3">
-            <Button href="/book-appointment">Book now</Button>
+            <Button href="/book-appointment">Request a quote</Button>
             <Button href="/services" variant="ghost">Explore services</Button>
           </div>
         </div>
       </section>
 
-      {/* Booking steps */}
+      {/* Quote steps */}
       <Section
-        title="Booking is straightforward"
-        subtitle="Four quick steps and we’ll have your property locked into the correct Somerset frequency."
+        title="Getting a quote is straightforward"
+        subtitle="Four quick touchpoints to align pricing, availability, and the crew that suits your property."
         spacing="relaxed"
       >
         <div className="feature-card feature-card--minimal relative overflow-hidden">
@@ -90,7 +90,7 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-              {HOME_BOOKING_STEPS.map((step, index) => {
+              {HOME_QUOTE_STEPS.map((step, index) => {
                 const stepPosition = index + 1
                 const displayNumber = stepPosition.toString().padStart(2, '0')
                 return (
@@ -121,9 +121,9 @@ export default function HomePage() {
 
             <div className="flex flex-wrap justify-center gap-3">
               <Button href="/book-appointment" className="px-8 py-3 tracking-[0.28em]">
-                Start your booking
+                Start your quote request
               </Button>
-              <Button href="/book-appointment#faq" variant="secondary" className="px-8 py-3 tracking-[0.28em] text-white/80">
+              <Button href="/book-appointment#how-it-works" variant="secondary" className="px-8 py-3 tracking-[0.28em] text-white/80">
                 See what happens next
               </Button>
             </div>
@@ -134,7 +134,7 @@ export default function HomePage() {
       {/* Services preview - Tabbed experience */}
       <Section
         title="Our most-requested services"
-        subtitle="Switch between core services to see benefits, pricing, and how we schedule them across Somerset."
+        subtitle="Switch between core services to see benefits, how we work, and what’s included across Somerset."
         spacing="relaxed"
         animationDelay={100}
       >

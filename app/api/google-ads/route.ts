@@ -5,29 +5,29 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleAdsClient, automatedKeywordOptimization, generateWeeklyReport } from '@/lib/google-ads'
+import {
+  GoogleAdsClient,
+  GoogleAdsConfigError,
+  automatedKeywordOptimization,
+  generateWeeklyReport,
+  isGoogleAdsConfigured,
+} from '@/lib/google-ads'
 
 // Initialize Google Ads client with environment variables
 function createGoogleAdsClient() {
-  return new GoogleAdsClient({
-    customerId: process.env.GOOGLE_ADS_CUSTOMER_ID!,
-    developerToken: process.env.GOOGLE_ADS_DEVELOPER_TOKEN!,
-    clientId: process.env.GOOGLE_ADS_CLIENT_ID!,
-    clientSecret: process.env.GOOGLE_ADS_CLIENT_SECRET!,
-    refreshToken: process.env.GOOGLE_ADS_REFRESH_TOKEN!
-  })
+  return new GoogleAdsClient()
 }
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const action = searchParams.get('action')
-    const customerId = process.env.GOOGLE_ADS_CUSTOMER_ID!
-
-    if (!customerId) {
+    if (!isGoogleAdsConfigured()) {
       return NextResponse.json(
-        { error: 'Google Ads customer ID not configured' },
-        { status: 500 }
+        {
+          error: 'Google Ads is not configured yet. Add the required credentials to .env.local and try again.',
+        },
+        { status: 503 },
       )
     }
 
@@ -35,14 +35,17 @@ export async function GET(request: NextRequest) {
 
     switch (action) {
       case 'campaigns': {
-        const campaigns = await client.getCampaigns()
+        const dateRange = searchParams.get('dateRange') ?? 'LAST_30_DAYS'
+        const campaigns = await client.getCampaigns(dateRange)
         return NextResponse.json({ campaigns })
       }
 
       case 'keywords': {
         const campaignId = searchParams.get('campaignId')
-        const keywords = await client.getKeywords(campaignId || undefined)
-        return NextResponse.json({ keywords })
+        const dateRange = searchParams.get('dateRange') ?? 'LAST_30_DAYS'
+        const keywords = await client.getKeywords(dateRange, { limit: 250 })
+        const filtered = campaignId ? keywords.filter((keyword) => keyword.campaignId === campaignId) : keywords
+        return NextResponse.json({ keywords: filtered })
       }
 
       case 'performance': {
@@ -61,12 +64,12 @@ export async function GET(request: NextRequest) {
       }
 
       case 'weekly-report': {
-        const report = await generateWeeklyReport(customerId)
+        const report = await generateWeeklyReport()
         return NextResponse.json({ report })
       }
 
       case 'auto-optimize': {
-        const optimizations = await automatedKeywordOptimization(customerId)
+        const optimizations = await automatedKeywordOptimization()
         return NextResponse.json({ 
           optimizations,
           message: `Generated ${optimizations.length} optimization recommendations`
@@ -80,6 +83,9 @@ export async function GET(request: NextRequest) {
         )
     }
   } catch (error) {
+    if (error instanceof GoogleAdsConfigError) {
+      return NextResponse.json({ error: error.message }, { status: 503 })
+    }
     console.error('Google Ads API error:', error)
     return NextResponse.json(
       { error: 'Google Ads API request failed', details: error instanceof Error ? error.message : 'Unknown error' },
@@ -93,6 +99,14 @@ export async function POST(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const action = searchParams.get('action')
     const body = await request.json()
+    if (!isGoogleAdsConfigured()) {
+      return NextResponse.json(
+        {
+          error: 'Google Ads is not configured yet. Add the required credentials to .env.local and try again.',
+        },
+        { status: 503 },
+      )
+    }
     const client = createGoogleAdsClient()
 
     switch (action) {
@@ -216,6 +230,9 @@ export async function POST(request: NextRequest) {
         )
     }
   } catch (error) {
+    if (error instanceof GoogleAdsConfigError) {
+      return NextResponse.json({ error: error.message }, { status: 503 })
+    }
     console.error('Google Ads API POST error:', error)
     return NextResponse.json(
       { error: 'Google Ads API request failed', details: error instanceof Error ? error.message : 'Unknown error' },

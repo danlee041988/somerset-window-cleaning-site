@@ -125,7 +125,7 @@ export default function PostcodeChecker({
           redirectParams.set('coverageArea', matchedAreaName)
         }
 
-        // Redirect to the booking form with postcode context once the success state is visible
+        // Redirect to the quote form with postcode context once the success state is visible
         setTimeout(() => {
           router.push(`/book-appointment?${redirectParams.toString()}`)
         }, 1500)
@@ -175,7 +175,7 @@ export default function PostcodeChecker({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div className="text-sm text-white">
-            <span className="font-semibold">Congratulations!</span> We cover {areaName}. Redirecting to booking...
+            <span className="font-semibold">Congratulations!</span> We cover {areaName}. Redirecting to the quote form...
           </div>
         </div>
       </div>
