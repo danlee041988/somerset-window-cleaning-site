@@ -29,7 +29,7 @@ function PrimaryServiceFeature() {
 
   const imageSrc =
     SERVICE_IMAGE_MAP[primaryService.title] || SERVICE_IMAGES.window || '/photos/photo06.jpg'
-  const bookingHref = `/book-appointment?service=${primaryService.slug}`
+  const quoteHref = `/book-appointment?service=${primaryService.slug}&intent=quote`
 
   const stats = [
     { label: 'Frequency coverage', value: '4–8 week pure-water rounds' },
@@ -89,10 +89,10 @@ function PrimaryServiceFeature() {
 
             <div className="flex flex-wrap gap-4 pt-4">
               <Button
-                href={bookingHref}
+                href={quoteHref}
                 className="rounded-full px-7 py-3 text-sm font-semibold uppercase tracking-wide"
               >
-                Book window cleaning
+                Request window quote
               </Button>
               <Button
                 href={`/services/${primaryService.slug}`}
@@ -133,7 +133,7 @@ export default function ServicesPage() {
       <Section
         spacing="relaxed"
         title="Exterior cleaning, perfected"
-        subtitle="One page, every service. Choose the treatment that fits your property and lock in your preferred visit straight away."
+        subtitle="One page, every service. Choose the treatment that fits your property and request a tailored quote in minutes."
       >
         <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur md:p-12">
           <div className="grid gap-8 md:grid-cols-[1.1fr_0.9fr] md:items-center">
@@ -155,8 +155,8 @@ export default function ServicesPage() {
                   value: 'Photo proof and maintenance logs on request',
                 },
                 {
-                  label: 'Booking',
-                  value: 'Online scheduling and automated reminders',
+                  label: 'Quoting',
+                  value: 'Online request reviewed within one working day',
                 }].map((item) => (
                   <div
                     key={item.label}
@@ -215,13 +215,13 @@ export default function ServicesPage() {
           <div className="feature-card__content grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="space-y-6 p-8 md:p-12">
               <span className="feature-chip feature-chip--accent">Ready when you are</span>
-              <h3 className="text-3xl font-semibold text-white md:text-4xl">Let’s get your next visit locked in</h3>
+              <h3 className="text-3xl font-semibold text-white md:text-4xl">Let’s get your next quote prepared</h3>
               <p className="text-white/75 text-base leading-relaxed">
-                Request your preferred date, add notes for access, and we’ll confirm the slot with SMS reminders plus contactless payment links after the job.
+                Share your preferred timing, add access notes, and we’ll confirm availability with reminders plus contactless payment links after each visit.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button href="/book-appointment" className="rounded-full px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
-                  Book now
+                  Request quote
                 </Button>
                 <Button href="/compare-services" variant="ghost" className="rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
                   Compare plans
@@ -304,7 +304,7 @@ function SecondaryServiceCard({
   service: (typeof servicesData)[number]
 }) {
   const imageSrc = SERVICE_IMAGE_MAP[service.title] || SERVICE_IMAGES.window || '/photos/photo06.jpg'
-  const bookingHref = `/book-appointment?service=${service.slug}`
+  const quoteHref = `/book-appointment?service=${service.slug}&intent=quote`
   const topBenefits = service.benefits.map((benefit) => benefit.text).slice(0, 3)
 
   return (
@@ -322,7 +322,7 @@ function SecondaryServiceCard({
         </div>
         <div className="flex gap-3">
           <div className="flex-1 rounded-2xl border border-white/12 bg-black/35 p-4">
-            <p className="text-[0.65rem] uppercase tracking-[0.3em] text-white/45">Investment</p>
+            <p className="text-[0.65rem] uppercase tracking-[0.3em] text-white/45">Quote</p>
             <p className="mt-1 text-base font-semibold text-white">{service.price}</p>
           </div>
           <div className="flex-1 rounded-2xl border border-white/12 bg-black/35 p-4">
@@ -334,10 +334,10 @@ function SecondaryServiceCard({
         <div className="mt-auto space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button
-              href={bookingHref}
+              href={quoteHref}
               className="w-full rounded-full px-6 py-2.5 text-sm font-semibold uppercase tracking-wide"
             >
-              Book now
+              Request quote
             </Button>
             <Button
               href={`/services/${service.slug}`}

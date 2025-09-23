@@ -1,13 +1,14 @@
 # Google Ads API Integration Setup Guide
 
-## Setup Status: ✅ **PRODUCTION READY**
+## Setup Status: 🚧 **Action Required**
 
-**Authentication Status**: ✅ **COMPLETED** (2025-09-17)
-- ✅ OAuth 2.0 credentials configured
-- ✅ Refresh token generated and stored
-- ✅ API connection tested and verified
-- ✅ All environment variables configured
-- 🚀 Ready for campaign management and optimization
+The new Google Ads client, admin dashboard, API route, and automation scripts are in place. To activate them you must finish the authentication steps and add the required credentials to `.env.local`.
+
+**Authentication Checklist**
+- [ ] OAuth 2.0 client JSON saved to `config/google-ads/web-client.json`
+- [ ] Refresh token generated with `node scripts/google-ads-auth.cjs`
+- [ ] Google Ads developer token + customer IDs added to environment variables
+- [ ] Connection test passes (`node scripts/test-google-ads-api.cjs`)
 
 ## Overview
 Complete setup guide for integrating Google Ads API with Somerset Window Cleaning website, including automated optimization, performance monitoring, and GA4-driven analytics.
@@ -53,7 +54,7 @@ Complete setup guide for integrating Google Ads API with Somerset Window Cleanin
 
 ### Step 2: Environment Variables
 
-Add these variables to your `.env.local` file:
+Add these variables to your `.env.local` file (replace the placeholders with your live values):
 
 ```bash
 # Google Ads API Configuration
@@ -62,24 +63,24 @@ GOOGLE_ADS_DEVELOPER_TOKEN=your_developer_token_here
 GOOGLE_ADS_CLIENT_ID=your_client_id.googleusercontent.com
 GOOGLE_ADS_CLIENT_SECRET=your_client_secret
 GOOGLE_ADS_REFRESH_TOKEN=your_refresh_token
+GOOGLE_ADS_LOGIN_CUSTOMER_ID=your_manager_account_id # optional, only for MCC setups
 
 # Optional: Test Account (for development)
 GOOGLE_ADS_TEST_CUSTOMER_ID=1234567890
+
+# Automation tuning
+GOOGLE_ADS_AUTOMATION_TARGET_CPA=80
+GOOGLE_ADS_AUTOMATION_ADJUSTMENT_RATIO=0.1
+GOOGLE_ADS_AUTOMATION_DRY_RUN=true
 ```
 
-### Step 3: Generate Refresh Token ✅ COMPLETED
+### Step 3: Generate Refresh Token
 
-~~Run the authentication script to generate a refresh token:~~
+Run the authentication script to generate (or rotate) your refresh token. The script now checks both the new config path and the legacy fallback:
 
 ```bash
-# Authentication completed - refresh token generated
-# GOOGLE_ADS_REFRESH_TOKEN=YOUR_REFRESH_TOKEN_HERE
+node scripts/google-ads-auth.cjs
 ```
-
-**Status**: ✅ **COMPLETED** - OAuth authentication successful
-- ✅ Authorization code processed
-- ✅ Refresh token generated and saved to .env.local
-- ✅ API connection tested and verified
 
 Test your connection:
 ```bash
@@ -101,7 +102,7 @@ curl "http://localhost:3000/api/google-ads?action=recommendations"
 
 ### Step 5: Configure Automation (Optional)
 
-Set up automated optimizations with cron jobs:
+Set up automated optimizations with cron jobs (leave `GOOGLE_ADS_AUTOMATION_DRY_RUN=true` until you are happy with the adjustments):
 
 ```bash
 # Edit crontab

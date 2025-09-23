@@ -36,7 +36,7 @@ export default function Footer() {
                   Trusted by 4,000+ customers
                 </span>
                 <span className="max-w-prose">
-                  Book, schedule, and keep every visit on track with reminders and clear communication from our crew.
+                  Request, schedule, and keep every visit on track with reminders and clear communication from our crew.
                 </span>
               </div>
             </div>
@@ -90,8 +90,8 @@ export default function Footer() {
               </h3>
               <div className="grid grid-cols-1 gap-2 text-sm noir-muted">
                 <Link href="/areas" className="transition hover:text-[var(--fg)]">Areas We Cover</Link>
-                <Link href="/book-appointment" className="transition hover:text-[var(--fg)]">View pricing &amp; book</Link>
-                <Link href="/book-appointment?intent=book" className="transition hover:text-[var(--fg)]">Book Now</Link>
+                <Link href="/book-appointment" className="transition hover:text-[var(--fg)]">Request a quote</Link>
+                <Link href="/book-appointment?intent=quote" className="transition hover:text-[var(--fg)]">Request quote now</Link>
                 {GO_CARDLESS_URL && (
                   <a
                     href={GO_CARDLESS_URL}

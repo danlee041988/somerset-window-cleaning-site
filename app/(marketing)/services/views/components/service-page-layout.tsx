@@ -141,9 +141,9 @@ export function ServicePageLayout({ service, hero, faqs, bookingHref, bookingLab
 
       <Section spacing="normal" className="pt-0">
         <div className="rounded-3xl border border-white/15 bg-white/5 p-8 text-center text-white/80">
-          <h2 className="text-2xl font-semibold text-white">Ready to book {service.title.toLowerCase()}?</h2>
+          <h2 className="text-2xl font-semibold text-white">Ready to request {service.title.toLowerCase()}?</h2>
           <p className="mt-3 text-sm text-white/70">
-            Tell us your preferred schedule and property details and we&apos;ll confirm your visit within four business hours.
+            Share your property details and availability and we&apos;ll confirm a tailored quote within one working day.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
             <Button href={bookingHref} className="rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em]">

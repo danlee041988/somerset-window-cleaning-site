@@ -144,7 +144,7 @@ export const WHATSAPP_TEMPLATES = {
     },
     body: {
       type: 'TEXT',
-      text: 'Hi {{1}}, your {{2}} quote is ready!\n\n💰 Quote: {{3}}\n📅 Valid until: {{4}}\n🔢 Reference: {{5}}\n\nThis quote includes all materials and equipment. No hidden charges, fully insured service.\n\nReady to book? Reply to this message or call us directly.',
+      text: 'Hi {{1}}, thanks for sharing the details about your {{2}}. Our team is preparing a tailored quote and we\'ll be in touch shortly to confirm pricing and visit options.\n\nNeed anything in the meantime? Reply here and we\'ll pick it up.',
     },
     footer: {
       type: 'TEXT',
@@ -153,11 +153,11 @@ export const WHATSAPP_TEMPLATES = {
     buttons: [
       {
         type: 'QUICK_REPLY',
-        text: 'Book Now',
+        text: 'Arrange Visit',
       },
       {
         type: 'QUICK_REPLY',
-        text: 'More Info',
+        text: 'Update Details',
       },
     ],
   },
@@ -307,7 +307,7 @@ export const WHATSAPP_TEMPLATES = {
     },
     body: {
       type: 'TEXT',
-      text: 'Hi {{1}}, it\'s time for your regular {{2}} service! 🏠\n\nLast service: {{3}}\nRecommended frequency: {{4}}\n\nReady to book your next appointment? We have availability this week and next.\n\nKeeping your property looking its best! ✨',
+      text: 'Hi {{1}}, it\'s time for your regular {{2}} service! 🏠\n\nLast visit: {{3}}\nRecommended frequency: {{4}}\n\nLet us know if you\'d like us to arrange the next visit or if anything has changed.',
     },
     footer: {
       type: 'TEXT',
@@ -316,7 +316,7 @@ export const WHATSAPP_TEMPLATES = {
     buttons: [
       {
         type: 'QUICK_REPLY',
-        text: 'Book Now',
+        text: 'Arrange Visit',
       },
       {
         type: 'QUICK_REPLY',

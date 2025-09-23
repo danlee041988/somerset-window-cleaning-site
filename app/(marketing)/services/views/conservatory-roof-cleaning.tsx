@@ -54,8 +54,8 @@ export default function ConservatoryRoofCleaningPage() {
         imageAlt: 'Conservatory roof cleaning in progress',
       }}
       faqs={FAQS}
-      bookingHref="/book-appointment?service=conservatory-roof-cleaning"
-      bookingLabel="Book conservatory clean"
+      bookingHref="/book-appointment?service=conservatory-roof-cleaning&intent=quote"
+      bookingLabel="Request conservatory quote"
     />
   )
 }

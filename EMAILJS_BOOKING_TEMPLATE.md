@@ -10,29 +10,29 @@ Use this checklist alongside `EMAILJS_SETUP.md` to keep the EmailJS side of the 
 
 ## Recommended Subject
 ```
-New Booking – {{name}} ({{customer_type_field}})
+New Quote Request – {{name}} ({{intent_label}})
 ```
 
 ## Core Variables to Surface
-These variables give you a complete view of every submission:
+These fields now focus on preparing a manual quote rather than surfacing live pricing:
 
 | Variable | Purpose |
 | --- | --- |
-| `{{summary_plaintext}}` | Single string summarising customer, property, services, pricing, and metadata |
-| `{{services_list}}` / `{{services_json}}` | Comma list and raw JSON array of chosen services |
+| `{{summary_plaintext}}` | One string covering customer, property, services, and metadata |
+| `{{services_list}}` / `{{services_json}}` | Comma list and JSON array of chosen services |
 | `{{service_frequency}}` | Requested visit cadence |
-| `{{preferred_date_label}}` | Human readable slot or "Manual scheduling required" |
-| `{{pricing_total}}`, `{{pricing_breakdown}}`, `{{pricing_discount_note}}` | Pricing insights assembled in the UI |
-| `{{frequency_match}}`, `{{frequency_service_days}}`, `{{coverage_label}}` | Route coverage diagnostics |
-| `{{raw_payload_json}}` | Full JSON snapshot if you need every raw field |
-| `{{submitted_at}}`, `{{recaptcha_token}}` | Audit trail | 
+| `{{manual_quote_required}}`, `{{manual_review_reason}}` | Highlights whether a follow-up quote call is needed and why |
+| `{{property_extras}}` | Notes on extensions, conservatories, bespoke layouts |
+| `{{commercial_type}}`, `{{commercial_services}}`, `{{commercial_notes}}` | Commercial context when relevant |
+| `{{raw_payload_json}}` | Full JSON payload for CRM or audit use |
+| `{{submitted_at}}`, `{{recaptcha_token}}` | Submission audit trail |
 
-> The template also receives the basic contact details (`{{name}}`, `{{email}}`, `{{phone}}`, `{{customer_type_field}}`, etc.) so you can display them anywhere you prefer.
+Standard contact fields (`{{customer_email}}`, `{{customer_phone}}`, etc.) remain available for the header of the email template.
 
 ## Template Body (Copy/Paste)
 
 ```html
-Subject: New Booking – {{name}} ({{customer_type_field}})
+Subject: New Quote Request – {{name}} ({{intent_label}})
 
 <!DOCTYPE html>
 <html>
@@ -52,7 +52,7 @@ Subject: New Booking – {{name}} ({{customer_type_field}})
   <body>
     <div class="header">
       <h1>Somerset Window Cleaning</h1>
-      <p>New booking request received</p>
+      <p>New quote request received</p>
     </div>
     <div class="content">
       <div class="panel">
@@ -62,13 +62,13 @@ Subject: New Booking – {{name}} ({{customer_type_field}})
         </div>
       </div>
       <div class="panel">
-        <h3>Pricing</h3>
+        <h3>Service Preferences</h3>
         <div>
-          <p><strong>Total:</strong> {{pricing_total}}</p>
-          <p><strong>Breakdown:</strong><br/>{{pricing_breakdown}}</p>
-          {{#pricing_discount_note}}
-            <p><strong>Discounts:</strong> {{pricing_discount_note}}</p>
-          {{/pricing_discount_note}}
+          <p><strong>Frequency:</strong> {{service_frequency}}</p>
+          <p><strong>Services requested:</strong> {{services_list}}</p>
+          <p><strong>Manual quote required?</strong> {{manual_quote_required}}</p>
+          <p><strong>Reason:</strong> {{manual_review_reason}}</p>
+          <p><strong>Extras / notes:</strong> {{property_extras}}</p>
         </div>
       </div>
       <div class="panel">
@@ -83,4 +83,4 @@ Subject: New Booking – {{name}} ({{customer_type_field}})
 </html>
 ```
 
-Update the template in EmailJS whenever you change the fields inside `components/BookingForm.tsx`. Keep the subject and summary aligned with the live form so every internal email surfaces the data you expect.
+Keep this template in sync with `components/BookingForm.tsx`. If you add or rename fields, update both the EmailJS template and this reference so the internal notification always reflects the live form.

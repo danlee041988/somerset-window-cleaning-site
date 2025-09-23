@@ -1,0 +1,18 @@
+campaign,ad_group,keyword,match_type
+Windows – Somerset,Core intent,"window cleaning near me",phrase
+Windows – Somerset,Core intent,"window cleaning near me",exact
+Windows – Somerset,Local intent,"window cleaner street",phrase
+Windows – Somerset,Local intent,"window cleaner glastonbury",phrase
+Windows – Somerset,Local intent,"window cleaner wells",phrase
+Windows – Somerset,Frequency,"monthly window cleaning",phrase
+Windows – Somerset,Frequency,"4 weekly window clean",phrase
+Windows – Somerset,Service,"exterior window cleaning",phrase
+Gutter – Somerset,Core intent,"gutter cleaning near me",phrase
+Gutter – Somerset,Core intent,"gutter cleaning",exact
+Gutter – Somerset,Downpipe,"downpipe cleaning",phrase
+Conservatory – Somerset,Core intent,"conservatory roof cleaning",phrase
+Conservatory – Somerset,Core intent,"conservatory roof cleaning",exact
+Solar Panels – Somerset,Core intent,"solar panel cleaning",phrase
+Solar Panels – Somerset,Core intent,"solar panel cleaning",exact
+Brand,Brand,"somerset window cleaning",exact
+Brand,Brand,"dan lee window cleaning",phrase

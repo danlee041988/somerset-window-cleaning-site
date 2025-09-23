@@ -54,8 +54,8 @@ export default function GutterClearingPage() {
         imageAlt: 'Technician using high reach gutter vacuum',
       }}
       faqs={FAQS}
-      bookingHref="/book-appointment?service=gutter-clearing"
-      bookingLabel="Book gutter clearing"
+      bookingHref="/book-appointment?service=gutter-clearing&intent=quote"
+      bookingLabel="Request gutter quote"
     />
   )
 }

@@ -213,7 +213,7 @@ export default function WellsBA5Page() {
         
         <div className="rounded-xl border border-brand-red/30 bg-gradient-to-br from-brand-red/20 to-brand-red/10 p-8 backdrop-blur-sm text-center">
           <h3 className="text-xl font-bold text-white mb-3">Wells Special Offer</h3>
-          <p className="text-white/80 mb-4">Book 3 services together and save 15% - Popular with BA5 customers!</p>
+          <p className="text-white/80 mb-4">Bundle 3 services together and save 15% - Popular with BA5 customers!</p>
           <Button href="/compare-services" variant="primary">View Package Deals</Button>
         </div>
       </Section>

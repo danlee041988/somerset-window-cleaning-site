@@ -38,7 +38,7 @@ test.describe('Comprehensive Site Check', () => {
     const navLinks = [
       { text: 'Services', expectedUrl: '/services' },
       { text: 'Areas', expectedUrl: '/areas' },
-      { text: 'Book', expectedUrl: '/book-appointment' },
+      { text: 'Quote', expectedUrl: '/book-appointment' },
       { text: 'Gallery', expectedUrl: '/gallery' },
     ]
 
@@ -61,7 +61,7 @@ test.describe('Comprehensive Site Check', () => {
     const footerLinks = [
       'Services',
       'Areas We Cover',
-      'View pricing & book',
+      'Request a quote',
       'Gallery',
     ]
 
@@ -133,17 +133,17 @@ test.describe('Comprehensive Site Check', () => {
       await expect(card.locator('h3, .text-lg')).toBeVisible()
       
       // Should have CTA button
-      const button = card.locator('button, a[href*="get-in-touch"]')
+      const button = card.locator('button, a[href*="/services/"]')
       await expect(button).toBeVisible()
       
       console.log(`✅ Service card ${i + 1} structure valid`)
     }
     
     // Test clicking a service CTA
-    const firstButton = serviceCards.first().locator('button, a[href*="get-in-touch"]')
+    const firstButton = serviceCards.first().locator('button, a[href*="/services/"]')
     await firstButton.click()
-    await page.waitForURL('**/get-in-touch**')
-    expect(page.url()).toContain('/get-in-touch')
+    await page.waitForURL('**/services/**')
+    expect(page.url()).toContain('/services/')
     
     console.log('✅ Service CTA buttons working')
   })

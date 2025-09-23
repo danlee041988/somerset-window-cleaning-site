@@ -1,6 +1,8 @@
 "use client"
 
 import React from 'react'
+import { analytics } from '@/lib/analytics'
+import { pushToDataLayer } from '@/lib/dataLayer'
 
 // UK Bank Holidays - add more as needed
 const UK_BANK_HOLIDAYS = [
@@ -20,6 +22,10 @@ const isBankHoliday = (date: Date): boolean => {
 
 export default function OpenBanner() {
   const [isOpen, setIsOpen] = React.useState(false)
+  const handlePhoneClick = React.useCallback(() => {
+    analytics.quoteRequest('phone')
+    pushToDataLayer('phone_click', { source: 'open_banner' })
+  }, [])
   
   React.useEffect(() => {
     const checkStatus = () => {
@@ -73,8 +79,9 @@ export default function OpenBanner() {
             </div>
             
             {/* Call to action button */}
-            <a 
+            <a
               href="tel:01458860339"
+              onClick={handlePhoneClick}
               className="ml-4 bg-white text-green-600 font-bold px-4 py-2 rounded-full hover:bg-green-50 transition-all duration-300 hover:scale-105 shadow-lg text-sm"
             >
               📞 01458 860339

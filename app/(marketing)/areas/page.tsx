@@ -121,8 +121,8 @@ const areaHighlights: Array<{
     primaryPostcode: 'BA5',
     area: 'Wells',
     href: '/areas/wells-ba5',
-    ctaHref: '/book-appointment?intent=book&postcode=BA5&coverageArea=Wells',
-    ctaLabel: 'Book in Wells',
+    ctaHref: '/book-appointment?intent=quote&postcode=BA5&coverageArea=Wells',
+    ctaLabel: 'Request a quote in Wells',
     ctaVariant: 'primary'
   },
   {
@@ -152,8 +152,8 @@ const areaHighlights: Array<{
       'Festival traffic, tourist footfall, and local businesses rely on us to keep glazing shining. We cover the Tor, Meare, Ashcott, Street, and the Clarks Village retail outlets.',
     primaryPostcode: 'BA6',
     area: 'Glastonbury & Street',
-    ctaHref: '/book-appointment?intent=book&postcode=BA6&coverageArea=Glastonbury%20%26%20Street',
-    ctaLabel: 'Book in Glastonbury'
+    ctaHref: '/book-appointment?intent=quote&postcode=BA6&coverageArea=Glastonbury%20%26%20Street',
+    ctaLabel: 'Request a quote in Glastonbury'
   }
 ]
 
@@ -175,8 +175,8 @@ const faqs = [
   }
 ]
 
-const buildBookingHref = (postcode: string, area?: string) => {
-  const params = new URLSearchParams({ intent: 'book' })
+const buildQuoteHref = (postcode: string, area?: string) => {
+  const params = new URLSearchParams({ intent: 'quote' })
   const normalizedPostcode = resolvePrimaryPostcode(postcode)
 
   if (normalizedPostcode) {
@@ -200,7 +200,7 @@ export default function AreasPage() {
               Areas We Cover Across Somerset
             </h1>
             <p className="text-white/80 text-lg leading-relaxed mb-5 max-w-2xl">
-              Somerset Window Cleaning delivers professional pure-water window cleaning across Mendip, North Somerset, Taunton Deane, and the Dorset border. Use the postcode checker to confirm coverage and book your clean in less than a minute.
+              Somerset Window Cleaning delivers professional pure-water window cleaning across Mendip, North Somerset, Taunton Deane, and the Dorset border. Use the postcode checker to confirm coverage and request your quote in less than a minute.
             </p>
             <ul className="space-y-3 text-white/70 text-sm md:text-base">
               <li>• BA, BS, TA, and DT9 postcodes with regular domestic and commercial window frequencies.</li>
@@ -211,11 +211,11 @@ export default function AreasPage() {
           <div className="rounded-2xl border border-white/15 bg-gradient-to-br from-white/10 to-white/5 p-8 backdrop-blur-sm shadow-xl">
             <h2 className="text-xl font-semibold text-white mb-2 text-center">Check Your Postcode</h2>
             <p className="text-white/70 text-sm mb-6 text-center">
-              Type a postcode or town (e.g. BA5, Wells) to see if we cover your property. We will confirm and send you straight to the booking form.
+              Type a postcode or town (e.g. BA5, Wells) to see if we cover your property. We will confirm and send you straight to the quote form.
             </p>
             <PostcodeChecker variant="hero" placeholder="Enter postcode or town" />
             <p className="text-xs text-white/50 mt-4 text-center">
-              ✅ Selecting an area now shows a confirmation and auto-redirects to our booking form.
+              ✅ Selecting an area now shows a confirmation and auto-redirects to our quote request form.
             </p>
           </div>
         </div>
@@ -224,15 +224,15 @@ export default function AreasPage() {
       <Section
         id="coverage-map"
         title="Somerset Postcode Coverage"
-        subtitle="Explore the postcode districts we visit most often. Select a town to read more or jump straight to booking."
+        subtitle="Explore the postcode districts we visit most often. Select a town to read more or jump straight to your quote request."
         spacing="relaxed"
       >
         <div className="space-y-12">
           {Object.entries(POSTCODE_AREAS).map(([prefix, data]) => {
             const firstCode = data.areas[0]?.code ?? ''
             const normalizedFirstCode = resolvePrimaryPostcode(firstCode)
-            const bookingHref = normalizedFirstCode
-              ? buildBookingHref(normalizedFirstCode, data.areas[0]?.town)
+            const quoteHref = normalizedFirstCode
+              ? buildQuoteHref(normalizedFirstCode, data.areas[0]?.town)
               : '/get-in-touch'
 
             return (
@@ -250,8 +250,8 @@ export default function AreasPage() {
                       {prefixDescriptions[prefix] ?? `Professional window cleaning across ${data.name}.`}
                     </p>
                   </div>
-                  <Button href={bookingHref} className="text-sm whitespace-nowrap">
-                    Book in {prefix} Area
+                  <Button href={quoteHref} className="text-sm whitespace-nowrap">
+                    Request quote for {prefix} Area
                   </Button>
                 </header>
 
@@ -260,12 +260,12 @@ export default function AreasPage() {
                     {data.areas.map((area) => {
                       const nextVisit = getNextVisitForArea(area.code, todayIso)
                       const strapline = nextVisit?.strapline.replace(/\s*window frequency\s*/i, ' route')
-                      const bookingHref = buildBookingHref(area.code, area.town)
+                      const quoteHrefForArea = buildQuoteHref(area.code, area.town)
 
                       return (
                         <Link
                           key={area.code}
-                          href={bookingHref}
+                          href={quoteHrefForArea}
                           className="block h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red/40"
                         >
                           <div
@@ -323,11 +323,11 @@ export default function AreasPage() {
       >
         <div className="grid gap-6 md:grid-cols-2">
           {areaHighlights.map((highlight) => {
-            const defaultHref = buildBookingHref(highlight.primaryPostcode, highlight.area)
+            const defaultHref = buildQuoteHref(highlight.primaryPostcode, highlight.area)
             const ctaHref = highlight.ctaHref ?? highlight.href ?? defaultHref
             const isDetailPage = Boolean(highlight.href) && !highlight.ctaHref
             const ctaVariant = highlight.ctaVariant ?? (isDetailPage ? 'secondary' : 'primary')
-            const ctaLabel = highlight.ctaLabel ?? (isDetailPage ? 'Explore local guide' : `Book in ${highlight.area}`)
+            const ctaLabel = highlight.ctaLabel ?? (isDetailPage ? 'Explore local guide' : `Request a quote in ${highlight.area}`)
 
             return (
               <article key={highlight.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">

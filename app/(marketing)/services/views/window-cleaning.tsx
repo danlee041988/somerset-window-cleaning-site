@@ -5,12 +5,12 @@ import { ServicePageLayout } from './components/service-page-layout'
 export const metadata = {
   title: 'Window Cleaning Somerset | Pure Water Specialists',
   description:
-    'Professional window cleaning across Somerset with pure water systems, frame detailing, and flexible 4–8 week rounds. Book a spotless finish today.',
+    'Professional window cleaning across Somerset with pure water systems, frame detailing, and flexible 4–8 week rounds. Request a tailored quote today.',
 }
 
 const FAQS = [
   {
-    question: 'How often should I book window cleaning?',
+    question: 'How often should I schedule window cleaning?',
     answer:
       'Most Somerset homeowners choose a four or eight-week schedule so the glass, frames, and sills stay bright year-round. We can also arrange one-off visits for property sales or inspections.',
   },
@@ -22,7 +22,7 @@ const FAQS = [
   {
     question: 'Do I need to be home when you visit?',
     answer:
-      'No. We arrive in uniform, send a text reminder, and take contactless payment after the clean. Gate access instructions can be added in the booking form.',
+      'No. We arrive in uniform, send a text reminder, and take contactless payment after the clean. Gate access instructions can be added when you request your quote.',
   },
   {
     question: 'Can you reach top-floor or awkward windows?',
@@ -54,8 +54,8 @@ export default function WindowCleaningPage() {
         imageAlt: 'Technician cleaning domestic windows with pure water pole system',
       }}
       faqs={FAQS}
-      bookingHref="/book-appointment?service=window-cleaning"
-      bookingLabel="Book window cleaning"
+      bookingHref="/book-appointment?service=window-cleaning&intent=quote"
+      bookingLabel="Request window quote"
     />
   )
 }

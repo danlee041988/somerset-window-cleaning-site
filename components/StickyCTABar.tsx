@@ -1,13 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Button from '@/components/ui/Button'
 import BusinessHours, { useBusinessStatus } from './BusinessHours'
+import { analytics } from '@/lib/analytics'
+import { pushToDataLayer } from '@/lib/dataLayer'
 
 export default function StickyCTABar() {
   const [isVisible, setIsVisible] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const businessStatus = useBusinessStatus()
+  const trackPhoneClick = useCallback((source: string) => {
+    analytics.quoteRequest('phone')
+    pushToDataLayer('phone_click', { source })
+  }, [])
   
   useEffect(() => {
     const handleScroll = () => {
@@ -40,7 +46,7 @@ export default function StickyCTABar() {
               {/* Left side - Message and business hours */}
               <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
                 <p className="text-white font-medium">
-                  Ready for sparkling clean windows?
+                  Ready for a tailored quote?
                 </p>
                 <BusinessHours variant="compact" />
               </div>
@@ -50,6 +56,7 @@ export default function StickyCTABar() {
                 {businessStatus.isOpen && (
                   <a
                     href="tel:01458860339"
+                    onClick={() => trackPhoneClick('sticky_cta_primary')}
                     className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-300 bg-transparent text-white hover:bg-white/10 active:scale-95 border border-white/20"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,8 +67,8 @@ export default function StickyCTABar() {
                   </a>
                 )}
                 
-                <Button href="/book-appointment?intent=book" variant="primary" className="text-sm px-4 py-2">
-                  Book Now
+                <Button href="/book-appointment?intent=quote" variant="primary" className="text-sm px-4 py-2">
+                  Request Quote
                 </Button>
                 
                 {/* Minimize button */}
@@ -81,12 +88,13 @@ export default function StickyCTABar() {
           // Minimized state
           <div className="px-4 py-2">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-white/80">Ready to book?</p>
+              <p className="text-sm text-white/80">Ready to request a visit?</p>
               <div className="flex items-center gap-2">
                 {businessStatus.isOpen && (
                   <>
                     <a
                       href="tel:01458860339"
+                      onClick={() => trackPhoneClick('sticky_cta_minimised')}
                       className="text-sm text-brand-red hover:text-brand-red/80 font-medium"
                     >
                       01458 860339
@@ -95,10 +103,10 @@ export default function StickyCTABar() {
                   </>
                 )}
                 <a
-                  href="/book-appointment?intent=book"
+                  href="/book-appointment?intent=quote"
                   className="text-sm text-brand-red hover:text-brand-red/80 font-medium"
                 >
-                  Book Now
+                  Request Quote
                 </a>
                 <button
                   onClick={() => setIsMinimized(false)}

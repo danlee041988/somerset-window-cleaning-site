@@ -54,8 +54,8 @@ export default function FasciasSoffitsCleaningPage() {
         imageAlt: 'Technician cleaning exterior fascias with soft brush',
       }}
       faqs={FAQS}
-      bookingHref="/book-appointment?service=fascias-soffits-cleaning"
-      bookingLabel="Book fascia cleaning"
+      bookingHref="/book-appointment?service=fascias-soffits-cleaning&intent=quote"
+      bookingLabel="Request fascia quote"
     />
   )
 }

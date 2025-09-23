@@ -254,7 +254,7 @@ export default function ServiceConceptOneClient() {
                 We&apos;ll map cadence, assign a dedicated crew, and build an always-on maintenance plan so your glazing stays marketing-ready.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button href="/book-appointment?intent=book" className="rounded-full px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
+                <Button href="/book-appointment?intent=quote" className="rounded-full px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
                   Let&apos;s build your frequency plan
                 </Button>
                 <Button href="/services" variant="ghost" className="rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
@@ -273,7 +273,7 @@ export default function ServiceConceptOneClient() {
               <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/20" />
               <div className="feature-card__content absolute bottom-6 left-6 right-6 rounded-2xl border border-white/10 bg-black/60 p-5 backdrop-blur">
                 <p className="text-sm text-white/75">
-                  &ldquo;Our frequency specialists look after premium homes, showrooms, and multi-site portfolios across Somerset. Book a discovery call to map your schedule.&rdquo;
+                &ldquo;Our frequency specialists look after premium homes, showrooms, and multi-site portfolios across Somerset. Arrange a discovery call to map your schedule.&rdquo;
                 </p>
               </div>
             </div>

@@ -22,14 +22,17 @@ async function getRefreshToken() {
   console.log('=====================================')
   
   // Check if credentials file exists
-  const credentialsPath = path.join(__dirname, '..', 'google-ads-credentials.json')
+  const preferredPath = path.join(__dirname, '..', 'config', 'google-ads', 'web-client.json')
+  const legacyPath = path.join(__dirname, '..', 'google-ads-credentials.json')
+  const credentialsPath = fs.existsSync(preferredPath) ? preferredPath : legacyPath
+
   if (!fs.existsSync(credentialsPath)) {
-    console.error('❌ Error: google-ads-credentials.json not found')
+    console.error('❌ Error: OAuth client JSON not found')
     console.log('Please download your OAuth 2.0 credentials from Google Cloud Console:')
     console.log('1. Go to https://console.cloud.google.com')
     console.log('2. Navigate to APIs & Services → Credentials')
-    console.log('3. Download your OAuth 2.0 client credentials as JSON')
-    console.log('4. Save it as google-ads-credentials.json in your project root')
+    console.log('3. Open your Web application client and click “Download JSON”')
+    console.log('4. Save it to config/google-ads/web-client.json in this project')
     process.exit(1)
   }
 
@@ -39,7 +42,7 @@ async function getRefreshToken() {
 
   if (!client_id || !client_secret) {
     console.error('❌ Error: Invalid credentials file')
-    console.log('Please ensure your google-ads-credentials.json contains valid OAuth 2.0 credentials')
+    console.log('Please ensure the OAuth client JSON contains valid web application credentials (client_id & client_secret).')
     process.exit(1)
   }
 
@@ -94,8 +97,9 @@ async function getRefreshToken() {
       
       // You'll also need to add your customer ID and developer token
       console.log('⚠️  Don\'t forget to add:')
-      console.log('GOOGLE_ADS_CUSTOMER_ID=your_customer_id_here')
+      console.log('GOOGLE_ADS_CUSTOMER_ID=your_customer_id_here  # e.g. 123-456-7890')
       console.log('GOOGLE_ADS_DEVELOPER_TOKEN=your_developer_token_here')
+      console.log('GOOGLE_ADS_LOGIN_CUSTOMER_ID=your_manager_id_if_applicable (optional)')
       console.log('')
       console.log('🎉 Setup complete! You can now run the Google Ads integration.')
 

@@ -25,10 +25,10 @@ export const servicesData = [
       "No need to be home"
     ],
     guarantee: "100% satisfaction guarantee. If you're not happy with our service, we'll return within 24 hours to make it right at no extra cost.",
-    price: "From £20",
+    price: "Tailored quote after review",
     specialty: "Most Popular",
-    ctaText: "Book Window Cleaning",
-    ctaHref: "/book-appointment?intent=book&service=window-cleaning"
+    ctaText: "Request Window Quote",
+    ctaHref: "/book-appointment?intent=quote&service=window-cleaning"
   },
   {
     slug: "gutter-clearing",
@@ -55,10 +55,10 @@ export const servicesData = [
       "Optional photo/video evidence on request"
     ],
     guarantee: "Complete gutter run debris removal guarantee. We highlight any issues we find and supply documentation on request.",
-    price: "From £80",
+    price: "Quote confirmed on follow-up",
     specialty: "Essential",
-    ctaText: "Book Gutter Clearing",
-    ctaHref: "/book-appointment?intent=book&service=gutter-clearing"
+    ctaText: "Request Gutter Quote",
+    ctaHref: "/book-appointment?intent=quote&service=gutter-clearing"
   },
   {
     slug: "conservatory-roof-cleaning",
@@ -85,10 +85,10 @@ export const servicesData = [
       "Improves appearance"
     ],
     guarantee: "Warranty-safe cleaning guarantee. We protect all seals and coatings while dramatically improving clarity and light transmission.",
-    price: "Custom quote",
+    price: "Custom quote provided",
     specialty: "Specialist",
-    ctaText: "Book Conservatory Cleaning",
-    ctaHref: "/book-appointment?intent=book&service=conservatory-cleaning"
+    ctaText: "Request Conservatory Quote",
+    ctaHref: "/book-appointment?intent=quote&service=conservatory-cleaning"
   },
   {
     slug: "solar-panel-cleaning",
@@ -117,10 +117,10 @@ export const servicesData = [
       "Digital efficiency monitoring tools"
     ],
     guarantee: "Warranty protection guarantee. Our methods are approved by all major solar panel manufacturers and will not void your warranty.",
-    price: "Custom quote",
+    price: "Custom quote provided",
     specialty: "High-Tech",
-    ctaText: "Book Solar Panel Cleaning",
-    ctaHref: "/book-appointment?intent=book&service=solar-cleaning"
+    ctaText: "Request Solar Quote",
+    ctaHref: "/book-appointment?intent=quote&service=solar-cleaning"
   },
   {
     slug: "fascias-soffits-cleaning",
@@ -149,9 +149,9 @@ export const servicesData = [
       "Protective sheeting for plants and surfaces"
     ],
     guarantee: "Restoration guarantee. We'll brighten your PVC exterior or return to address any areas that don't meet our high standards.",
-    price: "From £80",
-    ctaText: "Book Fascias & Soffits",
-    ctaHref: "/book-appointment?intent=book&service=fascias-soffits"
+    price: "Quote bundle available",
+    ctaText: "Request Fascia Quote",
+    ctaHref: "/book-appointment?intent=quote&service=fascias-soffits"
   },
   {
     slug: "commercial-cleaning",
@@ -180,9 +180,9 @@ export const servicesData = [
       "Documentation and reporting systems"
     ],
     guarantee: "Professional service guarantee. Full RAMS documentation, comprehensive insurance, and commitment to minimal business disruption.",
-    price: "Custom quote",
+    price: "Tailored maintenance quote",
     specialty: "Business",
-    ctaText: "Book Commercial Cleaning",
-    ctaHref: "/book-appointment?intent=book&service=commercial-cleaning"
+    ctaText: "Request Commercial Quote",
+    ctaHref: "/book-appointment?intent=quote&service=commercial-cleaning"
   }
 ]

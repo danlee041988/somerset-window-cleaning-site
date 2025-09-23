@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import emailjs from '@emailjs/browser'
 import ReCaptcha from './ReCaptcha'
 import { analytics } from '@/lib/analytics'
+import { pushToDataLayer } from '@/lib/dataLayer'
 import { emailJsConfig } from '@/lib/config/env'
 
 const SERVICE_OPTIONS = [
@@ -58,6 +59,11 @@ const SERVICE_PARAM_MAP: Record<string, (typeof SERVICE_OPTIONS)[number]> = {
 export default function GeneralEnquiryForm({ defaultService }: GeneralEnquiryFormProps = {}) {
   const [status, setStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
+
+  const trackPhoneClick = React.useCallback((source: string) => {
+    analytics.quoteRequest('phone')
+    pushToDataLayer('phone_click', { source })
+  }, [])
 
   const firstNameRef = React.useRef<HTMLInputElement | null>(null)
   const lastNameRef = React.useRef<HTMLInputElement | null>(null)
@@ -171,6 +177,18 @@ export default function GeneralEnquiryForm({ defaultService }: GeneralEnquiryFor
         email: values.email,
       })
 
+      analytics.quoteRequest('form')
+
+      pushToDataLayer('contact_form_submit', {
+        service_interest: values.service_interest,
+        customer_type: values.customer_type,
+        first_name: values.first_name,
+        last_name: values.last_name,
+        email: values.email,
+        phone: values.phone,
+        message_length: values.message?.length || 0,
+      })
+
       setStatus('success')
       setRecaptchaToken(null)
       setValue('recaptcha', '')
@@ -195,6 +213,13 @@ export default function GeneralEnquiryForm({ defaultService }: GeneralEnquiryFor
         <p className="text-white/75">
           We have your message and will reply within one working day. For anything urgent please call 01458 860339.
         </p>
+        <a
+          href="tel:01458860339"
+          onClick={() => trackPhoneClick('contact_success_message')}
+          className="mt-4 inline-flex items-center justify-center rounded-full border border-white/20 px-5 py-2 text-sm font-semibold tracking-[0.08em] text-white transition hover:border-brand-red/60 hover:text-white"
+        >
+          Call 01458 860339
+        </a>
       </div>
     )
   }
@@ -368,7 +393,15 @@ export default function GeneralEnquiryForm({ defaultService }: GeneralEnquiryFor
         </button>
 
         <p className="text-center text-xs text-white/60">
-          Prefer to speak now? Call <a href="tel:01458860339" className="font-semibold text-white underline decoration-brand-red/60 underline-offset-4">01458 860339</a> or message us on WhatsApp.
+          Prefer to speak now? Call{' '}
+          <a
+            href="tel:01458860339"
+            onClick={() => trackPhoneClick('contact_form_footer')}
+            className="font-semibold text-white underline decoration-brand-red/60 underline-offset-4"
+          >
+            01458 860339
+          </a>{' '}
+          or message us on WhatsApp.
         </p>
       </div>
     </form>

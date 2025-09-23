@@ -5,7 +5,7 @@ import Button from '@/components/ui/Button'
 import GeneralEnquiryForm from '@/components/features/contact/GeneralEnquiryForm'
 
 const TITLE = 'Get in touch'
-const SUBTITLE = "Send us a quick message and we’ll respond within one working day. Ready to confirm a visit? Head over to our booking page."
+const SUBTITLE = "Send us a quick message and we’ll respond within one working day. Ready to confirm a visit? Head over to our quote request page."
 
 export const metadata: Metadata = {
   title: 'Contact Somerset Window Cleaning | Get In Touch',
@@ -41,13 +41,13 @@ export default function GetInTouchPage({ searchParams }: GetInTouchPageProps) {
 
           <div className="space-y-6">
             <div className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-sm">
-              <h3 className="text-lg font-semibold text-white">Prefer to book straight away?</h3>
+              <h3 className="text-lg font-semibold text-white">Prefer to arrange straight away?</h3>
               <p className="mt-2 text-sm text-white/80">
-                If you already know the services you need and want to lock in a slot, head to our booking page to choose your frequency and request a visit date.
+                If you already know the services you need and want to lock in a slot, head to our quote request page to share the details and we&apos;ll confirm timings with you.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <Button href="/book-appointment" variant="primary">
-                  Go to booking form
+                  Go to quote form
                 </Button>
                 <Button href="/services" variant="secondary">
                   Explore services

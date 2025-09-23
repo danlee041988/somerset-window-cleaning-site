@@ -34,12 +34,12 @@ export default function StrategicCTA() {
             <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/20">
               <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
               <span className="text-xs font-medium text-brand-red uppercase tracking-wide">
-                Booking Fast
+                Quote Slots Filling Fast
               </span>
             </div>
             
             <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent mb-3">
-              Book Your Window Clean Today
+              Request Your Window Cleaning Quote Today
             </h3>
             
             <p className="text-white/80 text-lg mb-6 max-w-lg">
@@ -86,10 +86,10 @@ export default function StrategicCTA() {
 
             {/* Primary CTA Button */}
             <a
-              href="/book-appointment?intent=book"
+              href="/book-appointment?intent=quote"
               className="group inline-flex items-center justify-center gap-3 w-full lg:w-auto px-8 py-4 bg-gradient-to-r from-brand-red to-brand-red/90 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-brand-red/25 transition-all duration-300 hover:scale-105 active:scale-95"
             >
-              <span>Book Now</span>
+              <span>Request Quote</span>
               <svg 
                 className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" 
                 fill="none" 

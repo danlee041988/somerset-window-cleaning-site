@@ -111,7 +111,7 @@ export default function ServiceConceptTwoClient() {
                 ))}
               </div>
               <Button href="/get-in-touch" className="rounded-full px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
-                Book survey
+                Arrange survey
               </Button>
             </div>
             <div className="relative min-h-[420px]">
@@ -169,7 +169,7 @@ export default function ServiceConceptTwoClient() {
         </div>
       </Section>
 
-      <Section title="Fast estimate builder" subtitle="Select the property type and get an instant pricing snapshot. Add-ons can be stacked during booking." spacing="relaxed">
+      <Section title="Fast estimate builder" subtitle="Select the property type for a quick quote outline. Add-ons can be stacked when we schedule your visits." spacing="relaxed">
         <div className="grid gap-6 md:grid-cols-3">
           {PROPERTY_SELECTOR.map((option) => (
             <button
@@ -201,7 +201,7 @@ export default function ServiceConceptTwoClient() {
               </div>
             </div>
             <Button href="/book-appointment" className="rounded-full px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
-              Reserve slot
+              Request plan
             </Button>
           </div>
         </div>
