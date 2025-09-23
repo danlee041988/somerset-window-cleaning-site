@@ -1939,10 +1939,10 @@ function FormConfidencePanel({
     <aside className="flex flex-col gap-5 rounded-2xl border border-white/12 bg-brand-black/40 p-5 text-sm text-white/70 lg:sticky lg:top-6">
       <div>
         <p className="text-base font-semibold text-white">{copy.heading}</p>
-        <ul className="mt-3 space-y-2">
+        <ul className="mt-3 space-y-2 list-none pl-0">
           {copy.points.map((point) => (
-            <li key={point} className="flex items-start gap-2">
-              <span className="mt-1 inline-flex h-2 w-2 flex-none rounded-full bg-emerald-400" aria-hidden="true" />
+            <li key={point} className="flex items-start gap-3">
+              <CheckMark className="mt-0.5 flex-none" />
               <span>{point}</span>
             </li>
           ))}
