@@ -1,5 +1,11 @@
 export type DataLayerPayload = Record<string, unknown>;
 
+declare global {
+  interface Window {
+    dataLayer?: Array<Record<string, unknown>>;
+  }
+}
+
 const normaliseValue = (value: unknown) => {
   if (typeof value === 'string') {
     return value.trim();
