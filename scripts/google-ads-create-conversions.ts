@@ -66,10 +66,11 @@ async function ensureConversions() {
 
   const existingMap = new Map<string, { id: string; type: string; category: string }>()
   for (const row of existingRows) {
-    existingMap.set((row.conversionAction?.name || '').toLowerCase(), {
-      id: String(row.conversionAction?.id ?? ''),
-      type: String(row.conversionAction?.type ?? ''),
-      category: String(row.conversionAction?.category ?? ''),
+    const action = (row as { conversion_action?: { name?: string; id?: string | number; type?: string; category?: string } }).conversion_action ?? {}
+    existingMap.set(String(action.name ?? '').toLowerCase(), {
+      id: String(action.id ?? ''),
+      type: String(action.type ?? ''),
+      category: String(action.category ?? ''),
     })
   }
 
@@ -86,7 +87,7 @@ async function ensureConversions() {
     creations.push({
       name: conversion.name,
       type: enums.ConversionActionType.WEBPAGE,
-      category: enums.ConversionActionCategory.LEAD,
+      category: enums.ConversionActionCategory.SUBMIT_LEAD_FORM,
       status: enums.ConversionActionStatus.ENABLED,
       counting_type: enums.ConversionActionCountingType.ONE_PER_CLICK,
     })
