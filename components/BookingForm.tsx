@@ -1257,7 +1257,7 @@ function OptionSection({
               key={option.id}
               className={`cursor-pointer rounded-2xl border px-4 py-4 text-left transition ${
                 active
-                  ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_12px_30px_-20px_rgba(16,185,129,0.65)]'
+                  ? 'border-brand-red/70 bg-brand-red/15 text-white shadow-[0_12px_30px_-20px_rgba(225,29,42,0.45)]'
                   : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
               }`}
             >
@@ -1302,7 +1302,7 @@ function ServiceToggle({
     <label
       className={`flex w-full cursor-pointer items-start justify-between gap-4 rounded-2xl border px-5 py-5 text-left transition ${
         checked
-          ? 'border-emerald-400/70 bg-emerald-500/15 text-white shadow-[0_12px_30px_-20px_rgba(16,185,129,0.65)]'
+          ? 'border-brand-red/70 bg-brand-red/15 text-white shadow-[0_12px_30px_-20px_rgba(225,29,42,0.45)]'
           : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
       }`}
     >
@@ -1317,7 +1317,7 @@ function ServiceToggle({
         <div>
           <p className="text-sm font-semibold text-white">{label}</p>
           <p className="mt-2 text-xs text-white/60">{description}</p>
-          {helper ? <p className="mt-3 text-xs text-emerald-400">{helper}</p> : null}
+          {helper ? <p className="mt-3 text-xs text-brand-red/80">{helper}</p> : null}
         </div>
         <div className="flex items-center justify-center">
           {checked ? (
@@ -1362,7 +1362,7 @@ function TextInput({
         placeholder={placeholder}
         type={type}
         required={required}
-        className="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 focus:border-emerald-400 focus:outline-none"
+        className="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 focus:border-brand-red focus:outline-none"
       />
     </label>
   )
@@ -1387,7 +1387,7 @@ function TextArea({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         rows={4}
-        className="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 focus:border-emerald-400 focus:outline-none"
+        className="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 focus:border-brand-red focus:outline-none"
       />
     </label>
   )
@@ -1410,7 +1410,7 @@ function SelectField({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-white focus:border-emerald-400 focus:outline-none"
+        className="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-white focus:border-brand-red focus:outline-none"
       >
         <option value="" disabled>
           Select an option
@@ -1428,11 +1428,11 @@ function SelectField({
 function CheckMark({ className = '' }: { className?: string }) {
   return (
     <span
-      className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 ${className}`}
+      className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand-red/20 ${className}`}
       aria-hidden="true"
     >
       <svg
-        className="h-3 w-3 text-emerald-300"
+        className="h-3 w-3 text-brand-red"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -1461,7 +1461,7 @@ function StepIndicator({
 
         const buttonClasses = {
           complete:
-            'border-emerald-400/50 bg-emerald-500/15 text-white shadow-[0_10px_28px_-24px_rgba(16,185,129,0.65)]',
+            'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_10px_28px_-24px_rgba(225,29,42,0.45)]',
           current: 'border-white/30 bg-white/10 text-white',
           upcoming: 'border-white/15 bg-white/5 text-white/55',
         }[status]
@@ -1473,14 +1473,14 @@ function StepIndicator({
               onClick={() => interactive && onStepChange(item.id)}
               disabled={!interactive}
               aria-current={status === 'current' ? 'step' : undefined}
-              className={`flex w-full items-center gap-3 rounded-full border px-4 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 sm:flex-1 ${
+              className={`flex w-full items-center gap-3 rounded-full border px-4 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60 sm:flex-1 ${
                 buttonClasses
               } ${interactive ? 'hover:border-white/40 hover:text-white' : ''}`}
             >
               <span
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
                   status === 'complete'
-                    ? 'bg-emerald-400 text-brand-black'
+                    ? 'bg-brand-red text-brand-black'
                     : status === 'current'
                     ? 'bg-white text-brand-black'
                     : 'bg-white/10 text-white'
