@@ -1324,7 +1324,7 @@ function ServiceToggle({
             <CheckMark />
           ) : (
             <span
-              className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/25 text-white/40"
+              className="inline-flex h-5 w-5 items-center justify-center rounded-md border border-white/25 bg-white/5 text-white/40"
               aria-hidden="true"
             >
               <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1428,19 +1428,19 @@ function SelectField({
 function CheckMark({ className = '' }: { className?: string }) {
   return (
     <span
-      className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand-red/20 ${className}`}
+      className={`inline-flex h-5 w-5 items-center justify-center rounded-md border border-brand-red/60 bg-brand-red/20 text-brand-red ${className}`}
       aria-hidden="true"
     >
       <svg
-        className="h-3 w-3 text-brand-red"
-        viewBox="0 0 24 24"
+        className="h-3 w-3"
+        viewBox="0 0 20 20"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M5 13l4 4L19 7" />
+        <path d="M5 11.5L8.5 15L15 7.5" />
       </svg>
     </span>
   )
