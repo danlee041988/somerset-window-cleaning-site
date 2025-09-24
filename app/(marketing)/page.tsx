@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import clsx from 'clsx'
 import Button from '@/components/ui/Button'
 import Section from '@/components/ui/Section'
 import LightboxGallery from '@/components/LightboxGallery'
@@ -89,22 +90,29 @@ export default function HomePage() {
               </span>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-6 md:auto-rows-fr md:grid-cols-2 lg:gap-8 xl:grid-cols-4">
               {HOME_QUOTE_STEPS.map((step, index) => {
                 const stepPosition = index + 1
                 const displayNumber = stepPosition.toString().padStart(2, '0')
+                const isLastStep = index === HOME_QUOTE_STEPS.length - 1
                 return (
                   <div key={step.title} className="group relative h-full">
-                    <div className="relative flex h-full flex-col gap-6 rounded-3xl border border-white/12 bg-black/65 p-6 text-[#F5F7FA] shadow-[0_26px_60px_-42px_rgba(0,0,0,0.9)] transition-transform duration-300 hover:-translate-y-1 hover:border-brand-red/45">
-                      <div className="flex items-center gap-4">
-                        <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-red/55 bg-brand-red/12 text-sm font-semibold uppercase tracking-[0.32em] text-brand-red">
+                    <div
+                      className={clsx(
+                        'relative flex h-full flex-col gap-6 rounded-3xl border border-white/12 bg-gradient-to-b from-white/[0.07] via-black/55 to-black/80 p-6 text-[#F5F7FA] shadow-[0_26px_60px_-42px_rgba(0,0,0,0.9)] transition-transform duration-300 hover:-translate-y-1 hover:border-brand-red/45 md:p-8',
+                        !isLastStep &&
+                          "after:pointer-events-none after:absolute after:top-[3.9rem] after:left-[calc(100%+1.5rem)] after:hidden after:h-px after:w-16 after:bg-gradient-to-r after:from-white/25 after:via-white/10 after:to-transparent after:content-[''] xl:after:block"
+                      )}
+                    >
+                      <div className="flex items-start gap-4">
+                        <span className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-2xl border border-brand-red/55 bg-brand-red/12 text-sm font-semibold uppercase tracking-[0.32em] text-brand-red">
                           {displayNumber}
                         </span>
                         <div className="flex flex-col gap-1">
-                          <span className="text-[0.58rem] font-semibold uppercase tracking-[0.32em] text-white/45">
+                          <span className="text-[0.58rem] font-semibold uppercase tracking-[0.32em] text-white/50">
                             Step {stepPosition}
                           </span>
-                          <h3 className="text-base font-semibold uppercase tracking-[0.25em] text-[var(--fg)]">
+                          <h3 className="text-base font-semibold uppercase tracking-[0.2em] text-[var(--fg)]">
                             {step.title}
                           </h3>
                         </div>
