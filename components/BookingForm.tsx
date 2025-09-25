@@ -740,7 +740,10 @@ export default function BookingForm({
         <p className="mt-3 text-white/70">
           Thank you – we’ll align your postcode with the right round and come back within one working day to confirm pricing and schedule options.
         </p>
-        <div className="mt-6 rounded-2xl border border-white/15 bg-white/5 p-6 text-left text-sm text-white/70">
+        <div
+          className="mt-6 rounded-2xl border border-white/15 bg-white/5 p-6 text-left text-sm text-white/70"
+          data-testid="enquiry-success"
+        >
           <p className="text-base font-semibold text-white">What we captured</p>
           <dl className="mt-4 space-y-3">
             <div className="flex items-start justify-between gap-4">
@@ -765,7 +768,7 @@ export default function BookingForm({
             ) : null}
           </dl>
           {successSummary.manualReview ? (
-            <p className="mt-3 text-xs text-white/55">
+            <p className="mt-3 text-xs text-white/55" data-testid="manual-quote-note">
               We’ve flagged this for manual pricing so the team can confirm the quote before any work starts.
             </p>
           ) : (
@@ -1098,7 +1101,10 @@ export default function BookingForm({
       {step === 3 && (
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.45fr)]">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="rounded-2xl border border-white/15 bg-brand-black/40 p-5 text-sm text-white/70">
+            <div
+              className="rounded-2xl border border-white/15 bg-brand-black/40 p-5 text-sm text-white/70"
+              data-testid="enquiry-summary"
+            >
               <p className="text-base font-semibold text-white">You’re requesting</p>
               <p className="mt-2 text-xs text-white/60">{propertySummary}</p>
               {propertyExtras.length ? (
@@ -1109,10 +1115,14 @@ export default function BookingForm({
                   Premises notes: {request.commercialNotes}
                 </p>
               ) : null}
-              <p className="mt-3">{servicesSelected.join(', ')}</p>
-              <p>{frequencyLabel(request.frequency)} · Pricing confirmed after review</p>
+              <p className="mt-3" data-testid="enquiry-services">
+                {servicesSelected.join(', ')}
+              </p>
+              <p data-testid="enquiry-pricing-note">
+                {frequencyLabel(request.frequency)} · Pricing confirmed after review
+              </p>
               {requiresManualReview ? (
-                <p className="mt-2 text-xs text-white/55">
+                <p className="mt-2 text-xs text-white/55" data-testid="manual-quote-note">
                   We’ve flagged this request for manual quoting so the team can confirm pricing before scheduling.
                 </p>
               ) : null}
@@ -1537,7 +1547,7 @@ function FormConfidencePanel({
           <p className="text-sm font-semibold text-white">Current selection</p>
           <p className="mt-2 text-xs text-white/60">Services: {servicesSelected.join(', ')}</p>
           {manualReview ? (
-            <p className="mt-1 text-xs text-white/60">
+            <p className="mt-1 text-xs text-white/60" data-testid="manual-quote-banner">
               Manual quote required – we’ll confirm pricing with you directly.
             </p>
           ) : null}

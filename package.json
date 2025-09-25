@@ -23,8 +23,8 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:full": "playwright test --config=playwright.full.config.ts",
-    "test:frontend": "playwright test frontend-changes.spec.ts",
-    "test:frontend:headed": "playwright test frontend-changes.spec.ts --headed"
+    "test:frontend": "playwright test --config=playwright.full.config.ts tests/e2e/frontend-changes.spec.ts",
+    "test:frontend:headed": "playwright test --config=playwright.full.config.ts tests/e2e/frontend-changes.spec.ts --headed"
   },
   "engines": {
     "node": ">=18.17.0"
