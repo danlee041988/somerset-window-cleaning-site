@@ -2,12 +2,12 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import BookingForm from '@/components/BookingForm'
 
-describe('BookingForm pricing flow', () => {
+describe('BookingForm enquiry flow', () => {
   beforeAll(() => {
     window.scrollTo = jest.fn()
   })
 
-  it('updates the visit total when property options change', async () => {
+  it('summarises residential enquiry details with extras and pricing follow-up messaging', async () => {
     const user = userEvent.setup()
     render(<BookingForm />)
 
@@ -27,14 +27,20 @@ describe('BookingForm pricing flow', () => {
 
     await user.click(screen.getByRole('button', { name: /Continue to services/i }))
 
-    const total = await screen.findByTestId('visit-total')
-    expect(total).toHaveTextContent('£40')
-
     await user.click(screen.getByLabelText(/^Gutter clearing/i))
     await user.click(screen.getByLabelText(/^Fascia & soffit cleaning/i))
+    await user.click(screen.getByRole('button', { name: /Continue to details/i }))
 
-    expect(screen.getByTestId('window-line')).toHaveTextContent(/included with gutter & fascia bundle/i)
-    expect(total).toHaveTextContent('£260')
+    const summary = await screen.findByTestId('enquiry-summary')
+    const services = within(summary).getByTestId('enquiry-services')
+
+    expect(services).toHaveTextContent(/Exterior window cleaning/i)
+    expect(services).toHaveTextContent(/Gutter clearing requested/i)
+    expect(services).toHaveTextContent(/Fascia & soffit cleaning requested/i)
+    expect(services).not.toHaveTextContent(/Manual quote required/i)
+
+    expect(within(summary).getByTestId('enquiry-pricing-note')).toHaveTextContent(/Pricing confirmed after review/i)
+    expect(services).not.toHaveTextContent('£')
   })
 
   it('switches to manual quote flow for commercial enquiries', async () => {
@@ -54,10 +60,15 @@ describe('BookingForm pricing flow', () => {
     await user.click(await screen.findByRole('button', { name: /Continue to services/i }))
 
     await user.click(screen.getByLabelText(/Exterior window cleaning/i))
-    expect(screen.queryByTestId('visit-total')).not.toBeInTheDocument()
-    expect(screen.getByTestId('window-line')).toHaveTextContent(/Exterior window cleaning/i)
+    expect(await screen.findByTestId('manual-quote-banner')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: /Continue to your details/i }))
-    expect(screen.getByText(/manual quoting/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /Continue to details/i }))
+
+    const summary = await screen.findByTestId('enquiry-summary')
+    const services = within(summary).getByTestId('enquiry-services')
+
+    expect(services).toHaveTextContent(/Manual quote required/i)
+    expect(within(summary).getByTestId('manual-quote-note')).toHaveTextContent(/manual quoting/i)
+    expect(within(summary).getByTestId('enquiry-pricing-note')).toHaveTextContent(/Pricing confirmed after review/i)
   })
 })
