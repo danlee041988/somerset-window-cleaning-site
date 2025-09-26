@@ -52,9 +52,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <GoogleAnalytics />
-      </head>
-      <body className="min-h-screen bg-brand-black text-brand-white antialiased">
         {gtmContainerId ? (
           <Script id="gtm-base" strategy="afterInteractive">
             {`
@@ -71,15 +68,9 @@ export default function RootLayout({
             `}
           </Script>
         ) : null}
-        {gtmContainerId ? (
-          <noscript
-            dangerouslySetInnerHTML={{
-              __html: `
-                <iframe src="https://www.googletagmanager.com/ns.html?id=${gtmContainerId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-              `,
-            }}
-          />
-        ) : null}
+        <GoogleAnalytics />
+      </head>
+      <body className="min-h-screen bg-brand-black text-brand-white antialiased">
         <ErrorBoundary>
           <a href="#content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-brand-white text-black px-3 py-2 rounded">Skip to content</a>
           <Header />
