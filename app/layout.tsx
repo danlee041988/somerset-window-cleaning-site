@@ -12,7 +12,7 @@ import { buildAbsoluteUrl, getSiteUrl } from '@/lib/site-url'
 const siteUrl = getSiteUrl()
 const logoUrl = buildAbsoluteUrl('/images/logos/swc-logo.png', siteUrl)
 const siteUrlHref = buildAbsoluteUrl('/', siteUrl)
-const gtmContainerId = process.env.NEXT_PUBLIC_GTM_CONTAINER_ID
+const gtmContainerId = (process.env.NEXT_PUBLIC_GTM_CONTAINER_ID || '').trim()
 
 export const metadata: Metadata = {
   title: {
