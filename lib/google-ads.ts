@@ -178,8 +178,10 @@ type QueryOptions = {
 
 async function query<T = any>(gaql: string, options: QueryOptions = {}) {
   const customer = getGoogleAdsCustomer()
-  const rows = await customer.query(gaql, options.limit ? { page_size: options.limit } : undefined)
-  return rows as T[]
+  const hasExistingLimit = /\blimit\b/i.test(gaql)
+  const finalQuery = options.limit && !hasExistingLimit ? `${gaql}\nLIMIT ${options.limit}` : gaql
+  const rows = await customer.query(finalQuery)
+  return (options.limit && !hasExistingLimit ? (rows as T[]).slice(0, options.limit) : rows) as T[]
 }
 
 const extractBudgetId = (resourceName?: string | null): string | undefined => {
@@ -426,12 +428,7 @@ export class GoogleAdsClient {
         recommendation.resource_name,
         recommendation.campaign,
         recommendation.type,
-        recommendation.description,
-        recommendation.dismissed,
-        recommendation.impact.impressions.change_in_value,
-        recommendation.impact.clicks.change_in_value,
-        recommendation.impact.cost_micros.change_in_value,
-        recommendation.impact.conversions.change_in_value
+        recommendation.dismissed
       FROM recommendation
       WHERE recommendation.dismissed = FALSE`,
       options,
@@ -439,20 +436,22 @@ export class GoogleAdsClient {
 
     return rows.map((row) => {
       const recommendation = row.recommendation ?? {}
-      const impact = recommendation.impact ?? {}
+      const typeValue = recommendation.type
+      const typeName =
+        typeof typeValue === 'string'
+          ? typeValue
+          : typeof typeValue === 'number'
+            ? enums.RecommendationType[typeValue] ?? `TYPE_${typeValue}`
+            : 'UNSPECIFIED'
+      const formattedType = typeName.replace(/_/g, ' ').toLowerCase()
 
       return {
         resourceName: recommendation.resource_name,
-        type: recommendation.type ?? 'UNSPECIFIED',
-        description: recommendation.description ?? undefined,
+        type: typeName ?? 'UNSPECIFIED',
+        description: `Google Ads suggests reviewing the ${formattedType} recommendation.`,
         dismissed: recommendation.dismissed ?? false,
         campaignResourceName: recommendation.campaign ?? undefined,
-        estimatedImpact: {
-          impressions: toNumber(impact.impressions?.change_in_value ?? impact.impressions?.changeInValue),
-          clicks: toNumber(impact.clicks?.change_in_value ?? impact.clicks?.changeInValue),
-          costMicros: toNumber(impact.cost_micros?.change_in_value ?? impact.costMicros?.changeInValue),
-          conversions: toNumber(impact.conversions?.change_in_value ?? impact.conversions?.changeInValue),
-        },
+        estimatedImpact: undefined,
       }
     })
   }

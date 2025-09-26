@@ -1,14 +1,15 @@
 # Google Ads API Integration Setup Guide
 
-## Setup Status: 🚧 **Action Required**
+## Setup Status: ✅ **Automation scripts ready (manual run required)**
 
-The new Google Ads client, admin dashboard, API route, and automation scripts are in place. To activate them you must finish the authentication steps and add the required credentials to `.env.local`.
+Google Ads API access is configured and the automation scripts now live in the repo. Run the new tasks manually (or add a cron) to enforce the campaign plan, sync negatives and extensions, apply budgets, and write daily snapshots. Update `GOOGLE_ADS_AUTOMATION_DRY_RUN` if you need to revert to test mode.
 
 **Authentication Checklist**
-- [ ] OAuth 2.0 client JSON saved to `config/google-ads/web-client.json`
-- [ ] Refresh token generated with `node scripts/google-ads-auth.cjs`
-- [ ] Google Ads developer token + customer IDs added to environment variables
-- [ ] Connection test passes (`node scripts/test-google-ads-api.cjs`)
+- [x] OAuth 2.0 client JSON saved to `config/google-ads/web-client.json`
+- [x] Refresh token generated with `node scripts/google-ads-auth.cjs`
+- [x] Google Ads developer token + customer IDs added to environment variables
+- [x] Connection test passes (`node scripts/test-google-ads-api.cjs`)
+- [ ] Tag Assistant preview + GA4 verification (booking, contact, phone conversions)
 
 ## Overview
 Complete setup guide for integrating Google Ads API with Somerset Window Cleaning website, including automated optimization, performance monitoring, and GA4-driven analytics.
@@ -51,6 +52,7 @@ Complete setup guide for integrating Google Ads API with Somerset Window Cleanin
 3. **Get Customer ID**:
    - In Google Ads, go to Settings → Account Settings
    - Copy your Customer ID (format: 123-456-7890)
+   - _Somerset Window Cleaning_: use **429-956-3613** as the primary customer ID (the MCC **447-417-5960** stays blank in `.env.local` unless you switch to manager-auth calls)
 
 ### Step 2: Environment Variables
 
@@ -109,11 +111,11 @@ Set up automated optimizations with cron jobs (leave `GOOGLE_ADS_AUTOMATION_DRY_
 crontab -e
 
 # Add these lines for automation:
-# Daily optimization at 9 AM
-0 9 * * * /usr/bin/node /path/to/your/project/scripts/google-ads-automation.cjs daily
+# Daily sync at 7 AM (plan → negatives → automation → snapshot)
+0 7 * * 1-6 /usr/bin/node /path/to/your/project/scripts/google-ads-daily-sync.ts
 
-# Weekly report on Mondays at 8 AM  
-0 8 * * 1 /usr/bin/node /path/to/your/project/scripts/google-ads-automation.cjs weekly
+# Weekly automation summary on Mondays at 8 AM
+0 8 * * 1 /usr/bin/node /path/to/your/project/scripts/google-ads-automation.ts weekly
 ```
 
 ## API Endpoints
