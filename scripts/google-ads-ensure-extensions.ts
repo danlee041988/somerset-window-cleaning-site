@@ -259,7 +259,7 @@ async function ensureCampaignAssets(assets: AssetResources, campaignIds: Map<str
     WHERE campaign.id IN (${ids.join(',')})
   `)
 
-  const key = (campaignId: string, fieldType: enums.AssetFieldType) => `${campaignId}:${fieldType}`
+  const key = (campaignId: string, fieldType: string | number) => `${campaignId}:${fieldType}`
 
   const existing = new Map<string, { resource: string; asset: string }[]>()
   rows.forEach((row) => {

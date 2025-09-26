@@ -98,7 +98,9 @@ const loadExistingNegatives = async (campaignId: string) => {
     const text = row.campaign_criterion?.keyword?.text?.toLowerCase?.() ?? ''
     const matchType = row.campaign_criterion?.keyword?.match_type ?? 'UNSPECIFIED'
     if (text) {
-      existing.set(`${matchType}::${text}`, row.campaign_criterion?.criterion_id ?? '')
+      const normalizedText = String(text)
+      const criterionId = row.campaign_criterion?.criterion_id
+      existing.set(`${matchType}::${normalizedText}`, criterionId ? String(criterionId) : '')
     }
   })
   return existing
