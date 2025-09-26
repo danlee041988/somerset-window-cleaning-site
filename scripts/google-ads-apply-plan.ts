@@ -216,7 +216,6 @@ async function createCampaignShell(item: { name: string; dailyBudgetGBP: number 
       name: item.name,
       campaign_budget: budgetResource,
       advertising_channel_type: enums.AdvertisingChannelType.SEARCH,
-      advertising_channel_sub_type: enums.AdvertisingChannelSubType.SEARCH_STANDARD,
       status: enums.CampaignStatus.PAUSED,
       start_date: startDate,
       network_settings: {
@@ -368,7 +367,8 @@ async function ensureAdCopy(campaignName: string, campaignId: string) {
   adGroupRows.forEach((row) => {
     if (row.ad_group?.name === adGroupName) {
       adGroupId = row.ad_group?.id ? String(row.ad_group.id) : undefined
-      adGroupStatus = row.ad_group?.status
+      const statusValue = row.ad_group?.status
+      adGroupStatus = typeof statusValue === 'string' || typeof statusValue === 'number' ? statusValue : undefined
     }
   })
 
@@ -468,11 +468,14 @@ async function applyBudgets(client: GoogleAdsClient, campaigns: typeof plan.camp
       continue
     }
 
-    const currentStatus = typeof entry.status === 'number'
-      ? enums.CampaignStatus[entry.status as keyof typeof enums.CampaignStatus] ?? entry.status
-      : entry.status
+    const currentStatus: number | undefined =
+      typeof entry.status === 'number'
+        ? entry.status
+        : entry.status
+          ? (enums.CampaignStatus[entry.status as keyof typeof enums.CampaignStatus] as number | undefined)
+          : undefined
 
-    if (currentStatus !== desiredStatus) {
+    if (currentStatus !== statusEnum) {
       await customer.campaigns.update([
         {
           resource_name: `customers/${customerId}/campaigns/${entry.id}`,
@@ -506,11 +509,14 @@ async function pauseCampaigns(names: string[]) {
     }
 
     const statusEnum = enums.CampaignStatus.PAUSED
-    const currentStatus = typeof entry.status === 'number'
-      ? enums.CampaignStatus[entry.status as keyof typeof enums.CampaignStatus] ?? entry.status
-      : entry.status
+    const currentStatus: number | undefined =
+      typeof entry.status === 'number'
+        ? entry.status
+        : entry.status
+          ? (enums.CampaignStatus[entry.status as keyof typeof enums.CampaignStatus] as number | undefined)
+          : undefined
 
-    if (currentStatus !== 'PAUSED') {
+    if (currentStatus !== statusEnum) {
       await customer.campaigns.update([
         {
           resource_name: `customers/${customerId}/campaigns/${entry.id}`,

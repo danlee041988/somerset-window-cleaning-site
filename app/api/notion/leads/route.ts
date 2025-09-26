@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import type { CreatePageParameters } from '@notionhq/client/build/src/api-endpoints'
 import { getNotionClient, getWebsiteCustomersDatabaseId } from '@/lib/server/notion'
 
 export const runtime = 'nodejs'
@@ -55,6 +56,7 @@ const payloadSchema = z.object({
 type Payload = z.infer<typeof payloadSchema>
 
 type NotionPropertyValue = Record<string, unknown>
+type NotionPageProperties = CreatePageParameters['properties']
 
 type ServicesAccumulator = Set<string>
 
@@ -173,7 +175,7 @@ const buildNotes = (payload: Payload) => {
   return chunks.join('\n\n')
 }
 
-const toProperties = (payload: Payload): Record<string, NotionPropertyValue> => {
+const toProperties = (payload: Payload): NotionPageProperties => {
   const { customer, request, propertySummary, summaryPlaintext, submittedAt, frequencyText, bedroomText } = payload
 
   const fullName = `${customer.firstName.trim()} ${customer.lastName.trim()}`.trim()
