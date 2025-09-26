@@ -579,7 +579,8 @@ export default function BookingForm({
 
     const summaryPlaintext = summarySections.join('\n')
     const now = new Date()
-    const submittedAt = now.toLocaleString('en-GB')
+    const submittedAtIso = now.toISOString()
+    const submittedAtDisplay = now.toLocaleString('en-GB')
 
     const servicesList = servicesSelected.join(', ') || 'Exterior window cleaning'
 
@@ -632,7 +633,7 @@ export default function BookingForm({
       selected_date_option_id: 'manual-quote-flow',
       selected_date_match_label: frequencyText,
       pricing_lines_json: JSON.stringify(['Pricing to be confirmed manually']),
-      submitted_at: submittedAt,
+      submitted_at: submittedAtDisplay,
       recaptcha_token: recaptchaToken,
       'g-recaptcha-response': recaptchaToken,
       summary_plaintext: summaryPlaintext,
@@ -674,6 +675,39 @@ export default function BookingForm({
       })
 
       analytics.quoteRequest('form')
+
+      try {
+        const notionResponse = await fetch('/api/notion/leads', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            customer,
+            request,
+            manualReviewReason,
+            propertySummary,
+            propertyExtras,
+            servicesSelected,
+            summaryPlaintext,
+            submittedAt: submittedAtIso,
+            frequencyText,
+            bedroomText,
+          }),
+        })
+
+        if (!notionResponse.ok) {
+          const errorText = await notionResponse.text()
+          console.error('Notion sync failed with response:', notionResponse.status, errorText)
+          analytics.formError('notion_sync_failed', `HTTP ${notionResponse.status}`)
+        }
+      } catch (notionError) {
+        console.error('Notion sync error:', notionError)
+        analytics.formError(
+          'notion_sync_failed',
+          notionError instanceof Error ? notionError.message : 'Unknown error',
+        )
+      }
 
       pushToDataLayer('booking_form_submit', {
         service_list: servicesList,
