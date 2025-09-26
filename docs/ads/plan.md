@@ -1,6 +1,6 @@
 # Google Ads Growth Plan — Somerset Window Cleaning
 
-_Last updated: 23 Sept 2025_
+_Last updated: 25 Sept 2025_
 
 ## 1. Objectives
 - Generate qualified **window cleaning** leads (primary), with **gutter**, **conservatory roof**, and **solar panel cleaning** as secondary services.
@@ -19,9 +19,9 @@ _Last updated: 23 Sept 2025_
 - Validate tags in preview → record one real test conversion before go-live.
 
 ## 3. Account Configuration
-- **Ad account (customer)**: `447-417-5960`
-- **Manager / login**: _n/a (same account)_
-- `.env.local` already stores credentials for automation.
+- **Ad account (customer)**: `429-956-3613`
+- **Manager / login**: `447-417-5960` (MCC) — leave blank in `.env.local` unless you switch to manager-auth calls.
+- `.env.local` already stores credentials for automation (automation currently runs in dry-run mode).
 - Auto-tagging on, call reporting on.
 - Sitelink disapprovals to be resolved with compliant copy.
 
@@ -29,6 +29,7 @@ _Last updated: 23 Sept 2025_
 - **Tier 1 (launch)**: BA16 Street, BA6 Glastonbury, BA5 Wells, BA4 Shepton Mallet, TA11 Somerton, TA10 Langport.
 - **Tier 2 (expand once CPA stable)**: BA11 Frome, BA7 Castle Cary, BA10 Bruton, BS27 Cheddar, BS26 Axbridge, BS28 Wedmore, TA8 Burnham-on-Sea, TA9 Highbridge, TA6 & TA7 Bridgwater, TA1 & TA2 Taunton, BA20 & BA21 Yeovil.
 - Exclude out-of-area postcodes, Bristol, Bath, Devon, national/geographic irrelevant searches.
+- Automation enforces Tier‑1 targeting via `config/google-ads/service-areas.json`; update that file before expanding to Tier‑2.
 
 ## 5. Campaign Structure (Search first)
 | Campaign | Goal | Daily Budget (confirmed) | Bid Strategy |
@@ -103,7 +104,11 @@ _Last updated: 23 Sept 2025_
 - Admin dashboard: `/admin/google-ads` (campaign metrics, recommendations).
 - API endpoints: `GET /api/google-ads?action=campaigns`, `...=recommendations`.
 - Automation script: `npx tsx scripts/google-ads-automation.ts` (dry-run by default). Set `GOOGLE_ADS_AUTOMATION_DRY_RUN=false` to enable actions once approved.
+- `scripts/google-ads-apply-plan.ts` enforces the campaign/budget structure from `config/google-ads/campaign-plan.json` and seeds paused ad groups/RSAs.
+- `scripts/google-ads-upload-negatives.ts` syncs `docs/ads/negatives.csv` into every search campaign (idempotent reruns).
+- `scripts/google-ads-daily-sync.ts` runs plan → negatives → automation → snapshot each day and writes a history log in `docs/ads/history/` for rollback traceability.
 - `scripts/list-accessible-customers.ts` to verify account IDs.
+- `scripts/gtm-sync-container.ts` refreshes GTM tags/triggers/variables from `docs/ads/gtm-import-lead-conversions.json` and publishes a new container version (requires publish + edit.containerversions scopes).
 
 ## 13. Next Steps (Implementation Checklist)
 1. Configure Ads conversions + Enhanced Conversions in GTM.

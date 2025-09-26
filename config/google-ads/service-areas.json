@@ -1,0 +1,10 @@
+{
+  "tier1": [
+    { "name": "Street", "geoTargetConstant": "geoTargetConstants/9195545" },
+    { "name": "Glastonbury", "geoTargetConstant": "geoTargetConstants/1006739" },
+    { "name": "Wells", "geoTargetConstant": "geoTargetConstants/9194976" },
+    { "name": "Shepton Mallet", "geoTargetConstant": "geoTargetConstants/1007068" },
+    { "name": "Somerton", "geoTargetConstant": "geoTargetConstants/9195209" },
+    { "name": "Langport", "geoTargetConstant": "geoTargetConstants/9220508" }
+  ]
+}
