@@ -5,12 +5,14 @@ import Footer from '@/components/Footer'
 import StructuredData from '@/components/StructuredData'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import DynamicLayout from '@/components/DynamicLayout'
+import Script from 'next/script'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { buildAbsoluteUrl, getSiteUrl } from '@/lib/site-url'
 
 const siteUrl = getSiteUrl()
 const logoUrl = buildAbsoluteUrl('/images/logos/swc-logo.png', siteUrl)
 const siteUrlHref = buildAbsoluteUrl('/', siteUrl)
+const gtmContainerId = process.env.NEXT_PUBLIC_GTM_CONTAINER_ID
 
 export const metadata: Metadata = {
   title: {
@@ -53,6 +55,31 @@ export default function RootLayout({
         <GoogleAnalytics />
       </head>
       <body className="min-h-screen bg-brand-black text-brand-white antialiased">
+        {gtmContainerId ? (
+          <Script id="gtm-base" strategy="afterInteractive">
+            {`
+              (function(w,d,s,l,i){
+                w[l]=w[l]||[];
+                w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+                var f=d.getElementsByTagName(s)[0],
+                  j=d.createElement(s),
+                  dl=l!='dataLayer'?'&l='+l:'';
+                j.async=true;
+                j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+                f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','${gtmContainerId}');
+            `}
+          </Script>
+        ) : null}
+        {gtmContainerId ? (
+          <noscript
+            dangerouslySetInnerHTML={{
+              __html: `
+                <iframe src="https://www.googletagmanager.com/ns.html?id=${gtmContainerId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+              `,
+            }}
+          />
+        ) : null}
         <ErrorBoundary>
           <a href="#content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-brand-white text-black px-3 py-2 rounded">Skip to content</a>
           <Header />
