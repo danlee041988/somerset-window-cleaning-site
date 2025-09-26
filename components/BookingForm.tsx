@@ -911,7 +911,6 @@ export default function BookingForm({
                   options={BEDROOM_OPTIONS.map((option) => ({
                     id: option.id,
                     title: option.label,
-                    description: option.description,
                   }))}
                   name="property-bedrooms"
                   value={request.bedrooms}
@@ -1299,10 +1298,10 @@ function OptionSection({
           return (
             <label
               key={option.id}
-              className={`relative cursor-pointer rounded-2xl border pl-4 pr-9 py-4 text-left transition ${
+              className={`relative cursor-pointer rounded-2xl border pl-5 pr-12 py-4 text-left transition duration-200 ease-out ${
                 active
-                  ? 'border-brand-green/60 bg-brand-green/15 text-white shadow-[0_12px_30px_-20px_rgba(22,163,74,0.45)]'
-                  : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
+                  ? 'border-brand-green/60 bg-brand-green/20 text-white shadow-[0_20px_40px_-28px_rgba(22,163,74,0.55)]'
+                  : 'border-white/12 bg-white/5 text-white/75 hover:-translate-y-0.5 hover:border-white/30 hover:text-white'
               }`}
             >
               <input
@@ -1313,12 +1312,14 @@ function OptionSection({
                 onChange={() => onChange(option.id)}
                 className="sr-only"
               />
-              <div className="flex items-start justify-between gap-3">
-                <span className="text-sm font-semibold">{option.title}</span>
-                {option.meta ? <span className="text-xs text-white/60">{option.meta}</span> : null}
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-1">
+                  <span className="text-sm font-semibold tracking-[0.06em] text-white">{option.title}</span>
+                  {option.description ? <p className="text-xs text-white/55">{option.description}</p> : null}
+                </div>
+                {option.meta ? <span className="rounded-full border border-white/20 px-2 py-0.5 text-xs text-white/65">{option.meta}</span> : null}
               </div>
-              {option.description ? <p className="mt-2 text-xs text-white/50">{option.description}</p> : null}
-              {active ? <CheckMark className="absolute right-3 top-3" /> : null}
+              {active ? <CheckMark className="absolute right-4 top-4" /> : null}
             </label>
           )
         })}
@@ -1342,10 +1343,10 @@ function ServiceToggle({
 }) {
   return (
     <label
-      className={`relative flex w-full cursor-pointer items-start gap-4 rounded-2xl border pl-5 pr-12 py-5 text-left transition ${
+      className={`relative flex w-full cursor-pointer items-start gap-4 rounded-2xl border pl-6 pr-14 py-5 text-left transition duration-200 ease-out ${
         checked
-          ? 'border-brand-green/60 bg-brand-green/15 text-white shadow-[0_12px_30px_-20px_rgba(22,163,74,0.45)]'
-          : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
+          ? 'border-brand-green/60 bg-brand-green/20 text-white shadow-[0_20px_40px_-28px_rgba(22,163,74,0.55)]'
+          : 'border-white/12 bg-white/5 text-white/75 hover:-translate-y-0.5 hover:border-white/30 hover:text-white'
       }`}
     >
       <input
@@ -1357,7 +1358,7 @@ function ServiceToggle({
       />
       <div className="flex flex-1 flex-col gap-3">
         <div>
-          <p className="text-sm font-semibold text-white">{label}</p>
+          <p className="text-sm font-semibold tracking-[0.06em] text-white">{label}</p>
           <p className="mt-2 text-xs text-white/60">{description}</p>
         </div>
         {helper ? <p className="text-xs text-brand-red/80">{helper}</p> : null}
