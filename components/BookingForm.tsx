@@ -1299,7 +1299,7 @@ function OptionSection({
           return (
             <label
               key={option.id}
-              className={`cursor-pointer rounded-2xl border px-4 py-4 text-left transition ${
+              className={`relative cursor-pointer rounded-2xl border pl-4 pr-9 py-4 text-left transition ${
                 active
                   ? 'border-brand-green/60 bg-brand-green/15 text-white shadow-[0_12px_30px_-20px_rgba(22,163,74,0.45)]'
                   : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
@@ -1313,14 +1313,12 @@ function OptionSection({
                 onChange={() => onChange(option.id)}
                 className="sr-only"
               />
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex items-start justify-between gap-3">
                 <span className="text-sm font-semibold">{option.title}</span>
-                <div className="flex items-center gap-2 text-xs text-white/60">
-                  {option.meta ? <span>{option.meta}</span> : null}
-                  {active ? <CheckMark /> : null}
-                </div>
+                {option.meta ? <span className="text-xs text-white/60">{option.meta}</span> : null}
               </div>
               {option.description ? <p className="mt-2 text-xs text-white/50">{option.description}</p> : null}
+              {active ? <CheckMark className="absolute right-3 top-3" /> : null}
             </label>
           )
         })}
@@ -1344,7 +1342,7 @@ function ServiceToggle({
 }) {
   return (
     <label
-      className={`flex w-full cursor-pointer items-start justify-between gap-4 rounded-2xl border px-5 py-5 text-left transition ${
+      className={`relative flex w-full cursor-pointer items-start gap-4 rounded-2xl border pl-5 pr-12 py-5 text-left transition ${
         checked
           ? 'border-brand-green/60 bg-brand-green/15 text-white shadow-[0_12px_30px_-20px_rgba(22,163,74,0.45)]'
           : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
@@ -1357,27 +1355,25 @@ function ServiceToggle({
         className="sr-only"
         aria-label={label}
       />
-      <div className="flex flex-1 items-start justify-between gap-4">
+      <div className="flex flex-1 flex-col gap-3">
         <div>
           <p className="text-sm font-semibold text-white">{label}</p>
           <p className="mt-2 text-xs text-white/60">{description}</p>
-          {helper ? <p className="mt-3 text-xs text-brand-red/80">{helper}</p> : null}
         </div>
-        <div className="flex items-center justify-center">
-          {checked ? (
-            <CheckMark />
-          ) : (
-            <span
-              className="inline-flex h-5 w-5 items-center justify-center rounded-md border border-white/25 bg-white/5 text-white/40"
-              aria-hidden="true"
-            >
-              <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-              </svg>
-            </span>
-          )}
-        </div>
+        {helper ? <p className="text-xs text-brand-red/80">{helper}</p> : null}
       </div>
+      {checked ? (
+        <CheckMark className="absolute right-5 top-5" />
+      ) : (
+        <span
+          className="absolute right-5 top-5 inline-flex h-5 w-5 items-center justify-center rounded-md border border-white/25 bg-white/5 text-white/40"
+          aria-hidden="true"
+        >
+          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+          </svg>
+        </span>
+      )}
     </label>
   )
 }
