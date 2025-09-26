@@ -14,6 +14,7 @@ const config: Config = {
           black: '#0A0B0D',
           white: '#F5F7FA',
           gold: '#F4C542',
+          green: '#16A34A',
         },
         glass: 'rgba(255,255,255,0.06)',
         'glass-border': 'rgba(255,255,255,0.14)',

@@ -1301,7 +1301,7 @@ function OptionSection({
               key={option.id}
               className={`cursor-pointer rounded-2xl border px-4 py-4 text-left transition ${
                 active
-                  ? 'border-brand-red/70 bg-brand-red/15 text-white shadow-[0_12px_30px_-20px_rgba(225,29,42,0.45)]'
+                  ? 'border-brand-green/60 bg-brand-green/15 text-white shadow-[0_12px_30px_-20px_rgba(22,163,74,0.45)]'
                   : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
               }`}
             >
@@ -1346,7 +1346,7 @@ function ServiceToggle({
     <label
       className={`flex w-full cursor-pointer items-start justify-between gap-4 rounded-2xl border px-5 py-5 text-left transition ${
         checked
-          ? 'border-brand-red/70 bg-brand-red/15 text-white shadow-[0_12px_30px_-20px_rgba(225,29,42,0.45)]'
+          ? 'border-brand-green/60 bg-brand-green/15 text-white shadow-[0_12px_30px_-20px_rgba(22,163,74,0.45)]'
           : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white'
       }`}
     >
@@ -1472,7 +1472,7 @@ function SelectField({
 function CheckMark({ className = '' }: { className?: string }) {
   return (
     <span
-      className={`inline-flex h-5 w-5 items-center justify-center rounded-md border border-brand-red/60 bg-brand-red/20 text-brand-red ${className}`}
+      className={`inline-flex h-5 w-5 items-center justify-center rounded-md border border-brand-green/60 bg-brand-green/20 text-brand-green ${className}`}
       aria-hidden="true"
     >
       <svg
@@ -1505,7 +1505,7 @@ function StepIndicator({
 
         const buttonClasses = {
           complete:
-            'border-brand-red/60 bg-brand-red/15 text-white shadow-[0_10px_28px_-24px_rgba(225,29,42,0.45)]',
+            'border-brand-green/60 bg-brand-green/15 text-white shadow-[0_10px_28px_-24px_rgba(22,163,74,0.45)]',
           current: 'border-white/30 bg-white/10 text-white',
           upcoming: 'border-white/15 bg-white/5 text-white/55',
         }[status]
@@ -1517,14 +1517,14 @@ function StepIndicator({
               onClick={() => interactive && onStepChange(item.id)}
               disabled={!interactive}
               aria-current={status === 'current' ? 'step' : undefined}
-              className={`flex w-full items-center gap-3 rounded-full border px-4 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60 sm:flex-1 ${
+              className={`flex w-full items-center gap-3 rounded-full border px-4 py-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/60 sm:flex-1 ${
                 buttonClasses
               } ${interactive ? 'hover:border-white/40 hover:text-white' : ''}`}
             >
               <span
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
                   status === 'complete'
-                    ? 'bg-brand-red text-brand-black'
+                    ? 'bg-brand-green text-brand-black'
                     : status === 'current'
                     ? 'bg-white text-brand-black'
                     : 'bg-white/10 text-white'
