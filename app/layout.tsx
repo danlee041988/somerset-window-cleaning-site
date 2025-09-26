@@ -5,7 +5,7 @@ import Footer from '@/components/Footer'
 import StructuredData from '@/components/StructuredData'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import DynamicLayout from '@/components/DynamicLayout'
-import Script from 'next/script'
+import { GoogleTagManager } from '@next/third-parties/google'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { buildAbsoluteUrl, getSiteUrl } from '@/lib/site-url'
 
@@ -52,16 +52,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {gtmContainerId ? (
-          <>
-            <Script id="gtm-data-layer" strategy="beforeInteractive">
-              {`window.dataLayer = window.dataLayer || [];`}
-            </Script>
-            <Script id="gtm-base" strategy="beforeInteractive">
-              {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmContainerId}');`}
-            </Script>
-          </>
-        ) : null}
+        {gtmContainerId ? <GoogleTagManager gtmId={gtmContainerId} /> : null}
         <GoogleAnalytics />
       </head>
       <body className="min-h-screen bg-brand-black text-brand-white antialiased" suppressHydrationWarning>

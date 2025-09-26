@@ -43,7 +43,11 @@
 - Show diff plus a concise commit message when green.
 
 ## Secrets & Environment Handling
-- Never commit or echo access tokens; store them in macOS Keychain.
-- Provision a secret with `security add-generic-password -a "$USER" -s <NAME> -w '<value>'`.
-- Load it in the shell via `export <NAME>="$(security find-generic-password -a \"$USER\" -s <NAME> -w 2>/dev/null)"` (see `.zshrc`).
-- Current keys: `VERCEL_TOKEN` and `NOTION_API_TOKEN` are retrieved from Keychain on shell startup.
+- Per Notion security guidance (Context7 `/websites/developers_notion`, *Securely Handling Integration Tokens*), keep tokens out of source control and load them from environment variables or a secrets manager.
+- Store `NOTION_API_TOKEN` and `NOTION_WEBSITE_CUSTOMERS_DB_ID` in a gitignored `.env.local` **or** in `~/.secrets/notion_token` and source via `scripts/load-notion-token.sh` before running the app.
+- Continue keeping `VERCEL_TOKEN` (and any additional API keys) outside the repo. macOS Keychain is fine, but prefer the same env var pattern for consistency.
+- Never echo secrets into the terminal logs; scrub command history when pasting tokens.
+
+## Context7 Usage
+- Before adopting or changing implementation patterns, consult Context7 docs relevant to the framework/library and prefer their recommended components/APIs (e.g. `<GoogleTagManager>` for GTM in Next.js).
+- Link the specific snippet/ID in commits touching those areas so reviewers know which guidance was followed.
