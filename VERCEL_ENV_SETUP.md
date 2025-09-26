@@ -16,7 +16,9 @@ The error you're seeing is because the environment variables are not set in your
    | `NEXT_PUBLIC_EMAILJS_SERVICE_ID` | `service_yfnr1a9` |
    | `NEXT_PUBLIC_EMAILJS_PUBLIC_KEY` | `cbA_IhBfxEeDwbEx6` |
    | `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID` | `template_booking_form` |
-  | `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | `6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H` |
+   | `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | `6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H` |
+   | `NOTION_API_TOKEN` | `<< your Notion integration token >>` |
+   | `NOTION_WEBSITE_CUSTOMERS_DB_ID` | `2707c58a587781af9e26ff0d9a5e0ae3` |
 
 5. Click **Save** for each variable
 6. **Redeploy** your project (Deployments → ... → Redeploy)
@@ -46,6 +48,12 @@ The error you're seeing is because the environment variables are not set in your
 
    vercel env add NEXT_PUBLIC_RECAPTCHA_SITE_KEY production preview development
    # Enter value: 6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H
+
+   vercel env add NOTION_API_TOKEN production preview development
+   # Enter value: (paste integration token starting with ntn_)
+
+   vercel env add NOTION_WEBSITE_CUSTOMERS_DB_ID production preview development
+   # Enter value: 2707c58a587781af9e26ff0d9a5e0ae3
    ```
 
 4. Redeploy:
@@ -62,6 +70,8 @@ NEXT_PUBLIC_EMAILJS_SERVICE_ID=service_yfnr1a9
 NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=cbA_IhBfxEeDwbEx6
 NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=template_booking_form
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LdwUDQrAAAAAJh5Z2V5paJn003OrFouc8KVdA0H
+NOTION_API_TOKEN=
+NOTION_WEBSITE_CUSTOMERS_DB_ID=2707c58a587781af9e26ff0d9a5e0ae3
 ```
 
 Then commit and push:

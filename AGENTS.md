@@ -41,3 +41,9 @@
 - No renames/moves or dependency changes unless requested.
 - You may work outside this repo when asked (full filesystem allowed).
 - Show diff plus a concise commit message when green.
+
+## Secrets & Environment Handling
+- Never commit or echo access tokens; store them in macOS Keychain.
+- Provision a secret with `security add-generic-password -a "$USER" -s <NAME> -w '<value>'`.
+- Load it in the shell via `export <NAME>="$(security find-generic-password -a \"$USER\" -s <NAME> -w 2>/dev/null)"` (see `.zshrc`).
+- Current keys: `VERCEL_TOKEN` and `NOTION_API_TOKEN` are retrieved from Keychain on shell startup.
