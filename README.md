@@ -16,6 +16,8 @@ TypeScript Next.js site for Somerset Window Cleaning. Black-first theme with bri
    - Copy `.env.example` to `.env.local`
    - Add `NEXT_PUBLIC_EMAILJS_PUBLIC_KEY`, `NEXT_PUBLIC_EMAILJS_SERVICE_ID`, `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID`
    - Add `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` (production) and optionally `NEXT_PUBLIC_RECAPTCHA_SITE_KEY_LOCAL` for localhost runs
+   - Add Notion integration secrets: `NOTION_API_TOKEN` and `NOTION_WEBSITE_CUSTOMERS_DB_ID` (see [Notion authorization best practices](https://developers.notion.com/docs/authorization))
+   - Optional: store the same values in `~/.secrets/notion_token` and run `source scripts/load-notion-token.sh` for each new shell session so the API client can sync bookings automatically
 
 3. Run dev server:
    npm run dev
@@ -67,7 +69,6 @@ Map your template variables to the following keys:
 
 - `app/(marketing)/` – public pages (home, services, booking, etc.)
 - `app/(internal)/` – admin dashboards and operational tooling
-- `app/(legacy)/` – archived routes retained for reference
 - `app/api/` – API routes for EmailJS helpers, GA, Google Ads, etc.
 - `components/ui/` – reusable UI primitives (buttons, layouts, logo, etc.)
 - `components/features/` – feature modules (contact/quote flow, etc.)
