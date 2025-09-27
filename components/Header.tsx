@@ -290,12 +290,18 @@ export default function Header() {
             className="inline-flex shrink-0 items-center rounded-md px-3 py-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
             aria-label="Somerset Window Cleaning home"
           >
-            <Logo className="h-9 w-auto max-w-[160px] sm:h-11 sm:max-w-[210px] md:h-12 md:max-w-[300px] lg:h-[3.5rem] lg:max-w-[320px]" />
+            <Logo className="h-10 w-[140px] sm:h-12 sm:w-[180px] md:h-[3.5rem] md:w-[220px] lg:h-[4rem] lg:w-[240px]" />
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden flex-1 items-center justify-end gap-6 lg:flex">
             <nav className="flex items-center gap-6">
+              <Link
+                href="/"
+                className="inline-flex items-center text-xs font-semibold uppercase tracking-[0.32em] text-white/70 transition hover:text-white"
+              >
+                Home
+              </Link>
               <div
                 className="relative hidden lg:block"
                 onMouseEnter={supportsHover ? openServicesMenu : undefined}
