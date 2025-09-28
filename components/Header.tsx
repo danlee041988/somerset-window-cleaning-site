@@ -23,13 +23,26 @@ const SERVICE_LINKS: ServiceLink[] = [
   { title: 'External Commercial Cleaning', href: '/services/commercial-cleaning' },
 ]
 
-const AUX_NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/areas', label: 'Areas' },
-  { href: '/book-appointment', label: 'Quote' },
-  { href: '/gallery', label: 'Gallery' },
-  { href: '/contact', label: 'Contact' },
-] as const
+type NavLinkItem = {
+  type: 'link'
+  label: string
+  href: string
+}
+
+type NavServicesItem = {
+  type: 'services'
+  label: string
+}
+
+type NavItem = NavLinkItem | NavServicesItem
+
+const NAV_ITEMS: NavItem[] = [
+  { type: 'services', label: 'Services' },
+  { type: 'link', label: 'Areas', href: '/areas' },
+  { type: 'link', label: 'Quote', href: '/book-appointment' },
+  { type: 'link', label: 'Gallery', href: '/gallery' },
+  { type: 'link', label: 'Contact', href: '/contact' },
+]
 
 // UK Bank Holidays
 const UK_BANK_HOLIDAYS = [
@@ -296,99 +309,98 @@ export default function Header() {
           {/* Desktop Navigation */}
           <div className="hidden flex-1 items-center justify-end gap-6 lg:flex">
             <nav className="flex items-center gap-6">
-              <Link
-                href="/"
-                className="inline-flex items-center text-xs font-semibold uppercase tracking-[0.32em] text-white/70 transition hover:text-white"
-              >
-                Home
-              </Link>
-              <div
-                className="relative hidden lg:block"
-                onMouseEnter={supportsHover ? openServicesMenu : undefined}
-                onMouseLeave={supportsHover ? scheduleServicesClose : undefined}
-                onFocusCapture={openServicesMenu}
-                onBlurCapture={scheduleServicesClose}
-              >
-                <button
-                  ref={servicesButtonRef}
-                  type="button"
-                  aria-haspopup="true"
-                  aria-expanded={servicesOpen}
-                  aria-controls="services-mega-menu"
-                  onClick={() => (servicesOpen ? setServicesOpen(false) : openServicesMenu())}
-                  onKeyDown={handleServicesKeyDown}
-                  className={`group relative inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.32em] transition-colors ${
-                    servicesOpen ? 'text-white' : 'text-white/70 hover:text-white'
-                  }`}
-                >
-                  <span>Services</span>
-                  <svg
-                    className={`h-2.5 w-2.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180 text-brand-red' : 'text-white/60'}`}
-                    viewBox="0 0 12 8"
-                    fill="none"
-                    aria-hidden
-                  >
-                    <path d="M10.667.667 6 5.333 1.333.667 0 2l6 6 6-6L10.667.667Z" fill="currentColor" />
-                  </svg>
-                  <span
-                    className={`pointer-events-none mt-1 h-px w-full origin-left bg-gradient-to-r from-brand-red via-brand-red/60 to-transparent transition-opacity duration-300 ${
-                      servicesOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                    }`}
-                    aria-hidden="true"
-                  />
-                </button>
+              {NAV_ITEMS.map((item) => {
+                if (item.type === 'services') {
+                  return (
+                    <div
+                      key={item.type}
+                      className="relative"
+                      onMouseEnter={supportsHover ? openServicesMenu : undefined}
+                      onMouseLeave={supportsHover ? scheduleServicesClose : undefined}
+                      onFocusCapture={openServicesMenu}
+                      onBlurCapture={scheduleServicesClose}
+                    >
+                      <button
+                        ref={servicesButtonRef}
+                        type="button"
+                        aria-haspopup="true"
+                        aria-expanded={servicesOpen}
+                        aria-controls="services-mega-menu"
+                        onClick={() => (servicesOpen ? setServicesOpen(false) : openServicesMenu())}
+                        onKeyDown={handleServicesKeyDown}
+                        className={`group relative inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.32em] transition-colors ${
+                          servicesOpen ? 'text-white' : 'text-white/70 hover:text-white'
+                        }`}
+                      >
+                        <span>{item.label}</span>
+                        <svg
+                          className={`h-2.5 w-2.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180 text-brand-red' : 'text-white/60'}`}
+                          viewBox="0 0 12 8"
+                          fill="none"
+                          aria-hidden
+                        >
+                          <path d="M10.667.667 6 5.333 1.333.667 0 2l6 6 6-6L10.667.667Z" fill="currentColor" />
+                        </svg>
+                        <span
+                          className={`pointer-events-none mt-1 h-px w-full origin-left bg-gradient-to-r from-brand-red via-brand-red/60 to-transparent transition-opacity duration-300 ${
+                            servicesOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                          }`}
+                          aria-hidden="true"
+                        />
+                      </button>
 
-                <div
-                  ref={servicesMenuRef}
-                  id="services-mega-menu"
-                  style={menuStyle}
-                  className={`absolute top-full z-50 hidden w-[min(640px,calc(100vw-2rem))] pt-5 transition-all duration-300 lg:block ${
-                    servicesOpen ? 'pointer-events-auto opacity-100 translate-y-0' : 'pointer-events-none opacity-0 -translate-y-4'
-                  }`}
-                  role="region"
-                  aria-label="Somerset Window Cleaning services"
-                >
-                  <div
-                    className="overflow-hidden rounded-3xl border border-white/12 bg-black/95 shadow-[0_60px_120px_-40px_rgba(0,0,0,0.85)]"
-                  >
-                    <div className="relative">
-                      <div className="pointer-events-none absolute -left-32 top-[-120px] h-64 w-64 rounded-full bg-brand-red/20 blur-[120px]" aria-hidden />
-                      <div className="pointer-events-none absolute -right-24 bottom-[-120px] h-72 w-72 rounded-full bg-white/10 blur-[140px]" aria-hidden />
-                      <div className="relative px-5 py-6">
-                        <ul className="space-y-2">
-                          {SERVICE_LINKS.map((item) => (
-                            <li key={item.href}>
-                              <Link
-                                href={item.href}
-                                className="flex items-center justify-between rounded-full border border-white/15 bg-white/[0.06] px-5 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-white/80 transition hover:border-brand-red/60 hover:bg-brand-red/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
-                              >
-                                <span>{item.title}</span>
-                                <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" aria-hidden>
-                                  <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                      <div
+                        ref={servicesMenuRef}
+                        id="services-mega-menu"
+                        style={menuStyle}
+                        className={`absolute top-full z-50 hidden w-[min(640px,calc(100vw-2rem))] pt-5 transition-all duration-300 lg:block ${
+                          servicesOpen ? 'pointer-events-auto opacity-100 translate-y-0' : 'pointer-events-none opacity-0 -translate-y-4'
+                        }`}
+                        role="region"
+                        aria-label="Somerset Window Cleaning services"
+                      >
+                        <div className="overflow-hidden rounded-3xl border border-white/12 bg-black/95 shadow-[0_60px_120px_-40px_rgba(0,0,0,0.85)]">
+                          <div className="relative">
+                            <div className="pointer-events-none absolute -left-32 top-[-120px] h-64 w-64 rounded-full bg-brand-red/20 blur-[120px]" aria-hidden />
+                            <div className="pointer-events-none absolute -right-24 bottom-[-120px] h-72 w-72 rounded-full bg-white/10 blur-[140px]" aria-hidden />
+                            <div className="relative px-5 py-6">
+                              <ul className="space-y-2">
+                                {SERVICE_LINKS.map((service) => (
+                                  <li key={service.href}>
+                                    <Link
+                                      href={service.href}
+                                      className="flex items-center justify-between rounded-full border border-white/15 bg-white/[0.06] px-5 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-white/80 transition hover:border-brand-red/60 hover:bg-brand-red/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
+                                    >
+                                      <span>{service.title}</span>
+                                      <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" aria-hidden>
+                                        <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                      </svg>
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
+                  )
+                }
 
-              {AUX_NAV_LINKS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.32em] text-white/70 transition-colors hover:text-white"
-                >
-                  <span>{item.label}</span>
-                  <span
-                    className="pointer-events-none h-px w-8 bg-gradient-to-r from-brand-red via-brand-red/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                    aria-hidden="true"
-                  />
-                </Link>
-              ))}
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.32em] text-white/70 transition-colors hover:text-white"
+                  >
+                    <span>{item.label}</span>
+                    <span
+                      className="pointer-events-none h-px w-full max-w-[2.5rem] bg-gradient-to-r from-brand-red via-brand-red/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                      aria-hidden="true"
+                    />
+                  </Link>
+                )
+              })}
             </nav>
             <div className="flex flex-wrap items-center justify-end gap-4 lg:flex-nowrap">
               <HeaderCallButton className="hidden lg:inline-flex lg:min-w-[12.5rem] xl:min-w-[16.5rem]" />
@@ -511,8 +523,8 @@ export default function Header() {
                     >
                       View all services
                     </Link>
-            <Link
-              href="/book-appointment?intent=quote"
+                    <Link
+                      href="/book-appointment?intent=quote"
                       onClick={() => setOpen(false)}
                       className="inline-flex items-center justify-center rounded-full bg-brand-red px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-[0_12px_30px_-18px_rgba(225,29,42,0.8)] transition hover:scale-[1.02]"
                     >
@@ -522,7 +534,7 @@ export default function Header() {
                 </div>
 
                 <div className="space-y-3">
-                  {AUX_NAV_LINKS.map((item) => (
+                  {NAV_ITEMS.filter((navItem): navItem is NavLinkItem => navItem.type === 'link').map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
