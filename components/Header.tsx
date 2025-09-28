@@ -523,13 +523,6 @@ export default function Header() {
                     >
                       View all services
                     </Link>
-                    <Link
-                      href="/book-appointment?intent=quote"
-                      onClick={() => setOpen(false)}
-                      className="inline-flex items-center justify-center rounded-full bg-brand-red px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-[0_12px_30px_-18px_rgba(225,29,42,0.8)] transition hover:scale-[1.02]"
-                    >
-                      Request quote
-                    </Link>
                   </div>
                 </div>
 
