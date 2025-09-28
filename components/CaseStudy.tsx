@@ -177,35 +177,9 @@ export default function CaseStudy({
           </div>
         </div>
 
-        <div className="relative flex flex-col justify-between border-t border-white/10 bg-black/35 backdrop-blur md:border-t-0 md:border-l">
-          <div className="p-10 md:p-14">
-            <QuoteCard quote={quote} attribution={quoteAttribution} />
-          </div>
-          <div
-            className="border-t border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent p-10 md:p-14"
-          >
-            <div className="rounded-3xl border border-white/12 bg-black/40 p-8 text-white/80 shadow-[0_30px_60px_-45px_rgba(0,0,0,0.85)]">
-              <div className="relative mb-6 overflow-hidden rounded-2xl border border-white/12 bg-black/50">
-                <Image
-                  src={CASE_STUDY_IMAGE}
-                  alt="Somerset Window Cleaning van outside a Somerset home"
-                  width={1024}
-                  height={768}
-                  className="h-48 w-full object-cover md:h-64"
-                  priority={false}
-                />
-                <span
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/0 to-black/40"
-                  aria-hidden
-                />
-              </div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-red/80">
-                Case study highlights
-              </p>
-              <p className="mt-6 text-sm leading-relaxed text-white/70">
-                These results come from pairing military-grade discipline with neighbourly service—exactly what the council looked for when showcasing Somerset success stories.
-              </p>
-            </div>
+        <div className="relative flex flex-col border-t border-white/10 bg-black/35 backdrop-blur md:border-t-0 md:border-l">
+          <div className="flex flex-1 items-center p-10 md:p-14">
+            <QuoteCard quote={quote} attribution={quoteAttribution} className="w-full" />
           </div>
         </div>
       </div>

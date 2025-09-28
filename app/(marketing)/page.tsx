@@ -15,6 +15,18 @@ export const metadata: Metadata = {
   },
 }
 
+const HERO_SUPPORT_STATS = [
+  { label: 'Google reviews', value: '4.9★ · 195+' },
+  { label: 'Follow-up', value: 'Replies within 1 business day' },
+]
+
+const HERO_BULLETS = [
+  'Share property basics, access, and any notes so we prep the right crew.',
+  'Pick the services and visit frequency that suit your home or business.',
+  'We confirm tailored pricing and schedule details within one working day.',
+  'Pay after each visit by card, bank transfer, or GoCardless direct debit.',
+]
+
 const HOME_QUOTE_STEPS = [
   {
     title: 'Share your details',
@@ -37,38 +49,64 @@ const HOME_QUOTE_STEPS = [
 export default function HomePage() {
   const galleryImages = Array.from(new Set(GALLERY_IMAGES ?? [])).slice(0, 12)
   const fallbackGallery = ['/photos/photo01.jpg','/photos/photo02.jpg','/photos/photo03.jpg','/photos/photo04.jpg']
+  const heroImageSrc = (HERO_IMAGES && HERO_IMAGES[0]) || '/photos/photo01.jpg'
 
   return (
     <div>
-      {/* Hero with background image */}
       <section className="relative overflow-hidden border-b border-white/10 bg-transparent">
-        {/* Background image */}
         <Image
-          src={(HERO_IMAGES && HERO_IMAGES[0]) || '/photos/photo01.jpg'}
+          src={heroImageSrc}
           alt=""
           aria-hidden="true"
           fill
           priority
           className="absolute inset-0 object-cover opacity-70"
-          style={{ filter: 'brightness(2.1)' }}
+          style={{ filter: 'brightness(2)' }}
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1280px"
         />
-        {/* Softer gradient overlay for improved brightness */}
         <div className="pointer-events-none absolute inset-0 bg-radial-glow" aria-hidden />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/45 to-black/70" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/45 to-black/75" />
 
-        <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 pb-24 pt-32 md:pb-28 md:pt-36">
-          <span className="noir-chip">Local • Reliable • Fully Insured</span>
-          <h1 className="text-4xl font-extrabold tracking-tight text-[var(--fg)] md:text-6xl">
-            Somerset Window Cleaning
-          </h1>
-          <p className="max-w-2xl text-lg noir-muted">
-            Streak‑free, sparkling windows for homes and businesses across Somerset. Professional service, transparent quoting, and flexible scheduling.
-          </p>
-          
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8 px-4 pb-24 pt-32 md:pb-28 md:pt-36">
+          <div className="flex flex-wrap items-center gap-3 text-[0.58rem] font-semibold uppercase tracking-[0.32em] text-white/60">
+            <span className="noir-chip">Quote form takes minutes</span>
+            <span className="noir-chip">Local • Reliable • Fully Insured</span>
+          </div>
+
+          <div className="space-y-4 md:max-w-3xl">
+            <h1 className="text-4xl font-extrabold tracking-tight text-[var(--fg)] md:text-6xl">
+              Request your window clean in minutes
+            </h1>
+            <p className="max-w-2xl text-lg noir-muted">
+              Tell us about the property, choose the services you need, and we’ll confirm pricing and scheduling details by the next working day.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-6 text-sm text-white/70">
+            {HERO_SUPPORT_STATS.map((stat) => (
+              <div key={stat.label} className="flex flex-col gap-1">
+                <span className="text-lg font-semibold text-white">{stat.value}</span>
+                <span className="text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-white/40">
+                  {stat.label}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <ul className="grid gap-3 text-sm text-white/75 sm:grid-cols-2">
+            {HERO_BULLETS.map((bullet) => (
+              <li key={bullet} className="flex items-start gap-3">
+                <span className="mt-2 inline-flex h-2 w-2 flex-none rounded-full bg-brand-red" />
+                <span>{bullet}</span>
+              </li>
+            ))}
+          </ul>
+
           <div className="flex flex-wrap gap-3">
-            <Button href="/book-appointment">Request a quote</Button>
-            <Button href="/services" variant="ghost">Explore services</Button>
+            <Button href="/book-appointment?intent=quote">Start your quote</Button>
+            <Button href="tel:01458860339" variant="ghost">
+              Call 01458 860 339
+            </Button>
           </div>
         </div>
       </section>
