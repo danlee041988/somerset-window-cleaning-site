@@ -3,8 +3,13 @@
 set -euo pipefail
 
 PORT=${DEV_PORT:-3000}
-HOST="localhost"
+HOST=${DEV_HOST:-localhost}
 NEXT_BIN="./node_modules/.bin/next"
+
+if [ -f "./scripts/load-secrets.sh" ]; then
+  # shellcheck disable=SC1091
+  source "./scripts/load-secrets.sh"
+fi
 
 if [ ! -x "$NEXT_BIN" ]; then
   echo "❌ Could not find Next.js binary at $NEXT_BIN"

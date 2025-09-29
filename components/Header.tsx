@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import Logo from '@/components/ui/Logo'
-import BusinessHours from './BusinessHours'
+import BusinessHours, { useBusinessStatus } from './BusinessHours'
 import { analytics } from '@/lib/analytics'
 import { pushToDataLayer } from '@/lib/dataLayer'
 
@@ -71,41 +71,24 @@ const PhoneIcon = ({ className = '' }: { className?: string }) => (
 )
 
 const HeaderCallButton = ({ className = '' }: { className?: string }) => {
-  const [isOpen, setIsOpen] = React.useState(false)
+  const businessStatus = useBusinessStatus()
 
   const handleCallClick = React.useCallback(() => {
     analytics.quoteRequest('phone')
     pushToDataLayer('phone_click', { source: 'header_call_button' })
   }, [])
 
-  React.useEffect(() => {
-    const checkStatus = () => {
-      const now = new Date()
-      const currentDay = now.getDay()
-      const currentTime = now.getHours() * 100 + now.getMinutes()
-
-      // Closed on weekends
-      if (currentDay === 0 || currentDay === 6) {
-        setIsOpen(false)
-        return
-      }
-
-      // Closed on bank holidays
-      if (isBankHoliday(now)) {
-        setIsOpen(false)
-        return
-      }
-
-      // Monday-Friday: 9:00 AM to 4:00 PM
-      setIsOpen(currentTime >= 900 && currentTime < 1600)
+  const statusText = businessStatus.status ?? ''
+  const openUntilLabel = (() => {
+    if (!/^open\s+/i.test(statusText)) {
+      return statusText
     }
+    const trimmed = statusText.replace(/^open\s+/i, '').trim()
+    return trimmed ? trimmed.charAt(0).toUpperCase() + trimmed.slice(1) : ''
+  })()
+  const openChipText = openUntilLabel ? `Open · ${openUntilLabel}` : 'Open now'
 
-    checkStatus()
-    const interval = window.setInterval(checkStatus, 60000)
-    return () => window.clearInterval(interval)
-  }, [])
-
-  if (!isOpen) return null
+  if (!businessStatus.isOpen) return null
 
   const baseClasses = `group relative inline-flex shrink-0 items-center gap-2.5 rounded-full border border-white/15 bg-black/80 px-4 py-2 text-left text-white/80 shadow-[0_20px_40px_-30px_rgba(0,0,0,0.9)] transition-all duration-300 hover:border-white/25 hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/40 ${className}`
 
@@ -127,7 +110,9 @@ const HeaderCallButton = ({ className = '' }: { className?: string }) => {
           01458 860 339
         </span>
       </span>
-      <span className="text-[0.6rem] font-semibold uppercase tracking-[0.22em] text-emerald-300 whitespace-nowrap">Now Open</span>
+      <span className="text-[0.6rem] font-semibold uppercase tracking-[0.22em] text-emerald-300 whitespace-nowrap">
+        {openChipText}
+      </span>
       <span
         className="pointer-events-none absolute inset-x-4 -bottom-1 h-[2px] rounded-full bg-gradient-to-r from-brand-red via-brand-red/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         aria-hidden="true"
