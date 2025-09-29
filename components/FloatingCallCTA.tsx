@@ -50,7 +50,7 @@ export default function FloatingCallCTA() {
   }
 
   return (
-    <div className="pointer-events-none fixed bottom-4 left-4 right-4 z-40 sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-xs">
+    <div className="pointer-events-none fixed bottom-4 left-4 right-4 z-40 sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-xs" data-testid="floating-call-cta">
       <div className="pointer-events-auto overflow-hidden rounded-2xl border border-emerald-300/60 bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-600 shadow-xl shadow-emerald-500/30 backdrop-blur">
         <div className="flex items-start justify-between gap-2 px-4 pt-4">
           <span className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
@@ -91,4 +91,3 @@ export default function FloatingCallCTA() {
     </div>
   )
 }
-
