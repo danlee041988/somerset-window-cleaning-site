@@ -133,7 +133,7 @@ export default function TeamPage() {
             <Button href="/book-appointment?intent=quote">Request a visit</Button>
             {operationsLead?.image && (
               <Button href="#our-team" variant="ghost">
-                Meet {operationsLead.name.split(' ')[0]}'s crew
+                Meet {operationsLead.name.split(' ')[0]}&rsquo;s crew
               </Button>
             )}
           </div>
