@@ -5,6 +5,7 @@ import Footer from '@/components/Footer'
 import StructuredData from '@/components/StructuredData'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import DynamicLayout from '@/components/DynamicLayout'
+import FloatingCallCTA from '@/components/FloatingCallCTA'
 import { GoogleTagManager } from '@next/third-parties/google'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { buildAbsoluteUrl, getSiteUrl } from '@/lib/site-url'
@@ -63,6 +64,7 @@ export default function RootLayout({
             {children}
           </DynamicLayout>
           <Footer />
+          <FloatingCallCTA />
           <StructuredData />
         </ErrorBoundary>
       </body>
