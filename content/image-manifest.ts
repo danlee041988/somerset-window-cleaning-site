@@ -13,18 +13,22 @@ export const GALLERY_IMAGES = [
   "/images/photos/DJI_0070.JPG",
   "/images/photos/DJI_0092.JPG",
   "/images/photos/IMG_0880.jpeg",
-  "/images/photos/Vans.jpeg"
+  "/images/photos/Vans.jpeg",
+  "/images/photos/conservatory-roof-service-2025.jpg"
 ]
 
 export const TEAM_IMAGES = [
-  "/images/photos/Gutter Clearing.jpg"
+  "/images/team/dan-owner.jpg",
+  "/images/team/sean-operations-manager.jpg",
+  "/images/team/dylan-supervisor.jpg",
+  "/images/team/josh-window-cleaner.jpg"
 ]
 
 export const SERVICE_IMAGES = {
   "window": "/images/photos/Window Clean.jpeg",
   "gutter": "/images/photos/Gutter Clearing.jpg",
   "gutter_clearing": "/images/photos/Gutter Clearing.jpg",
-  "conservatory": "/images/photos/conservatory-cleaning.jpg",
+  "conservatory": "/images/photos/conservatory-roof-service-2025.jpg",
   "solar": "/images/photos/Solar Panel .jpeg",
   "fascias": "/images/photos/DJI_0045.JPG",
   "commercial": "/images/photos/Commercial.jpg",

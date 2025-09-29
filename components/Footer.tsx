@@ -90,6 +90,7 @@ export default function Footer() {
               </h3>
               <div className="grid grid-cols-1 gap-2 text-sm noir-muted">
                 <Link href="/areas" className="transition hover:text-[var(--fg)]">Areas We Cover</Link>
+                <Link href="/team" className="transition hover:text-[var(--fg)]">Meet the Team</Link>
                 <Link href="/book-appointment" className="transition hover:text-[var(--fg)]">Request a quote</Link>
                 <Link href="/book-appointment?intent=quote" className="transition hover:text-[var(--fg)]">Request quote now</Link>
                 {GO_CARDLESS_URL && (
