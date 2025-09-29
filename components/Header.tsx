@@ -39,7 +39,7 @@ type NavItem = NavLinkItem | NavServicesItem
 const NAV_ITEMS: NavItem[] = [
   { type: 'services', label: 'Services' },
   { type: 'link', label: 'Areas', href: '/areas' },
-  { type: 'link', label: 'Quote', href: '/book-appointment' },
+  { type: 'link', label: 'Meet the Team', href: '/team' },
   { type: 'link', label: 'Gallery', href: '/gallery' },
   { type: 'link', label: 'Contact', href: '/contact' },
 ]
@@ -317,7 +317,15 @@ export default function Header() {
                           servicesOpen ? 'text-white' : 'text-white/70 hover:text-white'
                         }`}
                       >
-                        <span>{item.label}</span>
+                        <span className="relative inline-block">
+                          {item.label}
+                          <span
+                            className={`pointer-events-none absolute -bottom-1 left-0 right-0 h-px origin-left bg-gradient-to-r from-brand-red via-brand-red/60 to-transparent transition-opacity duration-300 ${
+                              servicesOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                            }`}
+                            aria-hidden="true"
+                          />
+                        </span>
                         <svg
                           className={`h-2.5 w-2.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180 text-brand-red' : 'text-white/60'}`}
                           viewBox="0 0 12 8"
@@ -326,12 +334,6 @@ export default function Header() {
                         >
                           <path d="M10.667.667 6 5.333 1.333.667 0 2l6 6 6-6L10.667.667Z" fill="currentColor" />
                         </svg>
-                        <span
-                          className={`pointer-events-none mt-1 h-px w-full origin-left bg-gradient-to-r from-brand-red via-brand-red/60 to-transparent transition-opacity duration-300 ${
-                            servicesOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                          }`}
-                          aria-hidden="true"
-                        />
                       </button>
 
                       <div
