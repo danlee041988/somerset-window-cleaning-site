@@ -34,33 +34,35 @@ const customer = api.Customer({
 
 async function main() {
   const rows = await customer.query(`
-    SELECT conversion_action.id,
+    SELECT conversion_action.resource_name,
            conversion_action.name,
            conversion_action.type,
-           conversion_action.category,
            conversion_action.status,
            conversion_action.primary_for_goal,
+           conversion_action.category,
            conversion_action.origin,
            conversion_action.google_analytics_4_settings.property_id,
            conversion_action.google_analytics_4_settings.event_name
     FROM conversion_action
-    ORDER BY conversion_action.id DESC
+    WHERE conversion_action.type IN (GOOGLE_ANALYTICS_4_CUSTOM, GOOGLE_ANALYTICS_4_PURCHASE)
   `)
 
-  console.log('Conversion actions:')
+  if (rows.length === 0) {
+    console.log('No GA4 conversions available yet. If you just created the link, retry in a few minutes.')
+    return
+  }
+
+  console.log('GA4 conversions visible in Ads:')
   for (const row of rows) {
-    const ca = row.conversion_action ?? {}
-    const type = typeof ca.type === 'number' ? enums.ConversionActionType[ca.type] ?? ca.type : ca.type
+    const ca = row.conversion_action
+    if (!ca) continue
     const status = typeof ca.status === 'number' ? enums.ConversionActionStatus[ca.status] ?? ca.status : ca.status
     const category = typeof ca.category === 'number' ? enums.ConversionActionCategory[ca.category] ?? ca.category : ca.category
-    const g4 = ca.google_analytics_4_settings
-    console.log(
-      `- ${ca.name} | ID ${ca.id} | ${type} | status=${status} | category=${category} | primary=${ca.primary_for_goal} | GA4=${g4?.property_id ?? '-'}:${g4?.event_name ?? '-'}`
-    )
+    console.log(`- ${ca.name} | event=${ca.google_analytics_4_settings?.event_name ?? '-'} | status=${status} | category=${category} | primary=${ca.primary_for_goal}`)
   }
 }
 
 main().catch((error) => {
-  console.error('Failed to list conversions:', error)
+  console.error('Failed to inspect GA4 conversions:', error)
   process.exit(1)
 })

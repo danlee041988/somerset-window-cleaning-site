@@ -5,8 +5,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { analytics } from '@/lib/analytics';
+import { verifyWhatsAppSignature } from '@/lib/security/webhook-verification';
+import { getOrCreateRequestId, formatLogWithRequestId } from '@/lib/security/request-id';
 
 const WHATSAPP_WEBHOOK_VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN;
+const WHATSAPP_APP_SECRET = process.env.WHATSAPP_APP_SECRET;
 
 interface WhatsAppWebhookEntry {
   id: string;
@@ -82,13 +85,41 @@ export async function GET(request: NextRequest) {
  * POST - Handle incoming webhook events
  */
 export async function POST(request: NextRequest) {
+  const requestId = getOrCreateRequestId(request.headers);
+  const log = (msg: string) => console.log(formatLogWithRequestId(requestId, msg));
+  const logError = (msg: string) => console.error(formatLogWithRequestId(requestId, msg));
+
   try {
-    const payload: WhatsAppWebhookPayload = await request.json();
+    // Get raw body for signature verification
+    const body = await request.text();
+    const signature = request.headers.get('x-hub-signature-256');
+
+    // Verify webhook signature if secret is configured
+    if (WHATSAPP_APP_SECRET) {
+      if (!verifyWhatsAppSignature(body, signature, WHATSAPP_APP_SECRET)) {
+        logError('WhatsApp webhook signature verification failed');
+        return new NextResponse('Unauthorized', { 
+          status: 401,
+          headers: { 'X-Request-ID': requestId },
+        });
+      }
+      log('WhatsApp webhook signature verified');
+    } else {
+      console.warn('WHATSAPP_APP_SECRET not configured - signature verification skipped');
+    }
+
+    const payload: WhatsAppWebhookPayload = JSON.parse(body);
     
     // Verify webhook payload
     if (payload.object !== 'whatsapp_business_account') {
-      return new NextResponse('Invalid webhook object', { status: 400 });
+      logError(`Invalid webhook object: ${payload.object}`);
+      return new NextResponse('Invalid webhook object', { 
+        status: 400,
+        headers: { 'X-Request-ID': requestId },
+      });
     }
+
+    log(`Processing ${payload.entry.length} webhook entries`);
 
     for (const entry of payload.entry) {
       for (const change of entry.changes) {
@@ -98,10 +129,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return new NextResponse('OK', { status: 200 });
+    return new NextResponse('OK', { 
+      status: 200,
+      headers: { 'X-Request-ID': requestId },
+    });
   } catch (error) {
-    console.error('WhatsApp webhook error:', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    logError('WhatsApp webhook error: ' + (error instanceof Error ? error.message : String(error)));
+    return new NextResponse('Internal Server Error', { 
+      status: 500,
+      headers: { 'X-Request-ID': requestId },
+    });
   }
 }
 

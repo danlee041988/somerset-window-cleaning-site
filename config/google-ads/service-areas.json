@@ -1,10 +1,206 @@
 {
+  "countryCode": "GB",
+  "locationOption": "PRESENCE",
   "tier1": [
-    { "name": "Street", "geoTargetConstant": "geoTargetConstants/9195545" },
-    { "name": "Glastonbury", "geoTargetConstant": "geoTargetConstants/1006739" },
-    { "name": "Wells", "geoTargetConstant": "geoTargetConstants/9194976" },
-    { "name": "Shepton Mallet", "geoTargetConstant": "geoTargetConstants/1007068" },
-    { "name": "Somerton", "geoTargetConstant": "geoTargetConstants/9195209" },
-    { "name": "Langport", "geoTargetConstant": "geoTargetConstants/9220508" }
+    {
+      "code": "BA10",
+      "name": "Bruton (BA10)",
+      "geoTargetConstant": "geoTargetConstants/9045674"
+    },
+    {
+      "code": "BA11",
+      "name": "Frome (BA11)",
+      "geoTargetConstant": "geoTargetConstants/9045672"
+    },
+    {
+      "code": "BA16",
+      "name": "Street (BA16)",
+      "geoTargetConstant": "geoTargetConstants/9045663"
+    },
+    {
+      "code": "BA20",
+      "name": "Yeovil (BA20)",
+      "geoTargetConstant": "geoTargetConstants/9045680"
+    },
+    {
+      "code": "BA21",
+      "name": "Yeovil (BA21)",
+      "geoTargetConstant": "geoTargetConstants/9045679"
+    },
+    {
+      "code": "BA22",
+      "name": "Yeovil (BA22)",
+      "geoTargetConstant": "geoTargetConstants/9045666"
+    },
+    {
+      "code": "BA3",
+      "name": "Radstock (BA3)",
+      "geoTargetConstant": "geoTargetConstants/9045670"
+    },
+    {
+      "code": "BA4",
+      "name": "Shepton Mallet (BA4)",
+      "geoTargetConstant": "geoTargetConstants/9045671"
+    },
+    {
+      "code": "BA5",
+      "name": "Wells (BA5)",
+      "geoTargetConstant": "geoTargetConstants/9045668"
+    },
+    {
+      "code": "BA6",
+      "name": "Glastonbury (BA6)",
+      "geoTargetConstant": "geoTargetConstants/9045667"
+    },
+    {
+      "code": "BA7",
+      "name": "Castle Cary (BA7)",
+      "geoTargetConstant": "geoTargetConstants/9045678"
+    },
+    {
+      "code": "BA8",
+      "name": "Templecombe (BA8)",
+      "geoTargetConstant": "geoTargetConstants/9180608"
+    },
+    {
+      "code": "BA9",
+      "name": "Wincanton (BA9)",
+      "geoTargetConstant": "geoTargetConstants/9045675"
+    },
+    {
+      "code": "BS21",
+      "name": "Clevedon (BS21)",
+      "geoTargetConstant": "geoTargetConstants/9045653"
+    },
+    {
+      "code": "BS22",
+      "name": "Weston-super-Mare (BS22)",
+      "geoTargetConstant": "geoTargetConstants/9045656"
+    },
+    {
+      "code": "BS23",
+      "name": "Weston-super-Mare (BS23)",
+      "geoTargetConstant": "geoTargetConstants/9045657"
+    },
+    {
+      "code": "BS24",
+      "name": "Weston-super-Mare (BS24)",
+      "geoTargetConstant": "geoTargetConstants/9045654"
+    },
+    {
+      "code": "BS25",
+      "name": "Winscombe (BS25)",
+      "geoTargetConstant": "geoTargetConstants/9180612"
+    },
+    {
+      "code": "BS26",
+      "name": "Axbridge (BS26)",
+      "geoTargetConstant": "geoTargetConstants/9045655"
+    },
+    {
+      "code": "BS27",
+      "name": "Cheddar (BS27)",
+      "geoTargetConstant": "geoTargetConstants/9045669"
+    },
+    {
+      "code": "BS28",
+      "name": "Wedmore (BS28)",
+      "geoTargetConstant": "geoTargetConstants/9045660"
+    },
+    {
+      "code": "BS29",
+      "name": "Banwell (BS29)",
+      "geoTargetConstant": "geoTargetConstants/9180613"
+    },
+    {
+      "code": "BS39",
+      "name": "Clutton (BS39)",
+      "geoTargetConstant": "geoTargetConstants/9045617"
+    },
+    {
+      "code": "BS40",
+      "name": "Chew Valley (BS40)",
+      "geoTargetConstant": "geoTargetConstants/9045619"
+    },
+    {
+      "code": "BS49",
+      "name": "Wrington (BS49)",
+      "geoTargetConstant": "geoTargetConstants/9180615"
+    },
+    {
+      "code": "DT9",
+      "name": "Sherborne (DT9)",
+      "geoTargetConstant": "geoTargetConstants/9045677"
+    },
+    {
+      "code": "TA10",
+      "name": "Langport (TA10)",
+      "geoTargetConstant": "geoTargetConstants/9045662"
+    },
+    {
+      "code": "TA11",
+      "name": "Somerton (TA11)",
+      "geoTargetConstant": "geoTargetConstants/9045664"
+    },
+    {
+      "code": "TA12",
+      "name": "Martock (TA12)",
+      "geoTargetConstant": "geoTargetConstants/9045665"
+    },
+    {
+      "code": "TA13",
+      "name": "South Petherton (TA13)",
+      "geoTargetConstant": "geoTargetConstants/9045690"
+    },
+    {
+      "code": "TA14",
+      "name": "Stoke-sub-Hamdon (TA14)",
+      "geoTargetConstant": "geoTargetConstants/9073579"
+    },
+    {
+      "code": "TA18",
+      "name": "Crewkerne (TA18)",
+      "geoTargetConstant": "geoTargetConstants/9045689"
+    },
+    {
+      "code": "TA19",
+      "name": "Ilminster (TA19)",
+      "geoTargetConstant": "geoTargetConstants/9045691"
+    },
+    {
+      "code": "TA2",
+      "name": "Taunton (TA2)",
+      "geoTargetConstant": "geoTargetConstants/9045350"
+    },
+    {
+      "code": "TA20",
+      "name": "Chard (TA20)",
+      "geoTargetConstant": "geoTargetConstants/9045336"
+    },
+    {
+      "code": "TA21",
+      "name": "Wellington (TA21)",
+      "geoTargetConstant": "geoTargetConstants/9045338"
+    },
+    {
+      "code": "TA6",
+      "name": "Bridgwater (TA6)",
+      "geoTargetConstant": "geoTargetConstants/9045351"
+    },
+    {
+      "code": "TA7",
+      "name": "Bridgwater (TA7)",
+      "geoTargetConstant": "geoTargetConstants/9045661"
+    },
+    {
+      "code": "TA8",
+      "name": "Burnham-on-Sea (TA8)",
+      "geoTargetConstant": "geoTargetConstants/9045658"
+    },
+    {
+      "code": "TA9",
+      "name": "Highbridge (TA9)",
+      "geoTargetConstant": "geoTargetConstants/9045659"
+    }
   ]
 }

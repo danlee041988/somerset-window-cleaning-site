@@ -22,6 +22,22 @@ TypeScript Next.js site for Somerset Window Cleaning. Black-first theme with bri
 3. Run dev server:
    npm run dev
 
+### Secrets via macOS Keychain
+- Store sensitive values in the macOS Keychain so they never live in plaintext `.env` files. The project script expects entries named `swc-<secret-name>`.
+  ```sh
+  security add-generic-password -a "$USER" -s swc-emailjs-private-key -w "YOUR_VALUE" -U
+  security add-generic-password -a "$USER" -s swc-google-ads-client-secret -w "YOUR_VALUE" -U
+  security add-generic-password -a "$USER" -s swc-pagespeed-api-key -w "YOUR_PAGESPEED_API_KEY" -U
+  ```
+- The helper `scripts/load-secrets.sh` pulls those values into environment variables; it runs automatically from `npm run dev`. You can also source it manually for ad-hoc scripts:
+  ```sh
+  source scripts/load-secrets.sh
+  npm run build
+  ```
+- Adjust the account with `export SWC_KEYCHAIN_ACCOUNT="service-user"` or the prefix with `export SWC_KEYCHAIN_PREFIX="swc-prod"` before sourcing if you maintain multiple keychains.
+- Migrating an existing `.env.local`? Run `./scripts/import-env-to-keychain.sh .env.local` once to populate the Keychain, then empty or delete the file.
+- CI requires the same secrets. In GitHub, add `PAGE_SPEED_API_KEY` (and the Google Ads/Notion keys you use locally) to the repository secrets so automation workflows run.
+
 ### Local Dev Troubleshooting
 
 - If you see “Cannot find module './682.js'” or “missing required error components”:

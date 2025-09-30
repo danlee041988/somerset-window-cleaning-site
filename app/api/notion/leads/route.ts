@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import type { CreatePageParameters } from '@notionhq/client/build/src/api-endpoints'
 import { getNotionClient, getWebsiteCustomersDatabaseId } from '@/lib/server/notion'
+import { verifyRecaptchaToken } from '@/lib/security/recaptcha'
+import { checkRateLimit } from '@/lib/security/rate-limit'
+import { getOrCreateRequestId, formatLogWithRequestId } from '@/lib/security/request-id'
 
 export const runtime = 'nodejs'
 
@@ -51,6 +54,7 @@ const payloadSchema = z.object({
   submittedAt: z.string().datetime(),
   frequencyText: z.string(),
   bedroomText: z.string(),
+  recaptchaToken: z.string().min(1, 'reCAPTCHA token is required'),
 })
 
 type Payload = z.infer<typeof payloadSchema>
@@ -248,17 +252,55 @@ const toProperties = (payload: Payload): NotionPageProperties => {
 }
 
 export async function POST(request: NextRequest) {
+  const requestId = getOrCreateRequestId(request.headers)
+  const log = (msg: string) => console.log(formatLogWithRequestId(requestId, msg))
+  const logError = (msg: string) => console.error(formatLogWithRequestId(requestId, msg))
+
   try {
+    // Rate limiting by IP address
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 
+               request.headers.get('x-real-ip') || 
+               'unknown'
+    
+    const rateLimit = checkRateLimit(`notion-leads:${ip}`, {
+      limit: 5,
+      windowMs: 60000, // 5 requests per minute
+    })
+
+    if (!rateLimit.allowed) {
+      logError(`Rate limit exceeded for IP: ${ip}`)
+      return NextResponse.json(
+        {
+          error: 'rate_limit_exceeded',
+          message: 'Too many requests. Please try again later.',
+          retryAfter: rateLimit.retryAfter,
+        },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': new Date(rateLimit.resetAt).toISOString(),
+            'Retry-After': String(rateLimit.retryAfter || 60),
+            'X-Request-ID': requestId,
+          },
+        }
+      )
+    }
+
     const notion = getNotionClient()
     const databaseId = getWebsiteCustomersDatabaseId()
 
     if (!notion || !databaseId) {
+      logError('Notion not configured')
       return NextResponse.json(
         {
           error: 'notion_unavailable',
           message: 'Notion is not configured. Set NOTION_API_TOKEN and NOTION_WEBSITE_CUSTOMERS_DB_ID.',
         },
-        { status: 503 },
+        { 
+          status: 503,
+          headers: { 'X-Request-ID': requestId },
+        }
       )
     }
 
@@ -266,31 +308,68 @@ export async function POST(request: NextRequest) {
     const parsed = payloadSchema.safeParse(payloadJson)
 
     if (!parsed.success) {
+      logError('Invalid payload: ' + JSON.stringify(parsed.error.flatten()))
       return NextResponse.json(
         {
           error: 'invalid_payload',
           details: parsed.error.flatten(),
         },
-        { status: 400 },
+        { 
+          status: 400,
+          headers: { 'X-Request-ID': requestId },
+        }
       )
     }
 
     const payload = parsed.data
 
+    // Verify reCAPTCHA token server-side
+    log('Verifying reCAPTCHA token')
+    const recaptchaResult = await verifyRecaptchaToken(payload.recaptchaToken)
+
+    if (!recaptchaResult.valid) {
+      logError(`reCAPTCHA verification failed: ${recaptchaResult.error}`)
+      return NextResponse.json(
+        {
+          error: 'recaptcha_verification_failed',
+          message: recaptchaResult.error || 'Security verification failed. Please try again.',
+        },
+        { 
+          status: 403,
+          headers: { 'X-Request-ID': requestId },
+        }
+      )
+    }
+
+    log(`reCAPTCHA verified successfully (score: ${recaptchaResult.score || 'N/A'})`)
+
+    log('Creating Notion page')
     await notion.pages.create({
       parent: { database_id: databaseId },
       properties: toProperties(payload),
     })
 
-    return NextResponse.json({ ok: true })
+    log('Lead successfully synced to Notion')
+    return NextResponse.json(
+      { ok: true },
+      {
+        headers: {
+          'X-Request-ID': requestId,
+          'X-RateLimit-Remaining': String(rateLimit.remaining),
+        },
+      }
+    )
   } catch (error) {
-    console.error('Notion sync failed', error)
+    logError('Notion sync failed: ' + (error instanceof Error ? error.message : String(error)))
     return NextResponse.json(
       {
         error: 'notion_error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 },
+      { 
+        status: 500,
+        headers: { 'X-Request-ID': requestId },
+      }
     )
   }
 }

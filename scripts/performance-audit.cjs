@@ -33,10 +33,10 @@ class PerformanceAuditor {
       apiUrl.searchParams.set('url', url);
       apiUrl.searchParams.set('key', PAGESPEED_API_KEY);
       apiUrl.searchParams.set('strategy', strategy);
-      apiUrl.searchParams.set('category', 'performance');
-      apiUrl.searchParams.set('category', 'accessibility');
-      apiUrl.searchParams.set('category', 'best-practices');
-      apiUrl.searchParams.set('category', 'seo');
+      apiUrl.searchParams.append('category', 'performance');
+      apiUrl.searchParams.append('category', 'accessibility');
+      apiUrl.searchParams.append('category', 'best-practices');
+      apiUrl.searchParams.append('category', 'seo');
 
       const response = await fetch(apiUrl.toString());
       
@@ -214,13 +214,47 @@ class PerformanceAuditor {
       
       // Quick summary
       const totalPages = Object.keys(results).length;
-      const avgMobileScore = Object.values(results)
-        .filter(r => r.mobile)
-        .reduce((sum, r) => sum + r.mobile.performance.score, 0) / totalPages;
-      
+      const mobileScores = Object.values(results)
+        .map(r => r.mobile?.performance?.score)
+        .filter(score => typeof score === 'number');
+      const avgMobileScore = mobileScores.length
+        ? mobileScores.reduce((sum, score) => sum + score, 0) / mobileScores.length
+        : 0;
+
       console.log(`\n📈 Quick Summary:`);
       console.log(`   Average Mobile Score: ${Math.round(avgMobileScore)}/100`);
       console.log(`   Pages Analyzed: ${totalPages}`);
+
+      // Suggestions
+      const suggestions = [];
+      for (const [url, data] of Object.entries(results)) {
+        if (!data) continue;
+        for (const strategy of ['mobile', 'desktop']) {
+          const result = data[strategy];
+          if (!result || !result.performance) continue;
+
+          if (result.performance.score < 90) {
+            suggestions.push(
+              `${strategy.toUpperCase()} performance for ${url} dropped to ${result.performance.score}/100`
+            );
+          }
+
+          (result.opportunities || [])
+            .filter((opp) => opp.impact === 'HIGH' || opp.impact === 'MEDIUM')
+            .forEach((opp) => {
+              suggestions.push(
+                `${strategy.toUpperCase()} (${url}): ${opp.title} — approx. ${opp.savings}ms savings (${opp.impact})`
+              );
+            });
+        }
+      }
+
+      if (suggestions.length > 0) {
+        console.log(`\n⚠️ Suggested follow-up:`);
+        suggestions.forEach((line) => console.log(`   - ${line}`));
+      } else {
+        console.log(`\n✅ No immediate performance fixes detected.`);
+      }
 
     } catch (error) {
       console.error('❌ Audit failed:', error.message);

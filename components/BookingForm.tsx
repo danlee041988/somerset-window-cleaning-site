@@ -693,6 +693,7 @@ export default function BookingForm({
             submittedAt: submittedAtIso,
             frequencyText,
             bedroomText,
+            recaptchaToken,
           }),
         })
 

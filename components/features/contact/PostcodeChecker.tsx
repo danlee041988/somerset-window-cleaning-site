@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation'
 // Somerset postcodes we cover
 const COVERED_POSTCODES = new Set([
   // BS postcodes
-  'BS21', 'BS23', 'BS24', 'BS25', 'BS26', 'BS27', 'BS28', 'BS29', 'BS39', 'BS40', 'BS49',
-  // BA postcodes  
+  'BS21', 'BS22', 'BS23', 'BS24', 'BS25', 'BS26', 'BS27', 'BS28', 'BS29', 'BS39', 'BS40', 'BS49',
+  // BA postcodes
   'BA3', 'BA4', 'BA5', 'BA6', 'BA7', 'BA8', 'BA9', 'BA10', 'BA11', 'BA16', 'BA20', 'BA21', 'BA22',
   // TA postcodes
-  'TA2', 'TA6', 'TA7', 'TA8', 'TA9', 'TA10', 'TA11', 'TA12', 'TA13', 'TA14', 'TA18', 'TA19', 'TA20',
+  'TA2', 'TA6', 'TA7', 'TA8', 'TA9', 'TA10', 'TA11', 'TA12', 'TA13', 'TA14', 'TA18', 'TA19', 'TA20', 'TA21',
   // DT postcode (Sherborne)
   'DT9'
 ])
@@ -18,15 +18,15 @@ const COVERED_POSTCODES = new Set([
 // Postcode to area name mapping
 const postcodeAreas: Record<string, string> = {
   'BS21': 'Clevedon',
-  'BS23': 'Weston-Super-Mare', 'BS24': 'Weston-Super-Mare', 'BS25': 'Winscombe & Weston-Super-Mare',
+  'BS22': 'Weston-super-Mare', 'BS23': 'Weston-super-Mare', 'BS24': 'Weston-super-Mare', 'BS25': 'Winscombe',
   'BS26': 'Axbridge', 'BS27': 'Cheddar', 'BS28': 'Wedmore', 'BS29': 'Banwell',
-  'BS39': 'Paulton', 'BS40': 'Blagdon', 'BS49': 'Yatton',
+  'BS39': 'Clutton', 'BS40': 'Chew Valley', 'BS49': 'Wrington',
   'BA3': 'Radstock', 'BA4': 'Shepton Mallet', 'BA5': 'Wells', 'BA6': 'Glastonbury & Meare',
   'BA7': 'Castle Cary', 'BA8': 'Templecombe', 'BA9': 'Wincanton', 'BA10': 'Bruton', 'BA11': 'Frome',
   'BA16': 'Street', 'BA20': 'Yeovil', 'BA21': 'Yeovil', 'BA22': 'Yeovil',
   'TA2': 'Taunton', 'TA6': 'Bridgwater', 'TA7': 'Bridgwater', 'TA8': 'Burnham-on-Sea', 'TA9': 'Highbridge',
   'TA10': 'Langport', 'TA11': 'Somerton', 'TA12': 'Martock', 'TA13': 'South Petherton', 'TA14': 'Stoke-Sub-Hamdon',
-  'TA18': 'Crewkerne', 'TA19': 'Ilminster', 'TA20': 'Chard',
+  'TA18': 'Crewkerne', 'TA19': 'Ilminster', 'TA20': 'Chard', 'TA21': 'Wellington',
   'DT9': 'Sherborne'
 }
 

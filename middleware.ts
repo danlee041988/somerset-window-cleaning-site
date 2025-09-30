@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import securityHeadersConfig from '@/config/security-headers.json'
+import { generateRequestId } from '@/lib/security/request-id'
 
 const isLocalhost = (hostname: string | null) => !hostname || hostname.endsWith('.local') || hostname === 'localhost'
 const STRICT_TRANSPORT_SECURITY = securityHeadersConfig.strictTransportSecurity
@@ -8,6 +9,10 @@ const STRICT_TRANSPORT_SECURITY = securityHeadersConfig.strictTransportSecurity
 export function middleware(request: NextRequest) {
   const response = NextResponse.next()
   const hostname = request.nextUrl.hostname
+
+  // Add request ID to all requests for tracing
+  const requestId = request.headers.get('x-request-id') || generateRequestId()
+  response.headers.set('X-Request-ID', requestId)
 
   if (!isLocalhost(hostname)) {
     response.headers.set('Strict-Transport-Security', STRICT_TRANSPORT_SECURITY)

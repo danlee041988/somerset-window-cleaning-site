@@ -103,25 +103,70 @@ async function fetchCampaignIds() {
   return ids
 }
 
+const normalizeUrl = (url: string) => url.replace(/\/+$/, '').toLowerCase()
+
+type ExistingSitelink = {
+  resource: string
+  desc1?: string | null
+  desc2?: string | null
+  urls: string[]
+}
+
 async function ensureSitelinkAssets(): Promise<string[]> {
   const rows = await customer.query(`
-    SELECT asset.resource_name, asset.sitelink_asset.link_text
+    SELECT asset.resource_name,
+           asset.sitelink_asset.link_text,
+           asset.sitelink_asset.description1,
+           asset.sitelink_asset.description2,
+           asset.final_urls
     FROM asset
     WHERE asset.type = SITELINK
   `)
 
-  const existing = new Map<string, string>()
+  const existing = new Map<string, ExistingSitelink[]>()
   rows.forEach((row) => {
     const text = row.asset?.sitelink_asset?.link_text
     const resource = row.asset?.resource_name
-    if (text && resource) existing.set(text.toLowerCase(), resource)
+    if (!text || !resource) return
+    const list = existing.get(text.toLowerCase()) ?? []
+    list.push({
+      resource,
+      desc1: row.asset?.sitelink_asset?.description1,
+      desc2: row.asset?.sitelink_asset?.description2,
+      urls: row.asset?.final_urls ?? [],
+    })
+    existing.set(text.toLowerCase(), list)
   })
 
   const resources: string[] = []
   for (const item of SITELINKS) {
     const key = item.linkText.toLowerCase()
-    if (existing.has(key)) {
-      resources.push(existing.get(key)!)
+    const candidates = existing.get(key) ?? []
+    const desiredUrl = normalizeUrl(item.finalUrl)
+    const candidate =
+      candidates.find((entry) => entry.urls.some((url) => normalizeUrl(url) === desiredUrl)) || candidates[0]
+
+    if (candidate) {
+      const needsUpdate =
+        candidate.desc1 !== item.description1 ||
+        candidate.desc2 !== item.description2 ||
+        !candidate.urls.some((url) => normalizeUrl(url) === desiredUrl)
+
+      if (needsUpdate) {
+        await customer.assets.update([
+          {
+            resource_name: candidate.resource,
+            final_urls: [item.finalUrl],
+            sitelink_asset: {
+              link_text: item.linkText,
+              description1: item.description1,
+              description2: item.description2,
+            },
+          },
+        ])
+      }
+
+      resources.push(candidate.resource)
       continue
     }
 

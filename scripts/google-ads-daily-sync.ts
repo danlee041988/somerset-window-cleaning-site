@@ -8,7 +8,8 @@ import { runCampaignPlan } from './google-ads-apply-plan'
 import { syncNegativeKeywords } from './google-ads-upload-negatives'
 import { ensureExtensions } from './google-ads-ensure-extensions'
 import { runAutomation } from './google-ads-automation'
-import { generateSnapshot } from './google-ads-snapshot'
+import { generateSnapshot as generateAdsSnapshot } from './google-ads-snapshot'
+import { generateSnapshot as generateGa4Snapshot } from './ga4-daily-snapshot'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -45,8 +46,14 @@ const main = async () => {
   const automationLines = await runAutomation('daily')
   lines.push('', '## Automation', ...automationLines)
 
-  const snapshot = await generateSnapshot()
-  lines.push('', `## Snapshot`, `Saved to ${snapshot.filePath}`)
+  const ga4Snapshot = await generateGa4Snapshot()
+  lines.push('', '## GA4 Events', `Saved to ${ga4Snapshot.filePath}`)
+  ga4Snapshot.summary.focus.forEach((row) => {
+    lines.push(`• ${row.event}: last7=${row.last7} | last30=${row.last30}`)
+  })
+
+  const adsSnapshot = await generateAdsSnapshot()
+  lines.push('', `## Snapshot`, `Saved to ${adsSnapshot.filePath}`)
 
   writeLog(lines)
   console.log(`Daily sync complete. Log written to ${logFile}`)

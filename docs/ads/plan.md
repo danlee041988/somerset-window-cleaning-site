@@ -26,10 +26,11 @@ _Last updated: 25 Sept 2025_
 - Sitelink disapprovals to be resolved with compliant copy.
 
 ## 4. Locations
-- **Tier 1 (launch)**: BA16 Street, BA6 Glastonbury, BA5 Wells, BA4 Shepton Mallet, TA11 Somerton, TA10 Langport.
-- **Tier 2 (expand once CPA stable)**: BA11 Frome, BA7 Castle Cary, BA10 Bruton, BS27 Cheddar, BS26 Axbridge, BS28 Wedmore, TA8 Burnham-on-Sea, TA9 Highbridge, TA6 & TA7 Bridgwater, TA1 & TA2 Taunton, BA20 & BA21 Yeovil.
-- Exclude out-of-area postcodes, Bristol, Bath, Devon, national/geographic irrelevant searches.
-- Automation enforces Tier‑1 targeting via `config/google-ads/service-areas.json`; update that file before expanding to Tier‑2.
+- **Tier 1 (launch)**: Postcode sectors BA3–BA11, BA16, BA20–22, BS21–29, BS39–40, BS49, TA2, TA6–TA14, TA18–TA21, and DT9 (full mapping in `config/google-ads/service-areas.json`).
+- **Tier 2 (expand once CPA stable)**: Additional postcode sectors adjoining above (e.g., BA12, BS30s, TA15–17) once coverage and crews confirmed.
+- Campaign location option: **Presence** (people in or regularly in targeted locations). Automation enforces this alongside postcode criteria.
+- Exclude out-of-area postcodes, Bristol, Bath, Devon, and generic UK searches.
+- Automation enforces Tier‑1 postcode targeting via `config/google-ads/service-areas.json`; expand that file before widening service coverage.
 
 ## 5. Campaign Structure (Search first)
 | Campaign | Goal | Daily Budget (confirmed) | Bid Strategy |

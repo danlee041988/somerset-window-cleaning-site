@@ -20,6 +20,11 @@
 - [ ] Confirm call asset only active 09:00–16:00.
 - [ ] Keep automation script in dry-run; review output.
 
+## Daily Cadence (Ongoing)
+- [ ] Follow the playbook in `docs/ads/daily-review.md` (sync scripts, health check, Tag Assistant tests, UI recommendation audit, changelog update).
+- [ ] Record conversion test results and any outstanding warnings in `docs/ads/changelog.md`.
+- [ ] Ping Codex if automation needs approval to switch out of dry-run.
+
 ## Weekly Cadence
 - [ ] Export campaign/keyword performance (last 7 days) to `docs/ads/changelog.md` entry.
 - [ ] Adjust budgets ±20% based on CPA/volume.

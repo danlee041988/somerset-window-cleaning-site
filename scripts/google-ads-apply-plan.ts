@@ -51,17 +51,53 @@ const plan = JSON.parse(fs.readFileSync(planPath, 'utf8')) as {
 }
 
 const serviceAreas = JSON.parse(fs.readFileSync(serviceAreasPath, 'utf8')) as {
-  tier1: Array<{ name: string; geoTargetConstant: string }>
+  countryCode?: string
+  locationOption?: string
+  tier1?: Array<{ code?: string; name?: string; geoTargetConstant?: string }>
 }
 
-const TIER1_LOCATIONS = (serviceAreas.tier1 || []).map((item) => item.geoTargetConstant)
+const tier1Entries = (serviceAreas.tier1 || []).filter(
+  (item): item is { code?: string; name?: string; geoTargetConstant: string } => Boolean(item.geoTargetConstant),
+)
+
+const TIER1_LOCATIONS = tier1Entries.map((item) => item.geoTargetConstant)
 if (TIER1_LOCATIONS.length === 0) {
   throw new Error('No Tier-1 service areas defined in service-areas.json')
 }
 
 const LOCATION_NAME_LOOKUP = new Map<string, string>(
-  (serviceAreas.tier1 || []).map((item) => [item.geoTargetConstant, item.name]),
+  tier1Entries.map((item) => [item.geoTargetConstant, item.name || item.code || item.geoTargetConstant]),
 )
+
+const LOCATION_OPTION_KEY = (serviceAreas.locationOption || 'PRESENCE').toUpperCase() as keyof typeof enums.PositiveGeoTargetType
+const positiveOptionValue = enums.PositiveGeoTargetType[LOCATION_OPTION_KEY]
+const DESIRED_POSITIVE_GEO_TARGET_TYPE =
+  typeof positiveOptionValue === 'number' ? positiveOptionValue : enums.PositiveGeoTargetType.PRESENCE
+const DESIRED_NEGATIVE_GEO_TARGET_TYPE = enums.NegativeGeoTargetType.PRESENCE_OR_INTEREST
+
+const toPositiveEnumValue = (value: unknown): number => {
+  if (typeof value === 'number') return value
+  if (typeof value === 'string') {
+    const upper = value.toUpperCase() as keyof typeof enums.PositiveGeoTargetType
+    const mapped = enums.PositiveGeoTargetType[upper]
+    if (typeof mapped === 'number') {
+      return mapped
+    }
+  }
+  return enums.PositiveGeoTargetType.UNSPECIFIED
+}
+
+const toNegativeEnumValue = (value: unknown): number => {
+  if (typeof value === 'number') return value
+  if (typeof value === 'string') {
+    const upper = value.toUpperCase() as keyof typeof enums.NegativeGeoTargetType
+    const mapped = enums.NegativeGeoTargetType[upper]
+    if (typeof mapped === 'number') {
+      return mapped
+    }
+  }
+  return enums.NegativeGeoTargetType.UNSPECIFIED
+}
 
 const toMicros = (value: number) => Math.round(value * 1_000_000)
 const formatDate = (date: Date) => date.toISOString().slice(0, 10).replace(/-/g, '')
@@ -135,7 +171,7 @@ const DESCRIPTIONS: Record<string, string[]> = {
   'Conservatory – Somerset': [
     'Gentle pure water cleaning removes algae and staining safely.',
     'Includes roof panels, finials and skylights for a bright conservatory.',
-    'Local Somerset specialists with flexible scheduling across Tier-1 towns.',
+    'Local Somerset specialists with flexible scheduling across Tier-1 postcodes.',
     'Request a quote online - photo updates available on completion.',
   ],
   'Solar Panels – Somerset': [
@@ -284,6 +320,92 @@ async function createCampaignShell(item: { name: string; dailyBudgetGBP: number 
     budgetId: budgetResource.split('/').pop() ?? '',
     budgetMicros: toMicros(item.dailyBudgetGBP),
     channelType: enums.AdvertisingChannelType.SEARCH,
+  }
+}
+
+async function ensureLocationOptions(campaignId: string, channelType?: string | number) {
+  const searchChannelValues = new Set<unknown>([
+    enums.AdvertisingChannelType.SEARCH,
+    'SEARCH',
+    String(enums.AdvertisingChannelType.SEARCH),
+  ])
+
+  if (!searchChannelValues.has(channelType)) {
+    return {
+      skipped: true,
+      reason: 'non-search-channel',
+      positive: enums.PositiveGeoTargetType[DESIRED_POSITIVE_GEO_TARGET_TYPE],
+      negative: enums.NegativeGeoTargetType[DESIRED_NEGATIVE_GEO_TARGET_TYPE],
+    }
+  }
+
+  const rows = await customer.query(`
+    SELECT
+      campaign.geo_target_type_setting.positive_geo_target_type,
+      campaign.geo_target_type_setting.negative_geo_target_type
+    FROM campaign
+    WHERE campaign.id = ${campaignId}
+  `)
+
+  const setting = rows[0]?.campaign?.geo_target_type_setting || {}
+  const currentPositive = toPositiveEnumValue(setting?.positive_geo_target_type)
+  const currentNegative = toNegativeEnumValue(setting?.negative_geo_target_type)
+
+  const updates: {
+    positive_geo_target_type?: number
+    negative_geo_target_type?: number
+  } = {}
+
+  if (currentPositive !== DESIRED_POSITIVE_GEO_TARGET_TYPE) {
+    updates.positive_geo_target_type = DESIRED_POSITIVE_GEO_TARGET_TYPE
+  }
+
+  if (currentNegative !== DESIRED_NEGATIVE_GEO_TARGET_TYPE) {
+    updates.negative_geo_target_type = DESIRED_NEGATIVE_GEO_TARGET_TYPE
+  }
+
+  if (updates.positive_geo_target_type !== undefined || updates.negative_geo_target_type !== undefined) {
+    try {
+      await customer.campaigns.update([
+        {
+          resource_name: `customers/${customerId}/campaigns/${campaignId}`,
+          geo_target_type_setting: updates,
+        },
+      ])
+
+      return {
+        changed: true,
+        positive: enums.PositiveGeoTargetType[DESIRED_POSITIVE_GEO_TARGET_TYPE],
+        negative: enums.NegativeGeoTargetType[DESIRED_NEGATIVE_GEO_TARGET_TYPE],
+      }
+    } catch (error) {
+      const errorMessage =
+        (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string'
+          ? (error as any).message
+          : Array.isArray((error as any)?.errors) && (error as any).errors[0]?.message) ||
+        String(error)
+
+      if (typeof errorMessage === 'string' && errorMessage.includes('not compatible with the campaign type')) {
+        return {
+          skipped: true,
+          reason: 'incompatible-with-campaign-type',
+          positive:
+            enums.PositiveGeoTargetType[currentPositive] || enums.PositiveGeoTargetType[DESIRED_POSITIVE_GEO_TARGET_TYPE],
+          negative:
+            enums.NegativeGeoTargetType[currentNegative] || enums.NegativeGeoTargetType[DESIRED_NEGATIVE_GEO_TARGET_TYPE],
+        }
+      }
+
+      throw error
+    }
+  }
+
+  return {
+    changed: false,
+    positive:
+      enums.PositiveGeoTargetType[currentPositive] || enums.PositiveGeoTargetType[DESIRED_POSITIVE_GEO_TARGET_TYPE],
+    negative:
+      enums.NegativeGeoTargetType[currentNegative] || enums.NegativeGeoTargetType[DESIRED_NEGATIVE_GEO_TARGET_TYPE],
   }
 }
 
@@ -483,6 +605,20 @@ async function applyBudgets(client: GoogleAdsClient, campaigns: typeof plan.camp
         },
       ])
       results.push(`✅ Status set to ${desiredStatus} for ${item.name}`)
+    }
+
+    const locationOptionResult = await ensureLocationOptions(entry.id, entry.channelType)
+    if (locationOptionResult.changed) {
+      results.push(
+        `✅ Location option set to ${locationOptionResult.positive} (negative: ${locationOptionResult.negative})`,
+      )
+    } else if (locationOptionResult.skipped) {
+      const reason = locationOptionResult.reason === 'non-search-channel'
+        ? 'not a Search campaign'
+        : 'campaign uses default geo target mode'
+      results.push(`• Skipped location option update (${reason})`)
+    } else {
+      results.push(`• Location option already ${locationOptionResult.positive}`)
     }
 
     const locationResult = await ensureLocationTargets(entry.id)

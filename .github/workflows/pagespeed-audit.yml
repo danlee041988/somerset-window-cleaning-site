@@ -1,0 +1,54 @@
+name: PageSpeed Audit
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_PAGESPEED_API_KEY: ${{ secrets.PAGE_SPEED_API_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Run PageSpeed Insights audit
+        run: node scripts/performance-audit.cjs
+
+      - name: Upload PageSpeed artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pagespeed-report
+          path: |
+            performance-report-*.md
+            performance-data-*.json
+
+      - name: Append summary to job summary
+        if: ${{ always() }}
+        run: |
+          REPORT=$(ls performance-report-*.md 2>/dev/null | tail -n1 || echo "")
+          if [ -n "$REPORT" ]; then
+            {
+              echo "### PageSpeed Audit"
+              echo
+              echo '```markdown'
+              tail -n 40 "$REPORT"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### PageSpeed Audit" >> $GITHUB_STEP_SUMMARY
+            echo "No report generated." >> $GITHUB_STEP_SUMMARY
+          fi
