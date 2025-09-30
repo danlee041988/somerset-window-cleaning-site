@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import type { CreatePageParameters } from '@notionhq/client/build/src/api-endpoints'
-import { getNotionClient, getWebsiteCustomersDatabaseId } from '@/lib/server/notion'
+import { getNotionClient, getWebsiteCustomersDatabaseId, getWebsiteCustomersDataSourceId } from '@/lib/server/notion'
 import { verifyRecaptchaToken } from '@/lib/security/recaptcha'
 import { checkRateLimit } from '@/lib/security/rate-limit'
 import { getOrCreateRequestId } from '@/lib/security/request-id'
@@ -304,7 +304,25 @@ export async function POST(request: NextRequest) {
           error: 'notion_unavailable',
           message: 'Notion is not configured. Set NOTION_API_TOKEN and NOTION_WEBSITE_CUSTOMERS_DB_ID.',
         },
-        { 
+        {
+          status: 503,
+          headers: { 'X-Request-ID': requestId },
+        }
+      )
+    }
+
+    // Get data source ID for new Notion API version (2025-09-03)
+    const dataSourceId = await getWebsiteCustomersDataSourceId()
+
+    if (!dataSourceId) {
+      log.error('Failed to get Notion data source ID')
+      perf.complete(503)
+      return NextResponse.json(
+        {
+          error: 'notion_configuration_error',
+          message: 'Could not retrieve Notion data source. Check database permissions.',
+        },
+        {
           status: 503,
           headers: { 'X-Request-ID': requestId },
         }
@@ -357,9 +375,12 @@ export async function POST(request: NextRequest) {
     log.info('reCAPTCHA verified successfully', { score: recaptchaResult.score })
 
     perf.mark('notion-create-start')
-    log.info('Creating Notion page')
+    log.info('Creating Notion page', { dataSourceId })
     await notion.pages.create({
-      parent: { database_id: databaseId },
+      parent: {
+        type: 'data_source_id',
+        data_source_id: dataSourceId,  // Required for API version 2025-09-03+
+      },
       properties: toProperties(payload),
     })
 

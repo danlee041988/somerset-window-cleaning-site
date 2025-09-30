@@ -194,7 +194,7 @@ export default function BookingFormSimplified() {
         </div>
         <h2 className="text-2xl font-bold text-white">Request Received!</h2>
         <p className="mt-2 text-white/70">
-          We'll review your request and get back to you within one working day.
+          We&apos;ll review your request and get back to you within one working day.
         </p>
         <Button onClick={() => setStatus('idle')} className="mt-6">
           Send Another Request
@@ -209,7 +209,7 @@ export default function BookingFormSimplified() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white">Get Your Free Quote</h1>
         <p className="mt-2 text-white/60">
-          Tell us what you need and we'll send you a tailored quote within 24 hours
+          Tell us what you need and we&apos;ll send you a tailored quote within 24 hours
         </p>
       </div>
 

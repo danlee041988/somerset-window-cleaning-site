@@ -59,6 +59,7 @@ export default function GoogleAnalytics() {
               allow_google_signals: false,
               allow_ad_personalization_signals: false
             });
+            gtag('config', 'AW-766877634');
           `,
         }}
       />

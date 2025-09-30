@@ -36,3 +36,4 @@ google-ads-credentials.json
 config/google-ads/web-client.json
 docs/ads/history/
 lighthouse-report.json
+config/ga4/service-account.json

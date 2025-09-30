@@ -7,9 +7,18 @@
 
 import { google } from 'googleapis'
 import { fileURLToPath } from 'url'
+import path from 'path'
+import fs from 'fs'
+import dotenv from 'dotenv'
 
 const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Load environment variables
+dotenv.config({ path: path.join(__dirname, '..', '.env.local') })
+
 const SERVICE_ACCOUNT_PATH = process.env.GA4_SERVICE_ACCOUNT ?? path.join(process.cwd(), 'config/ga4/service-account.json')
+const PROPERTY_ID = process.env.GA4_PROPERTY_ID || ''
 
 interface EventSummary {
   event: string

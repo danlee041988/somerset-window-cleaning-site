@@ -4,6 +4,7 @@ import React from 'react'
 import { useBusinessStatus } from './BusinessHours'
 import { analytics } from '@/lib/analytics'
 import { pushToDataLayer } from '@/lib/dataLayer'
+import { trackPhoneClickConversion } from '@/lib/google-ads'
 
 const PhoneIcon = () => (
   <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,6 +44,7 @@ export default function FloatingCallCTA() {
   const handleCallClick = React.useCallback(() => {
     analytics.quoteRequest('phone')
     pushToDataLayer('phone_click', { source: 'floating_cta' })
+    trackPhoneClickConversion() // Google Ads conversion tracking
   }, [])
 
   if (!isReady) {

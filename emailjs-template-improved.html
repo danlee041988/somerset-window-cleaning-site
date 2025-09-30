@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Enquiry - Somerset Window Cleaning</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f4f6fb;padding:24px 0;">
+        <tr>
+            <td align="center">
+                <table width="640" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;border-radius:18px;border:1px solid #d9e1f7;overflow:hidden;color:#0f172a;">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background:linear-gradient(135deg, #E11D2A 0%, #C71920 100%);padding:28px;text-align:center;color:#ffffff;">
+                            <h1 style="margin:0;font-size:28px;letter-spacing:0.04em;font-weight:700;">SOMERSET WINDOW CLEANING</h1>
+                            <p style="margin:8px 0 0;font-size:14px;opacity:0.9;">New Customer Enquiry</p>
+                            <div style="display:inline-block;background:rgba(255,255,255,0.2);padding:6px 16px;border-radius:20px;font-size:12px;margin-top:12px;border:1px solid rgba(255,255,255,0.3);">
+                                📥 Form Submission • {{submitted_at}}
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding:28px;">
+
+                            <!-- Customer Type Badge (if available) -->
+                            {{#customer_type_field}}
+                            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:18px;">
+                                <tr>
+                                    <td align="center">
+                                        <span style="display:inline-block;padding:8px 18px;border-radius:25px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;background:linear-gradient(135deg, #4CAF50, #45a049);color:white;">
+                                            ⭐ {{customer_type_field}}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                            {{/customer_type_field}}
+
+                            <!-- Customer Information -->
+                            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f8fbff;border:1px solid #e4ecfb;border-radius:12px;margin-bottom:18px;overflow:hidden;">
+                                <tr>
+                                    <td style="background:#f1f5ff;padding:12px 18px;border-bottom:2px solid #E11D2A;">
+                                        <p style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:#E11D2A;font-weight:700;">👤 CUSTOMER INFORMATION</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:18px;">
+                                        <table width="100%" cellpadding="8" cellspacing="0">
+                                            <tr>
+                                                <td width="50%" style="vertical-align:top;padding:8px;background:#ffffff;border-radius:8px;">
+                                                    <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Full Name</p>
+                                                    <p style="margin:0;font-size:16px;font-weight:bold;color:#0f172a;">{{name}}</p>
+                                                </td>
+                                                <td width="50%" style="vertical-align:top;padding:8px;background:#ffffff;border-radius:8px;">
+                                                    <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Email</p>
+                                                    <p style="margin:0;font-size:14px;font-weight:600;color:#E11D2A;"><a href="mailto:{{email}}" style="color:#E11D2A;text-decoration:none;">{{email}}</a></p>
+                                                </td>
+                                            </tr>
+                                            {{#phone}}
+                                            <tr>
+                                                <td width="50%" style="vertical-align:top;padding:8px;background:#ffffff;border-radius:8px;">
+                                                    <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Mobile</p>
+                                                    <p style="margin:0;font-size:14px;font-weight:600;color:#0f172a;"><a href="tel:{{phone}}" style="color:#0f172a;text-decoration:none;">{{phone}}</a></p>
+                                                </td>
+                                                {{#preferred_contact}}
+                                                <td width="50%" style="vertical-align:top;padding:8px;background:#ffffff;border-radius:8px;">
+                                                    <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Preferred Contact</p>
+                                                    <p style="margin:0;font-size:14px;font-weight:600;color:#0f172a;">{{preferred_contact}}</p>
+                                                </td>
+                                                {{/preferred_contact}}
+                                            </tr>
+                                            {{/phone}}
+                                            {{#property_address}}
+                                            <tr>
+                                                <td colspan="2" style="padding:8px;background:#ffffff;border-radius:8px;">
+                                                    <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Property Address</p>
+                                                    <p style="margin:0;font-size:14px;color:#0f172a;">{{property_address}}</p>
+                                                </td>
+                                            </tr>
+                                            {{/property_address}}
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Property Details (if available) -->
+                            {{#property_type_field}}
+                            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f8fbff;border:1px solid #e4ecfb;border-radius:12px;margin-bottom:18px;overflow:hidden;">
+                                <tr>
+                                    <td style="background:#f1f5ff;padding:12px 18px;border-bottom:2px solid #E11D2A;">
+                                        <p style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:#E11D2A;font-weight:700;">🏠 PROPERTY DETAILS</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:18px;">
+                                        <table width="100%" cellpadding="8" cellspacing="0">
+                                            <tr>
+                                                <td width="50%" style="vertical-align:top;padding:8px;background:#ffffff;border-radius:8px;">
+                                                    <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Property Type</p>
+                                                    <p style="margin:0;font-size:14px;font-weight:600;color:#0f172a;">{{property_type_field}}</p>
+                                                </td>
+                                                {{#property_bedrooms}}
+                                                <td width="50%" style="vertical-align:top;padding:8px;background:#ffffff;border-radius:8px;">
+                                                    <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Bedrooms</p>
+                                                    <p style="margin:0;font-size:14px;font-weight:600;color:#0f172a;">{{property_bedrooms}}</p>
+                                                </td>
+                                                {{/property_bedrooms}}
+                                            </tr>
+                                            {{#property_extension}}
+                                            <tr>
+                                                <td width="50%" style="vertical-align:top;padding:8px;background:#ffffff;border-radius:8px;">
+                                                    <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Has Extension</p>
+                                                    <p style="margin:0;font-size:14px;font-weight:600;color:#0f172a;">{{property_extension}}</p>
+                                                </td>
+                                                {{#property_conservatory}}
+                                                <td width="50%" style="vertical-align:top;padding:8px;background:#ffffff;border-radius:8px;">
+                                                    <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Has Conservatory</p>
+                                                    <p style="margin:0;font-size:14px;font-weight:600;color:#0f172a;">{{property_conservatory}}</p>
+                                                </td>
+                                                {{/property_conservatory}}
+                                            </tr>
+                                            {{/property_extension}}
+                                        </table>
+                                        {{#property_notes}}
+                                        <div style="margin-top:12px;padding:14px;background:#fff3cd;border:1px solid #ffeaa7;border-radius:8px;border-left:4px solid #E11D2A;">
+                                            <p style="margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#856404;font-weight:700;">Property Notes</p>
+                                            <p style="margin:0;font-size:13px;color:#856404;line-height:1.6;">{{property_notes}}</p>
+                                        </div>
+                                        {{/property_notes}}
+                                    </td>
+                                </tr>
+                            </table>
+                            {{/property_type_field}}
+
+                            <!-- Services Requested -->
+                            {{#services_list}}
+                            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f8fbff;border:1px solid #e4ecfb;border-radius:12px;margin-bottom:18px;overflow:hidden;">
+                                <tr>
+                                    <td style="background:#f1f5ff;padding:12px 18px;border-bottom:2px solid #E11D2A;">
+                                        <p style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:#E11D2A;font-weight:700;">🧹 SERVICES REQUESTED</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:18px;">
+                                        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                                            <span style="display:inline-block;background:linear-gradient(135deg, #E11D2A, #C71920);color:white;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;">{{services_list}}</span>
+                                        </div>
+                                        {{#cleaning_frequency}}
+                                        <div style="margin-top:12px;padding:12px;background:#ffffff;border-radius:8px;">
+                                            <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;">Frequency</p>
+                                            <p style="margin:0;font-size:14px;font-weight:600;color:#0f172a;">{{cleaning_frequency}}</p>
+                                        </div>
+                                        {{/cleaning_frequency}}
+                                        {{#estimated_price}}
+                                        <div style="margin-top:12px;padding:14px;background:#d4edda;border:1px solid #c3e6cb;border-radius:8px;text-align:center;">
+                                            <p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:#155724;">Estimated Price</p>
+                                            <p style="margin:0;font-size:24px;font-weight:700;color:#E11D2A;">{{estimated_price}}</p>
+                                        </div>
+                                        {{/estimated_price}}
+                                    </td>
+                                </tr>
+                            </table>
+                            {{/services_list}}
+
+                            <!-- Customer Message -->
+                            {{#message}}
+                            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;border:1px solid #e4ecfb;border-radius:12px;margin-bottom:18px;">
+                                <tr>
+                                    <td style="padding:18px;">
+                                        <p style="margin:0 0 12px;font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:#4b5563;font-weight:700;">💬 CUSTOMER MESSAGE</p>
+                                        <div style="padding:14px;background:#f8fbff;border-left:4px solid #E11D2A;border-radius:6px;">
+                                            <p style="margin:0;font-size:15px;line-height:1.7;color:#0f172a;">{{message}}</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            {{/message}}
+
+                            <!-- Photos Indicator -->
+                            {{#customer_photos_count}}
+                            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#fff3cd;border:1px solid #ffeaa7;border-radius:12px;margin-bottom:18px;">
+                                <tr>
+                                    <td style="padding:16px;">
+                                        <div style="display:flex;align-items:center;gap:12px;">
+                                            <span style="font-size:24px;">📸</span>
+                                            <div style="flex:1;">
+                                                <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#856404;">Customer Photos Uploaded</p>
+                                                <p style="margin:0;font-size:12px;color:#856404;">{{customer_photos_count}} photo(s) - Follow up to request attachments</p>
+                                            </div>
+                                            <span style="background:#E11D2A;color:white;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;">{{customer_photos_count}}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            {{/customer_photos_count}}
+
+                            <!-- Timestamp Footer -->
+                            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f1f5ff;border:1px solid #d9e1f7;border-radius:12px;">
+                                <tr>
+                                    <td style="padding:16px 18px;">
+                                        <p style="margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:#4b5563;font-weight:700;">⏰ SUBMISSION DETAILS</p>
+                                        <table width="100%" cellpadding="4" cellspacing="0">
+                                            <tr>
+                                                <td style="font-size:13px;color:#64748b;">Submitted:</td>
+                                                <td style="font-size:13px;font-weight:600;color:#0f172a;text-align:right;">{{submitted_at}}</td>
+                                            </tr>
+                                            {{#form_id}}
+                                            <tr>
+                                                <td style="font-size:13px;color:#64748b;">Form ID:</td>
+                                                <td style="font-size:13px;font-weight:600;color:#0f172a;text-align:right;">#{{form_id}}</td>
+                                            </tr>
+                                            {{/form_id}}
+                                            <tr>
+                                                <td style="font-size:13px;color:#64748b;">Reply to:</td>
+                                                <td style="font-size:13px;text-align:right;"><a href="mailto:{{email}}" style="color:#E11D2A;text-decoration:none;font-weight:bold;">{{email}}</a></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Action Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:24px;">
+                                <tr>
+                                    <td align="center">
+                                        <div style="display:inline-block;background:linear-gradient(135deg, #E11D2A, #C71920);color:white;padding:14px 32px;border-radius:30px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;box-shadow:0 4px 12px rgba(225,29,42,0.3);">
+                                            ⚡ RESPOND WITHIN 1 WORKING DAY
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Security Footer -->
+                            {{#recaptcha_token}}
+                            <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e4ecfb;text-align:center;">
+                                <p style="margin:0;font-size:11px;color:#94a3b8;">
+                                    🔒 This form was verified with reCAPTCHA • Delivered securely via EmailJS
+                                </p>
+                            </div>
+                            {{/recaptcha_token}}
+
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
