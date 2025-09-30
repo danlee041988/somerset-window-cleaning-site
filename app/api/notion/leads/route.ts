@@ -4,7 +4,10 @@ import type { CreatePageParameters } from '@notionhq/client/build/src/api-endpoi
 import { getNotionClient, getWebsiteCustomersDatabaseId } from '@/lib/server/notion'
 import { verifyRecaptchaToken } from '@/lib/security/recaptcha'
 import { checkRateLimit } from '@/lib/security/rate-limit'
-import { getOrCreateRequestId, formatLogWithRequestId } from '@/lib/security/request-id'
+import { getOrCreateRequestId } from '@/lib/security/request-id'
+import { logger } from '@/lib/logger'
+import { captureError } from '@/lib/error-tracking'
+import { RoutePerformance } from '@/lib/performance'
 
 export const runtime = 'nodejs'
 
@@ -253,8 +256,8 @@ const toProperties = (payload: Payload): NotionPageProperties => {
 
 export async function POST(request: NextRequest) {
   const requestId = getOrCreateRequestId(request.headers)
-  const log = (msg: string) => console.log(formatLogWithRequestId(requestId, msg))
-  const logError = (msg: string) => console.error(formatLogWithRequestId(requestId, msg))
+  const perf = new RoutePerformance('/api/notion/leads')
+  const log = logger.child({ requestId })
 
   try {
     // Rate limiting by IP address
@@ -267,8 +270,11 @@ export async function POST(request: NextRequest) {
       windowMs: 60000, // 5 requests per minute
     })
 
+    perf.mark('rate-limit-check')
+
     if (!rateLimit.allowed) {
-      logError(`Rate limit exceeded for IP: ${ip}`)
+      log.warn(`Rate limit exceeded for IP: ${ip}`)
+      perf.complete(429)
       return NextResponse.json(
         {
           error: 'rate_limit_exceeded',
@@ -291,7 +297,8 @@ export async function POST(request: NextRequest) {
     const databaseId = getWebsiteCustomersDatabaseId()
 
     if (!notion || !databaseId) {
-      logError('Notion not configured')
+      log.error('Notion not configured')
+      perf.complete(503)
       return NextResponse.json(
         {
           error: 'notion_unavailable',
@@ -307,8 +314,11 @@ export async function POST(request: NextRequest) {
     const payloadJson = await request.json()
     const parsed = payloadSchema.safeParse(payloadJson)
 
+    perf.mark('payload-validation')
+
     if (!parsed.success) {
-      logError('Invalid payload: ' + JSON.stringify(parsed.error.flatten()))
+      log.error('Invalid payload', { errors: parsed.error.flatten() })
+      perf.complete(400)
       return NextResponse.json(
         {
           error: 'invalid_payload',
@@ -324,11 +334,14 @@ export async function POST(request: NextRequest) {
     const payload = parsed.data
 
     // Verify reCAPTCHA token server-side
-    log('Verifying reCAPTCHA token')
+    log.info('Verifying reCAPTCHA token')
     const recaptchaResult = await verifyRecaptchaToken(payload.recaptchaToken)
 
+    perf.mark('recaptcha-verification')
+
     if (!recaptchaResult.valid) {
-      logError(`reCAPTCHA verification failed: ${recaptchaResult.error}`)
+      log.error('reCAPTCHA verification failed', { error: recaptchaResult.error })
+      perf.complete(403)
       return NextResponse.json(
         {
           error: 'recaptcha_verification_failed',
@@ -341,15 +354,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    log(`reCAPTCHA verified successfully (score: ${recaptchaResult.score || 'N/A'})`)
+    log.info('reCAPTCHA verified successfully', { score: recaptchaResult.score })
 
-    log('Creating Notion page')
+    perf.mark('notion-create-start')
+    log.info('Creating Notion page')
     await notion.pages.create({
       parent: { database_id: databaseId },
       properties: toProperties(payload),
     })
 
-    log('Lead successfully synced to Notion')
+    perf.mark('notion-create-complete')
+    log.info('Lead successfully synced to Notion')
+    perf.complete(200)
+
     return NextResponse.json(
       { ok: true },
       {
@@ -360,7 +377,10 @@ export async function POST(request: NextRequest) {
       }
     )
   } catch (error) {
-    logError('Notion sync failed: ' + (error instanceof Error ? error.message : String(error)))
+    log.error('Notion sync failed', { error: error instanceof Error ? error.message : String(error) })
+    captureError(error, { requestId, route: '/api/notion/leads' })
+    perf.complete(500)
+
     return NextResponse.json(
       {
         error: 'notion_error',

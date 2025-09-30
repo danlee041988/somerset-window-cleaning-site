@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module'
+import { withSentryConfig } from '@sentry/nextjs'
 
 const require = createRequire(import.meta.url)
 const securityHeaders = require('./config/security-headers.json')
@@ -94,4 +95,15 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+// Wrap with Sentry for error tracking and performance monitoring
+export default withSentryConfig(nextConfig, {
+  // Sentry webpack plugin options
+  silent: true, // Suppresses all logs
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+}, {
+  // Upload source maps in production only
+  widenClientFileUpload: true,
+  hideSourceMaps: true,
+  disableLogger: true,
+})
