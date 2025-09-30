@@ -5,8 +5,14 @@ import emailjs from '@emailjs/browser'
 import Button from '@/components/ui/Button'
 import ReCaptcha from '@/components/features/contact/ReCaptcha'
 import SimpleAddressInput from '@/components/features/contact/SimpleAddressInput'
+import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import ProgressBar from '@/components/ui/ProgressBar'
+import Alert from '@/components/ui/Alert'
 import { analytics } from '@/lib/analytics'
 import { pushToDataLayer } from '@/lib/dataLayer'
+import { saveFormData, loadFormData, clearFormData, hasFormData, formatFormDataAge, getFormDataAge } from '@/lib/form-storage'
+import { getUserFriendlyError } from '@/lib/error-messages'
+import { announceToScreenReader, focusFirstError } from '@/lib/accessibility'
 
 const SERVICE_ID = (process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '').trim()
 const TEMPLATE_ID = (process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_booking_form').trim()
@@ -379,12 +385,54 @@ export default function BookingForm({
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
   const [successSummary, setSuccessSummary] = React.useState<SuccessSummaryState | null>(null)
+  const [showDraftPrompt, setShowDraftPrompt] = React.useState(false)
+  const [draftAge, setDraftAge] = React.useState<number | null>(null)
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({})
 
   const startTime = React.useRef<number>(Date.now())
+  const formRef = React.useRef<HTMLFormElement>(null)
 
   const trackPhoneClick = React.useCallback((source: string) => {
     analytics.quoteRequest('phone')
     pushToDataLayer('phone_click', { source })
+  }, [])
+
+  // Check for saved draft on mount
+  React.useEffect(() => {
+    const saved = loadFormData('booking-form')
+    if (saved && saved.data) {
+      setDraftAge(getFormDataAge('booking-form'))
+      setShowDraftPrompt(true)
+    }
+  }, [])
+
+  // Auto-save form data every 30 seconds
+  React.useEffect(() => {
+    if (status === 'success' || step === 1) return // Don't save on success or first step
+    
+    const interval = setInterval(() => {
+      saveFormData('booking-form', { request, customer }, step)
+    }, 30000) // 30 seconds
+
+    return () => clearInterval(interval)
+  }, [request, customer, step, status])
+
+  // Restore draft
+  const restoreDraft = React.useCallback(() => {
+    const saved = loadFormData('booking-form')
+    if (saved && saved.data) {
+      if (saved.data.request) setRequest(saved.data.request)
+      if (saved.data.customer) setCustomer(saved.data.customer)
+      if (saved.step) setStep(saved.step as Step)
+      setShowDraftPrompt(false)
+      announceToScreenReader('Draft restored successfully')
+    }
+  }, [])
+
+  // Dismiss draft
+  const dismissDraft = React.useCallback(() => {
+    clearFormData('booking-form')
+    setShowDraftPrompt(false)
   }, [])
 
   React.useEffect(() => {
@@ -732,28 +780,29 @@ export default function BookingForm({
         extras: propertyExtras,
         manualReview: requiresManualReview,
       })
+      
+      // Clear saved draft on success
+      clearFormData('booking-form')
+      
       setStatus('success')
       setStep(1)
       setRequest(INITIAL_REQUEST_STATE)
       setCustomer(initialCustomerState(defaultIntent, defaultPostcode, defaultAddress))
       setRecaptchaToken(null)
       startTime.current = Date.now()
+      
+      announceToScreenReader('Request submitted successfully!')
     } catch (error) {
-      const serviceError = error as { status?: number; text?: string } | undefined
-      console.error('Booking form submission error:', serviceError ?? error)
-      const errorMessageText =
-        serviceError?.text?.trim()
-          ? `Email service error: ${serviceError.text}`
-          : error instanceof Error
-          ? error.message
-          : 'Unknown error'
-      analytics.formError('submission_failure', errorMessageText)
+      console.error('Booking form submission error:', error)
+      
+      // Get user-friendly error message
+      const friendlyError = getUserFriendlyError(error)
+      setErrorMessage(friendlyError.message)
+      
+      analytics.formError('submission_failure', error instanceof Error ? error.message : 'Unknown error')
       setStatus('error')
-      if (serviceError?.status === 400 && serviceError?.text) {
-        setErrorMessage(`Email service error: ${serviceError.text}`)
-      } else {
-        setErrorMessage('Something went wrong sending your request. Please try again or call 01458 860339.')
-      }
+      
+      announceToScreenReader(`Error: ${friendlyError.message}`, 'assertive')
     } finally {
       setStatus((prev) => (prev === 'submitting' ? 'idle' : prev))
     }
@@ -858,35 +907,52 @@ export default function BookingForm({
             </p>
           </div>
         </div>
-        <StepIndicator
+        {/* Visual Progress Bar */}
+        <ProgressBar
           currentStep={step}
-          onStepChange={(target) => {
-            if (target < step) {
-              goToStep(target)
-            }
-          }}
+          totalSteps={TOTAL_STEPS}
+          labels={['Property', 'Services', 'Your Details']}
         />
       </header>
 
-      {errorMessage ? (
-        <div
-          className="mt-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200"
-          role="alert"
-          aria-live="assertive"
-        >
-          {errorMessage}
-        </div>
-      ) : null}
+      {/* Draft Restoration Prompt */}
+      {showDraftPrompt && draftAge && (
+        <Alert
+          type="info"
+          title="Continue where you left off?"
+          message={`We found a saved draft from ${formatFormDataAge(draftAge)}. Would you like to restore it?`}
+          action={{
+            label: 'Restore Draft',
+            onClick: restoreDraft
+          }}
+          onClose={dismissDraft}
+          className="mt-6"
+        />
+      )}
 
-      {status === 'error' && !errorMessage ? (
-        <div
-          className="mt-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200"
-          role="alert"
-          aria-live="assertive"
-        >
-          Something went wrong sending your request. Please try again or call 01458 860339.
-        </div>
-      ) : null}
+      {/* Error Messages */}
+      {errorMessage && (
+        <Alert
+          type="error"
+          title="Unable to Submit"
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}
+          className="mt-6"
+        />
+      )}
+
+      {status === 'error' && !errorMessage && (
+        <Alert
+          type="error"
+          title="Something Went Wrong"
+          message="Please try again or call 01458 860339 for immediate assistance."
+          action={{
+            label: 'Call Now',
+            onClick: () => window.location.href = 'tel:01458860339'
+          }}
+          className="mt-6"
+        />
+      )}
 
       {step === 1 && (
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.45fr)]">
@@ -1240,9 +1306,16 @@ export default function BookingForm({
               <Button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="px-7 py-3 text-sm font-semibold tracking-[0.08em] disabled:cursor-not-allowed disabled:opacity-60"
+                className="px-7 py-3 text-sm font-semibold tracking-[0.08em] disabled:cursor-not-allowed disabled:opacity-60 flex items-center gap-2"
               >
-                {status === 'submitting' ? 'Sending...' : 'Send request'}
+                {status === 'submitting' ? (
+                  <>
+                    <LoadingSpinner size="sm" />
+                    <span>Sending request...</span>
+                  </>
+                ) : (
+                  'Send request'
+                )}
               </Button>
             </div>
           </form>
