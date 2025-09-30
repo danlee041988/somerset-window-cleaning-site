@@ -52,10 +52,10 @@ const INITIAL_FORM_DATA: FormData = {
 }
 
 const SERVICE_OPTIONS = [
-  { id: 'windows', label: 'Window Cleaning', icon: '🪟', popular: true },
-  { id: 'gutters', label: 'Gutter Cleaning', icon: '🏠' },
-  { id: 'fascia', label: 'Fascia & Soffit', icon: '✨' },
-  { id: 'conservatory', label: 'Conservatory', icon: '🌿' },
+  { id: 'windows', label: 'Window Cleaning', popular: true },
+  { id: 'gutters', label: 'Gutter Cleaning' },
+  { id: 'fascia', label: 'Fascia & Soffit' },
+  { id: 'conservatory', label: 'Conservatory' },
 ]
 
 const FREQUENCY_OPTIONS = [
@@ -251,7 +251,6 @@ export default function BookingFormSimplified() {
                       : 'border-white/10 bg-white/5 hover:border-white/20'
                   }`}
                 >
-                  <div className="text-4xl mb-3">🏠</div>
                   <div className="text-xl font-semibold text-white">Residential</div>
                   <div className="text-sm text-white/60">Home, flat, or apartment</div>
                 </button>
@@ -265,7 +264,6 @@ export default function BookingFormSimplified() {
                       : 'border-white/10 bg-white/5 hover:border-white/20'
                   }`}
                 >
-                  <div className="text-4xl mb-3">🏢</div>
                   <div className="text-xl font-semibold text-white">Commercial</div>
                   <div className="text-sm text-white/60">Office, shop, or business</div>
                 </button>
@@ -303,13 +301,12 @@ export default function BookingFormSimplified() {
                     key={service.id}
                     type="button"
                     onClick={() => toggleService(service.id)}
-                    className={`relative flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all ${
+                    className={`relative flex items-center justify-between rounded-xl border-2 p-4 text-left transition-all ${
                       formData.services.includes(service.id)
                         ? 'border-brand-red bg-brand-red/10'
                         : 'border-white/10 bg-white/5 hover:border-white/20'
                     }`}
                   >
-                    <div className="text-3xl">{service.icon}</div>
                     <div className="flex-1">
                       <div className="font-semibold text-white">{service.label}</div>
                       {service.popular && (
@@ -317,7 +314,7 @@ export default function BookingFormSimplified() {
                       )}
                     </div>
                     {formData.services.includes(service.id) && (
-                      <svg className="h-6 w-6 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="h-6 w-6 text-brand-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     )}
@@ -329,8 +326,11 @@ export default function BookingFormSimplified() {
             {/* Frequency */}
             <div>
               <label className="mb-3 block text-lg font-semibold text-white">
-                How often?
+                How often would you like your windows cleaned?
               </label>
+              <p className="mb-3 text-sm text-white/60">
+                This frequency applies to window cleaning only. Other services are typically done less frequently.
+              </p>
               <div className="grid gap-3 sm:grid-cols-2">
                 {FREQUENCY_OPTIONS.map((freq) => (
                   <button
