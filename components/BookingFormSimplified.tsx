@@ -23,6 +23,7 @@ const TOTAL_STEPS: Step = 2
 interface FormData {
   // Step 1: What You Need
   propertyType: 'residential' | 'commercial'
+  propertyStyle: string // terraced, semi, detached, etc.
   bedrooms: string
   services: string[]
   frequency: string
@@ -39,6 +40,7 @@ interface FormData {
 
 const INITIAL_FORM_DATA: FormData = {
   propertyType: 'residential',
+  propertyStyle: 'semi',
   bedrooms: '3',
   services: ['windows'],
   frequency: 'every-4-weeks',
@@ -50,6 +52,15 @@ const INITIAL_FORM_DATA: FormData = {
   address: '',
   postcode: '',
 }
+
+const PROPERTY_STYLE_OPTIONS = [
+  { id: 'terraced', label: 'Terraced' },
+  { id: 'semi', label: 'Semi-detached' },
+  { id: 'detached', label: 'Detached' },
+  { id: 'bungalow', label: 'Bungalow' },
+  { id: 'flat', label: 'Flat/Apartment' },
+  { id: 'townhouse', label: 'Townhouse' },
+]
 
 const SERVICE_OPTIONS = [
   { id: 'windows', label: 'Window Cleaning', popular: true },
@@ -147,6 +158,7 @@ export default function BookingFormSimplified() {
           },
           request: {
             propertyCategory: formData.propertyType,
+            propertyType: formData.propertyStyle,
             bedrooms: formData.bedrooms,
             services: formData.services,
             frequency: formData.frequency,
@@ -270,24 +282,45 @@ export default function BookingFormSimplified() {
               </div>
             </div>
 
-            {/* Bedrooms (Residential only) */}
+            {/* Property Details (Residential only) */}
             {formData.propertyType === 'residential' && (
-              <div>
-                <label className="mb-3 block text-lg font-semibold text-white">
-                  How many bedrooms?
-                </label>
-                <select
-                  value={formData.bedrooms}
-                  onChange={(e) => updateField('bedrooms', e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/50"
-                >
-                  <option value="1-2">1-2 bedrooms</option>
-                  <option value="3">3 bedrooms</option>
-                  <option value="4">4 bedrooms</option>
-                  <option value="5">5 bedrooms</option>
-                  <option value="6+">6+ bedrooms</option>
-                </select>
-              </div>
+              <>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-3 block text-lg font-semibold text-white">
+                      Property type
+                    </label>
+                    <select
+                      value={formData.propertyStyle}
+                      onChange={(e) => updateField('propertyStyle', e.target.value)}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/50"
+                    >
+                      {PROPERTY_STYLE_OPTIONS.map((style) => (
+                        <option key={style.id} value={style.id}>
+                          {style.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="mb-3 block text-lg font-semibold text-white">
+                      Bedrooms
+                    </label>
+                    <select
+                      value={formData.bedrooms}
+                      onChange={(e) => updateField('bedrooms', e.target.value)}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/50"
+                    >
+                      <option value="1-2">1-2 bedrooms</option>
+                      <option value="3">3 bedrooms</option>
+                      <option value="4">4 bedrooms</option>
+                      <option value="5">5 bedrooms</option>
+                      <option value="6+">6+ bedrooms</option>
+                    </select>
+                  </div>
+                </div>
+              </>
             )}
 
             {/* Services */}
