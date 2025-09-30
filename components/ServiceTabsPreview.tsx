@@ -1,180 +1,158 @@
 "use client"
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import { SERVICE_IMAGES } from '@/content/image-manifest'
 
-type ServiceCategory = 'core' | 'add-on'
-
 type Service = {
   id: string
   name: string
   description: string
-  bullets: string[]
+  keyBenefit: string
   price: string
+  priceDetail?: string
   image: string
   href: string
-  ctaLabel: string
-  category: ServiceCategory
-  tagline?: string
-  supportingCopy?: string
+  popular?: boolean
 }
 
 const SERVICES: readonly Service[] = [
   {
     id: 'window-cleaning',
     name: 'Window Cleaning',
-    description: 'Pure water cleaning of glass, frames, and sills with optional interior work for show homes and offices.',
-    bullets: [
-      'Routine 4- or 8-week visits',
-      'Frames, sills, and doors included',
-      'Reach up to 4 storeys safely',
-    ],
-    price: 'Tailored quote after review',
+    description: 'Pure water cleaning of glass, frames, and sills. Routine 4 or 8-week visits.',
+    keyBenefit: 'Spotless windows, streak-free finish',
+    price: 'From £20',
+    priceDetail: 'per visit',
     image: SERVICE_IMAGES.window || '/photos/photo02.jpg',
     href: '/services/window-cleaning',
-    ctaLabel: 'View service details',
-    category: 'core',
-    tagline: 'Core service',
-    supportingCopy:
-      'Our most requested service keeps properties spotless using pole-fed pure water systems that protect frames and glass.',
+    popular: true,
   },
   {
     id: 'gutter-clearing',
     name: 'Gutter Clearing',
-    description: 'Ground-based vacuum system that removes moss and debris to prevent overflow issues and damp walls.',
-    bullets: [
-      'Camera inspection included',
-      'Safe access over conservatories',
-      'Downpipes flushed where needed',
-    ],
-    price: 'Quote confirmed on follow-up',
+    description: 'Ground-based vacuum system removes moss and debris to prevent overflow and damp.',
+    keyBenefit: 'Camera inspection included',
+    price: 'Custom Quote',
     image: SERVICE_IMAGES.gutter || '/photos/photo03.jpg',
     href: '/services/gutter-clearing',
-    ctaLabel: 'View service details',
-    category: 'add-on',
-    tagline: 'Most popular add-on',
   },
   {
     id: 'conservatory',
-    name: 'Conservatory Roof Cleaning',
-    description: 'Gentle clean of roofs, glazing bars, and finials to let natural light back into the room without damaging seals.',
-    bullets: [
-      'Soft brush and purified rinse',
-      'Safe on self-cleaning glass',
-      'Interior valet available on request',
-    ],
-    price: 'Custom quote provided',
+    name: 'Conservatory Roof',
+    description: 'Gentle clean of roofs, glazing bars, and finials to restore natural light.',
+    keyBenefit: 'Bring back the light',
+    price: 'Custom Quote',
     image: SERVICE_IMAGES.conservatory || '/photos/photo04.jpg',
     href: '/services/conservatory-roof-cleaning',
-    ctaLabel: 'View service details',
-    category: 'add-on',
-    tagline: 'Bring back the light',
   },
   {
     id: 'fascias-soffits',
-    name: 'Fascias & Soffits Cleaning',
-    description: 'Deep clean of uPVC fascias, soffits, and gutter exteriors to refresh curb appeal in a single visit.',
-    bullets: [
-      'Ideal after gutter clearing',
-      'Restores brilliant white finish',
-      'Includes fascia and gutter exteriors',
-    ],
-    price: 'Quote bundle available',
+    name: 'Fascias & Soffits',
+    description: 'Deep clean of uPVC fascias, soffits, and gutter exteriors for instant curb appeal.',
+    keyBenefit: 'Restores brilliant white finish',
+    price: 'Bundle Available',
     image: SERVICE_IMAGES.fascias || '/photos/photo06.jpg',
     href: '/services/fascias-soffits-cleaning',
-    ctaLabel: 'View service details',
-    category: 'add-on',
-    tagline: 'Exterior refresh',
   },
 ]
 
-type ServiceCombinationLayoutProps = {
-  services: readonly Service[]
-  activeService: Service
-  onSelect: (id: string) => void
-}
-
 export default function ServiceTabsPreview() {
-  const [activeId, setActiveId] = useState<string>(SERVICES[1]?.id ?? SERVICES[0].id)
-
-  const activeService = useMemo(() => {
-    return SERVICES.find((service) => service.id === activeId) ?? SERVICES[0]
-  }, [activeId])
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   return (
-    <div className="feature-card feature-card--minimal space-y-8 p-6 md:p-10" aria-live="polite">
-      <ServiceCombinationLayout services={SERVICES} activeService={activeService} onSelect={setActiveId} />
-    </div>
-  )
-}
+    <div className="space-y-8">
+      {/* Services Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {SERVICES.slice(0, 3).map((service) => (
+          <Link
+            key={service.id}
+            href={service.href}
+            onMouseEnter={() => setHoveredId(service.id)}
+            onMouseLeave={() => setHoveredId(null)}
+            className="group glass-noir-card glass-noir-card--tight relative overflow-hidden transition-all duration-300 hover:border-brand-red/30 hover:shadow-[0_0_30px_-10px_rgba(225,29,42,0.3)]"
+          >
+            {/* Popular Badge */}
+            {service.popular && (
+              <div className="absolute left-4 top-4 z-10 rounded-full border border-brand-red/30 bg-brand-red/90 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
+                Most Popular
+              </div>
+            )}
 
-function ServiceCombinationLayout({ services, activeService, onSelect }: ServiceCombinationLayoutProps) {
-  const secondaryServices = services.filter((service) => service.id !== activeService.id)
+            {/* Image */}
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <Image
+                src={service.image}
+                alt={service.name}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap gap-2">
-        {services.map((service) => {
-          const isActive = service.id === activeService.id
-          return (
-            <button
-              key={service.id}
-              type="button"
-              onClick={() => onSelect(service.id)}
-              className={`rounded-full border px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/70 ${
-                isActive
-                  ? 'border-brand-red bg-brand-red text-white'
-                  : 'border-white/20 text-white/60 hover:border-white/40 hover:text-white'
-              }`}
-            >
-              {service.name}
-            </button>
-          )
-        })}
-      </div>
-
-      <div className="feature-card feature-card--minimal overflow-hidden">
-        <div className="grid gap-0 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-stretch">
-          <div className="relative h-full min-h-[260px]">
-            <Image
-              src={activeService.image}
-              alt={activeService.name}
-              width={960}
-              height={640}
-              className="h-full w-full object-cover"
-              sizes="(min-width: 768px) 600px, 100vw"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-black/35 via-black/55 to-black/20" />
-          </div>
-
-          <div className="p-6 md:p-10">
-            <span className="feature-chip feature-chip--accent">{activeService.tagline ?? 'Service focus'}</span>
-            <h3 className="mt-4 text-3xl font-semibold text-white">{activeService.name}</h3>
-            <p className="mt-3 text-white/75">{activeService.description}</p>
-            <ul className="mt-5 space-y-3 text-sm text-white/70">
-              {activeService.bullets.map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <span className="feature-dot mt-1" aria-hidden />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.35em] text-white/60">
-              <span>{activeService.price}</span>
-              <Button
-                href={activeService.href}
-                className="rounded-full px-6 py-2 text-xs font-semibold uppercase tracking-[0.35em]"
-              >
-                {activeService.ctaLabel}
-              </Button>
+              {/* Hover overlay */}
+              <div className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${hoveredId === service.id ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="flex h-full items-center justify-center">
+                  <div className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm">
+                    View Details →
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-3">
+              {/* Title & Price */}
+              <div className="flex items-start justify-between gap-4">
+                <h3 className="text-lg font-bold text-white">{service.name}</h3>
+                <div className="flex-shrink-0 text-right">
+                  <div className="text-base font-bold text-brand-red">{service.price}</div>
+                  {service.priceDetail && (
+                    <div className="text-xs text-white/50">{service.priceDetail}</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Key Benefit */}
+              <div className="flex items-center gap-2 text-sm text-white/70">
+                <svg className="h-4 w-4 flex-shrink-0 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>{service.keyBenefit}</span>
+              </div>
+
+              {/* Description */}
+              <p className="text-sm leading-relaxed text-white/60">{service.description}</p>
+            </div>
+          </Link>
+        ))}
       </div>
 
+      {/* Bottom CTA Row */}
+      <div className="flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent p-6 md:flex-row md:justify-between">
+        <div>
+          <h4 className="text-lg font-semibold text-white">Explore all our services</h4>
+          <p className="text-sm text-white/60">Solar panels, commercial cleaning, and more specialist services</p>
+        </div>
+        <Button
+          href="/services"
+          variant="primary"
+          className="group flex-shrink-0"
+        >
+          View All Services
+          <svg
+            className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2.5}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </Button>
+      </div>
     </div>
   )
 }

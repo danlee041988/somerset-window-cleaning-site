@@ -8,6 +8,7 @@ import LightboxGallery from '@/components/LightboxGallery'
 import Reviews from '@/components/Reviews'
 import CaseStudy from '@/components/CaseStudy'
 import ServiceTabsPreview from '@/components/ServiceTabsPreview'
+import StickyMobileCTA from '@/components/StickyMobileCTA'
 
 export const metadata: Metadata = {
   alternates: {
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
 
 const HERO_SUPPORT_STATS = [
   { label: 'Google reviews', value: '4.9★ · 195+' },
+  { label: 'Regular cleans', value: 'From £20 per visit' },
   { label: 'Follow-up', value: 'Replies within 1 business day' },
 ]
 
@@ -29,20 +31,20 @@ const HERO_BULLETS = [
 
 const HOME_QUOTE_STEPS = [
   {
-    title: 'Share your details',
-    description: 'Tell us about the property, access, and the services you’re considering. It only takes a couple of minutes.'
+    title: 'Request Quote',
+    description: 'Fill in property details and service requirements. Takes just 2 minutes.'
   },
   {
-    title: 'We confirm your quote',
-    description: 'A specialist reviews the request, checks coverage, and comes back within one working day with tailored pricing.'
+    title: 'Get Pricing',
+    description: 'We review your request and send tailored pricing within 1 working day.'
   },
   {
-    title: 'Schedule your visit',
-    description: 'Choose a visit window that suits you. We lock in the crew, confirm access, and send reminders before arrival.'
+    title: 'Book Visit',
+    description: 'Choose your preferred date. We confirm crew assignment and send reminders.'
   },
   {
-    title: 'Stay in the loop',
-    description: 'You’ll get reminders ahead of every visit and can adjust services or schedules whenever you need.'
+    title: 'Pay Online',
+    description: 'Receive a secure payment link once work is complete. Pay by card or direct debit.'
   }
 ]
 
@@ -52,21 +54,23 @@ export default function HomePage() {
   const heroImageSrc = (HERO_IMAGES && HERO_IMAGES[0]) || '/photos/photo01.jpg'
 
   return (
-    <div>
-      <section className="relative overflow-hidden border-b border-white/10 bg-black">
-        <Image
-          src={heroImageSrc}
-          alt=""
-          aria-hidden="true"
-          fill
-          priority
-          quality={75}
-          className="absolute inset-0 object-cover opacity-40"
-          sizes="(max-width: 768px) 100vw, 1920px"
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+    <>
+      <StickyMobileCTA />
+      <div>
+        <section className="relative overflow-hidden border-b border-white/10 bg-black">
+          <Image
+            src={heroImageSrc}
+            alt=""
+            aria-hidden="true"
+            fill
+            priority
+            quality={75}
+            className="absolute inset-0 object-cover opacity-40"
+            sizes="(max-width: 768px) 100vw, 1920px"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
 
-        <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8 px-4 pb-24 pt-32 md:pb-28 md:pt-36">
+          <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8 px-4 pb-24 pt-32 md:pb-28 md:pt-36">
           <div className="flex flex-wrap items-center gap-3 text-[0.58rem] font-semibold uppercase tracking-[0.32em] text-white/60">
             <span className="noir-chip">Quote form takes minutes</span>
             <span className="noir-chip">Local • Reliable • Fully Insured</span>
@@ -92,6 +96,12 @@ export default function HomePage() {
             ))}
           </div>
 
+          <div className="rounded-2xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-transparent p-4 backdrop-blur-sm">
+            <p className="text-sm text-white/85">
+              <span className="font-semibold text-white">Regular cleans:</span> 3-bed semi from £25 per visit on 4 or 8-weekly schedule
+            </p>
+          </div>
+
           <ul className="grid gap-3 text-sm text-white/75 sm:grid-cols-2">
             {HERO_BULLETS.map((bullet) => (
               <li key={bullet} className="flex items-start gap-3">
@@ -108,105 +118,103 @@ export default function HomePage() {
             </Button>
           </div>
         </div>
-      </section>
+        </section>
 
-      {/* Quote steps */}
-      <Section
-        title="Getting a quote is straightforward"
-        subtitle="Four quick touchpoints to align pricing, availability, and the crew that suits your property."
-        spacing="relaxed"
-      >
-        <div className="feature-card feature-card--minimal relative overflow-hidden">
-          <span className="pointer-events-none absolute bottom-[-100px] right-[-80px] h-72 w-72 rounded-full bg-white/12 blur-[160px]" aria-hidden />
+        {/* Quote steps */}
+        <Section
+          title="Getting a quote is straightforward"
+          subtitle="Four quick touchpoints to align pricing, availability, and the crew that suits your property."
+          spacing="relaxed"
+        >
+          <div className="feature-card feature-card--minimal relative overflow-hidden">
+            <span className="pointer-events-none absolute bottom-[-100px] right-[-80px] h-72 w-72 rounded-full bg-white/12 blur-[160px]" aria-hidden />
 
-          <div className="feature-card__content space-y-10 p-8 md:p-12">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <span className="feature-chip feature-chip--accent">How it works</span>
-              <span className="hidden rounded-full border border-white/15 px-4 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-white/55 sm:inline-flex">
-                4 touchpoints from quote to sparkling glass
-              </span>
-            </div>
+            <div className="feature-card__content space-y-10 p-8 md:p-12">
+              <div className="text-center space-y-3">
+                <div className="inline-flex items-center gap-2 rounded-full border border-brand-red/30 bg-brand-red/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+                  <span className="h-2 w-2 rounded-full bg-brand-red" />
+                  How It Works
+                </div>
+                <h2 className="text-2xl font-bold text-white md:text-3xl">
+                  From quote to clean in 4 simple steps
+                </h2>
+              </div>
 
-            <div className="grid gap-6 md:auto-rows-fr md:grid-cols-2 lg:gap-8 xl:grid-cols-4">
-              {HOME_QUOTE_STEPS.map((step, index) => {
-                const stepPosition = index + 1
-                const displayNumber = stepPosition.toString().padStart(2, '0')
-                const isLastStep = index === HOME_QUOTE_STEPS.length - 1
-                return (
-                  <div key={step.title} className="group relative h-full">
-                    <div
-                      className={clsx(
-                        'relative flex h-full flex-col gap-6 rounded-3xl border border-white/12 bg-gradient-to-b from-white/[0.07] via-black/55 to-black/80 p-6 text-[#F5F7FA] shadow-[0_26px_60px_-42px_rgba(0,0,0,0.9)] transition-transform duration-300 hover:-translate-y-1 hover:border-brand-red/45 md:p-8',
-                        !isLastStep &&
-                          "after:pointer-events-none after:absolute after:top-[3.9rem] after:left-[calc(100%+1.5rem)] after:hidden after:h-px after:w-16 after:bg-gradient-to-r after:from-white/25 after:via-white/10 after:to-transparent after:content-[''] xl:after:block"
-                      )}
-                    >
-                      <div className="flex items-start gap-4">
-                        <span className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-2xl border border-brand-red/55 bg-brand-red/12 text-sm font-semibold uppercase tracking-[0.32em] text-brand-red">
-                          {displayNumber}
-                        </span>
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[0.58rem] font-semibold uppercase tracking-[0.32em] text-white/50">
-                            Step {stepPosition}
-                          </span>
-                          <h3 className="text-base font-semibold uppercase tracking-[0.2em] text-[var(--fg)]">
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+                {HOME_QUOTE_STEPS.map((step, index) => {
+                  const stepPosition = index + 1
+                  const isLastStep = index === HOME_QUOTE_STEPS.length - 1
+                  return (
+                    <div key={step.title} className="group relative">
+                        <div className="glass-noir-card glass-noir-card--tight relative flex h-full flex-col gap-4 p-6 transition-all duration-300 hover:border-brand-red/30 hover:shadow-[0_0_30px_-10px_rgba(225,29,42,0.3)]">
+
+                          {/* Number Badge */}
+                          <div className="mb-2">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-brand-red/30 bg-brand-red/10 text-xl font-bold text-brand-red">
+                              {stepPosition}
+                            </div>
+                          </div>
+
+                          {/* Title */}
+                          <h3 className="text-lg font-semibold text-white">
                             {step.title}
                           </h3>
+
+                          {/* Description */}
+                          <p className="text-sm leading-relaxed text-white/70">
+                            {step.description}
+                          </p>
+
                         </div>
                       </div>
-                      <div className="h-px w-full bg-gradient-to-r from-white/15 via-white/8 to-transparent" aria-hidden />
-                      <p className="text-sm leading-relaxed text-white/70">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                )
-              })}
+                    )
+                  })}
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-3">
+                  <Button href="/book-appointment" className="px-8 py-3 tracking-[0.28em]">
+                    Start your quote request
+                  </Button>
+                  <Button href="/book-appointment#how-it-works" variant="secondary" className="px-8 py-3 tracking-[0.28em] text-white/80">
+                    See what happens next
+                  </Button>
+                </div>
+              </div>
             </div>
+          </Section>
 
-            <div className="flex flex-wrap justify-center gap-3">
-              <Button href="/book-appointment" className="px-8 py-3 tracking-[0.28em]">
-                Start your quote request
-              </Button>
-              <Button href="/book-appointment#how-it-works" variant="secondary" className="px-8 py-3 tracking-[0.28em] text-white/80">
-                See what happens next
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Section>
+        <CaseStudy />
 
-      {/* Services preview - Tabbed experience */}
-      <Section
-        title="Our most-requested services"
-        subtitle="Switch between core services to see benefits, how we work, and what’s included across Somerset."
-        spacing="relaxed"
-        animationDelay={100}
-      >
-        <ServiceTabsPreview />
-      </Section>
+        {/* Services preview - Tabbed experience */}
+        <Section
+          title="Our most-requested services"
+          subtitle="Switch between core services to see benefits, how we work, and what's included across Somerset."
+          spacing="relaxed"
+          animationDelay={100}
+        >
+          <ServiceTabsPreview />
+        </Section>
 
-      <CaseStudy />
+        {/* Reviews section */}
+        <Section
+          title="What our customers say"
+          subtitle="Real reviews from verified Google customers across Somerset."
+          spacing="relaxed"
+          animationDelay={300}
+        >
+          <Reviews variant="carousel" />
+        </Section>
 
-      {/* Reviews section */}
-      <Section
-        title="What our customers say"
-        subtitle="Real reviews from verified Google customers across Somerset."
-        spacing="relaxed"
-        animationDelay={300}
-      >
-        <Reviews variant="carousel" />
-      </Section>
-
-      {/* Recent work preview */}
-      <Section 
-        title="Recent work" 
-        subtitle="A quick look at some of our cleaning results." 
-        spacing="generous"
-        animationDelay={400}
-      >
-        <LightboxGallery images={galleryImages.length ? galleryImages : fallbackGallery} />
-      </Section>
-    </div>
+        {/* Recent work preview */}
+        <Section
+          title="Recent work"
+          subtitle="A quick look at some of our cleaning results."
+          spacing="generous"
+          animationDelay={400}
+        >
+          <LightboxGallery images={galleryImages.length ? galleryImages : fallbackGallery} />
+        </Section>
+      </div>
+    </>
   )
 }

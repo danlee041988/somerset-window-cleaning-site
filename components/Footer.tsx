@@ -8,114 +8,100 @@ export default function Footer() {
   return (
     <footer className="mt-20 border-t border-white/10 bg-transparent">
       <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="glass-card glass-noir-card--tight grid gap-12 rounded-3xl border border-white/12 p-8 md:p-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)]">
-          <div className="flex flex-col gap-8">
-            <div className="glass-noir-card glass-noir-card--tight flex flex-col gap-6 rounded-3xl border border-white/12 bg-black/65 p-6 text-[#F5F7FA] shadow-[0_30px_70px_-45px_rgba(0,0,0,0.95)]">
-              <div className="flex flex-wrap items-center gap-5 md:gap-6">
-                <span className="relative flex h-[5.5rem] w-[5.5rem] min-h-[5.5rem] min-w-[5.5rem] flex-shrink-0 items-center justify-center rounded-[1.8rem] border border-brand-red/55 bg-black p-3 shadow-[0_22px_52px_-32px_rgba(225,29,42,0.85)] lg:h-[6rem] lg:w-[6rem] lg:min-h-[6rem] lg:min-w-[6rem] lg:rounded-[2rem]">
-                  <ImageWithFallback
-                    src="/images/logos/swc-logo.png"
-                    fallbackSrc="/images/logos/logo.png"
-                    alt="Somerset Window Cleaning app icon"
-                    width={112}
-                    height={112}
-                    className="h-full w-full object-contain"
-                  />
-                </span>
-                <div className="flex min-w-[14rem] flex-1 flex-col gap-2 md:min-w-[18rem]">
-                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white md:text-base">
-                    Somerset Window Cleaning
-                  </p>
-                  <p className="text-xs text-white/65 md:text-sm">
-                    Crystal-clear finishes and spotless results for Somerset homes and businesses.
-                  </p>
-                </div>
-              </div>
-              <div className="grid gap-2 text-xs text-white/55 md:text-sm md:text-white/60">
-                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 px-4 py-1 uppercase tracking-[0.28em] text-white/65">
-                  Trusted by 4,000+ customers
-                </span>
-                <span className="max-w-prose">
-                  Request, schedule, and keep every visit on track with reminders and clear communication from our crew.
-                </span>
+        <div className="glass-card glass-noir-card--tight grid gap-8 rounded-3xl border border-white/12 p-8 md:p-10 lg:grid-cols-[1.2fr_1fr_1fr]">
+          {/* Column 1: Brand & Contact */}
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center gap-5">
+              <span className="relative flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-2xl border border-brand-red/55 bg-black p-3 shadow-[0_22px_52px_-32px_rgba(225,29,42,0.85)]">
+                <ImageWithFallback
+                  src="/images/logos/swc-logo.png"
+                  fallbackSrc="/images/logos/logo.png"
+                  alt="Somerset Window Cleaning"
+                  width={80}
+                  height={80}
+                  className="h-full w-full object-contain"
+                />
+              </span>
+              <div>
+                <p className="text-base font-semibold uppercase tracking-[0.28em] text-white">
+                  Somerset Window Cleaning
+                </p>
+                <p className="text-sm text-white/60 mt-1">
+                  Professional window cleaning since 2019
+                </p>
               </div>
             </div>
-            <p className="text-sm noir-muted max-w-prose">
-              Crystal-clear windows for homes and businesses across Somerset. Friendly, reliable, fully insured.
+
+            <p className="text-sm text-white/70 max-w-prose">
+              Professional window cleaning for homes and businesses across Somerset. Friendly, reliable, fully insured.
             </p>
-            <div className="glass-noir-card glass-noir-card--tight p-5 text-sm text-[#F5F7FA]">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] noir-subtle">
+
+            <div>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-white/80">
                 Contact
               </h3>
-              <ul className="space-y-3">
-                <li className="leading-relaxed noir-muted">
+              <ul className="space-y-2 text-sm text-white/70">
+                <li className="leading-relaxed">
                   13 Rockhaven Business Centre
                   <br />Gravenchon Way
                   <br />BA16 0HW, UK
                 </li>
                 <li>
-                  <a href="tel:01458860339" className="transition hover:opacity-90">01458 860 339</a>
+                  <a href="tel:01458860339" className="transition hover:text-white">01458 860 339</a>
                 </li>
                 <li>
-                  <a href="mailto:info@somersetwindowcleaning.co.uk" className="transition hover:opacity-90">
+                  <a href="mailto:info@somersetwindowcleaning.co.uk" className="transition hover:text-white">
                     info@somersetwindowcleaning.co.uk
                   </a>
                 </li>
               </ul>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-8">
             <div>
-              <h3 className="relative mb-4 font-semibold text-[#F5F7FA]">
-                Services
-                <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-[var(--accent)] to-transparent opacity-60" />
-              </h3>
-              <div className="grid grid-cols-1 gap-2 text-sm noir-muted md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                <Link href="/services/window-cleaning" className="transition hover:text-[var(--fg)]">Window Cleaning</Link>
-                <Link href="/services/gutter-clearing" className="transition hover:text-[var(--fg)]">Gutter Clearing</Link>
-                <Link href="/services/conservatory-roof-cleaning" className="transition hover:text-[var(--fg)]">Conservatory Roof Cleaning</Link>
-                <Link href="/services/solar-panel-cleaning" className="transition hover:text-[var(--fg)]">Solar Panel Cleaning</Link>
-                <Link href="/services/fascias-soffits-cleaning" className="transition hover:text-[var(--fg)]">Fascias &amp; Soffits</Link>
-                <Link href="/services/commercial-cleaning" className="transition hover:text-[var(--fg)]">Commercial Cleaning</Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-8">
-            <div>
-              <h3 className="relative mb-4 font-semibold text-[#F5F7FA]">
-                Quick links
-                <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-[var(--accent)] to-transparent opacity-60" />
-              </h3>
-              <div className="grid grid-cols-1 gap-2 text-sm noir-muted">
-                <Link href="/areas" className="transition hover:text-[var(--fg)]">Areas We Cover</Link>
-                <Link href="/team" className="transition hover:text-[var(--fg)]">Meet the Team</Link>
-                <Link href="/book-appointment" className="transition hover:text-[var(--fg)]">Request a quote</Link>
-                <Link href="/book-appointment?intent=quote" className="transition hover:text-[var(--fg)]">Request quote now</Link>
-                {GO_CARDLESS_URL && (
-                  <a
-                    href={GO_CARDLESS_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="transition hover:text-[var(--fg)]"
-                  >
-                    Pay by Direct Debit
-                  </a>
-                )}
-                <Link href="/get-in-touch" className="transition hover:text-[var(--fg)]">Get in Touch</Link>
-                <Link href="/privacy" className="transition hover:text-[var(--fg)]">Privacy</Link>
-              </div>
-            </div>
-            <div className="glass-noir-card glass-noir-card--tight p-5 text-sm text-[#F5F7FA]">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] noir-subtle">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-white/80">
                 Business hours
               </h3>
-              <BusinessHours variant="compact" className="mb-3" />
-              <div className="flex flex-wrap gap-2 text-xs text-white/55">
-                <span className="rounded-full border border-white/15 px-3 py-1">Mon–Fri · 09:00–16:00</span>
-                <span className="rounded-full border border-white/15 px-3 py-1 text-red-400">Sat–Sun · Closed</span>
-              </div>
+              <BusinessHours variant="compact" className="mb-2" />
+              <p className="text-xs text-white/60">Mon–Fri 09:00–16:00 • Weekends Closed</p>
+            </div>
+          </div>
+
+          {/* Column 2: Services */}
+          <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-white/80">
+              Services
+            </h3>
+            <div className="space-y-2 text-sm text-white/70">
+              <Link href="/services/window-cleaning" className="block transition hover:text-white hover:translate-x-1 duration-200">Window Cleaning</Link>
+              <Link href="/services/gutter-clearing" className="block transition hover:text-white hover:translate-x-1 duration-200">Gutter Clearing</Link>
+              <Link href="/services/conservatory-roof-cleaning" className="block transition hover:text-white hover:translate-x-1 duration-200">Conservatory Roof Cleaning</Link>
+              <Link href="/services/solar-panel-cleaning" className="block transition hover:text-white hover:translate-x-1 duration-200">Solar Panel Cleaning</Link>
+              <Link href="/services/fascias-soffits-cleaning" className="block transition hover:text-white hover:translate-x-1 duration-200">Fascias &amp; Soffits</Link>
+              <Link href="/services/commercial-cleaning" className="block transition hover:text-white hover:translate-x-1 duration-200">Commercial Cleaning</Link>
+            </div>
+          </div>
+
+          {/* Column 3: Quick Links */}
+          <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-white/80">
+              Quick links
+            </h3>
+            <div className="space-y-2 text-sm text-white/70">
+              <Link href="/areas" className="block transition hover:text-white hover:translate-x-1 duration-200">Areas We Cover</Link>
+              <Link href="/team" className="block transition hover:text-white hover:translate-x-1 duration-200">Meet the Team</Link>
+              <Link href="/book-appointment" className="block transition hover:text-white hover:translate-x-1 duration-200">Request a Quote</Link>
+              <Link href="/get-in-touch" className="block transition hover:text-white hover:translate-x-1 duration-200">Get in Touch</Link>
+              {GO_CARDLESS_URL && (
+                <a
+                  href={GO_CARDLESS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block transition hover:text-white hover:translate-x-1 duration-200"
+                >
+                  Pay by Direct Debit
+                </a>
+              )}
+              <Link href="/privacy" className="block transition hover:text-white hover:translate-x-1 duration-200">Privacy Policy</Link>
             </div>
           </div>
         </div>

@@ -196,11 +196,11 @@ export default function BusinessHours({ variant = 'compact', className = '' }: B
       
       {/* Full business hours display */}
       <div className="glass-card glass-noir-card--tight mt-4 p-4">
-        <h4 className="text-sm font-medium text-[#F5F7FA] mb-3">Business Hours</h4>
+        <h4 className="text-sm font-medium text-white mb-3">Business Hours</h4>
         <div className="space-y-1 text-xs noir-muted">
           <div className="flex justify-between">
             <span>Monday - Friday:</span>
-            <span className="text-[#F5F7FA]">9:00 AM - 4:00 PM</span>
+            <span className="text-white">9:00 AM - 4:00 PM</span>
           </div>
           <div className="flex justify-between">
             <span>Saturday:</span>

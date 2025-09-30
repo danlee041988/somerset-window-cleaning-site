@@ -11,15 +11,14 @@ const config: Config = {
       colors: {
         brand: {
           red: '#E11D2A',
-          black: '#0A0B0D',
-          white: '#F5F7FA',
-          gold: '#F4C542',
+          black: '#000000',
+          white: '#FFFFFF',
           green: '#16A34A',
         },
-        glass: 'rgba(255,255,255,0.06)',
-        'glass-border': 'rgba(255,255,255,0.14)',
-        'noir-muted': 'rgba(245,247,250,0.72)',
-        'noir-subtle': 'rgba(245,247,250,0.55)',
+        glass: 'rgba(255,255,255,0.03)',
+        'glass-border': 'rgba(255,255,255,0.20)',
+        'noir-muted': 'rgba(255,255,255,0.75)',
+        'noir-subtle': 'rgba(255,255,255,0.55)',
       },
       boxShadow: {
         glow: '0 0 0 3px rgba(225, 29, 42, 0.3)',
