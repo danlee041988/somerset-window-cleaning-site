@@ -6,22 +6,21 @@ import Section from '@/components/ui/Section'
 import { HERO_IMAGES, GALLERY_IMAGES } from '@/content/image-manifest'
 import Image from 'next/image'
 
-// Dynamic imports for below-the-fold components
+// Import ServiceTabsPreview normally (appears early on page)
+import ServiceTabsPreview from '@/components/ServiceTabsPreview'
+
+// Dynamic imports for below-the-fold components only
 const LightboxGallery = dynamic(() => import('@/components/LightboxGallery'), {
-  loading: () => <div className="h-64 animate-pulse bg-white/5 rounded-lg" />,
+  loading: () => <div className="min-h-[400px] animate-pulse bg-white/5 rounded-lg" />,
   ssr: false,
 })
 
 const Reviews = dynamic(() => import('@/components/Reviews'), {
-  loading: () => <div className="h-96 animate-pulse bg-white/5 rounded-lg" />,
+  loading: () => <div className="min-h-[500px] animate-pulse bg-white/5 rounded-lg" />,
 })
 
 const CaseStudy = dynamic(() => import('@/components/CaseStudy'), {
-  loading: () => <div className="h-64 animate-pulse bg-white/5 rounded-lg" />,
-})
-
-const ServiceTabsPreview = dynamic(() => import('@/components/ServiceTabsPreview'), {
-  loading: () => <div className="h-96 animate-pulse bg-white/5 rounded-lg" />,
+  loading: () => <div className="min-h-[300px] animate-pulse bg-white/5 rounded-lg" />,
 })
 
 export const metadata: Metadata = {
