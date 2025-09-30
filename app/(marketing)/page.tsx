@@ -1,13 +1,28 @@
 import type { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 import clsx from 'clsx'
 import Button from '@/components/ui/Button'
 import Section from '@/components/ui/Section'
-import LightboxGallery from '@/components/LightboxGallery'
-import Reviews from '@/components/Reviews'
 import { HERO_IMAGES, GALLERY_IMAGES } from '@/content/image-manifest'
 import Image from 'next/image'
-import CaseStudy from '@/components/CaseStudy'
-import ServiceTabsPreview from '@/components/ServiceTabsPreview'
+
+// Dynamic imports for below-the-fold components
+const LightboxGallery = dynamic(() => import('@/components/LightboxGallery'), {
+  loading: () => <div className="h-64 animate-pulse bg-white/5 rounded-lg" />,
+  ssr: false,
+})
+
+const Reviews = dynamic(() => import('@/components/Reviews'), {
+  loading: () => <div className="h-96 animate-pulse bg-white/5 rounded-lg" />,
+})
+
+const CaseStudy = dynamic(() => import('@/components/CaseStudy'), {
+  loading: () => <div className="h-64 animate-pulse bg-white/5 rounded-lg" />,
+})
+
+const ServiceTabsPreview = dynamic(() => import('@/components/ServiceTabsPreview'), {
+  loading: () => <div className="h-96 animate-pulse bg-white/5 rounded-lg" />,
+})
 
 export const metadata: Metadata = {
   alternates: {

@@ -57,6 +57,14 @@ const SECURITY_HEADERS = createSecurityHeaders()
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  
+  // Performance optimizations
+  swcMinify: true,
+  compress: true,
+  
+  // Production source maps (smaller)
+  productionBrowserSourceMaps: false,
+  
   images: {
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 31536000,
@@ -65,6 +73,11 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: '**' },
     ],
+  },
+  
+  // Optimize external packages
+  experimental: {
+    optimizePackageImports: ['@sentry/nextjs', 'clsx'],
   },
   typescript: {
     ignoreBuildErrors: false,
