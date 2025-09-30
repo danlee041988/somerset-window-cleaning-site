@@ -1,27 +1,13 @@
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
 import clsx from 'clsx'
 import Button from '@/components/ui/Button'
 import Section from '@/components/ui/Section'
 import { HERO_IMAGES, GALLERY_IMAGES } from '@/content/image-manifest'
 import Image from 'next/image'
-
-// Import ServiceTabsPreview normally (appears early on page)
+import LightboxGallery from '@/components/LightboxGallery'
+import Reviews from '@/components/Reviews'
+import CaseStudy from '@/components/CaseStudy'
 import ServiceTabsPreview from '@/components/ServiceTabsPreview'
-
-// Dynamic imports for below-the-fold components only
-const LightboxGallery = dynamic(() => import('@/components/LightboxGallery'), {
-  loading: () => <div className="min-h-[400px] animate-pulse bg-white/5 rounded-lg" />,
-  ssr: false,
-})
-
-const Reviews = dynamic(() => import('@/components/Reviews'), {
-  loading: () => <div className="min-h-[500px] animate-pulse bg-white/5 rounded-lg" />,
-})
-
-const CaseStudy = dynamic(() => import('@/components/CaseStudy'), {
-  loading: () => <div className="min-h-[300px] animate-pulse bg-white/5 rounded-lg" />,
-})
 
 export const metadata: Metadata = {
   alternates: {
@@ -67,19 +53,18 @@ export default function HomePage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden border-b border-white/10 bg-transparent">
+      <section className="relative overflow-hidden border-b border-white/10 bg-black">
         <Image
           src={heroImageSrc}
           alt=""
           aria-hidden="true"
           fill
           priority
-          className="absolute inset-0 object-cover opacity-70"
-          style={{ filter: 'brightness(2)' }}
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1280px"
+          quality={75}
+          className="absolute inset-0 object-cover opacity-40"
+          sizes="(max-width: 768px) 100vw, 1920px"
         />
-        <div className="pointer-events-none absolute inset-0 bg-radial-glow" aria-hidden />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/45 to-black/75" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
 
         <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8 px-4 pb-24 pt-32 md:pb-28 md:pt-36">
           <div className="flex flex-wrap items-center gap-3 text-[0.58rem] font-semibold uppercase tracking-[0.32em] text-white/60">
