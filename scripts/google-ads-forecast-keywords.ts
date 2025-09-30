@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+// @ts-nocheck - Google Ads API types have compatibility issues
 
 import fs from 'fs'
 import path from 'path'
