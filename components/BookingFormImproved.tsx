@@ -22,25 +22,27 @@ const TEMPLATE_ID = (process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_bo
 const PUBLIC_KEY = (process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '').trim()
 
 type PropertyCategory = 'residential' | 'commercial'
-type Step = 1 | 2
-const TOTAL_STEPS: Step = 2
+type Step = 1 | 2 | 3
+const TOTAL_STEPS: Step = 3
 
 interface FormData {
-  // Step 1: Property & Services
+  // Step 1: Property Basics
   propertyCategory: PropertyCategory
   propertyStyle: string
   bedrooms: string
+
+  // Step 2: Services & Frequency
   services: string[]
   frequency: string
-  notes: string
 
-  // Step 2: Contact Details
+  // Step 3: Contact Details & Notes
   firstName: string
   lastName: string
   email: string
   phone: string
   address: string
   postcode: string
+  notes: string
   website: string
 }
 
@@ -259,9 +261,9 @@ export default function BookingFormImproved({
 
   if (status === 'success') {
     return (
-      <div className={`rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 p-8 text-center ${className}`}>
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20">
-          <svg className="h-8 w-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className={`rounded-3xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-brand-red/5 p-8 text-center ${className}`}>
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/20">
+          <svg className="h-8 w-8 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
@@ -309,7 +311,7 @@ export default function BookingFormImproved({
         <ProgressBar
           currentStep={step}
           totalSteps={TOTAL_STEPS}
-          labels={['What You Need', 'Your Details']}
+          labels={['Property', 'Services', 'Contact']}
           className="mb-8"
         />
 
@@ -331,68 +333,92 @@ export default function BookingFormImproved({
         )}
 
         <form onSubmit={handleSubmit}>
-          {/* STEP 1: Property & Services */}
+          {/* STEP 1: Property Basics */}
           {step === 1 && (
             <div className="space-y-8">
-              <PropertyTypeSelector
-                value={formData.propertyCategory}
-                onChange={(value) => updateField('propertyCategory', value)}
-              />
+              <div>
+                <h2 className="text-xl font-semibold text-white mb-6">Property Details</h2>
+                <PropertyTypeSelector
+                  value={formData.propertyCategory}
+                  onChange={(value) => updateField('propertyCategory', value)}
+                />
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-white/10"></div>
 
               {/* Residential-specific fields */}
               {formData.propertyCategory === 'residential' && (
-                <div className="grid gap-6 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-3 block text-sm font-medium text-white/80">Property Type</label>
-                    <select
-                      value={formData.propertyStyle}
-                      onChange={(e) => updateField('propertyStyle', e.target.value)}
-                      className="w-full rounded-xl border-2 border-white/10 bg-white/5 px-4 py-3 text-white transition focus:border-brand-red focus:outline-none focus:ring-4 focus:ring-brand-red/20"
-                    >
-                      {PROPERTY_STYLE_OPTIONS.map((style) => (
-                        <option key={style.id} value={style.id} className="bg-brand-black">
-                          {style.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <h3 className="text-lg font-medium text-white mb-4">Tell us more</h3>
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-3 block text-sm font-medium text-white/80">Property Type</label>
+                      <select
+                        value={formData.propertyStyle}
+                        onChange={(e) => updateField('propertyStyle', e.target.value)}
+                        className="w-full rounded-xl border-2 border-white/10 bg-white/5 px-4 py-3 text-white transition focus:border-brand-red focus:outline-none focus:ring-4 focus:ring-brand-red/20"
+                      >
+                        {PROPERTY_STYLE_OPTIONS.map((style) => (
+                          <option key={style.id} value={style.id} className="bg-brand-black">
+                            {style.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  <div>
-                    <label className="mb-3 block text-sm font-medium text-white/80">Bedrooms</label>
-                    <select
-                      value={formData.bedrooms}
-                      onChange={(e) => updateField('bedrooms', e.target.value)}
-                      className="w-full rounded-xl border-2 border-white/10 bg-white/5 px-4 py-3 text-white transition focus:border-brand-red focus:outline-none focus:ring-4 focus:ring-brand-red/20"
-                    >
-                      <option value="1-2" className="bg-brand-black">
-                        1-2 bedrooms
-                      </option>
-                      <option value="3" className="bg-brand-black">
-                        3 bedrooms
-                      </option>
-                      <option value="4" className="bg-brand-black">
-                        4 bedrooms
-                      </option>
-                      <option value="5" className="bg-brand-black">
-                        5 bedrooms
-                      </option>
-                      <option value="6+" className="bg-brand-black">
-                        6+ bedrooms
-                      </option>
-                    </select>
+                    <div>
+                      <label className="mb-3 block text-sm font-medium text-white/80">Bedrooms</label>
+                      <select
+                        value={formData.bedrooms}
+                        onChange={(e) => updateField('bedrooms', e.target.value)}
+                        className="w-full rounded-xl border-2 border-white/10 bg-white/5 px-4 py-3 text-white transition focus:border-brand-red focus:outline-none focus:ring-4 focus:ring-brand-red/20"
+                      >
+                        <option value="1-2" className="bg-brand-black">
+                          1-2 bedrooms
+                        </option>
+                        <option value="3" className="bg-brand-black">
+                          3 bedrooms
+                        </option>
+                        <option value="4" className="bg-brand-black">
+                          4 bedrooms
+                        </option>
+                        <option value="5" className="bg-brand-black">
+                          5 bedrooms
+                        </option>
+                        <option value="6+" className="bg-brand-black">
+                          6+ bedrooms
+                        </option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               )}
 
-              <ServiceSelector services={formData.services} onChange={(services) => updateField('services', services)} />
+              <Button type="button" onClick={handleStep1Continue} className="w-full py-4 text-lg font-semibold">
+                Continue to Services →
+              </Button>
+            </div>
+          )}
+
+          {/* STEP 2: Services & Frequency */}
+          {step === 2 && (
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-xl font-semibold text-white mb-6">What do you need?</h2>
+                <ServiceSelector services={formData.services} onChange={(services) => updateField('services', services)} />
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-white/10"></div>
 
               {/* Frequency */}
               <div>
-                <label className="mb-4 block text-lg font-semibold text-white">How often?</label>
+                <h3 className="text-lg font-medium text-white mb-2">How often?</h3>
                 <p className="mb-4 text-sm leading-relaxed-body text-white/60">
-                  This frequency applies to window cleaning. Other services are typically done less frequently.
+                  For window cleaning service. Other services have their own schedules.
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-3">
                   {FREQUENCY_OPTIONS.map((freq) => {
                     const isSelected = formData.frequency === freq.id
                     return (
@@ -400,50 +426,45 @@ export default function BookingFormImproved({
                         key={freq.id}
                         type="button"
                         onClick={() => updateField('frequency', freq.id)}
-                        className={`rounded-xl border-2 p-4 text-left transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-red/30 ${
+                        className={`w-full rounded-xl border-2 p-4 text-left transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-red/30 ${
                           isSelected
                             ? 'border-brand-red bg-brand-red/10'
                             : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="font-semibold text-white">{freq.label}</div>
+                          <div>
+                            <div className="font-semibold text-white">{freq.label}</div>
+                            <div className="text-sm leading-relaxed-body text-white/60">{freq.subtitle}</div>
+                          </div>
                           {freq.badge && isSelected && (
                             <span className="rounded-full bg-brand-gold px-2 py-0.5 text-xs font-semibold text-brand-black">
                               {freq.badge}
                             </span>
                           )}
                         </div>
-                        <div className="text-sm leading-relaxed-body text-white/60">{freq.subtitle}</div>
                       </button>
                     )
                   })}
                 </div>
               </div>
 
-              {/* Additional notes */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-white/80">
-                  Anything else we should know? (Optional)
-                </label>
-                <textarea
-                  value={formData.notes}
-                  onChange={(e) => updateField('notes', e.target.value)}
-                  rows={3}
-                  placeholder="e.g., Parking info, access notes, pets, specific requirements..."
-                  className="w-full rounded-xl border-2 border-white/10 bg-white/5 px-4 py-3 leading-relaxed-body text-white placeholder:text-white/30 transition focus:border-brand-red focus:outline-none focus:ring-4 focus:ring-brand-red/20"
-                />
+              <div className="flex gap-4">
+                <Button type="button" variant="ghost" onClick={() => goToStep(1)} className="flex-1">
+                  ← Back
+                </Button>
+                <Button type="button" onClick={handleStep1Continue} className="flex-1">
+                  Continue →
+                </Button>
               </div>
-
-              <Button type="button" onClick={handleStep1Continue} className="w-full py-4 text-lg font-semibold">
-                Continue to Your Details →
-              </Button>
             </div>
           )}
 
-          {/* STEP 2: Contact Details */}
-          {step === 2 && (
-            <div className="space-y-6">
+          {/* STEP 3: Contact Details & Notes */}
+          {step === 3 && (
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-xl font-semibold text-white mb-6">Your Contact Details</h2>
               {/* Name fields */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
@@ -507,6 +528,23 @@ export default function BookingFormImproved({
                   updateField('postcode', place.postcode)
                 }}
               />
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-white/10"></div>
+
+              {/* Additional notes */}
+              <div>
+                <h3 className="text-lg font-medium text-white mb-2">Anything else we should know?</h3>
+                <p className="mb-3 text-sm text-white/60">Optional - add any special requirements or notes</p>
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => updateField('notes', e.target.value)}
+                  rows={3}
+                  placeholder="e.g., Parking info, gate code, pets, access notes, specific requirements..."
+                  className="w-full rounded-xl border-2 border-white/10 bg-white/5 px-4 py-3 leading-relaxed-body text-white placeholder:text-white/30 transition focus:border-brand-red focus:outline-none focus:ring-4 focus:ring-brand-red/20"
+                />
+              </div>
 
               {/* Honeypot */}
               <input
@@ -525,7 +563,7 @@ export default function BookingFormImproved({
 
               {/* Actions */}
               <div className="flex gap-4">
-                <Button type="button" variant="ghost" onClick={() => goToStep(1)} className="flex-1">
+                <Button type="button" variant="ghost" onClick={() => goToStep(2)} className="flex-1">
                   ← Back
                 </Button>
                 <Button
