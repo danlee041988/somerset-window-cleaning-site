@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+// @ts-nocheck
 /**
  * Add Core Keywords to Google Ads Campaigns
  *

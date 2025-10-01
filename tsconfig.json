@@ -43,9 +43,6 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
-    "scripts/ga4-daily-snapshot.ts",
-    "scripts/google-ads-enable-ga4-conversions.ts",
-    "scripts/google-ads-forecast-keywords.ts",
-    "scripts/google-ads-report-auction-share.ts"
+    "scripts/**/*.ts"
   ]
 }

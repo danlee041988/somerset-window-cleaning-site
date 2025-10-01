@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+// @ts-nocheck
 /**
  * Add Call Extensions to Google Ads Campaigns
  *

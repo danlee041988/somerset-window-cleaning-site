@@ -43,7 +43,7 @@ export const getWebsiteCustomersDataSourceId = async (): Promise<string | null> 
 
   // Return cached data source ID if available
   if (global.__notionDataSourceId) {
-    return global.__notionDataSourceId
+    return global.__notionDataSourceId ?? null
   }
 
   try {
@@ -51,9 +51,11 @@ export const getWebsiteCustomersDataSourceId = async (): Promise<string | null> 
     const database = await notion.databases.retrieve({ database_id: databaseId })
 
     // Get first data source (most databases have only one)
+    // @ts-ignore - data_sources property exists at runtime but not in types
     if (database.data_sources && database.data_sources.length > 0) {
-      global.__notionDataSourceId = database.data_sources[0].id
-      return global.__notionDataSourceId
+      // @ts-ignore
+      global.__notionDataSourceId = database.data_sources[0].id || null
+      return global.__notionDataSourceId ?? null
     }
 
     return null

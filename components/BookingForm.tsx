@@ -4,7 +4,7 @@ import React from 'react'
 import emailjs from '@emailjs/browser'
 import Button from '@/components/ui/Button'
 import ReCaptcha from '@/components/features/contact/ReCaptcha'
-import SimpleAddressInput from '@/components/features/contact/SimpleAddressInput'
+import GooglePlacesAutocomplete from '@/components/features/contact/GooglePlacesAutocomplete'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import ProgressBar from '@/components/ui/ProgressBar'
 import Alert from '@/components/ui/Alert'
@@ -1263,11 +1263,14 @@ export default function BookingForm({
             <div className="grid gap-4 md:grid-cols-2">
               <label className="md:col-span-2 block text-sm text-white/70">
                 <span className="block text-xs font-semibold text-white/65 tracking-[0.12em]">Property address</span>
-                <SimpleAddressInput
+                <GooglePlacesAutocomplete
                   value={customer.address}
                   onChange={(value) => handleCustomerChange('address', value)}
-                  placeholder="Full address including house number"
-                  required
+                  onPlaceSelected={(place) => {
+                    handleCustomerChange('address', place.address)
+                    handleCustomerChange('postcode', place.postcode)
+                  }}
+                  placeholder="Start typing your address..."
                   className="mt-2"
                 />
               </label>
