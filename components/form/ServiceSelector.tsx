@@ -13,6 +13,8 @@ interface Service {
 interface ServiceSelectorProps {
   services: string[]
   onChange: (services: string[]) => void
+  frequency?: string
+  onFrequencyChange?: (frequency: string) => void
   className?: string
 }
 
@@ -75,7 +77,14 @@ const SERVICE_OPTIONS: Service[] = [
   },
 ]
 
-export default function ServiceSelector({ services, onChange, className = '' }: ServiceSelectorProps) {
+const FREQUENCY_OPTIONS = [
+  { id: 'every-4-weeks', label: 'Every 4 weeks', subtitle: 'Most popular', badge: 'Recommended' },
+  { id: 'every-8-weeks', label: 'Every 8 weeks', subtitle: 'Great value' },
+  { id: 'one-off', label: 'One-off clean', subtitle: 'Single visit' },
+  { id: 'monthly', label: 'Monthly', subtitle: 'Regular service' },
+]
+
+export default function ServiceSelector({ services, onChange, frequency, onFrequencyChange, className = '' }: ServiceSelectorProps) {
   const toggleService = (serviceId: string) => {
     if (services.includes(serviceId)) {
       onChange(services.filter((s) => s !== serviceId))
@@ -113,11 +122,11 @@ export default function ServiceSelector({ services, onChange, className = '' }: 
               </div>
 
               {/* Content */}
-              <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1 pr-8">
+                <div className="mb-1">
                   <div className="font-semibold text-white">{service.label}</div>
                   {service.popular && !isSelected && (
-                    <span className="flex-shrink-0 rounded-full border border-brand-gold/30 bg-brand-gold/10 px-2 py-0.5 text-xs font-semibold text-brand-gold">
+                    <span className="mt-1 inline-block rounded-full border border-brand-gold/30 bg-brand-gold/10 px-2 py-0.5 text-xs font-semibold text-brand-gold">
                       Popular
                     </span>
                   )}
@@ -154,6 +163,46 @@ export default function ServiceSelector({ services, onChange, className = '' }: 
 
       {services.length === 0 && (
         <p className="mt-3 text-sm text-white/50">Please select at least one service to continue</p>
+      )}
+
+      {/* Frequency Selection - Only show if windows are selected */}
+      {services.includes('windows') && onFrequencyChange && frequency && (
+        <div className="mt-8">
+          <div className="mb-4 rounded-lg border border-brand-red/20 bg-brand-red/5 p-4">
+            <h3 className="text-base font-medium text-white mb-1">Window Cleaning Frequency</h3>
+            <p className="text-sm text-white/60">How often would you like your windows cleaned?</p>
+          </div>
+
+          <div className="space-y-3">
+            {FREQUENCY_OPTIONS.map((freq) => {
+              const isSelected = frequency === freq.id
+              return (
+                <button
+                  key={freq.id}
+                  type="button"
+                  onClick={() => onFrequencyChange(freq.id)}
+                  className={`w-full rounded-xl border-2 p-4 text-left transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-red/30 ${
+                    isSelected
+                      ? 'border-brand-red bg-brand-red/10'
+                      : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-white">{freq.label}</div>
+                      <div className="text-sm leading-relaxed-body text-white/60">{freq.subtitle}</div>
+                    </div>
+                    {freq.badge && isSelected && (
+                      <span className="rounded-full bg-brand-gold px-2 py-0.5 text-xs font-semibold text-brand-black">
+                        {freq.badge}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
       )}
     </div>
   )

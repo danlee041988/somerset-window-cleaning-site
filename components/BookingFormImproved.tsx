@@ -149,11 +149,21 @@ export default function BookingFormImproved({
   }
 
   const handleStep1Continue = () => {
+    // Step 1 just needs property details, no validation needed
+    goToStep(2)
+  }
+
+  const handleStep2Continue = () => {
     if (formData.services.length === 0) {
       setErrorMessage('Please select at least one service to continue')
       return
     }
-    goToStep(2)
+    // If windows are selected, frequency must be chosen
+    if (formData.services.includes('windows') && !formData.frequency) {
+      setErrorMessage('Please select a frequency for window cleaning')
+      return
+    }
+    goToStep(3)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -406,54 +416,19 @@ export default function BookingFormImproved({
             <div className="space-y-8">
               <div>
                 <h2 className="text-xl font-semibold text-white mb-6">What do you need?</h2>
-                <ServiceSelector services={formData.services} onChange={(services) => updateField('services', services)} />
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-white/10"></div>
-
-              {/* Frequency */}
-              <div>
-                <h3 className="text-lg font-medium text-white mb-2">How often?</h3>
-                <p className="mb-4 text-sm leading-relaxed-body text-white/60">
-                  For window cleaning service. Other services have their own schedules.
-                </p>
-                <div className="space-y-3">
-                  {FREQUENCY_OPTIONS.map((freq) => {
-                    const isSelected = formData.frequency === freq.id
-                    return (
-                      <button
-                        key={freq.id}
-                        type="button"
-                        onClick={() => updateField('frequency', freq.id)}
-                        className={`w-full rounded-xl border-2 p-4 text-left transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-red/30 ${
-                          isSelected
-                            ? 'border-brand-red bg-brand-red/10'
-                            : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-semibold text-white">{freq.label}</div>
-                            <div className="text-sm leading-relaxed-body text-white/60">{freq.subtitle}</div>
-                          </div>
-                          {freq.badge && isSelected && (
-                            <span className="rounded-full bg-brand-gold px-2 py-0.5 text-xs font-semibold text-brand-black">
-                              {freq.badge}
-                            </span>
-                          )}
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
+                <ServiceSelector
+                  services={formData.services}
+                  onChange={(services) => updateField('services', services)}
+                  frequency={formData.frequency}
+                  onFrequencyChange={(freq) => updateField('frequency', freq)}
+                />
               </div>
 
               <div className="flex gap-4">
                 <Button type="button" variant="ghost" onClick={() => goToStep(1)} className="flex-1">
                   ← Back
                 </Button>
-                <Button type="button" onClick={handleStep1Continue} className="flex-1">
+                <Button type="button" onClick={handleStep2Continue} className="flex-1">
                   Continue →
                 </Button>
               </div>
