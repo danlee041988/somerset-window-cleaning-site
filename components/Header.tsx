@@ -177,7 +177,7 @@ export default function Header() {
             className="flex-shrink-0 rounded-lg px-2 py-2 transition-opacity hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
             aria-label="Somerset Window Cleaning home"
           >
-            <Logo className="h-12 w-[200px] md:h-14 md:w-[240px]" />
+            <Logo className="h-9 w-[150px] md:h-12 md:w-[200px]" />
           </Link>
 
           {/* Desktop Navigation */}

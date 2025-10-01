@@ -20,18 +20,18 @@ export default function StickyMobileCTA() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-      <div className="border-t border-white/10 bg-black/95 px-4 py-3 backdrop-blur-lg">
+      <div className="border-t border-white/10 bg-black/95 px-3 py-2 backdrop-blur-lg">
         <div className="flex gap-2">
           <Button
             href="/book-appointment?intent=quote"
-            className="flex-1 text-sm"
+            className="flex-1 py-2 text-xs font-semibold"
           >
             Get Quote
           </Button>
           <Button
             href="tel:01458860339"
             variant="secondary"
-            className="flex-1 text-sm"
+            className="flex-1 py-2 text-xs font-semibold"
           >
             Call Now
           </Button>
