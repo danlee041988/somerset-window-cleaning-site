@@ -1,0 +1,26 @@
+# Allowed patterns for git-secrets
+# These are NOT secrets - they're variable names or references
+
+# Variable names and property accessors (not actual secrets)
+\.client_secret:
+\.refresh_token:
+process\.env\.GOOGLE_ADS_CLIENT_SECRET
+process\.env\.GOOGLE_ADS_REFRESH_TOKEN
+GOOGLE_ADS_CLIENT_SECRET
+GOOGLE_ADS_REFRESH_TOKEN
+
+# Documentation/comments about secrets (not actual values)
+YOUR_PAGESPEED_API_KEY
+
+# TypeScript interfaces and types (not actual secrets)
+string;$
+refresh_token\)
+
+# Security add-generic-password commands (examples, not actual secrets)
+security add-generic-password.*swc-pagespeed-api-key
+
+# Substring operations (showing truncated tokens, not full secrets)
+\.substring\(0,\s*20\)
+
+# Script paths that contain sensitive words but aren't secrets themselves
+get-refresh-token

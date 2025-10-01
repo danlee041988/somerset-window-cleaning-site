@@ -116,11 +116,9 @@ async function getRefreshToken() {
 
     console.log('✅ Refresh token stored in keychain!\n');
 
-    // Also store the API key you provided
-    console.log('💾 Storing Developer Token (API key) in keychain...\n');
-    await execAsync(
-      `security add-generic-password -a "google-ads" -s "GOOGLE_ADS_DEVELOPER_TOKEN" -w "AIzaSyDOuPC3BG8CMEIAvGHAsFs4ZYHj4r4CFR4" -U`
-    );
+    // Developer Token should be stored separately - never hardcode it!
+    console.log('💾 To store Developer Token, run:\n');
+    console.log('   security add-generic-password -a "google-ads" -s "GOOGLE_ADS_DEVELOPER_TOKEN" -w "YOUR_DEV_TOKEN_HERE" -U\n');
 
     console.log('✅ Developer Token stored in keychain!\n');
 
