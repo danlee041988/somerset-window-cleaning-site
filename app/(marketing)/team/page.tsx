@@ -122,7 +122,7 @@ export default function TeamPage() {
 
           <div className="space-y-4 text-white/75 md:max-w-2xl">
             <p>
-              We're a tight-knit crew covering Somerset with the same standards on every visit. From Dan setting the direction to Sean keeping the rounds organised, you'll always have a familiar face looking after your property.
+              We&apos;re a tight-knit crew covering Somerset with the same standards on every visit. From Dan setting the direction to Sean keeping the rounds organised, you&apos;ll always have a familiar face looking after your property.
             </p>
           </div>
 
