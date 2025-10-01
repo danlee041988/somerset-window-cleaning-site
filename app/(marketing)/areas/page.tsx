@@ -1,359 +1,199 @@
 import Link from 'next/link'
 import Section from '@/components/ui/Section'
 import Button from '@/components/ui/Button'
-import PostcodeChecker from '@/components/features/contact/PostcodeChecker'
-import { findFrequencyForPostcode } from '@/content/route-schedule'
-import { POSTCODE_AREAS, buildAreaDomId, AREA_DETAIL_ROUTES } from '@/content/service-areas'
-
-export const revalidate = 0
-
-interface NextVisitDetails {
-  dateLabel: string
-  day: string
-  strapline: string
-}
-
-const formatTodayIso = () => {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-const deriveLookupPostcodes = (rawCode: string): string[] => {
-  const normalized = rawCode.toUpperCase().replace(/\s+/g, '')
-  if (!normalized) return []
-
-  const segments = normalized.split('/')
-  const prefix = segments[0]?.match(/^[A-Z]+/i)?.[0]?.toUpperCase() ?? ''
-  const candidates = new Set<string>()
-
-  segments.forEach((segment) => {
-    const part = segment.trim().toUpperCase()
-    if (!part) return
-
-    if (/^[A-Z]{1,2}\d/.test(part)) {
-      candidates.add(part)
-      return
-    }
-
-    if (/^\d/.test(part) && prefix) {
-      candidates.add(`${prefix}${part}`)
-    }
-  })
-
-  return Array.from(candidates)
-}
-
-const resolvePrimaryPostcode = (rawCode: string): string => {
-  if (!rawCode) return ''
-  const lookupCodes = deriveLookupPostcodes(rawCode)
-  if (lookupCodes.length > 0) {
-    return lookupCodes[0]
-  }
-
-  return rawCode.toUpperCase().replace(/\s+/g, '')
-}
-
-const getNextVisitForArea = (code: string, todayIso: string): NextVisitDetails | null => {
-  const lookupCodes = deriveLookupPostcodes(code)
-
-  for (const lookupCode of lookupCodes) {
-    const frequency = findFrequencyForPostcode(lookupCode)
-    if (!frequency) continue
-
-    const timeline = frequency.matches
-      .flatMap((match) =>
-        match.dates.map((date) => ({
-          date,
-          day: match.day,
-        })),
-      )
-      .sort((a, b) => a.date.iso.localeCompare(b.date.iso))
-
-    if (!timeline.length) continue
-
-    const upcoming =
-      timeline.find((entry) => entry.date.iso >= todayIso) ?? timeline[0]
-
-    if (!upcoming) continue
-
-    return {
-      dateLabel: upcoming.date.label,
-      day: upcoming.day,
-      strapline: frequency.strapline,
-    }
-  }
-
-  return null
-}
+import { POSTCODE_AREAS } from '@/content/service-areas'
 
 export const metadata = {
   title: 'Areas We Cover | Somerset Window Cleaning Service Areas',
   description:
-    'Professional window cleaning across Somerset. BA postcodes (Wells, Glastonbury), BS postcodes (Weston, Cheddar), TA postcodes (Taunton, Bridgwater). Check if we cover your area.',
-  keywords:
-    'BA5 window cleaner, BS27 window cleaning, TA6 cleaning services, Somerset window cleaning areas, Wells, Glastonbury, Cheddar, Street, Bridgwater, Taunton, Yeovil'
-}
-
-const prefixDescriptions: Record<string, string> = {
-  BA: 'BA postcodes cover Wells, Glastonbury, Street, Castle Cary, and the surrounding Mendip villages. Our local Somerset team keeps heritage homes, stone cottages, and new-build developments streak-free with pure-water window cleaning and reliable maintenance schedules.',
-  BS: 'Our BS coverage reaches Weston-super-Mare, Clevedon, Cheddar, and the coastal communities across North Somerset. Regular window cleaning keeps sea-spray, farm dust, and holiday let traffic under control.',
-  TA: 'From Taunton and Bridgwater to Ilminster and Chard, TA postcodes enjoy dedicated crews for residential, commercial, and agricultural properties. We handle everything from townhouses to rural farmsteads.',
-  DT: 'We look after Sherborne and the Dorset border villages, delivering the same professional finish for homes that straddle the Somerset boundary.'
-}
-
-const areaHighlights: Array<{
-  title: string
-  description: string
-  primaryPostcode: string
-  area: string
-  href?: string
-  ctaHref?: string
-  ctaLabel?: string
-  ctaVariant?: 'primary' | 'secondary'
-}> = [
-  {
-    title: 'Window Cleaning in Wells (BA5)',
-    description:
-      'Our Wells window cleaners are trusted by homeowners, schools, and hospitality venues across the cathedral city. We navigate tight streets and period properties with specialist equipment for a spotless finish.',
-    primaryPostcode: 'BA5',
-    area: 'Wells',
-    href: '/areas/wells-ba5',
-    ctaHref: '/book-appointment?intent=quote&postcode=BA5&coverageArea=Wells',
-    ctaLabel: 'Request a quote in Wells',
-    ctaVariant: 'primary'
-  },
-  {
-    title: 'Cheddar Gorge & Mendip Villages (BS26–BS28)',
-    description:
-      'From Cheddar and Axbridge to Wedmore and the Somerset Levels, our pure-water systems remove limestone residue and farm dust without leaving streaks.',
-    primaryPostcode: 'BS27',
-    area: 'Cheddar'
-  },
-  {
-    title: 'Weston-super-Mare & North Somerset Coast (BS22–BS24)',
-    description:
-      'Holiday lets, seafront apartments, and family homes benefit from routine cleans that combat salt spray and gull droppings. We also manage Clevedon, Banwell, and surrounding villages.',
-    primaryPostcode: 'BS23',
-    area: 'Weston-super-Mare'
-  },
-  {
-    title: 'Taunton, Bridgwater & Langport (TA Postcodes)',
-    description:
-      'Our TA crews support market towns, logistics centres, and new housing developments. Flexible scheduling keeps shopfronts, offices, and homes looking their best year-round.',
-    primaryPostcode: 'TA6',
-    area: 'Bridgwater'
-  },
-  {
-    title: 'Glastonbury & Street Window Cleaning (BA6 & BA16)',
-    description:
-      'Festival traffic, tourist footfall, and local businesses rely on us to keep glazing shining. We cover the Tor, Meare, Ashcott, Street, and the Clarks Village retail outlets.',
-    primaryPostcode: 'BA6',
-    area: 'Glastonbury & Street',
-    ctaHref: '/book-appointment?intent=quote&postcode=BA6&coverageArea=Glastonbury%20%26%20Street',
-    ctaLabel: 'Request a quote in Glastonbury'
-  }
-]
-
-const faqs = [
-  {
-    question: 'Do you cover new housing developments or rural properties?',
-    answer:
-      'Yes. Our vehicles are equipped with long-reach poles and onboard water purification, so we can clean homes on new estates as well as farms and cottages down country lanes.'
-  },
-  {
-    question: 'Can you provide window cleaning for businesses in these areas?',
-    answer:
-      'We already service shops, schools, offices, and hospitality venues throughout Somerset. Let us know the property type when you book and we will schedule the right team.'
-  },
-  {
-    question: 'What if my postcode is just outside the list?',
-    answer:
-      'Enter your postcode in the checker or contact us. If you are close to our Somerset window frequencies we can often fit you in, and we will refer you if the postcode falls outside our coverage.'
-  }
-]
-
-const buildQuoteHref = (postcode: string, area?: string) => {
-  const params = new URLSearchParams({ intent: 'quote' })
-  const normalizedPostcode = resolvePrimaryPostcode(postcode)
-
-  if (normalizedPostcode) {
-    params.set('postcode', normalizedPostcode)
-  }
-  if (area) {
-    params.set('coverageArea', area)
-  }
-  return `/book-appointment?${params.toString()}`
+    'Professional window cleaning across Somerset. Covering Wells, Glastonbury, Taunton, Bridgwater, Weston-super-Mare and 30+ towns. Check if we cover your area.',
 }
 
 export default function AreasPage() {
-  const todayIso = formatTodayIso()
+  // Count total areas
+  const totalAreas = Object.values(POSTCODE_AREAS).reduce((sum, group) => sum + group.areas.length, 0)
 
   return (
-    <div className="space-y-20 md:space-y-24 pb-20">
+    <div className="pb-20">
+      {/* Hero Section */}
       <Section spacing="relaxed" className="pt-32 md:pt-40">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-center">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-6">
-              Areas We Cover Across Somerset
-            </h1>
-            <p className="text-white/80 text-lg leading-relaxed mb-5 max-w-2xl">
-              Somerset Window Cleaning delivers professional pure-water window cleaning across Mendip, North Somerset, Taunton Deane, and the Dorset border. Use the postcode checker to confirm coverage and request your quote in less than a minute.
-            </p>
-            <ul className="space-y-3 text-white/70 text-sm md:text-base">
-              <li>• BA, BS, TA, and DT9 postcodes with regular domestic and commercial window frequencies.</li>
-              <li>• Flexible scheduling for homes, schools, shops, care homes, and hospitality venues.</li>
-              <li>• Trusted local team with 4.9★ Google rating and specialist access equipment.</li>
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-white/15 bg-gradient-to-br from-white/10 to-white/5 p-8 backdrop-blur-sm shadow-xl">
-            <h2 className="text-xl font-semibold text-white mb-2 text-center">Check Your Postcode</h2>
-            <p className="text-white/70 text-sm mb-6 text-center">
-              Type a postcode or town (e.g. BA5, Wells) to see if we cover your property. We will confirm and send you straight to the quote form.
-            </p>
-            <PostcodeChecker variant="hero" placeholder="Enter postcode or town" />
-            <p className="text-xs text-white/50 mt-4 text-center">
-              ✅ Selecting an area now shows a confirmation and auto-redirects to our quote request form.
-            </p>
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">
+            Professional Window Cleaning Across Somerset
+          </h1>
+          <p className="text-white/80 text-lg md:text-xl leading-relaxed mb-8">
+            We cover <strong className="text-white">{totalAreas} towns and villages</strong> across Bath & East Somerset, North Somerset, Taunton Deane, and the Dorset border.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button href="/book-appointment?intent=quote" className="px-8 py-3">
+              Request Your Quote
+            </Button>
+            <Button href="/contact" variant="secondary" className="px-8 py-3">
+              Contact Us
+            </Button>
           </div>
         </div>
       </Section>
 
+      {/* Coverage Grid - Clean & Simple */}
       <Section
-        id="coverage-map"
-        title="Somerset Postcode Coverage"
-        subtitle="Explore the postcode districts we visit most often. Select a town to read more or jump straight to your quote request."
+        title="All Areas We Cover"
+        subtitle="Click on any area to request a quote for your postcode"
         spacing="relaxed"
       >
-        <div className="space-y-12">
-          {Object.entries(POSTCODE_AREAS).map(([prefix, data]) => {
-            const firstCode = data.areas[0]?.code ?? ''
-            const normalizedFirstCode = resolvePrimaryPostcode(firstCode)
-            const quoteHref = normalizedFirstCode
-              ? buildQuoteHref(normalizedFirstCode, data.areas[0]?.town)
-              : '/get-in-touch'
+        <div className="space-y-10">
+          {Object.entries(POSTCODE_AREAS).map(([prefix, data]) => (
+            <div
+              key={prefix}
+              className="rounded-2xl border border-white/15 bg-gradient-to-br from-white/8 to-white/5 p-6 md:p-8"
+            >
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                  <span className="inline-flex items-center justify-center rounded-lg bg-brand-red/20 px-3 py-1 text-lg font-mono text-brand-red">
+                    {prefix}
+                  </span>
+                  <span>{data.name}</span>
+                </h2>
+                <p className="text-white/70 text-sm md:text-base max-w-3xl">
+                  {prefix === 'BA' && 'Wells, Glastonbury, Street, Castle Cary, Frome, and the Mendip villages.'}
+                  {prefix === 'BS' && 'Weston-super-Mare, Clevedon, Cheddar, Axbridge, Wedmore, and coastal North Somerset.'}
+                  {prefix === 'TA' && 'Taunton, Bridgwater, Burnham-on-Sea, Highbridge, Ilminster, Chard, and West Somerset.'}
+                  {prefix === 'DT' && 'Sherborne and Dorset border villages.'}
+                </p>
+              </div>
 
-            return (
-              <section
-                key={prefix}
-                className={`rounded-2xl border ${data.borderColor} bg-gradient-to-br ${data.color} backdrop-blur-sm shadow-lg`}
-              >
-                <header className="flex flex-col gap-4 border-b border-white/10 p-6 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <h3 className="text-2xl font-semibold text-white flex items-center gap-3">
-                      <span className={`text-3xl ${data.iconColor}`}>{prefix}</span>
-                      <span>{data.name}</span>
-                    </h3>
-                    <p className="text-sm text-white/70 mt-2 max-w-2xl">
-                      {prefixDescriptions[prefix] ?? `Professional window cleaning across ${data.name}.`}
-                    </p>
-                  </div>
-                  <Button href={quoteHref} className="text-sm whitespace-nowrap">
-                    Request quote for {prefix} Area
-                  </Button>
-                </header>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {data.areas.map((area) => {
+                  const quoteHref = `/book-appointment?intent=quote&postcode=${area.code}&coverageArea=${encodeURIComponent(area.town)}`
+                  const hasDetailPage = area.code === 'BA5' // Only Wells has a detail page currently
 
-                <div className="p-6">
-                  <div className="grid gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
-                    {data.areas.map((area) => {
-                      const nextVisit = getNextVisitForArea(area.code, todayIso)
-                      const strapline = nextVisit?.strapline.replace(/\s*window frequency\s*/i, ' route')
-                      const quoteHrefForArea = buildQuoteHref(area.code, area.town)
-
-                      return (
-                        <Link
-                          key={area.code}
-                          href={quoteHrefForArea}
-                          className="block h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red/40"
-                        >
-                          <div
-                            className="group flex h-full items-start gap-3 rounded-lg border border-white/5 bg-white/5 p-3 transition hover:border-brand-red/40 hover:bg-white/10"
-                            id={buildAreaDomId(prefix, area.code)}
-                          >
-                            <div className={`font-mono font-semibold ${data.iconColor} bg-white/10 px-2 py-1 rounded text-xs min-w-[82px] text-center`}>
-                              {area.code}
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-white text-sm md:text-base">{area.town}</div>
-                              {area.keywords && (
-                                <div className="text-xs text-white/60 mt-1">{area.keywords}</div>
-                              )}
-                              {strapline && (
-                                <div className="mt-2 text-[0.65rem] uppercase tracking-[0.35em] text-white/45">
-                                  {strapline}
-                                </div>
-                              )}
-                              {nextVisit ? (
-                                <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/70">
-                                  <span className="inline-flex items-center gap-1 rounded-full bg-brand-red/15 px-2 py-0.5 text-brand-red/90">
-                                    <svg
-                                      className="h-3.5 w-3.5"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                      aria-hidden="true"
-                                    >
-                                      <path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm8 6H6a1 1 0 000 2h8a1 1 0 100-2z" />
-                                    </svg>
-                                    Next visit {nextVisit.dateLabel}
-                                  </span>
-                                </div>
-                              ) : (
-                                <div className="mt-2 text-xs text-white/50">Next rounds scheduled on request</div>
-                              )}
-                            </div>
-                            <div className="text-xs text-white/50">{prefix}</div>
-                          </div>
-                        </Link>
-                      )
-                    })}
-                  </div>
-                </div>
-              </section>
-            )
-          })}
+                  return (
+                    <Link
+                      key={area.code}
+                      href={hasDetailPage ? '/areas/wells-ba5' : quoteHref}
+                      className="group block rounded-lg border border-white/10 bg-white/5 p-3 transition-all hover:border-brand-red/40 hover:bg-white/10 hover:shadow-lg"
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <div className="font-semibold text-white text-sm group-hover:text-brand-red transition-colors">
+                          {area.town}
+                        </div>
+                        {hasDetailPage && (
+                          <span className="text-xs text-brand-red font-semibold">
+                            →
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs font-mono text-white/50">
+                        {area.code}
+                      </div>
+                      {area.keywords && (
+                        <div className="text-xs text-white/40 mt-1 line-clamp-1">
+                          {area.keywords}
+                        </div>
+                      )}
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </Section>
 
+      {/* Featured Areas - Wells Only (with detail page) */}
       <Section
-        title="Local Window Cleaning Highlights"
-        subtitle="A quick snapshot of the Somerset towns we visit most often."
+        title="Explore Local Guides"
+        subtitle="Detailed information for select areas"
+        spacing="relaxed"
+      >
+        <div className="rounded-2xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-transparent p-8 md:p-10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                Window Cleaning in Wells (BA5)
+              </h3>
+              <p className="text-white/80 leading-relaxed max-w-2xl">
+                Our Wells window cleaners serve the cathedral city, surrounding villages, and period properties. Read our complete local guide with pricing, testimonials, and area-specific information.
+              </p>
+            </div>
+            <Button
+              href="/areas/wells-ba5"
+              variant="primary"
+              className="whitespace-nowrap"
+            >
+              View Wells Guide
+            </Button>
+          </div>
+          <div className="mt-6 rounded-lg border border-white/10 bg-black/20 p-4">
+            <p className="text-sm text-white/60">
+              <strong className="text-white">More local guides coming soon.</strong> We&apos;re creating detailed area pages for Glastonbury, Taunton, Bridgwater, and other high-demand locations.
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      {/* FAQ Section - Simplified */}
+      <Section
+        title="Coverage Questions"
+        subtitle="Common questions about our service areas"
         spacing="relaxed"
       >
         <div className="grid gap-6 md:grid-cols-2">
-          {areaHighlights.map((highlight) => {
-            const defaultHref = buildQuoteHref(highlight.primaryPostcode, highlight.area)
-            const ctaHref = highlight.ctaHref ?? highlight.href ?? defaultHref
-            const isDetailPage = Boolean(highlight.href) && !highlight.ctaHref
-            const ctaVariant = highlight.ctaVariant ?? (isDetailPage ? 'secondary' : 'primary')
-            const ctaLabel = highlight.ctaLabel ?? (isDetailPage ? 'Explore local guide' : `Request a quote in ${highlight.area}`)
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+            <h3 className="text-lg font-semibold text-white mb-3">
+              Do you cover new housing developments?
+            </h3>
+            <p className="text-sm text-white/70 leading-relaxed">
+              Yes. Our long-reach poles and onboard water systems can access new estates and rural properties throughout Somerset.
+            </p>
+          </div>
 
-            return (
-              <article key={highlight.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-                <h3 className="text-xl font-semibold text-white mb-3">{highlight.title}</h3>
-                <p className="text-sm text-white/70 leading-relaxed mb-4">{highlight.description}</p>
-                <Button href={ctaHref} variant={ctaVariant} className="text-sm">
-                  {ctaLabel}
-                </Button>
-              </article>
-            )
-          })}
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+            <h3 className="text-lg font-semibold text-white mb-3">
+              Can you service commercial properties?
+            </h3>
+            <p className="text-sm text-white/70 leading-relaxed">
+              We clean shops, schools, offices, and hospitality venues across all our coverage areas. Request a quote with your property type.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+            <h3 className="text-lg font-semibold text-white mb-3">
+              What if my postcode isn&apos;t listed?
+            </h3>
+            <p className="text-sm text-white/70 leading-relaxed">
+              Contact us with your postcode. If you&apos;re close to our routes we can often fit you in, or we&apos;ll provide an honest referral.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+            <h3 className="text-lg font-semibold text-white mb-3">
+              How do I book for my area?
+            </h3>
+            <p className="text-sm text-white/70 leading-relaxed">
+              Click any area above to request a quote, or use our <Link href="/book-appointment" className="text-brand-red underline hover:text-brand-red/80">online booking form</Link> with your full postcode.
+            </p>
+          </div>
         </div>
       </Section>
 
-      <Section
-        title="Area Coverage FAQs"
-        subtitle="Answers to the most common questions about where and how we work."
-        spacing="relaxed"
-      >
-        <div className="space-y-6">
-          {faqs.map((faq) => (
-            <div key={faq.question} className="rounded-xl border border-white/10 bg-white/5 p-5">
-              <h3 className="text-lg font-semibold text-white mb-2">{faq.question}</h3>
-              <p className="text-sm text-white/70 leading-relaxed">{faq.answer}</p>
-            </div>
-          ))}
+      {/* CTA Section */}
+      <Section spacing="relaxed">
+        <div className="rounded-3xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-transparent p-10 md:p-12 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Ready for Spotless Windows?
+          </h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+            Request your quote in minutes. We&apos;ll confirm pricing and schedule within one working day.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button href="/book-appointment?intent=quote" className="px-8 py-3 text-base">
+              Get Your Quote
+            </Button>
+            <Button href="tel:01458860339" variant="secondary" className="px-8 py-3 text-base">
+              Call 01458 860 339
+            </Button>
+          </div>
         </div>
       </Section>
     </div>

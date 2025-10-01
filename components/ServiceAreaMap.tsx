@@ -2,24 +2,55 @@
 
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface ServiceAreaMapProps {
   className?: string
 }
 
 const COVERAGE_AREAS = [
-  'Wells',
-  'Glastonbury',
-  'Street',
-  'Shepton Mallet',
-  'Cheddar',
-  'Frome',
-  'Bruton',
-  'Castle Cary',
-  'Somerton',
-  'Langport',
-  'Wedmore',
-  'Axbridge',
+  // Bath & East Somerset (BA)
+  { name: 'Wells', postcode: 'BA5' },
+  { name: 'Glastonbury', postcode: 'BA6' },
+  { name: 'Street', postcode: 'BA16' },
+  { name: 'Shepton Mallet', postcode: 'BA4' },
+  { name: 'Frome', postcode: 'BA11' },
+  { name: 'Radstock', postcode: 'BA3' },
+  { name: 'Castle Cary', postcode: 'BA7' },
+  { name: 'Bruton', postcode: 'BA10' },
+  { name: 'Templecombe', postcode: 'BA8' },
+  { name: 'Wincanton', postcode: 'BA9' },
+  { name: 'Yeovil', postcode: 'BA20-22' },
+
+  // Bristol & North Somerset (BS)
+  { name: 'Cheddar', postcode: 'BS27' },
+  { name: 'Axbridge', postcode: 'BS26' },
+  { name: 'Wedmore', postcode: 'BS28' },
+  { name: 'Weston-super-Mare', postcode: 'BS22-24' },
+  { name: 'Clevedon', postcode: 'BS21' },
+  { name: 'Winscombe', postcode: 'BS25' },
+  { name: 'Banwell', postcode: 'BS29' },
+  { name: 'Chew Valley', postcode: 'BS40' },
+  { name: 'Clutton', postcode: 'BS39' },
+  { name: 'Wrington', postcode: 'BS49' },
+
+  // Taunton & West Somerset (TA)
+  { name: 'Taunton', postcode: 'TA2' },
+  { name: 'Bridgwater', postcode: 'TA6-7' },
+  { name: 'Burnham-on-Sea', postcode: 'TA8' },
+  { name: 'Highbridge', postcode: 'TA9' },
+  { name: 'Langport', postcode: 'TA10' },
+  { name: 'Somerton', postcode: 'TA11' },
+  { name: 'Martock', postcode: 'TA12' },
+  { name: 'South Petherton', postcode: 'TA13' },
+  { name: 'Stoke-sub-Hamdon', postcode: 'TA14' },
+  { name: 'Crewkerne', postcode: 'TA18' },
+  { name: 'Ilminster', postcode: 'TA19' },
+  { name: 'Chard', postcode: 'TA20' },
+  { name: 'Wellington', postcode: 'TA21' },
+
+  // Dorset Border (DT)
+  { name: 'Sherborne', postcode: 'DT9' },
 ]
 
 export default function ServiceAreaMap({ className = '' }: ServiceAreaMapProps) {
@@ -99,18 +130,30 @@ export default function ServiceAreaMap({ className = '' }: ServiceAreaMapProps) 
 
           <div>
             <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/60">
-              Areas We Cover
+              All {COVERAGE_AREAS.length} Areas We Cover
             </h4>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {COVERAGE_AREAS.map((area) => (
-                <div
-                  key={area}
-                  className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80 transition hover:border-brand-gold/30 hover:bg-brand-gold/5"
-                >
-                  <div className="h-1.5 w-1.5 rounded-full bg-brand-gold" />
-                  {area}
-                </div>
-              ))}
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+              {COVERAGE_AREAS.map((area) => {
+                const hasDetailPage = area.postcode === 'BA5' // Only Wells has a detail page
+                const href = hasDetailPage ? '/areas/wells-ba5' : `/book-appointment?intent=quote&postcode=${area.postcode}&coverageArea=${encodeURIComponent(area.name)}`
+
+                return (
+                  <Link
+                    key={area.postcode}
+                    href={href}
+                    className="group flex flex-col gap-0.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80 transition hover:border-brand-gold/30 hover:bg-brand-gold/5 hover:shadow-md"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-gold" />
+                      <span className="font-medium group-hover:text-white transition-colors">{area.name}</span>
+                      {hasDetailPage && (
+                        <span className="ml-auto text-xs text-brand-gold">→</span>
+                      )}
+                    </div>
+                    <span className="pl-3.5 text-xs text-white/50">{area.postcode}</span>
+                  </Link>
+                )
+              })}
             </div>
           </div>
 
