@@ -170,14 +170,14 @@ export default function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/95 backdrop-blur-md">
       <div className="mx-auto max-w-7xl">
-        <div className="flex h-20 items-center justify-between px-4 md:px-6">
+        <div className="flex h-16 items-center justify-between px-4 md:h-20 md:px-6">
           {/* Logo */}
           <Link
             href="/"
             className="flex-shrink-0 rounded-lg px-2 py-2 transition-opacity hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/60"
             aria-label="Somerset Window Cleaning home"
           >
-            <Logo className="h-9 w-[150px] md:h-12 md:w-[200px]" />
+            <Logo className="h-7 w-[120px] md:h-12 md:w-[200px]" />
           </Link>
 
           {/* Desktop Navigation */}
