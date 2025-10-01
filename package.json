@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "push": "bash scripts/push-and-verify.sh",
     "build:static": "next build",
     "preview:static": "npx --yes serve -l 4321 out || python3 -m http.server 4321 -d out",
     "dev:preview": "npm run build:static && npm run preview:static",
