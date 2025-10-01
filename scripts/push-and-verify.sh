@@ -47,24 +47,24 @@ ATTEMPT=0
 while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
   ATTEMPT=$((ATTEMPT + 1))
 
-  # Get deployment status
-  STATUS=$(npx vercel ls --yes 2>/dev/null | grep "$LATEST_DEPLOYMENT" | awk '{print $5}')
+  # Get deployment status from the table output
+  DEPLOYMENT_LINE=$(npx vercel ls --yes 2>&1 | grep -A 50 "Deployments for" | grep "$LATEST_DEPLOYMENT")
 
-  if [[ "$STATUS" == *"Ready"* ]]; then
+  if [[ "$DEPLOYMENT_LINE" == *"● Ready"* ]]; then
     echo -e "${GREEN}✓ Deployment successful!${NC}"
     echo -e "${GREEN}🌐 Live at: ${LATEST_DEPLOYMENT}${NC}"
     exit 0
-  elif [[ "$STATUS" == *"Error"* ]]; then
+  elif [[ "$DEPLOYMENT_LINE" == *"● Error"* ]]; then
     echo -e "${RED}❌ Deployment failed!${NC}"
     echo
     echo -e "${YELLOW}To see logs, run:${NC}"
-    echo -e "  npx vercel logs ${LATEST_DEPLOYMENT}"
+    echo -e "  npx vercel inspect ${LATEST_DEPLOYMENT}"
     exit 1
-  elif [[ "$STATUS" == *"Building"* ]] || [[ "$STATUS" == *"Queued"* ]]; then
-    echo -e "   ⏳ Status: ${STATUS} (attempt ${ATTEMPT}/${MAX_ATTEMPTS})"
+  elif [[ "$DEPLOYMENT_LINE" == *"● Building"* ]] || [[ "$DEPLOYMENT_LINE" == *"● Queued"* ]]; then
+    echo -e "   ⏳ Building... (attempt ${ATTEMPT}/${MAX_ATTEMPTS})"
     sleep 10
   else
-    echo -e "   ⏳ Status: ${STATUS:-Unknown} (attempt ${ATTEMPT}/${MAX_ATTEMPTS})"
+    echo -e "   ⏳ Waiting for deployment... (attempt ${ATTEMPT}/${MAX_ATTEMPTS})"
     sleep 10
   fi
 done
