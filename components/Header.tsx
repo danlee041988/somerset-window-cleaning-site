@@ -39,6 +39,7 @@ type NavItem = NavLinkItem | NavServicesItem
 const NAV_ITEMS: NavItem[] = [
   { type: 'services', label: 'Services' },
   { type: 'link', label: 'Areas', href: '/areas' },
+  { type: 'link', label: 'Team', href: '/team' },
   { type: 'link', label: 'Gallery', href: '/gallery' },
   { type: 'link', label: 'Contact', href: '/contact' },
 ]
