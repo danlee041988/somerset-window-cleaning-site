@@ -22,7 +22,7 @@ export const teamMembers: TeamMember[] = [
     slug: 'sean',
     name: 'Sean',
     role: 'Operations Manager',
-    bio: 'Based in Glastonbury with a young family, Sean is the calm voice behind most quotes and commercial schedules. He keeps the diary tight, designs access plans, and follows up after every visit so customers always know what's next.',
+    bio: 'Based in Glastonbury with a young family, Sean is the calm voice behind most quotes and commercial schedules. He keeps the diary tight, designs access plans, and follows up after every visit so customers always know what\'s next.',
     image: '/images/team/sean-operations-manager.jpg',
     specialties: ['Quoting & proposals', 'Commercial planning', 'Client liaison'],
     funFact: 'Juggles school runs, site visits, and quote deadlines with the precision of a Swiss watchmaker.',

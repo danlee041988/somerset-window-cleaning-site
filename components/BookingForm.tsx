@@ -266,7 +266,7 @@ const COMMERCIAL_FREQUENCY_OPTIONS: Array<{ id: FrequencyId; label: string; help
   {
     id: 'ad-hoc',
     label: 'One-off / ad-hoc',
-    helper: 'Let us know when you need a visit and we'll align availability.',
+    helper: 'Let us know when you need a visit and we\'ll align availability.',
   },
 ]
 
