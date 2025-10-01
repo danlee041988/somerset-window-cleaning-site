@@ -29,6 +29,7 @@
     position: relative;
     font-family: -apple-system, "SF Pro Text", ui-sans-serif, Inter, "Segoe UI", Roboto, sans-serif;
     letter-spacing: -0.01em;
+    line-height: 1.6;
     background-image:
       linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.98));
     background-attachment: fixed;
@@ -213,7 +214,55 @@
 
   .focus-ring {
     outline: none;
-    box-shadow: 0 0 0 2px var(--ring);
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+
+  /* Enhanced focus indicators for better keyboard navigation */
+  *:focus-visible {
+    outline: 3px solid rgba(225, 29, 42, 0.6);
+    outline-offset: 2px;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 3px solid rgba(225, 29, 42, 0.7);
+    outline-offset: 2px;
+  }
+
+  /* Spacing utilities for sections */
+  .section-spacing-normal {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .section-spacing-relaxed {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  .section-spacing-generous {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+
+  @media (min-width: 768px) {
+    .section-spacing-normal {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+
+    .section-spacing-relaxed {
+      padding-top: 7rem;
+      padding-bottom: 7rem;
+    }
+
+    .section-spacing-generous {
+      padding-top: 10rem;
+      padding-bottom: 10rem;
+    }
   }
 
   .radial-divider {

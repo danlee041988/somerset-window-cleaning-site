@@ -14,11 +14,16 @@ const config: Config = {
           black: '#000000',
           white: '#FFFFFF',
           green: '#16A34A',
+          gold: '#F59E0B',
+          'gold-light': '#FCD34D',
         },
         glass: 'rgba(255,255,255,0.03)',
         'glass-border': 'rgba(255,255,255,0.20)',
         'noir-muted': 'rgba(255,255,255,0.75)',
         'noir-subtle': 'rgba(255,255,255,0.55)',
+      },
+      lineHeight: {
+        'relaxed-body': '1.6',
       },
       boxShadow: {
         glow: '0 0 0 3px rgba(225, 29, 42, 0.3)',

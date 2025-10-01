@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Section from '@/components/ui/Section'
-import BookingFormSimplified from '@/components/BookingFormSimplified'
+import BookingFormImproved from '@/components/BookingFormImproved'
 
 export const metadata: Metadata = {
   title: 'Request A Quote | Somerset Window Cleaning Services',
@@ -48,8 +48,11 @@ export default function BookAppointmentPage({ searchParams }: BookAppointmentPag
   return (
     <div className="pb-24">
       <div className="bg-brand-black py-16 md:py-24">
-        <div className="mx-auto max-w-3xl px-4">
-          <BookingFormSimplified />
+        <div className="mx-auto max-w-4xl px-4">
+          <BookingFormImproved
+            defaultAddress={defaultAddress}
+            defaultPostcode={defaultPostcode}
+          />
         </div>
       </div>
 

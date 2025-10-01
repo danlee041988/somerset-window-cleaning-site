@@ -6,6 +6,7 @@ import StructuredData from '@/components/StructuredData'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import DynamicLayout from '@/components/DynamicLayout'
 import FloatingCallCTA from '@/components/FloatingCallCTA'
+import WhatsAppButton from '@/components/ui/WhatsAppButton'
 import { GoogleTagManager } from '@next/third-parties/google'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { buildAbsoluteUrl, getSiteUrl } from '@/lib/site-url'
@@ -65,6 +66,7 @@ export default function RootLayout({
           </DynamicLayout>
           <Footer />
           <FloatingCallCTA />
+          <WhatsAppButton />
           <StructuredData />
         </ErrorBoundary>
       </body>

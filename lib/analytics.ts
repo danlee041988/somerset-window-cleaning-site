@@ -148,8 +148,8 @@ export const analytics = {
     });
   },
 
-  // Track quote requests (phone/email clicks)
-  quoteRequest: (method: 'phone' | 'email' | 'form') => {
+  // Track quote requests (phone/email/whatsapp clicks)
+  quoteRequest: (method: 'phone' | 'email' | 'form' | 'whatsapp' | 'exit_intent_phone' | 'exit_intent_callback') => {
     trackFormEvent('quote_request', {
       event_label: `Quote Request: ${method}`,
       contact_method: method,

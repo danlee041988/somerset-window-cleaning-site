@@ -34,7 +34,7 @@
     "@emailjs/browser": "^4.4.1",
     "@next/third-parties": "^14.2.5",
     "@notionhq/client": "^5.1.0",
-    "@sentry/nextjs": "^10.16.0",
+    "@sentry/nextjs": "^10.17.0",
     "@types/react-google-recaptcha": "^2.1.9",
     "clsx": "^2.1.1",
     "google-ads-api": "^21.0.1",

@@ -9,6 +9,7 @@ import Reviews from '@/components/Reviews'
 import CaseStudy from '@/components/CaseStudy'
 import ServiceTabsPreview from '@/components/ServiceTabsPreview'
 import StickyMobileCTA from '@/components/StickyMobileCTA'
+import ServiceAreaMap from '@/components/ServiceAreaMap'
 
 export const metadata: Metadata = {
   alternates: {
@@ -203,6 +204,16 @@ export default function HomePage() {
           animationDelay={300}
         >
           <Reviews variant="carousel" />
+        </Section>
+
+        {/* Service Area Map */}
+        <Section
+          title="Where we work"
+          subtitle="Local coverage across Somerset and surrounding areas."
+          spacing="relaxed"
+          animationDelay={350}
+        >
+          <ServiceAreaMap />
         </Section>
 
         {/* Recent work preview */}
