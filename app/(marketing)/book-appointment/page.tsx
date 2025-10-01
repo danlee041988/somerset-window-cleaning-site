@@ -17,16 +17,19 @@ const GO_CARDLESS_URL = process.env.NEXT_PUBLIC_GOCARDLESS_PAYMENT_URL
 
 const BOOKING_STEPS = [
   {
-    title: 'Share property basics',
-    copy: 'Bedrooms, layout, and access help us prep the right crew.'
+    title: 'Tell us about your property',
+    copy: 'Property type, bedrooms, and any extras like conservatories or extensions.',
+    icon: 'home'
   },
   {
-    title: 'Choose services & cadence',
-    copy: 'Select the services you’re interested in and how often you’d like a visit.'
+    title: 'Pick your services',
+    copy: 'Windows, gutters, fascias—select what you need and how often.',
+    icon: 'checkmark'
   },
   {
-    title: 'We follow up',
-    copy: 'A team member confirms pricing, access, and a visit time that suits you.'
+    title: 'Get your quote fast',
+    copy: 'We&apos;ll confirm pricing and schedule within one working day.',
+    icon: 'calendar'
   }
 ]
 
@@ -58,46 +61,53 @@ export default function BookAppointmentPage({ searchParams }: BookAppointmentPag
 
       <div id="how-it-works">
         <Section
-          title="How the quote process works"
-          subtitle="Share the essentials, choose a frequency, and we&rsquo;ll follow up with tailored pricing."
+          title="How it works"
+          subtitle="Three simple steps to get your quote"
           spacing="relaxed"
         >
-          <ol className="flex flex-col gap-6 text-white/70 md:flex-row md:items-start md:gap-8">
+          <ol className="grid gap-6 md:grid-cols-3 md:gap-8">
             {BOOKING_STEPS.map((step, index) => (
-              <li key={step.title} className="flex flex-1 items-start gap-4">
-                <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full border border-emerald-400/50 bg-emerald-500/10 text-sm font-semibold text-white">
-                  {index + 1}
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-white">{step.title}</p>
-                  <p className="mt-1 text-xs text-white/60">{step.copy}</p>
+              <li key={step.title} className="group relative rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition-all hover:border-brand-red/30 hover:bg-brand-red/5">
+                <div className="mb-4 flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-brand-red/20 to-brand-red/5 ring-2 ring-brand-red/30 transition-all group-hover:ring-brand-red/50">
+                    {step.icon === 'home' && (
+                      <svg className="h-6 w-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                    )}
+                    {step.icon === 'checkmark' && (
+                      <svg className="h-6 w-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                      </svg>
+                    )}
+                    {step.icon === 'calendar' && (
+                      <svg className="h-6 w-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-sm font-bold text-brand-red/60">Step {index + 1}</span>
                 </div>
+                <h3 className="text-base font-semibold text-white mb-2">{step.title}</h3>
+                <p className="text-sm text-white/60 leading-relaxed">{step.copy}</p>
               </li>
             ))}
           </ol>
 
-          <div className="mt-10 rounded-xl border border-white/10 bg-white/5 p-5 text-sm text-white/70">
-            <p>
-              Light rain doesn&rsquo;t affect pure water results, and we&rsquo;ll always revisit promptly if anything needs attention. After your quote is approved you can settle by card or transfer after each visit, or set up automatic payments through{' '}
-              {GO_CARDLESS_URL ? (
-                <a
-                  href={GO_CARDLESS_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-white underline decoration-brand-red/60 underline-offset-4 hover:text-brand-red"
-                >
-                  GoCardless
-                </a>
-              ) : (
-                'GoCardless'
-              )}
-              .
-            </p>
-            {GO_CARDLESS_URL && (
-              <p className="mt-2 text-xs text-white/60">
-                Already a customer? Use the Direct Debit portal any time to review or settle outstanding balances.
+          <div className="mt-12 flex flex-col gap-4 md:flex-row md:items-start md:gap-6">
+            <div className="flex-shrink-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-red/20">
+                <svg className="h-5 w-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex-1">
+              <h4 className="text-sm font-semibold text-white mb-2">Good to know</h4>
+              <p className="text-sm text-white/70 leading-relaxed">
+                Light rain doesn&apos;t affect pure water results. We&apos;ll always revisit promptly if anything needs attention. Payment is flexible—settle by card or bank transfer after each visit, or set up automatic payments through GoCardless.
               </p>
-            )}
+            </div>
           </div>
         </Section>
       </div>
