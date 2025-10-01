@@ -75,7 +75,7 @@ const CAROUSEL_REVIEWS: CarouselReview[] = [
   {
     name: 'Sandra',
     service: 'Routine Clean',
-    quote: 'Dylan did a fantastic window clean for me this morning. The high windows were spotless and the text updates were really helpful.',
+    quote: '<strong>Dylan</strong> did a fantastic window clean for me this morning. The high windows were spotless and the text updates were really helpful.',
     location: 'Glastonbury BA6'
   },
   {
@@ -301,13 +301,12 @@ function SpotlightReviewSurface({ className }: { className?: string }) {
 }
 
 function CarouselReviewSurface({ className }: { className?: string }) {
-  const FADE_DURATION = 450
-  const ROTATE_INTERVAL = 16000
+  const ROTATE_INTERVAL = 30000 // Slower rotation: 30 seconds
 
   const [activeIndex, setActiveIndex] = React.useState(0)
-  const [isFading, setIsFading] = React.useState(false)
+  const [isPaused, setIsPaused] = React.useState(false)
+  const [direction, setDirection] = React.useState<'left' | 'right'>('right')
   const rotationTimeoutRef = React.useRef<number | null>(null)
-  const fadeTimeoutRef = React.useRef<number | null>(null)
 
   const clearRotationTimeout = React.useCallback(() => {
     if (rotationTimeoutRef.current) {
@@ -316,45 +315,35 @@ function CarouselReviewSurface({ className }: { className?: string }) {
     }
   }, [])
 
-  const clearFadeTimeout = React.useCallback(() => {
-    if (fadeTimeoutRef.current) {
-      window.clearTimeout(fadeTimeoutRef.current)
-      fadeTimeoutRef.current = null
-    }
+  const triggerChange = React.useCallback((updater: (prev: number) => number, dir: 'left' | 'right' = 'right') => {
+    setDirection(dir)
+    setActiveIndex((prev) => updater(prev))
   }, [])
-
-  const triggerChange = React.useCallback((updater: (prev: number) => number) => {
-    clearFadeTimeout()
-    setIsFading(true)
-    fadeTimeoutRef.current = window.setTimeout(() => {
-      setActiveIndex((prev) => updater(prev))
-      setIsFading(false)
-    }, FADE_DURATION)
-  }, [clearFadeTimeout, FADE_DURATION])
 
   const scheduleAutoRotate = React.useCallback(() => {
     clearRotationTimeout()
-    rotationTimeoutRef.current = window.setTimeout(() => {
-      triggerChange((prev) => (prev + 1) % CAROUSEL_REVIEWS.length)
-      scheduleAutoRotate()
-    }, ROTATE_INTERVAL)
-  }, [clearRotationTimeout, triggerChange, ROTATE_INTERVAL])
+    if (!isPaused) {
+      rotationTimeoutRef.current = window.setTimeout(() => {
+        triggerChange((prev) => (prev + 1) % CAROUSEL_REVIEWS.length, 'right')
+        scheduleAutoRotate()
+      }, ROTATE_INTERVAL)
+    }
+  }, [clearRotationTimeout, triggerChange, ROTATE_INTERVAL, isPaused])
 
   React.useEffect(() => {
     scheduleAutoRotate()
     return () => {
       clearRotationTimeout()
-      clearFadeTimeout()
     }
-  }, [scheduleAutoRotate, clearRotationTimeout, clearFadeTimeout])
+  }, [scheduleAutoRotate, clearRotationTimeout])
 
   const handleNext = React.useCallback(() => {
-    triggerChange((prev) => (prev + 1) % CAROUSEL_REVIEWS.length)
+    triggerChange((prev) => (prev + 1) % CAROUSEL_REVIEWS.length, 'right')
     scheduleAutoRotate()
   }, [triggerChange, scheduleAutoRotate])
 
   const handlePrev = React.useCallback(() => {
-    triggerChange((prev) => (prev - 1 + CAROUSEL_REVIEWS.length) % CAROUSEL_REVIEWS.length)
+    triggerChange((prev) => (prev - 1 + CAROUSEL_REVIEWS.length) % CAROUSEL_REVIEWS.length, 'left')
     scheduleAutoRotate()
   }, [triggerChange, scheduleAutoRotate])
 
@@ -366,52 +355,90 @@ function CarouselReviewSurface({ className }: { className?: string }) {
   return (
     <div
       className={clsx(
-        'glass-noir-panel rounded-3xl border border-[var(--glass-border)] bg-[var(--glass)] p-8 md:p-12 backdrop-blur-xl transition-opacity duration-700 ease-in-out',
-        isFading ? 'opacity-0' : 'opacity-100',
+        'glass-noir-panel rounded-3xl border border-[var(--glass-border)] bg-[var(--glass)] p-8 md:p-12 backdrop-blur-xl overflow-hidden',
         className,
       )}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => {
+        setIsPaused(false)
+        scheduleAutoRotate()
+      }}
     >
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div className="space-y-3">
           <GoogleReviewBadge subtitle="Real feedback from verified customers" />
           <h3 className="text-3xl font-semibold text-[var(--fg)]">{GOOGLE_RATING_SCORE} out of 5 on Google</h3>
           <p className="text-sm text-[color:var(--muted)]">{GOOGLE_REVIEW_TOTAL} Somerset customers across domestic and commercial routes.</p>
+          <div className="flex items-center gap-2 pt-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-white/40">92% gave 5 stars</p>
+            <span className="text-white/20">•</span>
+            <p className="text-xs text-white/40">Most recent: 2 days ago</p>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handlePrev}
-            className="glass-card glass-noir-card--tight flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 text-[var(--fg)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20"
-            aria-label="Previous review"
-          >
-            <span aria-hidden>←</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleNext}
-            className="glass-card glass-noir-card--tight flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 text-[var(--fg)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20"
-            aria-label="Next review"
-          >
-            <span aria-hidden>→</span>
-          </button>
+        <div className="flex flex-col items-end gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="glass-card glass-noir-card--tight flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 text-[var(--fg)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20"
+              aria-label="Previous review"
+            >
+              <span aria-hidden>←</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              className="glass-card glass-noir-card--tight flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 text-[var(--fg)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20"
+              aria-label="Next review"
+            >
+              <span aria-hidden>→</span>
+            </button>
+          </div>
+          <div className="flex items-center gap-1.5">
+            {CAROUSEL_REVIEWS.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  const direction = idx > activeIndex ? 'right' : 'left'
+                  triggerChange(() => idx, direction)
+                  scheduleAutoRotate()
+                }}
+                className={clsx(
+                  'h-2 rounded-full transition-all duration-300',
+                  idx === activeIndex ? 'w-8 bg-brand-red' : 'w-2 bg-white/30 hover:bg-white/50'
+                )}
+                aria-label={`Go to review ${idx + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-        <article
-          data-testid="review-card-emphasis"
-          className="glass-card glass-noir-card--tight flex h-full flex-col justify-between gap-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/12 to-white/6 p-8 text-[var(--fg)] shadow-[0_30px_80px_rgba(0,0,0,0.35)]"
-        >
-          <div className="space-y-4">
-            <p className="text-sm font-semibold text-[color:var(--muted-subtle)]">{activeReview.service}</p>
-            <ReviewStars />
-            <p className="text-lg leading-relaxed text-[var(--fg)]">“{activeReview.quote}”</p>
+        <div className="relative overflow-hidden">
+          <div
+            key={activeIndex}
+            className={clsx(
+              'animate-slide-in',
+              direction === 'right' ? 'slide-from-right' : 'slide-from-left'
+            )}
+          >
+            <article
+              data-testid="review-card-emphasis"
+              className="glass-card glass-noir-card--tight flex h-full flex-col justify-between gap-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/12 to-white/6 p-8 text-[var(--fg)] shadow-[0_30px_80px_rgba(0,0,0,0.35)]"
+            >
+              <div className="space-y-4">
+                <p className="text-sm font-semibold text-[color:var(--muted-subtle)]">{activeReview.service}</p>
+                <ReviewStars />
+                <p className="text-lg leading-relaxed text-[var(--fg)]" dangerouslySetInnerHTML={{ __html: `"${activeReview.quote}"` }} />
+              </div>
+              <footer className="space-y-1 text-sm">
+                <p className="font-semibold text-[var(--fg)]">{activeReview.name}</p>
+                <p className="text-[color:var(--muted)]">{activeReview.location}</p>
+              </footer>
+            </article>
           </div>
-          <footer className="space-y-1 text-sm">
-            <p className="font-semibold text-[var(--fg)]">{activeReview.name}</p>
-            <p className="text-[color:var(--muted)]">{activeReview.location}</p>
-          </footer>
-        </article>
+        </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           {supportingReviews.map((review) => (
@@ -422,12 +449,38 @@ function CarouselReviewSurface({ className }: { className?: string }) {
               <div className="space-y-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-subtle)]">{review.service}</p>
                 <ReviewStars className="text-sm" />
-                <p className="text-sm text-[var(--fg)]">“{review.quote}”</p>
+                <p className="text-sm text-[var(--fg)]" dangerouslySetInnerHTML={{ __html: `"${review.quote}"` }} />
               </div>
               <footer className="mt-auto text-xs text-[color:var(--muted)]">{review.name} — {review.location}</footer>
             </article>
           ))}
         </div>
+      </div>
+
+      {/* CTAs at bottom */}
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-6">
+        <a
+          href="https://g.page/r/CTIr7pDWKi9SEBM/review"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="glass-card glass-noir-card--tight inline-flex items-center gap-2 rounded-full border border-brand-red/30 bg-brand-red/10 px-6 py-3 text-sm font-semibold text-brand-red transition-all hover:bg-brand-red/20 hover:border-brand-red/50"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+          </svg>
+          Leave a Google Review
+        </a>
+        <a
+          href="https://g.page/r/CTIr7pDWKi9SEBM"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-white/70 transition-colors hover:text-white"
+        >
+          View all {GOOGLE_REVIEW_TOTAL} reviews on Google
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
       </div>
     </div>
   )

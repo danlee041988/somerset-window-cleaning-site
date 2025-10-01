@@ -133,15 +133,15 @@ export default function ServiceTabsPreview() {
       {/* Bottom CTA Row */}
       <div className="flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent p-6 md:flex-row md:justify-between">
         <div>
-          <h4 className="text-lg font-semibold text-white">Explore all our services</h4>
-          <p className="text-sm text-white/60">Solar panels, commercial cleaning, and more specialist services</p>
+          <h4 className="text-lg font-semibold text-white">Ready for spotless windows?</h4>
+          <p className="text-sm text-white/60">Get a tailored quote for your property in minutes</p>
         </div>
         <Button
-          href="/services"
+          href="/book-appointment?intent=quote"
           variant="primary"
           className="group flex-shrink-0"
         >
-          View All Services
+          Request Your Quote
           <svg
             className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
             fill="none"

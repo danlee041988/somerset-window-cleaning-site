@@ -8,7 +8,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     toEntry('/'),
-    toEntry('/services'),
+    toEntry('/services/window-cleaning'),
+    toEntry('/services/gutter-clearing'),
+    toEntry('/services/conservatory-roof-cleaning'),
+    toEntry('/services/fascias-soffits-cleaning'),
+    toEntry('/services/solar-panel-cleaning'),
+    toEntry('/services/commercial-cleaning'),
     toEntry('/areas'),
     toEntry('/book-appointment'),
     toEntry('/gallery'),

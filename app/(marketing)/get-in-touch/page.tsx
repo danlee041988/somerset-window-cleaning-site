@@ -49,8 +49,8 @@ export default function GetInTouchPage({ searchParams }: GetInTouchPageProps) {
                 <Button href="/book-appointment" variant="primary">
                   Go to quote form
                 </Button>
-                <Button href="/services" variant="secondary">
-                  Explore services
+                <Button href="/services/window-cleaning" variant="secondary">
+                  View window cleaning
                 </Button>
               </div>
             </div>
