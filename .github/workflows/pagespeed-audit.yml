@@ -1,12 +1,11 @@
 name: PageSpeed Audit
 
 on:
-  # Disabled until PageSpeed API key is added to GitHub secrets
-  # push:
-  #   branches: ["main"]
-  # pull_request:
-  #   branches: ["main"]
-  workflow_dispatch: # Manual trigger only
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch: # Can also trigger manually
 
 jobs:
   audit:
