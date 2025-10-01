@@ -20,15 +20,23 @@ interface ReCaptchaProps {
 }
 
 export default function ReCaptcha({ onChange, onExpired, className = '' }: ReCaptchaProps) {
+  const [mounted, setMounted] = React.useState(false)
   const siteKey = recaptchaConfig.siteKey
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
   const resolvedSiteKey = React.useMemo(() => {
+    if (!mounted) return siteKey // Return production key during SSR
+
     if (hostname && isLocalHostname(hostname)) {
       return LOCAL_OVERRIDE_SITE_KEY || LOCAL_RECAPTCHA_TEST_KEY
     }
 
     return siteKey
-  }, [hostname, siteKey])
+  }, [hostname, siteKey, mounted])
 
   // Enhanced logging for debugging
   React.useEffect(() => {
@@ -59,6 +67,15 @@ export default function ReCaptcha({ onChange, onExpired, className = '' }: ReCap
           ⚠️ reCAPTCHA configuration error
           <div className="text-xs mt-1">Please contact support if this persists</div>
         </div>
+      </div>
+    )
+  }
+
+  // Only render ReCAPTCHA after component has mounted to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className={`flex justify-center ${className}`}>
+        <div className="h-[78px] w-[304px] animate-pulse bg-white/10 rounded"></div>
       </div>
     )
   }
