@@ -706,9 +706,24 @@ export default function BookingForm({
     try {
       setStatus('submitting')
 
-      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, {
-        publicKey: PUBLIC_KEY,
+      // Use direct fetch to avoid SameSite cookie issues with EmailJS SDK
+      const emailResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          service_id: SERVICE_ID,
+          template_id: TEMPLATE_ID,
+          user_id: PUBLIC_KEY,
+          template_params: templateParams,
+        }),
       })
+
+      if (!emailResponse.ok) {
+        const errorText = await emailResponse.text()
+        throw new Error(`EmailJS failed: ${emailResponse.status} - ${errorText}`)
+      }
 
       analytics.formSubmit({
         serviceType: servicesList,
