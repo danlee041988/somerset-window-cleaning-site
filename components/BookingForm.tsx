@@ -238,7 +238,7 @@ const RESIDENTIAL_FREQUENCY_OPTIONS: Array<{ id: FrequencyId; label: string; hel
   {
     id: 'one-off',
     label: 'One-off clean',
-    helper: 'Perfect before events or listings.',
+    helper: 'Perfect before events or listings. Charged at a premium rate.',
   },
 ]
 
@@ -254,11 +254,6 @@ const COMMERCIAL_FREQUENCY_OPTIONS: Array<{ id: FrequencyId; label: string; help
     helper: 'Keeps glazing presentable for steady customer traffic.',
   },
   {
-    id: 'monthly',
-    label: 'Every month',
-    helper: 'Popular for offices and shared workspace.',
-  },
-  {
     id: 'quarterly',
     label: 'Quarterly maintenance',
     helper: 'Ideal for signage, high-level glazing or larger sites.',
@@ -271,7 +266,7 @@ const COMMERCIAL_FREQUENCY_OPTIONS: Array<{ id: FrequencyId; label: string; help
   {
     id: 'ad-hoc',
     label: 'One-off / ad-hoc',
-    helper: 'Let us know when you need a visit and we’ll align availability.',
+    helper: 'Let us know when you need a visit and we'll align availability.',
   },
 ]
 

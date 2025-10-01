@@ -42,14 +42,14 @@ function TeamMemberCard({ name, role, bio, image, specialties }: TeamMemberCardP
   const gradientClass = gradientPalette[name.length % gradientPalette.length]
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-white/12 bg-white/[0.03] backdrop-blur transition-shadow hover:border-white/20 hover:shadow-[0_28px_80px_-48px_rgba(0,0,0,0.9)]">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/12 bg-white/[0.03] backdrop-blur transition-all duration-300 hover:border-white/25 hover:shadow-[0_28px_80px_-48px_rgba(225,29,42,0.4)] hover:-translate-y-1">
       <div className="relative aspect-[3/4] w-full overflow-hidden border-b border-white/10 bg-black/40">
         {image ? (
           <Image
             src={image}
             alt={`${name} - ${role}`}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(min-width: 1024px) 320px, (min-width: 768px) 45vw, 90vw"
             priority={role.includes('Owner')}
           />
@@ -122,10 +122,7 @@ export default function TeamPage() {
 
           <div className="space-y-4 text-white/75 md:max-w-2xl">
             <p>
-              We’re a tight-knit crew covering Somerset with the same standards on every visit. From Dan setting the direction to Sean keeping the rounds organised, you’ll always have a familiar face looking after your property.
-            </p>
-            <p className="text-white/65">
-              Woody’s portrait is being finished now—check back soon. Want to put the team to work? Request a quote and we’ll build the right rota for your property.
+              We're a tight-knit crew covering Somerset with the same standards on every visit. From Dan setting the direction to Sean keeping the rounds organised, you'll always have a familiar face looking after your property.
             </p>
           </div>
 
@@ -140,7 +137,67 @@ export default function TeamPage() {
         </div>
       </section>
 
+      <Section spacing="relaxed" className="pt-0">
+        <div className="mx-auto max-w-4xl text-center space-y-6 mb-16">
+          <div className="inline-flex items-center gap-2 rounded-full border border-brand-red/30 bg-brand-red/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-brand-red/90">
+            Why choose Somerset Window Cleaning
+          </div>
+          <h2 className="text-3xl font-bold text-white md:text-4xl">
+            Local, trained, and accountable
+          </h2>
+          <p className="text-lg text-white/70 max-w-2xl mx-auto">
+            Every member of our crew is background-checked, fully insured, and trained to the same standards Dan set when he founded the business.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-20">
+          <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6 text-center backdrop-blur transition-all hover:border-white/20 hover:bg-white/[0.05]">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-red/20">
+              <svg className="h-7 w-7 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 className="text-base font-semibold text-white mb-2">Fully Insured</h3>
+            <p className="text-sm text-white/65">£5M public liability and comprehensive equipment cover on every visit.</p>
+          </div>
+
+          <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6 text-center backdrop-blur transition-all hover:border-white/20 hover:bg-white/[0.05]">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/20">
+              <svg className="h-7 w-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h3 className="text-base font-semibold text-white mb-2">Trained Crew</h3>
+            <p className="text-sm text-white/65">Every team member completes pure-water, safety, and customer care training.</p>
+          </div>
+
+          <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6 text-center backdrop-blur transition-all hover:border-white/20 hover:bg-white/[0.05]">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-sky-500/20">
+              <svg className="h-7 w-7 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <h3 className="text-base font-semibold text-white mb-2">Somerset Local</h3>
+            <p className="text-sm text-white/65">Based in Glastonbury, serving communities across the county we call home.</p>
+          </div>
+
+          <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6 text-center backdrop-blur transition-all hover:border-white/20 hover:bg-white/[0.05]">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/20">
+              <svg className="h-7 w-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-base font-semibold text-white mb-2">Reliable Service</h3>
+            <p className="text-sm text-white/65">Reminder texts before every visit with easy rescheduling if plans change.</p>
+          </div>
+        </div>
+      </Section>
+
       <Section id="our-team" spacing="relaxed" className="pt-0">
+        <div className="text-center space-y-3 mb-12">
+          <h2 className="text-3xl font-bold text-white md:text-4xl">Meet the crew</h2>
+        </div>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {teamMembers.map(({ slug, ...member }) => (
             <TeamMemberCard key={slug} {...member} />
