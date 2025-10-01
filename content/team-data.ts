@@ -36,6 +36,7 @@ export const teamMembers: TeamMember[] = [
     slug: 'woody',
     name: 'Woody',
     role: 'Senior Window Cleaner',
+    image: '/images/team/woody-window-cleaner.jpg',
     bio: 'Woody leads our core window rounds and is the first face many customers recognise. His sweep through frames, seals, and finials leaves a signature sparkle—and he proactively flags maintenance issues before they escalate.',
     specialties: ['Pure-water rounds', 'Conservatory detailing', 'Preventative reporting'],
   },
