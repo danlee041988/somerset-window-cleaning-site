@@ -246,38 +246,45 @@ export default function BookingFormImproved({
 
       // Try Notion sync (non-blocking)
       try {
+        console.log('🔵 Attempting Notion sync...')
+        const notionPayload = {
+          customer: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            postcode: formData.postcode,
+            address: formData.address,
+          },
+          request: {
+            propertyCategory: formData.propertyCategory,
+            propertyType: formData.propertyStyle,
+            bedrooms: formData.bedrooms,
+            services: formData.services,
+            frequency: formData.frequency,
+            notes: formData.notes || '',
+          },
+          recaptchaToken,
+        }
+        console.log('📤 Notion payload:', notionPayload)
+
         const notionResponse = await fetch('/api/notion/simple-leads', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            customer: {
-              firstName: formData.firstName,
-              lastName: formData.lastName,
-              email: formData.email,
-              phone: formData.phone,
-              postcode: formData.postcode,
-              address: formData.address,
-            },
-            request: {
-              propertyCategory: formData.propertyCategory,
-              propertyType: formData.propertyStyle,
-              bedrooms: formData.bedrooms,
-              services: formData.services,
-              frequency: formData.frequency,
-              notes: formData.notes || '',
-            },
-            recaptchaToken,
-          }),
+          body: JSON.stringify(notionPayload),
         })
+
+        console.log('📥 Notion response status:', notionResponse.status)
 
         if (!notionResponse.ok) {
           const errorText = await notionResponse.text()
-          console.error('Notion sync failed:', notionResponse.status, errorText)
+          console.error('❌ Notion sync failed:', notionResponse.status, errorText)
         } else {
-          console.log('✅ Lead successfully synced to Notion')
+          const responseData = await notionResponse.json()
+          console.log('✅ Lead successfully synced to Notion:', responseData)
         }
       } catch (notionError) {
-        console.error('Notion sync error:', notionError)
+        console.error('❌ Notion sync error:', notionError)
       }
 
       clearFormData('booking-form-improved')

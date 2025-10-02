@@ -154,11 +154,15 @@ export async function POST(request: NextRequest) {
   const perf = new RoutePerformance('/api/notion/simple-leads')
   const log = logger.child({ requestId })
 
+  console.log('🟢 [NOTION API] Request received at /api/notion/simple-leads')
+
   try {
     // Rate limiting
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ||
                request.headers.get('x-real-ip') ||
                'unknown'
+
+    console.log('🔍 [NOTION API] IP:', ip)
 
     const rateLimit = checkRateLimit(`notion-simple-leads:${ip}`, {
       limit: 5,
@@ -201,9 +205,12 @@ export async function POST(request: NextRequest) {
     }
 
     const payloadJson = await request.json()
+    console.log('📦 [NOTION API] Received payload:', JSON.stringify(payloadJson, null, 2))
+
     const parsed = simpleLeadSchema.safeParse(payloadJson)
 
     if (!parsed.success) {
+      console.error('❌ [NOTION API] Validation failed:', parsed.error.flatten())
       log.error('Invalid payload', { errors: parsed.error.flatten() })
       perf.complete(400)
       return NextResponse.json(
@@ -212,6 +219,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    console.log('✅ [NOTION API] Payload validated successfully')
     const lead = parsed.data
 
     // Verify reCAPTCHA
@@ -226,15 +234,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    console.log('📝 [NOTION API] Creating Notion page with data source ID:', dataSourceId)
     log.info('Creating Notion page for simple lead')
+
+    const properties = toProperties(lead)
+    console.log('📋 [NOTION API] Properties:', JSON.stringify(properties, null, 2))
+
     await notion.pages.create({
       parent: {
         type: 'data_source_id',
         data_source_id: dataSourceId,
       },
-      properties: toProperties(lead),
+      properties,
     })
 
+    console.log('✅ [NOTION API] Page created successfully!')
     log.info('Simple lead successfully synced to Notion')
     perf.complete(200)
 
