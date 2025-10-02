@@ -81,7 +81,6 @@ const FREQUENCY_OPTIONS = [
   { id: 'every-4-weeks', label: 'Every 4 weeks', subtitle: 'Most popular', badge: 'Recommended' },
   { id: 'every-8-weeks', label: 'Every 8 weeks', subtitle: 'Great value' },
   { id: 'one-off', label: 'One-off clean', subtitle: 'Single visit' },
-  { id: 'monthly', label: 'Monthly', subtitle: 'Regular service' },
 ]
 
 export default function ServiceSelector({ services, onChange, frequency, onFrequencyChange, className = '' }: ServiceSelectorProps) {
