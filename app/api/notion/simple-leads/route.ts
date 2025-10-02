@@ -71,6 +71,16 @@ const SERVICE_NAME_MAP: Record<string, string> = {
   solar: 'Solar Panel Cleaning',
 }
 
+const COMMERCIAL_TYPE_OPTIONS = [
+  { id: 'office', label: 'Office Building' },
+  { id: 'retail', label: 'Retail Store' },
+  { id: 'restaurant', label: 'Restaurant/Café' },
+  { id: 'warehouse', label: 'Warehouse' },
+  { id: 'school', label: 'School/Education' },
+  { id: 'medical', label: 'Medical Facility' },
+  { id: 'other', label: 'Other' },
+]
+
 const toProperties = (lead: SimpleLead): CreatePageParameters['properties'] => {
   const { customer, request } = lead
   const fullName = `${customer.firstName.trim()} ${customer.lastName.trim()}`.trim()
