@@ -207,13 +207,10 @@ export async function POST(request: NextRequest) {
     const notion = getNotionClient()
     const databaseId = getWebsiteCustomersDatabaseId()
 
-    if (!notion || !databaseId) {
-      log.error('Notion not configured')
-      perf.complete(503)
-      return NextResponse.json(
-        { error: 'notion_unavailable', message: 'Notion is not configured.' },
-        { status: 503, headers: { 'X-Request-ID': requestId } }
-      )
+    // Make Notion optional - don't fail if not configured
+    const notionConfigured = notion && databaseId
+    if (!notionConfigured) {
+      log.warn('Notion not configured - skipping Notion sync')
     }
 
     const payloadJson = await request.json()
@@ -246,26 +243,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('📝 [NOTION API] Creating Notion page')
-    log.info('Creating Notion page for simple lead')
+    // Only sync to Notion if configured
+    if (notionConfigured) {
+      console.log('📝 [NOTION API] Creating Notion page')
+      log.info('Creating Notion page for simple lead')
 
-    const properties = toProperties(lead)
-    console.log('📋 [NOTION API] Properties:', JSON.stringify(properties, null, 2))
+      const properties = toProperties(lead)
+      console.log('📋 [NOTION API] Properties:', JSON.stringify(properties, null, 2))
 
-    await notion.pages.create({
-      parent: {
-        type: 'database_id',
-        database_id: databaseId,
-      },
-      properties,
-    })
+      await notion.pages.create({
+        parent: {
+          type: 'database_id',
+          database_id: databaseId,
+        },
+        properties,
+      })
 
-    console.log('✅ [NOTION API] Page created successfully!')
-    log.info('Simple lead successfully synced to Notion')
+      console.log('✅ [NOTION API] Page created successfully!')
+      log.info('Simple lead successfully synced to Notion')
+    } else {
+      console.log('⚠️  [NOTION API] Notion not configured - skipping database sync')
+      log.info('Lead processed but not synced to Notion (not configured)')
+    }
+
     perf.complete(200)
 
     return NextResponse.json(
-      { ok: true },
+      { ok: true, notionSynced: notionConfigured },
       { headers: { 'X-Request-ID': requestId } }
     )
   } catch (error) {
