@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('📝 [NOTION API] Creating Notion page with data source ID:', dataSourceId)
+    console.log('📝 [NOTION API] Creating Notion page')
     log.info('Creating Notion page for simple lead')
 
     const properties = toProperties(lead)
@@ -254,8 +254,8 @@ export async function POST(request: NextRequest) {
 
     await notion.pages.create({
       parent: {
-        type: 'data_source_id',
-        data_source_id: dataSourceId,
+        type: 'database_id',
+        database_id: databaseId,
       },
       properties,
     })
