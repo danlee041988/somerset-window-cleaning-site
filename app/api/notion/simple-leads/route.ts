@@ -25,6 +25,9 @@ const simpleLeadSchema = z.object({
     propertyCategory: z.union([z.literal('residential'), z.literal('commercial')]),
     propertyType: z.string(),
     bedrooms: z.string(),
+    hasExtension: z.boolean().optional(),
+    hasConservatory: z.boolean().optional(),
+    commercialType: z.string().optional(),
     services: z.array(z.string()),
     frequency: z.string(),
     notes: z.string().optional(),
@@ -79,7 +82,13 @@ const toProperties = (lead: SimpleLead): CreatePageParameters['properties'] => {
   const servicesMultiSelect = servicesList.map((name) => ({ name }))
 
   // Build property summary
-  const propertySummary = `${request.propertyType} (${request.bedrooms} bedrooms)`
+  const propertyExtras = []
+  if (request.hasExtension) propertyExtras.push('Extension')
+  if (request.hasConservatory) propertyExtras.push('Conservatory')
+
+  const propertySummary = request.propertyCategory === 'residential'
+    ? `${request.propertyType} (${request.bedrooms} bedrooms)${propertyExtras.length ? ' + ' + propertyExtras.join(', ') : ''}`
+    : `${request.commercialType || 'Commercial'} property`
 
   // Build services summary
   const servicesSummary = [
@@ -87,13 +96,17 @@ const toProperties = (lead: SimpleLead): CreatePageParameters['properties'] => {
     `Services: ${servicesList.join(', ')}`,
     `Property: ${propertySummary}`,
     request.propertyCategory === 'residential' ? `Bedrooms: ${request.bedrooms}` : undefined,
+    request.propertyCategory === 'commercial' && request.commercialType ? `Commercial Type: ${COMMERCIAL_TYPE_OPTIONS.find(t => t.id === request.commercialType)?.label || request.commercialType}` : undefined,
     `Frequency: ${FREQUENCY_MAP[request.frequency] || request.frequency}`,
   ]
     .filter(Boolean)
     .join('\n')
 
   // Build notes
-  const notes = request.notes?.trim() ? `Customer notes: ${request.notes.trim()}` : ''
+  const notesParts = []
+  if (request.notes?.trim()) notesParts.push(`Customer notes: ${request.notes.trim()}`)
+  if (propertyExtras.length) notesParts.push(`Property extras: ${propertyExtras.join(', ')}`)
+  const notes = notesParts.join('\n\n')
 
   return {
     Name: {

@@ -30,6 +30,9 @@ interface FormData {
   propertyCategory: PropertyCategory
   propertyStyle: string
   bedrooms: string
+  hasExtension: boolean
+  hasConservatory: boolean
+  commercialType: string
 
   // Step 2: Services & Frequency
   services: string[]
@@ -50,6 +53,9 @@ const INITIAL_FORM_DATA: FormData = {
   propertyCategory: 'residential',
   propertyStyle: 'semi',
   bedrooms: '3',
+  hasExtension: false,
+  hasConservatory: false,
+  commercialType: '',
   services: ['windows'],
   frequency: 'every-4-weeks',
   notes: '',
@@ -69,6 +75,24 @@ const PROPERTY_STYLE_OPTIONS = [
   { id: 'bungalow', label: 'Bungalow' },
   { id: 'flat', label: 'Flat/Apartment' },
   { id: 'townhouse', label: 'Townhouse' },
+]
+
+const BEDROOM_OPTIONS = [
+  { id: '1-2', label: '1-2' },
+  { id: '3', label: '3' },
+  { id: '4', label: '4' },
+  { id: '5', label: '5' },
+  { id: '6+', label: '6+' },
+]
+
+const COMMERCIAL_TYPE_OPTIONS = [
+  { id: 'office', label: 'Office Building' },
+  { id: 'retail', label: 'Retail Store' },
+  { id: 'restaurant', label: 'Restaurant/Café' },
+  { id: 'warehouse', label: 'Warehouse' },
+  { id: 'school', label: 'School/Education' },
+  { id: 'medical', label: 'Medical Facility' },
+  { id: 'other', label: 'Other' },
 ]
 
 const FREQUENCY_OPTIONS = [
@@ -260,6 +284,9 @@ export default function BookingFormImproved({
             propertyCategory: formData.propertyCategory,
             propertyType: formData.propertyStyle,
             bedrooms: formData.bedrooms,
+            hasExtension: formData.hasExtension,
+            hasConservatory: formData.hasConservatory,
+            commercialType: formData.commercialType,
             services: formData.services,
             frequency: formData.frequency,
             notes: formData.notes || '',
@@ -389,47 +416,97 @@ export default function BookingFormImproved({
 
               {/* Residential-specific fields */}
               {formData.propertyCategory === 'residential' && (
-                <div>
+                <div className="space-y-6">
                   <h3 className="text-lg font-medium text-white mb-4">Tell us more</h3>
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <div>
-                      <label className="mb-3 block text-sm font-medium text-white/80">Property Type</label>
-                      <select
-                        value={formData.propertyStyle}
-                        onChange={(e) => updateField('propertyStyle', e.target.value)}
-                        className="w-full rounded-xl border-2 border-white/10 bg-white/5 px-4 py-3 text-white transition focus:border-brand-red focus:outline-none focus:ring-4 focus:ring-brand-red/20"
-                      >
-                        {PROPERTY_STYLE_OPTIONS.map((style) => (
-                          <option key={style.id} value={style.id} className="bg-brand-black">
-                            {style.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
 
-                    <div>
-                      <label className="mb-3 block text-sm font-medium text-white/80">Bedrooms</label>
-                      <select
-                        value={formData.bedrooms}
-                        onChange={(e) => updateField('bedrooms', e.target.value)}
-                        className="w-full rounded-xl border-2 border-white/10 bg-white/5 px-4 py-3 text-white transition focus:border-brand-red focus:outline-none focus:ring-4 focus:ring-brand-red/20"
-                      >
-                        <option value="1-2" className="bg-brand-black">
-                          1-2 bedrooms
-                        </option>
-                        <option value="3" className="bg-brand-black">
-                          3 bedrooms
-                        </option>
-                        <option value="4" className="bg-brand-black">
-                          4 bedrooms
-                        </option>
-                        <option value="5" className="bg-brand-black">
-                          5 bedrooms
-                        </option>
-                        <option value="6+" className="bg-brand-black">
-                          6+ bedrooms
-                        </option>
-                      </select>
+                  {/* Property Type Tabs */}
+                  <div>
+                    <label className="mb-3 block text-sm font-medium text-white/80">Property Type</label>
+                    <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+                      {PROPERTY_STYLE_OPTIONS.map((style) => (
+                        <button
+                          key={style.id}
+                          type="button"
+                          onClick={() => updateField('propertyStyle', style.id)}
+                          className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition ${
+                            formData.propertyStyle === style.id
+                              ? 'border-brand-red bg-brand-red/20 text-white'
+                              : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:bg-white/10'
+                          }`}
+                        >
+                          {style.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Bedrooms Tabs */}
+                  <div>
+                    <label className="mb-3 block text-sm font-medium text-white/80">Bedrooms</label>
+                    <div className="flex gap-2">
+                      {BEDROOM_OPTIONS.map((bedroom) => (
+                        <button
+                          key={bedroom.id}
+                          type="button"
+                          onClick={() => updateField('bedrooms', bedroom.id)}
+                          className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-medium transition ${
+                            formData.bedrooms === bedroom.id
+                              ? 'border-brand-red bg-brand-red/20 text-white'
+                              : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:bg-white/10'
+                          }`}
+                        >
+                          {bedroom.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Extension & Conservatory */}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-white/10 bg-white/5 p-4 transition hover:border-white/20 hover:bg-white/10">
+                      <input
+                        type="checkbox"
+                        checked={formData.hasExtension}
+                        onChange={(e) => updateField('hasExtension', e.target.checked)}
+                        className="h-5 w-5 rounded border-white/20 bg-white/10 text-brand-red focus:ring-2 focus:ring-brand-red focus:ring-offset-0"
+                      />
+                      <span className="text-sm font-medium text-white">Has Extension</span>
+                    </label>
+
+                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-white/10 bg-white/5 p-4 transition hover:border-white/20 hover:bg-white/10">
+                      <input
+                        type="checkbox"
+                        checked={formData.hasConservatory}
+                        onChange={(e) => updateField('hasConservatory', e.target.checked)}
+                        className="h-5 w-5 rounded border-white/20 bg-white/10 text-brand-red focus:ring-2 focus:ring-brand-red focus:ring-offset-0"
+                      />
+                      <span className="text-sm font-medium text-white">Has Conservatory</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Commercial-specific fields */}
+              {formData.propertyCategory === 'commercial' && (
+                <div>
+                  <h3 className="text-lg font-medium text-white mb-4">Commercial Property Details</h3>
+                  <div>
+                    <label className="mb-3 block text-sm font-medium text-white/80">Type of Commercial Property</label>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      {COMMERCIAL_TYPE_OPTIONS.map((type) => (
+                        <button
+                          key={type.id}
+                          type="button"
+                          onClick={() => updateField('commercialType', type.id)}
+                          className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition ${
+                            formData.commercialType === type.id
+                              ? 'border-brand-red bg-brand-red/20 text-white'
+                              : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:bg-white/10'
+                          }`}
+                        >
+                          {type.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </div>
