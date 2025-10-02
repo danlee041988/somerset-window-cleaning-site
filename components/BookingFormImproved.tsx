@@ -56,7 +56,7 @@ const INITIAL_FORM_DATA: FormData = {
   hasExtension: false,
   hasConservatory: false,
   commercialType: '',
-  services: ['windows'],
+  services: [],
   frequency: 'every-4-weeks',
   notes: '',
   firstName: '',
