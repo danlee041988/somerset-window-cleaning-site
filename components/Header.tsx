@@ -118,14 +118,6 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-3 lg:hidden">
-            <HeaderCallButton className="hidden sm:inline-flex" />
-            <a
-              href="tel:01458860339"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:border-brand-red/50 hover:bg-brand-red/20 sm:hidden"
-              aria-label="Call us"
-            >
-              <PhoneIcon className="h-5 w-5" />
-            </a>
             <button
               aria-label="Toggle menu"
               aria-expanded={open}
