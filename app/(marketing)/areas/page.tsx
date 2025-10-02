@@ -6,7 +6,7 @@ import { POSTCODE_AREAS } from '@/content/service-areas'
 export const metadata = {
   title: 'Areas We Cover | Somerset Window Cleaning Service Areas',
   description:
-    'Professional window cleaning across Somerset. Covering Wells, Glastonbury, Taunton, Bridgwater, Weston-super-Mare and 30+ towns. Check if we cover your area.',
+    'Professional window cleaning across Somerset. Covering Glastonbury, Taunton, Bridgwater, Weston-super-Mare and 30+ towns. Check if we cover your area.',
 }
 
 export default function AreasPage() {
@@ -55,7 +55,7 @@ export default function AreasPage() {
                   <span>{data.name}</span>
                 </h2>
                 <p className="text-white/70 text-sm md:text-base max-w-3xl">
-                  {prefix === 'BA' && 'Wells, Glastonbury, Street, Castle Cary, Frome, and the Mendip villages.'}
+                  {prefix === 'BA' && 'Glastonbury, Street, Castle Cary, Frome, and the Mendip villages.'}
                   {prefix === 'BS' && 'Weston-super-Mare, Clevedon, Cheddar, Axbridge, Wedmore, and coastal North Somerset.'}
                   {prefix === 'TA' && 'Taunton, Bridgwater, Burnham-on-Sea, Highbridge, Ilminster, Chard, and West Somerset.'}
                   {prefix === 'DT' && 'Sherborne and Dorset border villages.'}
@@ -65,23 +65,17 @@ export default function AreasPage() {
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {data.areas.map((area) => {
                   const quoteHref = `/book-appointment?intent=quote&postcode=${area.code}&coverageArea=${encodeURIComponent(area.town)}`
-                  const hasDetailPage = area.code === 'BA5' // Only Wells has a detail page currently
 
                   return (
                     <Link
                       key={area.code}
-                      href={hasDetailPage ? '/areas/wells-ba5' : quoteHref}
+                      href={quoteHref}
                       className="group block rounded-lg border border-white/10 bg-white/5 p-3 transition-all hover:border-brand-red/40 hover:bg-white/10 hover:shadow-lg"
                     >
                       <div className="flex items-start justify-between gap-2 mb-1">
                         <div className="font-semibold text-white text-sm group-hover:text-brand-red transition-colors">
                           {area.town}
                         </div>
-                        {hasDetailPage && (
-                          <span className="text-xs text-brand-red font-semibold">
-                            →
-                          </span>
-                        )}
                       </div>
                       <div className="text-xs font-mono text-white/50">
                         {area.code}
@@ -97,38 +91,6 @@ export default function AreasPage() {
               </div>
             </div>
           ))}
-        </div>
-      </Section>
-
-      {/* Featured Areas - Wells Only (with detail page) */}
-      <Section
-        title="Explore Local Guides"
-        subtitle="Detailed information for select areas"
-        spacing="relaxed"
-      >
-        <div className="rounded-2xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-transparent p-8 md:p-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-3">
-                Window Cleaning in Wells (BA5)
-              </h3>
-              <p className="text-white/80 leading-relaxed max-w-2xl">
-                Our Wells window cleaners serve the cathedral city, surrounding villages, and period properties. Read our complete local guide with pricing, testimonials, and area-specific information.
-              </p>
-            </div>
-            <Button
-              href="/areas/wells-ba5"
-              variant="primary"
-              className="whitespace-nowrap"
-            >
-              View Wells Guide
-            </Button>
-          </div>
-          <div className="mt-6 rounded-lg border border-white/10 bg-black/20 p-4">
-            <p className="text-sm text-white/60">
-              <strong className="text-white">More local guides coming soon.</strong> We&apos;re creating detailed area pages for Glastonbury, Taunton, Bridgwater, and other high-demand locations.
-            </p>
-          </div>
         </div>
       </Section>
 
