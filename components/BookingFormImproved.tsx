@@ -246,7 +246,7 @@ export default function BookingFormImproved({
 
       // Try Notion sync (non-blocking)
       try {
-        const notionResponse = await fetch('/api/notion/leads', {
+        const notionResponse = await fetch('/api/notion/simple-leads', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -264,7 +264,7 @@ export default function BookingFormImproved({
               bedrooms: formData.bedrooms,
               services: formData.services,
               frequency: formData.frequency,
-              notes: formData.notes,
+              notes: formData.notes || '',
             },
             recaptchaToken,
           }),
@@ -272,7 +272,9 @@ export default function BookingFormImproved({
 
         if (!notionResponse.ok) {
           const errorText = await notionResponse.text()
-          console.error('Notion sync failed with response:', notionResponse.status, errorText)
+          console.error('Notion sync failed:', notionResponse.status, errorText)
+        } else {
+          console.log('✅ Lead successfully synced to Notion')
         }
       } catch (notionError) {
         console.error('Notion sync error:', notionError)
