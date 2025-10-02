@@ -224,6 +224,9 @@ export default function BookingFormImproved({
         property_category: formData.propertyCategory,
         property_type: formData.propertyStyle,
         property_size: formData.bedrooms,
+        has_extension: formData.hasExtension ? 'Yes' : '',
+        has_conservatory: formData.hasConservatory ? 'Yes' : '',
+        commercial_type: formData.commercialType || '',
         service_frequency: formData.frequency,
         services_list: formData.services.join(', '),
         notes: formData.notes || 'No additional notes',
@@ -231,7 +234,7 @@ export default function BookingFormImproved({
         'g-recaptcha-response': recaptchaToken,
         intent: 'quote',
         intent_label: 'Quote request',
-        email_subject: `Quote request – ${formData.firstName} ${formData.lastName} (${formData.postcode.toUpperCase()})`,
+        email_subject: `${formData.firstName} ${formData.lastName} - ${formData.postcode.toUpperCase()} - ${formData.services.join(', ')} - ${formData.frequency}`,
       }
 
       // Use direct fetch to avoid SameSite cookie issues with EmailJS SDK
