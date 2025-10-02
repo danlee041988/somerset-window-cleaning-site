@@ -29,11 +29,12 @@ export async function verifyRecaptchaToken(
 ): Promise<{ valid: boolean; error?: string; score?: number }> {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY
 
+  // Make reCAPTCHA optional - allow submission if not configured
   if (!secretKey) {
-    console.error('RECAPTCHA_SECRET_KEY is not configured')
+    console.warn('RECAPTCHA_SECRET_KEY is not configured - skipping reCAPTCHA verification')
     return {
-      valid: false,
-      error: 'Server configuration error',
+      valid: true, // Allow submission when reCAPTCHA is not configured
+      error: undefined,
     }
   }
 
