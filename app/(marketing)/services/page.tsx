@@ -215,9 +215,9 @@ export default function ServicesPage() {
           <div className="feature-card__content grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="space-y-6 p-8 md:p-12">
               <span className="feature-chip feature-chip--accent">Ready when you are</span>
-              <h3 className="text-3xl font-semibold text-white md:text-4xl">Let's get your next quote prepared</h3>
+              <h3 className="text-3xl font-semibold text-white md:text-4xl">Let&apos;s get your next quote prepared</h3>
               <p className="text-white/75 text-base leading-relaxed">
-                Share your preferred timing, add access notes, and we'll confirm availability with reminders plus contactless payment links after each visit.
+                Share your preferred timing, add access notes, and we&apos;ll confirm availability with reminders plus contactless payment links after each visit.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button href="/book-appointment" className="rounded-full px-6 py-2.5 text-sm font-semibold uppercase tracking-wide">
