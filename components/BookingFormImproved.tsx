@@ -205,6 +205,7 @@ export default function BookingFormImproved({
         services_list: formData.services.join(', '),
         notes: formData.notes || 'No additional notes',
         recaptcha_token: recaptchaToken,
+        'g-recaptcha-response': recaptchaToken,
         intent: 'quote',
         intent_label: 'Quote request',
         email_subject: `Quote request – ${formData.firstName} ${formData.lastName} (${formData.postcode.toUpperCase()})`,
