@@ -463,7 +463,11 @@ export default function BookingFormImproved({
 
                   {/* Extension & Conservatory */}
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-white/10 bg-white/5 p-4 transition hover:border-white/20 hover:bg-white/10">
+                    <label className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition ${
+                      formData.hasExtension
+                        ? 'border-brand-red bg-brand-red/20'
+                        : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                    }`}>
                       <input
                         type="checkbox"
                         checked={formData.hasExtension}
@@ -473,7 +477,11 @@ export default function BookingFormImproved({
                       <span className="text-sm font-medium text-white">Has Extension</span>
                     </label>
 
-                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-white/10 bg-white/5 p-4 transition hover:border-white/20 hover:bg-white/10">
+                    <label className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition ${
+                      formData.hasConservatory
+                        ? 'border-brand-red bg-brand-red/20'
+                        : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                    }`}>
                       <input
                         type="checkbox"
                         checked={formData.hasConservatory}
