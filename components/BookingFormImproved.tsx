@@ -292,17 +292,17 @@ export default function BookingFormImproved({
 
   if (status === 'success') {
     return (
-      <div className={`rounded-3xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-brand-red/5 p-8 text-center ${className}`}>
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/20">
-          <svg className="h-8 w-8 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className={`rounded-3xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-brand-red/5 p-8 text-center ${className} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/20 animate-in zoom-in duration-700 delay-150">
+          <svg className="h-8 w-8 text-brand-red animate-in zoom-in duration-500 delay-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-white">Request Received!</h2>
-        <p className="mt-3 leading-relaxed-body text-white/70">
+        <h2 className="text-2xl font-bold text-white animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">Request Received!</h2>
+        <p className="mt-3 leading-relaxed-body text-white/70 animate-in fade-in duration-500 delay-300">
           Thank you! We&apos;ll review your request and get back to you within one working day with tailored pricing and scheduling options.
         </p>
-        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-left text-sm">
+        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-left text-sm animate-in fade-in slide-in-from-bottom-2 duration-500 delay-400">
           <p className="font-semibold text-white">What we captured:</p>
           <ul className="mt-2 space-y-1 leading-relaxed-body text-white/70">
             <li>• Property: {formData.propertyStyle} ({formData.bedrooms} bedrooms)</li>
@@ -310,7 +310,7 @@ export default function BookingFormImproved({
             <li>• Frequency: {FREQUENCY_OPTIONS.find((f) => f.id === formData.frequency)?.label}</li>
           </ul>
         </div>
-        <Button onClick={() => setStatus('idle')} className="mt-6">
+        <Button onClick={() => setStatus('idle')} className="mt-6 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-500">
           Send Another Request
         </Button>
       </div>
