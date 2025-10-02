@@ -16,8 +16,8 @@ export const getNotionClient = (): Client | null => {
   if (!global.__notionClient) {
     global.__notionClient = new Client({
       auth: token,
-      // Use latest API version for data_source support
-      notionVersion: '2025-09-03'
+      // Use stable API version
+      notionVersion: '2022-06-28'
     })
   }
 

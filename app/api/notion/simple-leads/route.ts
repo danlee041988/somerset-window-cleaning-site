@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import type { CreatePageParameters } from '@notionhq/client/build/src/api-endpoints'
-import { getNotionClient, getWebsiteCustomersDatabaseId, getWebsiteCustomersDataSourceId } from '@/lib/server/notion'
+import { getNotionClient, getWebsiteCustomersDatabaseId } from '@/lib/server/notion'
 import { verifyRecaptchaToken } from '@/lib/security/recaptcha'
 import { checkRateLimit } from '@/lib/security/rate-limit'
 import { getOrCreateRequestId } from '@/lib/security/request-id'
@@ -212,17 +212,6 @@ export async function POST(request: NextRequest) {
       perf.complete(503)
       return NextResponse.json(
         { error: 'notion_unavailable', message: 'Notion is not configured.' },
-        { status: 503, headers: { 'X-Request-ID': requestId } }
-      )
-    }
-
-    const dataSourceId = await getWebsiteCustomersDataSourceId()
-
-    if (!dataSourceId) {
-      log.error('Failed to get Notion data source ID')
-      perf.complete(503)
-      return NextResponse.json(
-        { error: 'notion_configuration_error', message: 'Could not retrieve Notion data source.' },
         { status: 503, headers: { 'X-Request-ID': requestId } }
       )
     }

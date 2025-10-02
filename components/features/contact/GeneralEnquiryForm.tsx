@@ -343,7 +343,7 @@ export default function GeneralEnquiryForm({ defaultService }: GeneralEnquiryFor
           <div>
             <label className="mb-2 block text-sm font-medium text-white/90">What do you need help with? *</label>
             <select
-              className="w-full rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-white transition focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
+              className="w-full rounded-lg border border-white/20 bg-black px-4 py-3 text-white transition focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
               {...register('service_interest', { required: true })}
             >
               {SERVICE_OPTIONS.map((service) => (
