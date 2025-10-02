@@ -330,7 +330,7 @@ export default function BookingFormImproved({
 
   if (status === 'success') {
     return (
-      <div className={`rounded-3xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-brand-red/5 p-8 text-center ${className} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
+      <div className={`mx-auto max-w-2xl rounded-3xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-brand-red/5 p-8 text-center ${className} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/20 animate-in zoom-in duration-700 delay-150">
           <svg className="h-8 w-8 text-brand-red animate-in zoom-in duration-500 delay-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
