@@ -210,9 +210,24 @@ export default function BookingFormImproved({
         email_subject: `Quote request – ${formData.firstName} ${formData.lastName} (${formData.postcode.toUpperCase()})`,
       }
 
-      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, {
-        publicKey: PUBLIC_KEY,
+      // Use direct fetch to avoid SameSite cookie issues with EmailJS SDK
+      const emailResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          service_id: SERVICE_ID,
+          template_id: TEMPLATE_ID,
+          user_id: PUBLIC_KEY,
+          template_params: templateParams,
+        }),
       })
+
+      if (!emailResponse.ok) {
+        const errorText = await emailResponse.text()
+        throw new Error(`EmailJS failed: ${emailResponse.status} - ${errorText}`)
+      }
 
       // Track success
       analytics.formSubmit({
@@ -230,7 +245,7 @@ export default function BookingFormImproved({
 
       // Try Notion sync (non-blocking)
       try {
-        await fetch('/api/notion/leads', {
+        const notionResponse = await fetch('/api/notion/leads', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -253,8 +268,13 @@ export default function BookingFormImproved({
             recaptchaToken,
           }),
         })
+
+        if (!notionResponse.ok) {
+          const errorText = await notionResponse.text()
+          console.error('Notion sync failed with response:', notionResponse.status, errorText)
+        }
       } catch (notionError) {
-        console.error('Notion sync failed:', notionError)
+        console.error('Notion sync error:', notionError)
       }
 
       clearFormData('booking-form-improved')
