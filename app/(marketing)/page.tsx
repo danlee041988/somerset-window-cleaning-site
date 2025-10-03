@@ -78,11 +78,11 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-4 md:max-w-3xl">
-            <h1 className="text-4xl font-extrabold tracking-tight text-[var(--fg)] md:text-6xl">
+            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-[var(--fg)] md:text-6xl md:leading-[1.15] mb-6">
               Request your window clean in minutes
             </h1>
             <p className="max-w-2xl text-lg noir-muted">
-              Tell us about the property, choose the services you need, and we’ll confirm pricing and scheduling details by the next working day.
+              Tell us about the property, choose the services you need, and we&apos;ll confirm pricing and scheduling details by the next working day.
             </p>
           </div>
 

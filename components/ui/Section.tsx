@@ -6,7 +6,7 @@ const spacingClasses: Record<SpacingVariant, string> = {
   compact: 'py-8 md:py-12',
   normal: 'py-12 md:py-16',
   relaxed: 'py-16 md:py-24',
-  generous: 'py-20 md:py-32',
+  generous: 'py-16 md:py-24',
 }
 
 type SectionProps = {

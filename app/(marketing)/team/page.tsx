@@ -112,7 +112,7 @@ export default function TeamPage() {
           </div>
 
           <header className="space-y-4 md:max-w-3xl">
-            <h1 className="text-4xl font-extrabold tracking-tight text-[var(--fg)] md:text-6xl">
+            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-[var(--fg)] md:text-6xl md:leading-[1.15] mb-6">
               Meet the Somerset Window Cleaning team
             </h1>
             <p className="max-w-2xl text-lg noir-muted">

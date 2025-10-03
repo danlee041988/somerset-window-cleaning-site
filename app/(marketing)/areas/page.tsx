@@ -18,7 +18,7 @@ export default function AreasPage() {
       {/* Hero Section */}
       <Section spacing="relaxed" className="pt-32 md:pt-40">
         <div className="mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight text-white md:leading-[1.2] mb-6">
             Professional Window Cleaning Across Somerset
           </h1>
           <p className="text-white/80 text-lg md:text-xl leading-relaxed mb-8">

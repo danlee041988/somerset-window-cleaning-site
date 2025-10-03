@@ -1,6 +1,6 @@
 /**
- * Sentry Client Configuration
- * Tracks errors and performance in the browser
+ * Client-side Instrumentation
+ * Used for browser-side initialization
  */
 
 import * as Sentry from '@sentry/nextjs'
@@ -55,3 +55,6 @@ if (SENTRY_ENABLED && SENTRY_DSN) {
     ],
   })
 }
+
+// Export router transition hook for navigation instrumentation
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart

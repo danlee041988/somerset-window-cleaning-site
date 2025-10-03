@@ -61,7 +61,7 @@ export default function PropertyTypeSelector({
               key={option.id}
               type="button"
               onClick={() => onChange(option.id)}
-              className={`group relative overflow-hidden rounded-2xl border-2 p-6 text-left transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-red/30 ${
+              className={`group relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-red/30 ${
                 isSelected
                   ? 'border-brand-red bg-brand-red/10 shadow-lg shadow-brand-red/20'
                   : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import type { CreatePageParameters } from '@notionhq/client/build/src/api-endpoints'
-import { getNotionClient, getWebsiteCustomersDatabaseId, getWebsiteCustomersDataSourceId } from '@/lib/server/notion'
+import { getNotionClient, getWebsiteCustomersDatabaseId } from '@/lib/server/notion'
 import { verifyRecaptchaToken } from '@/lib/security/recaptcha'
 import { checkRateLimit } from '@/lib/security/rate-limit'
 import { getOrCreateRequestId } from '@/lib/security/request-id'
@@ -248,9 +248,9 @@ const toProperties = (payload: Payload): NotionPageProperties => {
     'Date & Time Submitted (UK Format)': {
       rich_text: toRichText(formatUkDateTime(submittedAt)),
     },
-    'Customer Reference Number': {
-      rich_text: toRichText(customerReference),
-    },
+    // 'Customer Reference Number': {
+    //   rich_text: toRichText(customerReference),
+    // },
   }
 }
 
@@ -311,24 +311,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get data source ID for new Notion API version (2025-09-03)
-    const dataSourceId = await getWebsiteCustomersDataSourceId()
-
-    if (!dataSourceId) {
-      log.error('Failed to get Notion data source ID')
-      perf.complete(503)
-      return NextResponse.json(
-        {
-          error: 'notion_configuration_error',
-          message: 'Could not retrieve Notion data source. Check database permissions.',
-        },
-        {
-          status: 503,
-          headers: { 'X-Request-ID': requestId },
-        }
-      )
-    }
-
     const payloadJson = await request.json()
     const parsed = payloadSchema.safeParse(payloadJson)
 
@@ -375,11 +357,11 @@ export async function POST(request: NextRequest) {
     log.info('reCAPTCHA verified successfully', { score: recaptchaResult.score })
 
     perf.mark('notion-create-start')
-    log.info('Creating Notion page', { dataSourceId })
+    log.info('Creating Notion page', { databaseId })
     await notion.pages.create({
       parent: {
-        type: 'data_source_id',
-        data_source_id: dataSourceId,  // Required for API version 2025-09-03+
+        type: 'database_id',
+        database_id: databaseId,  // Standard approach for API version 2022-06-28
       },
       properties: toProperties(payload),
     })
