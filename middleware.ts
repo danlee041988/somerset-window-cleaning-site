@@ -22,6 +22,11 @@ export function middleware(request: NextRequest) {
     response.headers.set('Strict-Transport-Security', STRICT_TRANSPORT_SECURITY)
   }
 
+  // Apply all security headers from config
+  securityHeadersConfig.headers.forEach((header) => {
+    response.headers.set(header.key, header.value)
+  })
+
   return response
 }
 
