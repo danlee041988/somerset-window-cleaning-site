@@ -166,9 +166,10 @@ const toProperties = (lead: SimpleLead): CreatePageParameters['properties'] => {
         new Date(submittedAt).toLocaleString('en-GB', { timeZone: 'Europe/London' })
       ),
     },
-    'Customer Reference Number': {
-      rich_text: toRichText(customerReference),
-    },
+    // Customer Reference Number field removed - doesn't exist in database
+    // 'Customer Reference Number': {
+    //   rich_text: toRichText(customerReference),
+    // },
   }
 }
 

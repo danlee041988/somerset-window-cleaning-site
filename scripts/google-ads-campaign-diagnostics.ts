@@ -14,6 +14,39 @@ const __dirname = path.dirname(__filename)
 
 dotenv.config({ path: path.join(__dirname, '..', '.env.local') })
 
+// Enum mappings for human-readable labels
+const CAMPAIGN_STATUS: Record<number, string> = {
+  0: 'UNSPECIFIED',
+  1: 'UNKNOWN',
+  2: 'ENABLED',
+  3: 'PAUSED',
+  4: 'REMOVED',
+}
+
+const KEYWORD_STATUS: Record<number, string> = {
+  0: 'UNSPECIFIED',
+  1: 'UNKNOWN',
+  2: 'ENABLED',
+  3: 'PAUSED',
+  4: 'REMOVED',
+}
+
+const AD_STATUS: Record<number, string> = {
+  0: 'UNSPECIFIED',
+  1: 'UNKNOWN',
+  2: 'ENABLED',
+  3: 'PAUSED',
+  4: 'REMOVED',
+}
+
+const APPROVAL_STATUS: Record<number, string> = {
+  0: 'UNSPECIFIED',
+  1: 'UNKNOWN',
+  2: 'APPROVED',
+  3: 'DISAPPROVED',
+  4: 'APPROVED_LIMITED',
+}
+
 const customerId = process.env.GOOGLE_ADS_CUSTOMER_ID!
 const api = new GoogleAdsApi({
   client_id: process.env.GOOGLE_ADS_CLIENT_ID!,
@@ -73,7 +106,7 @@ async function runDiagnostics() {
     totalClicks += clicks
 
     console.log(`📌 ${campaign.name}`)
-    console.log(`   Status: ${campaign.status}`)
+    console.log(`   Status: ${CAMPAIGN_STATUS[campaign.status] || campaign.status} (${campaign.status})`)
     console.log(`   Budget: £${budgetGbp.toFixed(2)}/day`)
     console.log(`   Spend: £${spend.toFixed(2)} (${(spend/budgetGbp/7*100).toFixed(1)}% of weekly budget)`)
     console.log(`   Impressions: ${impressions}`)
@@ -123,7 +156,7 @@ async function runDiagnostics() {
 
       console.log(`   "${keyword.keyword?.text}"`)
       console.log(`   Campaign: ${row.campaign.name} | Ad Group: ${row.ad_group.name}`)
-      console.log(`   Status: ${keyword.status} | Quality Score: ${qualityScore} | Bid: £${bid.toFixed(2)}`)
+      console.log(`   Status: ${KEYWORD_STATUS[keyword.status] || keyword.status} (${keyword.status}) | Quality Score: ${qualityScore} | Bid: £${bid.toFixed(2)}`)
       console.log(`   Impressions: ${metrics.impressions} | Clicks: ${metrics.clicks} | Spend: £${spend.toFixed(2)}\n`)
     }
   }
@@ -157,7 +190,7 @@ async function runDiagnostics() {
       const metrics = row.metrics
 
       console.log(`   ${row.campaign.name} > ${row.ad_group.name}`)
-      console.log(`   Type: ${ad.ad?.type} | Status: ${ad.status} | Approval: ${ad.policy_summary?.approval_status}`)
+      console.log(`   Type: ${ad.ad?.type} | Status: ${AD_STATUS[ad.status] || ad.status} (${ad.status}) | Approval: ${APPROVAL_STATUS[ad.policy_summary?.approval_status] || ad.policy_summary?.approval_status} (${ad.policy_summary?.approval_status})`)
       console.log(`   Impressions: ${metrics.impressions} | Clicks: ${metrics.clicks}\n`)
     }
   }

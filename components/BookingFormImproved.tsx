@@ -105,12 +105,14 @@ interface BookingFormImprovedProps {
   defaultAddress?: string
   defaultPostcode?: string
   className?: string
+  onStatusChange?: (status: 'idle' | 'submitting' | 'success' | 'error') => void
 }
 
 export default function BookingFormImproved({
   defaultAddress = '',
   defaultPostcode = '',
   className = '',
+  onStatusChange,
 }: BookingFormImprovedProps) {
   const [step, setStep] = React.useState<Step>(1)
   const [formData, setFormData] = React.useState<FormData>({
@@ -328,29 +330,184 @@ export default function BookingFormImproved({
     }
   }
 
+  // Auto-scroll to top on success
+  React.useEffect(() => {
+    if (status === 'success') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [status])
+
+  // Notify parent component of status changes
+  React.useEffect(() => {
+    onStatusChange?.(status)
+  }, [status, onStatusChange])
+
   if (status === 'success') {
     return (
-      <div className={`mx-auto max-w-2xl rounded-3xl border border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-brand-red/5 p-8 text-center ${className} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/20 animate-in zoom-in duration-700 delay-150">
-          <svg className="h-8 w-8 text-brand-red animate-in zoom-in duration-500 delay-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
+      <div className="animate-in fade-in duration-500">
+        {/* Hero Success Section */}
+        <div className="mx-auto max-w-3xl text-center mb-12">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-red to-brand-red/80 shadow-xl shadow-brand-red/20 animate-in zoom-in duration-700">
+            <svg className="h-10 w-10 text-white animate-in zoom-in duration-500 delay-150" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 animate-in slide-in-from-bottom-4 duration-500 delay-100">
+            Request Received!
+          </h1>
+
+          <p className="text-xl text-white/80 mb-2 animate-in fade-in duration-500 delay-200">
+            Thank you, {formData.firstName}!
+          </p>
+
+          <p className="text-base text-white/60 animate-in fade-in duration-500 delay-300">
+            Confirmation email sent to <span className="text-brand-red font-medium">{formData.email}</span>
+          </p>
         </div>
-        <h2 className="text-2xl font-bold text-white animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">Request Received!</h2>
-        <p className="mt-3 leading-relaxed-body text-white/70 animate-in fade-in duration-500 delay-300">
-          Thank you! We&apos;ll review your request and get back to you within one working day with tailored pricing and scheduling options.
-        </p>
-        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-left text-sm animate-in fade-in slide-in-from-bottom-2 duration-500 delay-400">
-          <p className="font-semibold text-white">What we captured:</p>
-          <ul className="mt-2 space-y-1 leading-relaxed-body text-white/70">
-            <li>• Property: {formData.propertyStyle} ({formData.bedrooms} bedrooms)</li>
-            <li>• Services: {formData.services.join(', ')}</li>
-            <li>• Frequency: {FREQUENCY_OPTIONS.find((f) => f.id === formData.frequency)?.label}</li>
-          </ul>
+
+        {/* What Happens Next Timeline */}
+        <div className="mx-auto max-w-3xl mb-12 animate-in slide-in-from-bottom-4 duration-500 delay-300">
+          <h2 className="text-2xl font-bold text-white mb-6 text-center">What Happens Next</h2>
+
+          <div className="space-y-4">
+            <div className="flex gap-4 p-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-brand-red/30 transition-all">
+              <div className="flex-shrink-0">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-red/20 ring-2 ring-brand-red/30">
+                  <span className="text-lg font-bold text-brand-red">1</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-1">Within 1 Hour</h3>
+                <p className="text-sm text-white/70 leading-relaxed">
+                  You&apos;ll receive a confirmation email with your request details
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 p-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-brand-red/30 transition-all">
+              <div className="flex-shrink-0">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-red/20 ring-2 ring-brand-red/30">
+                  <span className="text-lg font-bold text-brand-red">2</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-1">Within 24 Hours</h3>
+                <p className="text-sm text-white/70 leading-relaxed">
+                  We&apos;ll review your property details and send you a personalized quote with transparent pricing
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 p-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm hover:border-brand-red/30 transition-all">
+              <div className="flex-shrink-0">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-red/20 ring-2 ring-brand-red/30">
+                  <span className="text-lg font-bold text-brand-red">3</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-1">Book Your Clean</h3>
+                <p className="text-sm text-white/70 leading-relaxed">
+                  Choose a date that works for you and we&apos;ll get your windows sparkling
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <Button onClick={() => setStatus('idle')} className="mt-6 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-500">
-          Send Another Request
-        </Button>
+
+        {/* Request Summary */}
+        <div className="mx-auto max-w-3xl mb-12 animate-in slide-in-from-bottom-4 duration-500 delay-400">
+          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6 backdrop-blur-sm">
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <svg className="h-5 w-5 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Your Request Summary
+            </h3>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-white/50 mb-1">Property</p>
+                <p className="text-white font-medium">{formData.propertyStyle}</p>
+                <p className="text-sm text-white/70">{formData.bedrooms} bedrooms</p>
+                {formData.hasExtension && <p className="text-sm text-white/70">• Extension</p>}
+                {formData.hasConservatory && <p className="text-sm text-white/70">• Conservatory</p>}
+              </div>
+
+              <div>
+                <p className="text-sm text-white/50 mb-1">Services Requested</p>
+                <ul className="space-y-1">
+                  {formData.services.map((service) => (
+                    <li key={service} className="text-white font-medium capitalize">• {service}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-sm text-white/50 mb-1">Frequency</p>
+                <p className="text-white font-medium">
+                  {FREQUENCY_OPTIONS.find((f) => f.id === formData.frequency)?.label}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-sm text-white/50 mb-1">Location</p>
+                <p className="text-white font-medium">{formData.postcode}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Social Proof */}
+        <div className="mx-auto max-w-3xl mb-12 animate-in fade-in duration-500 delay-500">
+          <div className="rounded-2xl border border-brand-red/20 bg-gradient-to-br from-brand-red/10 to-brand-red/5 p-6 text-center backdrop-blur-sm">
+            <div className="flex justify-center gap-1 mb-3">
+              {[...Array(5)].map((_, i) => (
+                <svg key={i} className="h-6 w-6 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              ))}
+            </div>
+            <p className="text-white font-semibold mb-2">Rated 5 stars by our customers</p>
+            <p className="text-sm text-white/70 italic">
+              &quot;Professional service, spotless windows every time. The pure water system really works!&quot;
+            </p>
+            <p className="text-xs text-white/50 mt-2">— Sarah M., Taunton</p>
+          </div>
+        </div>
+
+        {/* CTAs */}
+        <div className="mx-auto max-w-3xl grid md:grid-cols-3 gap-4 animate-in fade-in duration-500 delay-600">
+          <a
+            href="/gallery"
+            className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-6 py-4 text-center font-medium text-white transition-all hover:border-brand-red/50 hover:bg-brand-red/10"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            View Our Work
+          </a>
+
+          <a
+            href="/about"
+            className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-6 py-4 text-center font-medium text-white transition-all hover:border-brand-red/50 hover:bg-brand-red/10"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            About Us
+          </a>
+
+          <a
+            href="/services"
+            className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-6 py-4 text-center font-medium text-white transition-all hover:border-brand-red/50 hover:bg-brand-red/10"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Our Services
+          </a>
+        </div>
       </div>
     )
   }

@@ -1,7 +1,7 @@
 {
-  "weekdayBudgetCapGBP": 50,
+  "weekdayBudgetCapGBP": 60,
   "campaigns": [
-    { "name": "Windows – Somerset", "dailyBudgetGBP": 25, "status": "ENABLED" },
+    { "name": "Windows – Somerset", "dailyBudgetGBP": 35, "status": "ENABLED" },
     { "name": "Gutter – Somerset", "dailyBudgetGBP": 10, "status": "ENABLED" },
     { "name": "Conservatory – Somerset", "dailyBudgetGBP": 7, "status": "ENABLED" },
     { "name": "Solar Panels – Somerset", "dailyBudgetGBP": 5, "status": "ENABLED" },

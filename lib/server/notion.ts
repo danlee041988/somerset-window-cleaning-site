@@ -9,19 +9,23 @@ declare global {
 
 export const getNotionClient = (): Client | null => {
   const token = process.env.NOTION_API_TOKEN
+  console.log('[DEBUG] NOTION_API_TOKEN value:', token ? `${token.substring(0, 20)}...` : 'UNDEFINED')
+  console.log('[DEBUG] All NOTION env vars:', {
+    NOTION_API_TOKEN: token ? 'SET' : 'NOT SET',
+    NOTION_WEBSITE_CUSTOMERS_DB_ID: process.env.NOTION_WEBSITE_CUSTOMERS_DB_ID ? 'SET' : 'NOT SET'
+  })
+
   if (!token) {
     return null
   }
 
-  if (!global.__notionClient) {
-    global.__notionClient = new Client({
-      auth: token,
-      // Use stable API version
-      notionVersion: '2022-06-28'
-    })
-  }
-
-  return global.__notionClient
+  // ALWAYS create a new client (don't cache) to pick up environment changes
+  return new Client({
+    auth: token,
+    // Use stable API version (2022-06-28)
+    // Not using 2025-09-03 which requires data_source_id
+    notionVersion: '2022-06-28'
+  })
 }
 
 export const getWebsiteCustomersDatabaseId = (): string => {
