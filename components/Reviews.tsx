@@ -3,6 +3,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import Section from '@/components/ui/Section'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type SectionMode = 'showcase' | 'standalone'
 type ReviewsVariant = 'spotlight' | 'carousel' | 'mosaic'
@@ -301,12 +302,17 @@ function SpotlightReviewSurface({ className }: { className?: string }) {
 }
 
 function CarouselReviewSurface({ className }: { className?: string }) {
-  const ROTATE_INTERVAL = 30000 // Slower rotation: 30 seconds
+  const ROTATE_INTERVAL = 30000
 
   const [activeIndex, setActiveIndex] = React.useState(0)
   const [isPaused, setIsPaused] = React.useState(false)
   const [direction, setDirection] = React.useState<'left' | 'right'>('right')
+  const [isLoading, setIsLoading] = React.useState(true)
   const rotationTimeoutRef = React.useRef<number | null>(null)
+
+  React.useEffect(() => {
+    setIsLoading(false)
+  }, [])
 
   const clearRotationTimeout = React.useCallback(() => {
     if (rotationTimeoutRef.current) {
@@ -351,6 +357,38 @@ function CarouselReviewSurface({ className }: { className?: string }) {
   const supportingReviews = React.useMemo(() => {
     return CAROUSEL_REVIEWS.filter((_, idx) => idx !== activeIndex).slice(0, 2)
   }, [activeIndex])
+
+  if (isLoading) {
+    return (
+      <div className={clsx(
+        'glass-noir-panel rounded-3xl border border-[var(--glass-border)] bg-[var(--glass)] p-8 md:p-12 backdrop-blur-xl overflow-hidden',
+        className,
+      )}>
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-4 w-72" />
+          </div>
+          <div className="flex flex-col items-end gap-3">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-12 w-12 rounded-full" />
+              <Skeleton className="h-12 w-12 rounded-full" />
+            </div>
+            <Skeleton className="h-2 w-24" />
+          </div>
+        </div>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+          <Skeleton className="h-64 rounded-3xl" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Skeleton className="h-48 rounded-3xl" />
+            <Skeleton className="h-48 rounded-3xl" />
+          </div>
+        </div>
+        <Skeleton className="mt-8 h-24 rounded-2xl" />
+      </div>
+    )
+  }
 
   return (
     <div

@@ -25,27 +25,41 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:full": "playwright test --config=playwright.full.config.ts",
     "test:frontend": "playwright test --config=playwright.full.config.ts tests/e2e/frontend-changes.spec.ts",
-    "test:frontend:headed": "playwright test --config=playwright.full.config.ts tests/e2e/frontend-changes.spec.ts --headed"
+    "test:frontend:headed": "playwright test --config=playwright.full.config.ts tests/e2e/frontend-changes.spec.ts --headed",
+    "generate-emails": "tsx scripts/email-outreach/generate-bespoke-emails.ts",
+    "preview-emails": "tsx scripts/email-outreach/send-emails-with-notion.ts --preview",
+    "send-emails": "tsx scripts/email-outreach/send-emails-with-notion.ts",
+    "check-replies": "tsx scripts/email-outreach/check-replies.ts",
+    "manage-drafts": "tsx scripts/email-outreach/manage-drafts.ts"
   },
   "engines": {
     "node": ">=18.17.0"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
     "@emailjs/browser": "^4.4.1",
     "@next/third-parties": "^14.2.5",
     "@notionhq/client": "^5.1.0",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@sentry/nextjs": "^10.17.0",
     "@types/react-google-recaptcha": "^2.1.9",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "csv-parse": "^6.1.0",
     "google-ads-api": "^21.0.1",
     "google-auth-library": "^10.3.0",
     "googleapis": "^160.0.0",
+    "lucide-react": "^0.544.0",
     "next": "^14.2.5",
+    "next-themes": "^0.4.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-recaptcha": "^3.1.0",
     "react-hook-form": "^7.51.5",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7",
+    "tldts": "^7.0.16",
     "zod": "^3.25.76"
   },
   "devDependencies": {

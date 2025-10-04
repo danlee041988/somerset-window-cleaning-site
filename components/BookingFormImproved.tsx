@@ -16,6 +16,7 @@ import { pushToDataLayer } from '@/lib/dataLayer'
 import { saveFormData, loadFormData, clearFormData, formatFormDataAge, getFormDataAge } from '@/lib/form-storage'
 import { getUserFriendlyError } from '@/lib/error-messages'
 import { announceToScreenReader } from '@/lib/accessibility'
+import { toast } from 'sonner'
 
 const SERVICE_ID = (process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '').trim()
 const TEMPLATE_ID = (process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_booking_form').trim()
@@ -121,7 +122,6 @@ export default function BookingFormImproved({
     postcode: defaultPostcode.toUpperCase(),
   })
   const [status, setStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
   const [recaptchaToken, setRecaptchaToken] = React.useState<string | null>(null)
   const [showDraftPrompt, setShowDraftPrompt] = React.useState(false)
   const [draftAge, setDraftAge] = React.useState<number | null>(null)
@@ -167,7 +167,6 @@ export default function BookingFormImproved({
   }
 
   const goToStep = (nextStep: Step) => {
-    setErrorMessage(null)
     setStep(nextStep)
     window.scrollTo({ top: 0, behavior: 'smooth' })
     announceToScreenReader(`Moving to step ${nextStep}`)
@@ -180,12 +179,11 @@ export default function BookingFormImproved({
 
   const handleStep2Continue = () => {
     if (formData.services.length === 0) {
-      setErrorMessage('Please select at least one service to continue')
+      toast.error('Please select at least one service to continue')
       return
     }
-    // If windows are selected, frequency must be chosen
     if (formData.services.includes('windows') && !formData.frequency) {
-      setErrorMessage('Please select a frequency for window cleaning')
+      toast.error('Please select a frequency for window cleaning')
       return
     }
     goToStep(3)
@@ -199,20 +197,19 @@ export default function BookingFormImproved({
     // Honeypot check
     if (formData.website.trim().length > 0) return
 
-    // Time check
     const elapsed = Date.now() - startTime.current
     if (elapsed < 2000) {
-      setErrorMessage('Please take a moment to review your request before sending')
+      toast.error('Please take a moment to review your request before sending')
       return
     }
 
     if (!recaptchaToken) {
-      setErrorMessage('Please complete the security check')
+      toast.error('Please complete the security check')
       return
     }
 
+    const toastId = toast.loading('Sending your request...')
     setStatus('submitting')
-    setErrorMessage(null)
 
     try {
       const templateParams = {
@@ -318,13 +315,20 @@ export default function BookingFormImproved({
         console.error('❌ Notion sync error:', notionError)
       }
 
+      toast.success('Quote request sent!', {
+        id: toastId,
+        description: `We'll reply to ${formData.email} within 1 business day`,
+      })
       clearFormData('booking-form-improved')
       setStatus('success')
       announceToScreenReader('Request submitted successfully!')
     } catch (error) {
       console.error('Form submission error:', error)
       const friendlyError = getUserFriendlyError(error)
-      setErrorMessage(friendlyError.message)
+      toast.error(friendlyError.message, {
+        id: toastId,
+        description: 'Please try again or call us directly',
+      })
       setStatus('error')
       announceToScreenReader(`Error: ${friendlyError.message}`, 'assertive')
     }
@@ -553,10 +557,6 @@ export default function BookingFormImproved({
           />
         )}
 
-        {/* Errors */}
-        {errorMessage && (
-          <Alert type="error" title="Unable to Submit" message={errorMessage} onClose={() => setErrorMessage(null)} className="mb-6" />
-        )}
 
         <form onSubmit={handleSubmit}>
           {/* STEP 1: Property Basics */}

@@ -10,6 +10,7 @@ import WhatsAppButton from '@/components/ui/WhatsAppButton'
 import { GoogleTagManager } from '@next/third-parties/google'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { buildAbsoluteUrl, getSiteUrl } from '@/lib/site-url'
+import { Toaster } from '@/components/ui/sonner'
 
 const siteUrl = getSiteUrl()
 const logoUrl = buildAbsoluteUrl('/images/logos/swc-logo.png', siteUrl)
@@ -68,6 +69,7 @@ export default function RootLayout({
           <FloatingCallCTA />
           <WhatsAppButton />
           <StructuredData />
+          <Toaster />
         </ErrorBoundary>
       </body>
     </html>

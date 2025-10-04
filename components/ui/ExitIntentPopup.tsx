@@ -3,6 +3,13 @@
 import React from 'react'
 import Button from '@/components/ui/Button'
 import { analytics } from '@/lib/analytics'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 interface ExitIntentPopupProps {
   onClose?: () => void
@@ -51,50 +58,28 @@ export default function ExitIntentPopup({
     handleClose()
   }
 
-  if (!isVisible) return null
-
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="exit-popup-title"
-    >
-      <div className="relative w-full max-w-md animate-fadeIn rounded-3xl border border-white/20 bg-gradient-to-br from-brand-black via-brand-black to-brand-red/10 p-8 shadow-2xl">
-        {/* Close button */}
-        <button
-          onClick={handleClose}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/70 transition hover:bg-white/20 hover:text-white focus:outline-none focus:ring-2 focus:ring-brand-red/50"
-          aria-label="Close popup"
-        >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        {/* Icon */}
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/20">
-          <svg className="h-8 w-8 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-            />
-          </svg>
-        </div>
-
-        {/* Content */}
-        <div className="text-center">
-          <h2 id="exit-popup-title" className="text-2xl font-bold text-white">
+    <Dialog open={isVisible} onOpenChange={handleClose}>
+      <DialogContent className="max-w-md border-white/20 bg-gradient-to-br from-brand-black via-brand-black to-brand-red/10 text-white">
+        <DialogHeader>
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/20">
+            <svg className="h-8 w-8 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+              />
+            </svg>
+          </div>
+          <DialogTitle className="text-center text-2xl font-bold text-white">
             Need Help Choosing?
-          </h2>
-          <p className="mt-3 leading-relaxed-body text-white/70">
+          </DialogTitle>
+          <DialogDescription className="text-center leading-relaxed-body text-white/70">
             We understand choosing the right window cleaning service can be tricky. Our friendly team is here to help answer any questions.
-          </p>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
 
-        {/* Actions */}
         <div className="mt-6 space-y-3">
           <Button
             href={`tel:${phoneNumber}`}
@@ -120,11 +105,10 @@ export default function ExitIntentPopup({
           </button>
         </div>
 
-        {/* Helper text */}
         <p className="mt-4 text-center text-xs text-white/50">
           Or WhatsApp us at 07415 526 331
         </p>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }

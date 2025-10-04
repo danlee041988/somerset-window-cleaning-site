@@ -1,7 +1,6 @@
 "use client"
 
 import React from 'react'
-import { scrollToElement } from '@/lib/utils'
 
 interface FormErrorSummaryProps {
   errors: Record<string, string>
@@ -16,13 +15,22 @@ export function FormErrorSummary({ errors, generalErrors = [], className }: Form
   if (totalErrorCount === 0) return null
 
   const handleErrorClick = (fieldName: string) => {
-    scrollToElement(fieldName, 120)
-    
-    // Focus the field
     const element = document.getElementById(fieldName) || 
                    document.querySelector(`[name="${fieldName}"]`) as HTMLElement
-    if (element && 'focus' in element) {
-      setTimeout(() => element.focus(), 300)
+    
+    if (element) {
+      const offset = 120
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY
+      const offsetPosition = elementPosition - offset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+
+      if ('focus' in element) {
+        setTimeout(() => element.focus(), 300)
+      }
     }
   }
 
